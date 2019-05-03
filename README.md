@@ -1,5 +1,0 @@
-# Blocs
-
-## Author
-
-Félix
