@@ -2,4 +2,4 @@
 
 ## Author
 
-FÃ©lix
+* Félix
