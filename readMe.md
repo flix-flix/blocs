@@ -1,5 +1,7 @@
 # Blocs
 
+RTS with blocs
+
 ## Author
 
-* Félix
+* FÃ©lix
