@@ -26,7 +26,7 @@ public class Session implements Serializable {
 
 	public transient TexturePack texturePack;
 
-	public GameMode gamemode = GameMode.CREATIF;
+	public GameMode gamemode = GameMode.CLASSIC;
 
 	// ================================
 
@@ -83,7 +83,9 @@ public class Session implements Serializable {
 
 		keyboard = new Keyboard(this);
 
-		camera = new Camera(new Point3D(-2, 5, -2));
+		camera = new Camera(new Point3D(15, 25, 0));
+		camera.setVx(90);
+		camera.setVy(-65);
 
 		if (with3DEngine) {
 			engine = new Engine();
@@ -116,14 +118,28 @@ public class Session implements Serializable {
 	// =========================================================================================================================
 
 	public void setGameMode(GameMode gameMode) {
+		this.gamemode = gameMode;
 		switch (gameMode) {
 		case CLASSIC:
+			// Realign the camera with the grid
+			camera.setVx(90);
+			camera.setVy(-65);
+
+			fen.cursorVisible(true);
 			break;
-		case CREATIF:
+		case CREATIVE:
+			fen.cursorVisible(false);
 			break;
 		case SPECTATOR:
 			break;
 		}
+	}
+
+	// =========================================================================================================================
+
+	public void setTarget(int x, int y) {
+		engine.cursorX = x - 8;
+		engine.cursorY = y - 32;
 	}
 
 	// =========================================================================================================================

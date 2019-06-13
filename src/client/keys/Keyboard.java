@@ -68,13 +68,17 @@ public class Keyboard {
 		Cube cube = session.cubeTarget;
 		Face face = session.faceTarget;
 
-		if (session.gamemode == GameMode.CREATIF) {
+		if (session.gamemode == GameMode.CREATIVE) {
 			// ========== Add a cube to the map ==========
 			if (cube != null && face != null)
 				session.map.gridAddToFace(cube.x, cube.y, cube.z, ItemID.GRASS, face);
 
 		} else if (session.gamemode == GameMode.CLASSIC) {
 			pressR = true;
+
+			// ========== Add a cube to the map ==========
+			if (cube != null && face != null)
+				session.map.gridAddToFace(cube.x, cube.y, cube.z, ItemID.GRASS, face);
 
 			// If the bloc is right-clickable do the action
 			// if (cube != null && !session.keyboard.sneakKeyEnabled && cube.hasAction())
@@ -88,7 +92,7 @@ public class Keyboard {
 		if (session.stateGUI != StateHUD.GAME)
 			return;
 
-		if (session.gamemode == GameMode.CREATIF) {
+		if (session.gamemode == GameMode.CREATIVE) {
 			if (session.cubeTarget != null)
 				if (session.cubeTarget.onGrid)
 					session.map.removeGrid(session.cubeTarget);

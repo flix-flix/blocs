@@ -2,7 +2,7 @@ package client.session;
 
 public enum GameMode {
 
-	CLASSIC(0), CREATIF(1), SPECTATOR(2);
+	CLASSIC(0), CREATIVE(1), SPECTATOR(2);
 
 	int id;
 

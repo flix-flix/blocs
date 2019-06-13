@@ -18,6 +18,7 @@ import java.awt.image.BufferedImage;
 import javax.swing.JFrame;
 
 import client.keys.Key;
+import client.session.GameMode;
 import client.session.Session;
 import client.window.panels.Pan;
 import client.window.panels.PanDevlop;
@@ -33,6 +34,8 @@ public class Fen extends JFrame {
 	private static BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
 	private static Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(cursorImg, new Point(0, 0),
 			"blank cursor");
+
+	private int mouseX, mouseY;
 
 	// ============= Pan ===================
 	public Pan pan;
@@ -64,7 +67,7 @@ public class Fen extends JFrame {
 
 		// ======================================
 
-		this.setTitle("Moteur 3D");
+		this.setTitle("Blocs");
 		this.setVisible(true);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setSize(800, 600);
@@ -76,8 +79,6 @@ public class Fen extends JFrame {
 		this.add(pan);
 		pan.add(devlop, -1);
 		pan.add(gui, -1);
-
-		cursorVisible(false);
 
 		threadActu = new Thread(new Actu());
 
@@ -151,14 +152,18 @@ public class Fen extends JFrame {
 						case LEFT:
 							session.keyboard.leftKeyEnabled = true;
 							break;
-						case UP:
-							session.keyboard.jumpKeyEnabled = true;
-							break;
-						case DOWN:
-							session.keyboard.sneakKeyEnabled = true;
-							break;
+
 						case SPRINT:
 							session.keyboard.sprintKeyEnabled = true;
+							break;
+
+						case UP:
+							if (session.gamemode == GameMode.CREATIVE)
+								session.keyboard.jumpKeyEnabled = true;
+							break;
+						case DOWN:
+							if (session.gamemode == GameMode.CREATIVE)
+								session.keyboard.sneakKeyEnabled = true;
 							break;
 
 						// =====================================================
@@ -238,13 +243,22 @@ public class Fen extends JFrame {
 
 		this.addMouseMotionListener(new MouseMotionListener() {
 			public void mouseMoved(MouseEvent e) {
-				if (session.stateGUI != StateHUD.DIALOG)
-					session.keyboard.mouse(getLocationOnScreen().x, getLocationOnScreen().y, e.getX(), e.getY());
+				if (session.gamemode == GameMode.CLASSIC) {
+					mouseX = e.getX();
+					mouseY = e.getY();
+				} else if (session.gamemode == GameMode.CREATIVE)
+					if (session.stateGUI != StateHUD.DIALOG)
+						session.keyboard.mouse(getLocationOnScreen().x, getLocationOnScreen().y, e.getX(), e.getY());
 			}
 
 			public void mouseDragged(MouseEvent e) {
-				if (session.stateGUI != StateHUD.DIALOG)
-					session.keyboard.mouse(getLocationOnScreen().x, getLocationOnScreen().y, e.getX(), e.getY());
+				if (session.gamemode == GameMode.CLASSIC) {
+					mouseX = e.getX();
+					mouseY = e.getY();
+				} else if (session.gamemode == GameMode.CREATIVE)
+					if (session.stateGUI != StateHUD.DIALOG)
+						session.keyboard.mouse(getLocationOnScreen().x, getLocationOnScreen().y, e.getX(), e.getY());
+
 			}
 		});
 
@@ -369,6 +383,8 @@ public class Fen extends JFrame {
 					repaint = false;
 
 					session.timeBefore = System.currentTimeMillis();
+
+					session.setTarget(mouseX, mouseY);
 
 					pan.img = session.getImage(pan.getWidth(), pan.getHeight());
 

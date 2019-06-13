@@ -29,6 +29,8 @@ public class Engine {
 	public int vueX = 60, vueY = 45;
 
 	// ================ Target =====================
+	public int cursorX = 100, cursorY = 100;
+
 	static public Cube cubeTarget;
 	static public Face faceTarget;
 
@@ -94,8 +96,6 @@ public class Engine {
 		dataBuffer = bimg.getRaster().getDataBuffer();
 
 		statePixel = new StatePixel[screenWidth * screenHeight];
-		// TODO [Feature] Add colored Transparence
-		// stateTrans = new StateTransparent[width * height];
 	}
 
 	// =========================================================================================================================
@@ -225,8 +225,8 @@ public class Engine {
 	// =========================================================================================================================
 
 	public void setPixel(int row, int col, int rgb, StatePixel state) {
-		if (statePixel[col * screenHeight + row] != StatePixel.FILL) {
-			if (col == centerX && row == centerY) {
+		if (statePixel[col * screenHeight + row].isDrawable) {
+			if (col == cursorX && row == cursorY) {
 				Engine.faceTarget = Engine.faceTargetTemp;
 				Engine.cubeTarget = Engine.cubeTargetTemp;
 			}
@@ -245,15 +245,5 @@ public class Engine {
 		int y = centerY + (int) (-yy * screenHeight);
 
 		return new Point(x, y);
-	}
-
-	// =========================================================================================================================
-
-	public int getCenterX() {
-		return centerX;
-	}
-
-	public int getCenterY() {
-		return centerY;
 	}
 }

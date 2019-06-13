@@ -11,6 +11,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import client.messages.Message;
+import client.session.GameMode;
 import client.session.Session;
 
 public class PanGUI extends JPanel {
@@ -117,11 +118,18 @@ public class PanGUI extends JPanel {
 		switch (session.stateGUI) {
 		case GAME:
 
-			gg.setColor(Color.black);
-			gg.drawLine(centerX - crossSize, centerY - 1, centerX + crossSize - 1, centerY - 1);
-			gg.drawLine(centerX - crossSize, centerY, centerX + crossSize - 1, centerY);
-			gg.drawLine(centerX - 1, centerY - crossSize, centerX - 1, centerY + crossSize - 1);
-			gg.drawLine(centerX, centerY - crossSize, centerX, centerY + crossSize - 1);
+			if (session.gamemode == GameMode.CLASSIC) {
+
+			}
+
+			else if (session.gamemode == GameMode.CREATIVE) {
+				gg.setColor(Color.black);
+				gg.drawLine(centerX - crossSize, centerY - 1, centerX + crossSize - 1, centerY - 1);
+				gg.drawLine(centerX - crossSize, centerY, centerX + crossSize - 1, centerY);
+				gg.drawLine(centerX - 1, centerY - crossSize, centerX - 1, centerY + crossSize - 1);
+				gg.drawLine(centerX, centerY - crossSize, centerX, centerY + crossSize - 1);
+			}
+
 			break;
 
 		case PAUSE:

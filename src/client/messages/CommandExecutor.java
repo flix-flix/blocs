@@ -1,5 +1,6 @@
 package client.messages;
 
+import client.session.GameMode;
 import client.session.Session;
 
 public class CommandExecutor {
@@ -23,6 +24,22 @@ public class CommandExecutor {
 		case "!help":
 			messages.addTextMsg("-------------------- HELP -----------------------------");
 			messages.addTextMsg("===== Commands are work in progress =====");
+			break;
+		case "!gamemode":
+			if (parts.length != 3) {
+				messages.addTextMsg("!gamemode <player> <mode>");
+				return;
+			}
+
+			if (parts[2].equals(GameMode.CLASSIC.name())) {
+				session.setGameMode(GameMode.CLASSIC);
+				messages.addTextMsg("Gamemode updated to " + GameMode.CLASSIC.name());
+			} else if (parts[2].equals(GameMode.CREATIVE.name())) {
+				session.setGameMode(GameMode.CREATIVE);
+				messages.addTextMsg("Gamemode updated to " + GameMode.CLASSIC.name());
+			} else
+				messages.addTextMsg("Available modes : " + GameMode.CLASSIC.name() + ", " + GameMode.CREATIVE.name());
+
 			break;
 		default:
 			messages.addTextMsg("Unknown command. Try !help");
