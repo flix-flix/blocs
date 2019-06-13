@@ -98,7 +98,7 @@ public class DrawCubeFace extends Draw {
 			for (int j = 0; j < nbX1; j++)
 				tab2D[i][j] = engine.to2D(tab3D[i][j]);
 
-		quadri.add(new Quadri(tab2D[0][0], tab2D[0][nbX], tab2D[nbX][nbX], tab2D[nbX][0], -0xffffff, StatePixel.FILL,
+		quadri.add(new Quadri(tab2D[0][0], tab2D[0][nbX], tab2D[nbX][nbX], tab2D[nbX][0], -0xffffff, StatePixel.CONTOUR,
 				false));
 
 		for (int i = 0; i < nbY; i++)

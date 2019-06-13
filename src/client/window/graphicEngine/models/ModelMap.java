@@ -129,8 +129,8 @@ public class ModelMap extends AbstractMap<ModelChunk, ModelCube> implements Mode
 	 */
 	public void checkHideFaceAdd(int x, int y, int z, Face face) {
 		initFaceCoord(x, y, z, face);
-		
-		if(Chunk.wrongY(y))
+
+		if (Chunk.wrongY(y))
 			return;
 
 		if (isOpaque(xFace, yFace, zFace))

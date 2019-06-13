@@ -1,9 +1,9 @@
 package client.window.graphicEngine.calcul;
 
 public enum StatePixel {
-	EMPTY(true), FILL, TRANSPARENT(true), GLASS(true), LIQUID;
+	EMPTY(true), FILL, TRANSPARENT(true), GLASS(true), LIQUID, CONTOUR;
 
-	boolean isDrawable;
+	public boolean isDrawable;
 
 	private StatePixel(boolean isDrawable) {
 		this.isDrawable = isDrawable;
