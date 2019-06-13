@@ -355,6 +355,7 @@ public class Fen extends JFrame {
 					session.fps = fps;
 					fps = 0;
 
+					session.ticksPhys = session.keyboard.ticks;
 					session.keyboard.ticks = 0;
 				}
 

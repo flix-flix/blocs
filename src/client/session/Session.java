@@ -50,7 +50,7 @@ public class Session implements Serializable {
 	// Number of cubes and chunks displayed
 	public int nbChunks, nbCubes;
 	// Number of frames displayed the last second
-	public volatile int fps;
+	public volatile int fps, ticksPhys;
 	// true : show on-screen the dev infos
 	public boolean devlop;
 
