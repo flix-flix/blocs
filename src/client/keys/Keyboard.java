@@ -71,7 +71,7 @@ public class Keyboard {
 		if (session.gamemode == GameMode.CREATIVE) {
 			// ========== Add a cube to the map ==========
 			if (cube != null && face != null)
-				session.map.gridAddToFace(cube.x, cube.y, cube.z, ItemID.GRASS, face);
+				session.map.gridAddToFace(cube.x, cube.y, cube.z, ItemID.GLASS, face);
 
 		} else if (session.gamemode == GameMode.CLASSIC) {
 			pressR = true;
@@ -186,7 +186,8 @@ public class Keyboard {
 		session.stateGUI = StateHUD.GAME;
 		session.captureMouse = true;
 
-		session.fen.cursorVisible(false);
+		if (session.gamemode == GameMode.CREATIVE)
+			session.fen.cursorVisible(false);
 
 		session.fen.gui.resume.setVisible(false);
 		session.fen.gui.options.setVisible(false);

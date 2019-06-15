@@ -124,7 +124,9 @@ public class Session implements Serializable {
 			// Realign the camera with the grid
 			camera.setVx(90);
 			camera.setVy(-65);
-
+			// Replace the camera at the correct altitude
+			camera.vue.y = 25;
+			
 			fen.cursorVisible(true);
 			break;
 		case CREATIVE:

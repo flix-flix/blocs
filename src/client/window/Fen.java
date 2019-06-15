@@ -137,8 +137,8 @@ public class Fen extends JFrame {
 				}
 
 				else if (session.stateGUI == StateHUD.GAME) {
-					if (Key.get(k.getExtendedKeyCode()) != null)
-						switch (Key.get(k.getExtendedKeyCode())) {
+					if (Key.get(k.getKeyCode()) != null)
+						switch (Key.get(k.getKeyCode())) {
 
 						case FORWARD:
 							session.keyboard.forwardKeyEnabled = true;
@@ -175,8 +175,10 @@ public class Fen extends JFrame {
 						// =====================================================
 
 						case ACCESS_1:
+							session.setGameMode(GameMode.CREATIVE);
 							break;
 						case ACCESS_2:
+							session.setGameMode(GameMode.CLASSIC);
 							break;
 						case ACCESS_3:
 							break;
@@ -195,7 +197,7 @@ public class Fen extends JFrame {
 
 						// =====================================================
 
-						case KEY_POWER:
+						case KEY_EXCLAMATION:
 							session.keyboard.dialog();
 							break;
 

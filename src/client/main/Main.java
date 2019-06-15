@@ -11,7 +11,6 @@ import data.generation.WorldGeneration;
 public class Main {
 
 	public static void main(String[] args) throws AWTException {
-
 		ModelMap map = new ModelMap();
 
 		Session session = new Session(map, true);

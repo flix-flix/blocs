@@ -11,6 +11,8 @@ public enum Key {
 	// =========================================================================================================================
 	// Dialog
 
+	KEY_EXCLAMATION(517),
+
 	KEY_ENTER(10), KEY_DEL(8), KEY_SUPPR(127), KEY_LEFT(37), KEY_UP(38), KEY_RIGHT(39), KEY_DOWN(40),
 
 	KEY_END(35), KEY_START(36), KEY_PAGE_UP(33), KEY_PAGE_DOWN(34),
@@ -20,12 +22,10 @@ public enum Key {
 	ACCESS_1(49), ACCESS_2(50), ACCESS_3(51), ACCESS_4(52), ACCESS_5(53), ACCESS_6(54), ACCESS_7(55), ACCESS_8(
 			56), ACCESS_9(57),
 
-	KEY_TAB(9),
+	KEY_TAB(9);
 
 	// =========================================================================================================================
-	// Extended keycode
-
-	KEY_POWER(16777394);// ²
+	// ² Extended keycode : 16_777_394
 
 	public static EnumSet<Key> keys;
 

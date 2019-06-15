@@ -5,7 +5,7 @@ import data.enumeration.SensBloc;
 
 public class TextureCube {
 
-	//Faces : up, down, north, south, east, west
+	// Faces : up, down, north, south, east, west
 	private TextureFace[] textures = new TextureFace[6];
 
 	// =========================================================================================================================
@@ -20,7 +20,7 @@ public class TextureCube {
 	}
 
 	// =========================================================================================================================
-	
+
 	public TextureCube(TextureFace up, TextureFace down, TextureFace north, TextureFace south, TextureFace east,
 			TextureFace west) {
 		textures[0] = up;
