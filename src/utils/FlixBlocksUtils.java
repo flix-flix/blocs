@@ -1,7 +1,6 @@
 package utils;
 
 import java.awt.Image;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
 
@@ -17,19 +16,6 @@ public class FlixBlocksUtils {
 	public static final int NO_MINING = -1;
 
 	// =========================================================================================================================
-
-	public static int[][] imgToTab(String folder, String file) {
-		Image img = getImage(folder + "/" + file, "/blocs/999.png");
-		BufferedImage bimg = (BufferedImage) img;
-
-		int[][] tab = new int[bimg.getHeight()][bimg.getWidth()];
-
-		for (int i = 0; i < tab.length; i++)
-			for (int j = 0; j < tab[0].length; j++)
-				tab[tab.length - 1 - i][j] = bimg.getRGB(j, i);
-
-		return tab;
-	}
 
 	public static Image getImage(String path, String error) {
 		URL url = Pan.class.getResource("/" + path + ".png");
@@ -57,5 +43,26 @@ public class FlixBlocksUtils {
 	public static boolean resourceExist(String name) {
 		URL url = TextureFace.class.getResource("/" + name);
 		return url != null;
+	}
+
+	// =========================================================================================================================
+
+	public static int mixColor(int a, int b) {
+		a += 16_777_216;
+		b += 16_777_216;
+
+		int aR = a / (256 * 256) % 256;
+		int aG = (a / 256) % 256;
+		int aB = a % 256;
+
+		int bR = b / (256 * 256) % 256;
+		int bG = (b / 256) % 256;
+		int bB = b % 256;
+
+		int red = (aR + bR) / 2;
+		int green = (aG + bG) / 2;
+		int blue = (aB + bB) / 2;
+
+		return -16_777_216 + red * 256 * 256 + green * 256 + blue;
 	}
 }

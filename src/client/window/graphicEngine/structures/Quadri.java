@@ -11,7 +11,7 @@ import client.window.graphicEngine.calcul.StatePixel;
 public class Quadri {
 
 	public Point[] points;
-	public int color;
+	public int color, alpha;
 	public StatePixel statePixel;
 	public boolean fill = true;
 
@@ -28,7 +28,12 @@ public class Quadri {
 	public Quadri(Point p0, Point p1, Point p2, Point p3, int color, StatePixel etat) {
 		this(new Point[] { p0, p1, p2, p3 }, color, etat);
 	}
-	
+
+	public Quadri(Point p0, Point p1, Point p2, Point p3, int color, StatePixel etat, int alpha) {
+		this(new Point[] { p0, p1, p2, p3 }, color, etat);
+		this.alpha = alpha;
+	}
+
 	public Quadri(Point p0, Point p1, Point p2, Point p3, int color, StatePixel etat, boolean fill) {
 		this(new Point[] { p0, p1, p2, p3 }, color, etat);
 		this.fill = fill;

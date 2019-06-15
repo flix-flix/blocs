@@ -67,7 +67,6 @@ public class Engine {
 		matrice = new Matrix(-camera.getVx(), -camera.getVy(), camera.vue);
 
 		Arrays.fill(statePixel, StatePixel.EMPTY);
-		drawSky();
 
 		cubeTarget = null;
 		faceTarget = null;
@@ -78,6 +77,7 @@ public class Engine {
 		timeInit = System.currentTimeMillis();
 
 		draw();
+		drawSky();
 
 		return bimg;
 	}
@@ -109,24 +109,25 @@ public class Engine {
 
 		int bottom = (int) (screenHeight / 2 + (camera.getVy() + 40) * angleToRow);
 
-		int middleColor = (3_380_955 + (int) (middle - top) / 6 * 65_792);
-		int red = middleColor / (256 * 256);
-		int green = (middleColor / 256) % 256;
-		int blue = middleColor % 256;
+		int middleColor = (-13_396_261 - (int) (top - middle) / 7 * 65_792);
+
+		int red = ((middleColor + 16_777_216) / (256 * 256)) % 256;
+		int green = ((middleColor + 16_777_216) / 256) % 256;
+		int blue = (middleColor + 16_777_216) % 256;
 
 		for (int row = 0; row < screenHeight; row++) {
 			if (row < top)
 				// Fill the top with blue
 				for (int col = 0; col < screenWidth; col++)
-					dataBuffer.setElem(row * screenWidth + col, 3_380_955);
+					setPixel(row, col, -13_396_261, StatePixel.SKY);
 
 			else if (row <= middle)
-				// Fill the "middle top" with a light blue to dark blue gradient
+				// Fill the "middle top" with a blue to light blue gradient
 				for (int col = 0; col < screenWidth; col++)
-					dataBuffer.setElem(row * screenWidth + col, (3_380_955 + ((int) (row - top) / 6 * 65792)));
+					setPixel(row, col, (-13_396_261 - ((int) (top - row) / 7 * 65792)), StatePixel.SKY);
 
 			else if (row <= bottom) {
-				// Fill the "middle bottom" with a dark blue to black gradient
+				// Fill the "middle bottom" with a light blue to black gradient
 				double lala = 1 - (bottom - row) / ((double) bottom - middle);
 
 				int dR = (int) (red * lala);
@@ -134,11 +135,11 @@ public class Engine {
 				int dB = (int) (blue * lala);
 
 				for (int col = 0; col < screenWidth; col++)
-					dataBuffer.setElem(row * screenWidth + col, middleColor - (dR * 256 * 256 + dG * 256 + dB));
+					setPixel(row, col, middleColor - (dR * 256 * 256 + dG * 256 + dB), StatePixel.SKY);
 			} else
 				// Fill the bottom with black
 				for (int col = 0; col < screenWidth; col++)
-					dataBuffer.setElem(row * screenWidth + col, -0xffffff);
+					setPixel(row, col, -0xffffff, StatePixel.SKY);
 		}
 	}
 
@@ -207,7 +208,7 @@ public class Engine {
 							;
 
 						for (int k = col; k < xInScreen(list.get(i - 1).x); k++)
-							setPixel(row, k, q.color, q.statePixel);
+							setPixel(row, k, q.color, q.statePixel, q.alpha);
 						i--;
 					}
 				else
@@ -225,15 +226,47 @@ public class Engine {
 	// =========================================================================================================================
 
 	public void setPixel(int row, int col, int rgb, StatePixel state) {
-		if (statePixel[col * screenHeight + row].isDrawable) {
-			if (col == cursorX && row == cursorY) {
+		setPixel(row, col, rgb, state, 0);
+	}
+
+	public void setPixel(int row, int col, int rgb, StatePixel state, int alpha) {
+		if (statePixel[row * screenWidth + col].isEmpty) {
+			if (col == cursorX && row == cursorY && statePixel[row * screenWidth + col] == StatePixel.EMPTY) {
 				Engine.faceTarget = Engine.faceTargetTemp;
 				Engine.cubeTarget = Engine.cubeTargetTemp;
 			}
 			dataBuffer.setElem(row * screenWidth + col, rgb);
-			statePixel[col * screenHeight + row] = state;
+			statePixel[row * screenWidth + col] = state;
+		} else if (statePixel[row * screenWidth + col] == StatePixel.TRANSPARENT) {
+			int colorPrev = dataBuffer.getElem(row * screenWidth + col);
+
+			dataBuffer.setElem(row * screenWidth + col, mix(rgb, colorPrev));
+			statePixel[row * screenWidth + col] = state;
 		}
 	}
+
+	// =========================================================================================================================
+
+	public int mix(int a, int b) {
+		a += 16_777_216;
+		b += 16_777_216;
+
+		int aR = a / (256 * 256);
+		int aG = (a / 256) % 256;
+		int aB = a % 256;
+
+		int bR = b / (256 * 256);
+		int bG = (b / 256) % 256;
+		int bB = b % 256;
+
+		int red = (aR + bR) / 2;
+		int green = (aG + bG) / 2;
+		int blue = (aB + bB) / 2;
+
+		return -16_777_216 + red * 256 * 256 + green * 256 + blue;
+	}
+
+	// =========================================================================================================================
 
 	public Point to2D(Point3D p) {
 		if (p.x <= 0)

@@ -7,6 +7,7 @@ import client.window.graphicEngine.calcul.Matrix;
 import client.window.graphicEngine.calcul.Point3D;
 import client.window.graphicEngine.structures.Draw;
 import client.window.graphicEngine.structures.Model;
+import data.ItemTable;
 import data.enumeration.Face;
 import data.enumeration.ItemID;
 import data.map.AbstractMap;
@@ -83,9 +84,7 @@ public class ModelMap extends AbstractMap<ModelChunk, ModelCube> implements Mode
 	public boolean isOpaque(int x, int y, int z) {
 		if (!gridContains(x, y, z))
 			return false;
-		// if (ItemTable.isOpaque(getBloc(x, y, z).itemID))
-		// return false;
-		return true;
+		return ItemTable.isOpaque(gridGet(x, y, z).itemID);
 	}
 
 	// =========================================================================================================================
@@ -109,14 +108,8 @@ public class ModelMap extends AbstractMap<ModelChunk, ModelCube> implements Mode
 		if (!gridContains(x, y, z))
 			return;
 
-		if (y == 0 || y == ModelChunk.Y)
-			return;
-
-		if (isOpaque(x + 1, y, z) && isOpaque(x - 1, y, z) && isOpaque(x, y + 1, z) && isOpaque(x, y - 1, z)
-				&& isOpaque(x, y, z + 1) && isOpaque(x, y, z - 1)) {
-			gridGet(x, y, z).visible = false;
-		} else
-			gridGet(x, y, z).visible = true;
+		gridGet(x, y, z).visible = !(isOpaque(x + 1, y, z) && isOpaque(x - 1, y, z) && isOpaque(x, y + 1, z)
+				&& isOpaque(x, y - 1, z) && isOpaque(x, y, z + 1) && isOpaque(x, y, z - 1));
 	}
 
 	/**

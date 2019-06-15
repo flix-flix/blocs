@@ -49,10 +49,16 @@ public class WorldGeneration {
 		
 		// Cubes with the differents step of the mining animation
 		for (int x = 0; x < 5; x++) {
-			Cube c = new Cube(x, 2, -3, ItemID.GLASS);
+			Cube c = new Cube(x, 2, -3, ItemID.IRON_BLOC);
 			c.miningState = x;
 			map.gridAdd(c);
 		}
+		
+		map.gridAdd(16, 1, 14, ItemID.GLASS);
+		
+		map.gridAdd(15, 1, 15, ItemID.GLASS_GRAY);
+		
+		map.gridAdd(14, 1, 16, ItemID.GLASS_RED);
 
 		return map;
 	}

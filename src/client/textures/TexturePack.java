@@ -9,7 +9,7 @@ public class TexturePack {
 	// Number of mining animation frames to load
 	public static final int nbAnim = 5;
 	// ID of textures blocks to load
-	public static final int[] texturesToLoad = new int[] { 0, 1, 2, 3, 20, 21 };
+	public static final int[] texturesToLoad = new int[] { 0, 1, 2, 3, 20, 21, 50, 51, 52 };
 
 	// Array to store the textures of the cubes (sorted by id)
 	TextureCube[] texturesCubes = new TextureCube[200];
@@ -17,7 +17,7 @@ public class TexturePack {
 	TextureSquare[] miningFrames = new TextureSquare[nbAnim];
 
 	// Default missing texture
-	TextureSquare faceError = new TextureSquare("blocs", 999);
+	TextureSquare faceError = TextureSquare.generateSquare("blocs", "999");
 
 	public TexturePack() {
 		texturesCubes[199] = new TextureCube("UP", "DOWN", "NORTH", "SOUTH", "EAST", "WEST");
@@ -27,7 +27,7 @@ public class TexturePack {
 				texturesCubes[i] = new TextureCube(i);
 
 		for (int i = 0; i < nbAnim; i++)
-			miningFrames[i] = new TextureSquare("anim", "miner-" + i);
+			miningFrames[i] = TextureSquare.generateSquare("anim", "mining-" + i);
 	}
 
 	// =========================================================================================================================

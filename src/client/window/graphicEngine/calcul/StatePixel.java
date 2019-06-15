@@ -1,12 +1,23 @@
 package client.window.graphicEngine.calcul;
 
 public enum StatePixel {
-	EMPTY(true), FILL, TRANSPARENT(true), GLASS(true), LIQUID, CONTOUR;
+	// Initial
+	EMPTY(true),
+	// Painted
+	FILL,
+	// Full transparency (needed to intercept target)
+	INVISIBLE(true),
+	// Colored Transparency
+	TRANSPARENT,
+	// Black line
+	CONTOUR,
+	// Background
+	SKY;
 
-	public boolean isDrawable;
+	public boolean isEmpty;
 
 	private StatePixel(boolean isDrawable) {
-		this.isDrawable = isDrawable;
+		this.isEmpty = isDrawable;
 	}
 
 	private StatePixel() {

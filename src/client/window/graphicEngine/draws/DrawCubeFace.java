@@ -61,7 +61,7 @@ public class DrawCubeFace extends Draw {
 		TextureSquare texture = Engine.texturePack.getFace(id, face);
 
 		if (cube.miningState != FlixBlocksUtils.NO_MINING)
-			texture = texture.fusion(texturePack.getMiningFrame(cube.miningState));
+			texture = texture.miningFusion(texturePack.getMiningFrame(cube.miningState));
 
 		int nbX = texture.color[0].length;
 		int nbY = texture.color.length;
@@ -101,16 +101,22 @@ public class DrawCubeFace extends Draw {
 		quadri.add(new Quadri(tab2D[0][0], tab2D[0][nbX], tab2D[nbX][nbX], tab2D[nbX][0], -0xffffff, StatePixel.CONTOUR,
 				false));
 
-		for (int i = 0; i < nbY; i++)
-			for (int j = 0; j < nbX; j++) {
-				int color = texture.color[i][j];
+		for (int row = 0; row < nbY; row++)
+			for (int col = 0; col < nbX; col++) {
+				int color = texture.getColor(row, col);
 
 				// If the bloc is targeted by the player : its color will be lighter
 				if (cube.isTarget)
 					color = texture.lighter(color, 75);
 
-				quadri.add(new Quadri(tab2D[i][j], tab2D[i + 1][j], tab2D[i + 1][j + 1], tab2D[i][j + 1], color,
-						StatePixel.FILL));
+				StatePixel state = StatePixel.FILL;
+				if (texture.getAlpha(row, col) == 0)
+					state = StatePixel.INVISIBLE;
+				else if (texture.getAlpha(row, col) != 255)
+					state = StatePixel.TRANSPARENT;
+
+				quadri.add(new Quadri(tab2D[row][col], tab2D[row + 1][col], tab2D[row + 1][col + 1],
+						tab2D[row][col + 1], color, state));
 			}
 		return quadri;
 	}

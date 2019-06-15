@@ -9,64 +9,45 @@ public class TextureFace {
 
 	public int rows = 0, cols = 0;
 
-	public TextureSquare normal = new TextureSquare();
-	public TextureSquare reverse = new TextureSquare();
-	public TextureSquare right = new TextureSquare();
-	public TextureSquare left = new TextureSquare();
+	public TextureSquare normal, reverse, right, left;
 
 	// =========================================================================================================================
 
-	public TextureFace(int[][] color) {
-		normal.color = color;
+	public TextureFace(String folder, String file) {
+		normal = TextureSquare.generateSquare(folder, file);
 		generateRotatedTexture();
-	}
-
-	public TextureFace(int i) {
-		this(i + "");
 	}
 
 	public TextureFace(String file) {
 		this(folder, file);
 	}
 
-	public TextureFace(String folder, String file) {
-		this(FlixBlocksUtils.imgToTab(folder, file));
+	// =========================================================================================================================
+
+	public TextureFace(String id, Face face) {
+		this(folder, getFileName(id, face));
 	}
 
 	// =========================================================================================================================
 
-	public TextureFace(String id, Face face) {
-		// Try to use <id>.png texture
-		if (FlixBlocksUtils.pngExist(folder + "/" + id + "-" + face.toString().toLowerCase())) {
-			normal.color = FlixBlocksUtils.imgToTab(folder, id + "-" + face.toString().toLowerCase());
-			generateRotatedTexture();
-			return;
-		}
+	public static String getFileName(String id, Face face) {
+		// Try to use <id>-<face>.png texture
+		if (FlixBlocksUtils.pngExist(folder + "/" + id + "-" + face.toString().toLowerCase()))
+			return id + "-" + face.toString().toLowerCase();
 
 		// != UP : to avoid the profile texture on the top
 		if (face != Face.UP)
 			// Try to use the up texture for the down face
 			if (face == Face.DOWN) {
-				if (FlixBlocksUtils.pngExist(folder + "/" + id + "-up")) {
-					normal.color = FlixBlocksUtils.imgToTab(folder, id + "-up");
-					generateRotatedTexture();
-					return;
-				}
+				if (FlixBlocksUtils.pngExist(folder + "/" + id + "-up"))
+					return id + "-up";
 			}
 			// Try to use the profile texture for the side faces
-			else if (FlixBlocksUtils.pngExist(folder + "/" + id + "-pro")) {
-				normal.color = FlixBlocksUtils.imgToTab(folder, id + "-pro");
-				generateRotatedTexture();
-				return;
-			}
+			else if (FlixBlocksUtils.pngExist(folder + "/" + id + "-pro"))
+				return id + "-pro";
 
 		// Use the default texture of the id
-		normal.color = FlixBlocksUtils.imgToTab(folder, id);
-		generateRotatedTexture();
-	}
-
-	public TextureFace(int id, Face face) {
-		this(id + "", face);
+		return id;
 	}
 
 	// =========================================================================================================================
@@ -75,20 +56,26 @@ public class TextureFace {
 		rows = normal.color.length;
 		cols = normal.color[0].length;
 
-		reverse.color = new int[rows][cols];
-		right.color = new int[cols][rows];
-		left.color = new int[cols][rows];
+		reverse = new TextureSquare(rows, cols);
+		right = new TextureSquare(rows, cols);
+		left = new TextureSquare(rows, cols);
 
 		for (int row = 0; row < rows; row++)
-			for (int col = 0; col < cols; col++)
+			for (int col = 0; col < cols; col++) {
 				reverse.color[rows - 1 - row][cols - 1 - col] = normal.color[row][col];
+				reverse.setAlpha(rows - 1 - row, cols - 1 - col, normal.getAlpha(row, col));
+			}
 
 		for (int row = 0; row < rows; row++)
-			for (int col = 0; col < cols; col++)
+			for (int col = 0; col < cols; col++) {
 				right.color[cols - 1 - col][row] = normal.color[row][col];
+				right.setAlpha(cols - 1 - col, row, normal.getAlpha(row, col));
+			}
 
 		for (int row = 0; row < rows; row++)
-			for (int col = 0; col < cols; col++)
+			for (int col = 0; col < cols; col++) {
 				left.color[col][rows - 1 - row] = normal.color[row][col];
+				left.setAlpha(col, rows - 1 - row, normal.getAlpha(row, col));
+			}
 	}
 }
