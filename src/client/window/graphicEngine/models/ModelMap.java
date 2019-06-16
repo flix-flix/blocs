@@ -108,8 +108,8 @@ public class ModelMap extends AbstractMap<ModelChunk, ModelCube> implements Mode
 		if (!gridContains(x, y, z))
 			return;
 
-		gridGet(x, y, z).visible = !(isOpaque(x + 1, y, z) && isOpaque(x - 1, y, z) && isOpaque(x, y + 1, z)
-				&& isOpaque(x, y - 1, z) && isOpaque(x, y, z + 1) && isOpaque(x, y, z - 1));
+		gridGet(x, y, z).setVisible(!(isOpaque(x + 1, y, z) && isOpaque(x - 1, y, z) && isOpaque(x, y + 1, z)
+				&& isOpaque(x, y - 1, z) && isOpaque(x, y, z + 1) && isOpaque(x, y, z - 1)));
 	}
 
 	/**

@@ -15,14 +15,6 @@ public class Vector {
 		z = (end.z - start.z) / resolution;
 	}
 
-	private Vector(Point3D start, double x, double y, double z) {
-		this.start = start;
-
-		this.x = x;
-		this.y = y;
-		this.z = z;
-	}
-
 	// =========================================================================================================================
 
 	public Point3D multiply(double a) {
@@ -38,9 +30,5 @@ public class Vector {
 	@Override
 	public String toString() {
 		return "Vectorr [ x=" + x + ", y=" + y + ", z=" + z + "]";
-	}
-
-	public Vector clone() {
-		return new Vector(start.clone(), x, y, z);
 	}
 }

@@ -13,7 +13,6 @@ import client.window.graphicEngine.calcul.Camera;
 import client.window.graphicEngine.calcul.Engine;
 import client.window.graphicEngine.calcul.Point3D;
 import client.window.graphicEngine.draws.DrawCubeFace;
-import client.window.graphicEngine.models.ModelCube;
 import client.window.graphicEngine.models.ModelMap;
 import client.window.panels.StateHUD;
 import data.enumeration.Face;
@@ -91,8 +90,6 @@ public class Session implements Serializable {
 			engine = new Engine();
 			engine.camera = camera;
 
-			ModelCube.engine = engine;
-
 			engine.model = map;
 			map.engine = engine;
 		}
@@ -126,7 +123,7 @@ public class Session implements Serializable {
 			camera.setVy(-65);
 			// Replace the camera at the correct altitude
 			camera.vue.y = 25;
-			
+
 			fen.cursorVisible(true);
 			break;
 		case CREATIVE:

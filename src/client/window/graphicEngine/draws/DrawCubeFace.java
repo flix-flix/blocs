@@ -31,7 +31,7 @@ public class DrawCubeFace extends Draw {
 
 	// =========================================================================================================================
 
-	public DrawCubeFace(int id, Face face, Vector vx, Vector vy, Vector vz, Point3D[] points, Point3D centre, int index,
+	public DrawCubeFace(int id, Face face, Vector vx, Vector vy, Vector vz, Point3D[] points, Point3D center, int index,
 			Cube cube) {
 		this.id = id;
 		this.face = face;
@@ -39,7 +39,7 @@ public class DrawCubeFace extends Draw {
 		this.vy = vy;
 		this.vz = vz;
 		this.points = points;
-		this.center = centre;
+		this.center = center;
 		this.index = index;
 
 		this.cube = cube;

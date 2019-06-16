@@ -1,9 +1,7 @@
 package client.window.graphicEngine.models;
 
-import java.awt.Point;
 import java.util.ArrayList;
 
-import client.window.graphicEngine.calcul.Engine;
 import client.window.graphicEngine.calcul.Matrix;
 import client.window.graphicEngine.calcul.Point3D;
 import client.window.graphicEngine.calcul.Vector;
@@ -18,47 +16,23 @@ public class ModelCube extends Cube implements Model {
 
 	private static final double toRadian = Math.PI / 180;
 
-	public static Engine engine;
+	// center cloned and changed by map rotation
+	public Point3D centerDecal;
+	// The 3 adjacents points of centerDecal after the map and cube rotations
+	public Point3D ppx, ppy, ppz;
+	// Vectors of the cube for the 3 axes (centerDecal to ppx, ppy, ppz)
+	public Vector vx, vy, vz;
+	// 3D Points of the cube calculed with the vectors
+	public Point3D[] points = new Point3D[8];
 
-	// Model
-	public boolean visible = true;
-	protected ArrayList<Draw> draws = new ArrayList<>();
-
-	public boolean frontOfCamera = false;
-
-	// True: the face won't be displayed (Set auto when adjacent bloc)
+	// Index of the cube (used to sort when centers are at the same location)
+	int index;
+	// true: the face won't be displayed (Set auto when an adjacent bloc is added)
 	public boolean[] hideFace = { false, false, false, false, false, false };
 
-	// =========================================================================================================================
-
-	// =================== Data ==================
-
-	public Point3D[] points = new Point3D[8];
-	public Point3D[] pointsTransform = new Point3D[8];
-	public Point[] p2D = new Point[8];
-	public Point3D depDecal;
-
-	// =================== Basic Infos ==================
-
-	public Point3D dep;
-	public Vector vx, vy, vz;
-
-	public Point3D ppx, ppy, ppz;
-
-	// =================== ?? temp or not ==================
-
-	double[] mem;
-	int[] sommets;
-
-	// =================== Infos (Draw) ==================
-
-	// Index of the cube (in case of many cubes at the same location)
-	int index;
-
-	// =================== Rotation ==================
-
-	// Shift for the rotation point (nb pixels)
-	public int decalX, decalY, decalZ;
+	// =================== Model ===================
+	private boolean visible = true;
+	private ArrayList<Draw> draws = new ArrayList<>();
 
 	// =========================================================================================================================
 
@@ -66,7 +40,7 @@ public class ModelCube extends Cube implements Model {
 			double _sizeX, double _sizeY, double _sizeZ, ItemID itemID) {
 		super(x, y, z, _decalX, _decalY, _decalZ, _ax, _ay, _sizeX, _sizeY, _sizeZ, itemID);
 
-		this.dep = center.clone();
+		this.centerDecal = center.clone();
 
 		initPoints();
 
@@ -83,30 +57,27 @@ public class ModelCube extends Cube implements Model {
 	// =========================================================================================================================
 
 	public void initPoints() {
-		for (int i = 0; i < 8; i++)
-			this.p2D[i] = new Point(0, 0);
+		centerDecal = center.clone();
 
-		depDecal = dep.clone();
+		this.ppx = new Point3D(center.x + Math.cos(ax * toRadian) * Math.cos(ay * toRadian) * sizeX,
+				center.y + Math.sin(ay * toRadian) * sizeX,
+				center.z - Math.sin(ax * toRadian) * Math.cos(ay * toRadian) * sizeX);
 
-		this.ppx = new Point3D(depDecal.x + Math.cos(ax * toRadian) * Math.cos(ay * toRadian) * sizeX,
-				depDecal.y + Math.sin(ay * toRadian) * sizeX,
-				depDecal.z - Math.sin(ax * toRadian) * Math.cos(ay * toRadian) * sizeX);
+		this.ppy = new Point3D(center.x - Math.sin(ay * toRadian) * Math.cos(ax * toRadian) * sizeY,
+				center.y + Math.cos(ay * toRadian) * sizeY,
+				center.z + Math.sin(ay * toRadian) * Math.sin(ax * toRadian) * sizeY);
 
-		this.ppy = new Point3D(depDecal.x - Math.sin(ay * toRadian) * Math.cos(ax * toRadian) * sizeY,
-				depDecal.y + Math.cos(ay * toRadian) * sizeY,
-				depDecal.z + Math.sin(ay * toRadian) * Math.sin(ax * toRadian) * sizeY);
-
-		this.ppz = new Point3D(depDecal.x + Math.sin(ax * toRadian) * sizeZ, depDecal.y,
-				depDecal.z + Math.cos(ax * toRadian) * sizeZ);
+		this.ppz = new Point3D(center.x + Math.sin(ax * toRadian) * sizeZ, center.y,
+				center.z + Math.cos(ax * toRadian) * sizeZ);
 	}
 
 	public void recalcul() {
-		vx = new Vector(depDecal, ppx, resoX);
-		vy = new Vector(depDecal, ppy, resoY);
-		vz = new Vector(depDecal, ppz, resoZ);
+		vx = new Vector(centerDecal, ppx, resoX);
+		vy = new Vector(centerDecal, ppy, resoY);
+		vz = new Vector(centerDecal, ppz, resoZ);
 
-		points[0] = vx.multiply(vy.multiply(vz.multiply(-resoZ * decalZ / resoZ), -resoY * decalY / resoY),
-				-resoX * decalX / resoX);
+		points[0] = vx.multiply(vy.multiply(vz.multiply(-resoZ * shiftZ / resoZ), -resoY * shiftY / resoY),
+				-resoX * shiftX / resoX);
 		points[1] = vz.multiply(points[0], resoZ);
 		points[2] = vx.multiply(points[0], resoX);
 		points[3] = vx.multiply(points[1], resoX);
@@ -121,14 +92,10 @@ public class ModelCube extends Cube implements Model {
 
 	@Override
 	public void init(Point3D camera, Matrix matrice) {
-		center = dep.clone();
-		matrice.decal(center);
-
 		matrice.transform(this);
-		to2D();
 
-		mem = new double[] { 1000000, 1000000, 1000000 };
-		sommets = new int[] { 0, 0, 0 };
+		double[] mem = new double[] { 1000000, 1000000, 1000000 };
+		int[] sommets = new int[] { 0, 0, 0 };
 
 		for (int i = 0; i < 8; i++) {
 
@@ -199,44 +166,29 @@ public class ModelCube extends Cube implements Model {
 		for (int j = 6; j >= 4; j--)
 			for (int i = 0; i < 6; i++)
 				if (faces[i] == j && !hideFace[i]) {
-					draws.add(new DrawCubeFace(itemID.id, Face.faces[i], vx, vy, vz, points, center, index * 10 + 6 - j,
-							this));
+					draws.add(new DrawCubeFace(itemID.id, Face.faces[i], vx, vy, vz, points, centerDecal,
+							index * 10 + 6 - j, this));
 					break;
 				}
 
-		for (Draw draw : draws) {
-			draw.engine = engine;
+		for (Draw draw : draws)
 			draw.init(camera, matrice);
-		}
 	}
 
-	// =========================================================================================================================
-
-	private void to2D() {
-		for (int i = 0; i < 8; i++) {
-			frontOfCamera = points[i].x > 0;
-			if (!frontOfCamera)
-				return;
-
-			p2D[i].x = engine.centerX + (int) (points[i].z / engine.vue[0] * points[i].x * engine.screenWidth);
-			p2D[i].y = engine.centerY + (int) (-points[i].y / (engine.vue[1] * points[i].x) * engine.screenHeight);
-		}
+	@Override
+	public ArrayList<Draw> getDraws() {
+		return draws;
 	}
 
 	// =========================================================================================================================
 
 	@Override
 	public boolean isVisible() {
-		return visible && frontOfCamera;
+		return visible;
 	}
 
 	@Override
 	public void setVisible(boolean visible) {
 		this.visible = visible;
-	}
-
-	@Override
-	public ArrayList<Draw> getDraws() {
-		return draws;
 	}
 }

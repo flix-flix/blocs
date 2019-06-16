@@ -78,5 +78,4 @@ public class Quadri {
 	public String toString() {
 		return "Quadri [points=" + Arrays.toString(points) + ", color=" + color + "]";
 	}
-
 }

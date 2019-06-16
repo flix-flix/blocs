@@ -63,15 +63,8 @@ public class Matrix {
 
 	// =========================================================================================================================
 
-	public double line(Point3D pp, int line) {
-		return pp.x * tab[line][0] + pp.y * tab[line][1] + pp.z * tab[line][2];
-	}
-
-	public double line(double x, double y, double z, int line) {
-		double d = x * tab[line][0];
-		d += y * tab[line][1];
-		d += z * tab[line][2];
-		return d;
+	public double line(Point3D p, int line) {
+		return p.x * tab[line][0] + p.y * tab[line][1] + p.z * tab[line][2];
 	}
 
 	// =========================================================================================================================
@@ -84,36 +77,11 @@ public class Matrix {
 		p.z = (line(pp, 2));
 	}
 
-	public void transform(Point3D[] ppp) {
-		for (Point3D p : ppp) {
-			decal(p);
-			Point3D pp = p.clone();
-			p.x = line(pp, 0);
-			p.y = line(pp, 1);
-			p.z = line(pp, 2);
-		}
-	}
-
-	public void transformNoDecal(Point3D p) {
-		Point3D pp = p.clone();
-		p.x = (line(pp, 0));
-		p.y = (line(pp, 1));
-		p.z = (line(pp, 2));
-
-		// double d = pp.x * tab[line][0];
-		// d += pp.y * tab[line][1];
-		// d += pp.z * tab[line][2];
-	}
-
 	// =========================================================================================================================
 
 	public void transform(ModelCube c) {
 		c.initPoints();
-		transform(c.depDecal);
-		// transform(c.pos);
-		// transform(c.px);
-		// transform(c.py);
-		// transform(c.pz);
+		transform(c.centerDecal);
 		transform(c.ppx);
 		transform(c.ppy);
 		transform(c.ppz);
