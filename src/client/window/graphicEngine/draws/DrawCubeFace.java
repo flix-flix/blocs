@@ -110,7 +110,7 @@ public class DrawCubeFace extends Draw {
 
 		if (cube.preview)
 			quadri.add(new Quadri(tab2D[0][0], tab2D[0][nbX], tab2D[nbX][nbX], tab2D[nbX][0], -0xffffff,
-					StatePixel.PREVIEW_CONTOUR, false));
+					cube.previewThrought ? StatePixel.PREVIEW_THROUGHT : StatePixel.PREVIEW, false));
 		else
 			quadri.add(new Quadri(tab2D[0][0], tab2D[0][nbX], tab2D[nbX][nbX], tab2D[nbX][0], -0xffffff,
 					StatePixel.CONTOUR, false));

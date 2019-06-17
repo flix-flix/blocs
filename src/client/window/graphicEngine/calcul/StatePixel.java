@@ -15,8 +15,6 @@ public enum StatePixel {
 
 	// Bloc of map with status preview
 	PREVIEW(true, false, true),
-	// Contour with preview attributes
-	PREVIEW_CONTOUR(true, false, true),
 	// Next bloc added preview
 	// (Needed to be able to select bloc beyond this preview)
 	PREVIEW_THROUGHT(true, true, true),
