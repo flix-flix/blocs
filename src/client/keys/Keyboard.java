@@ -16,18 +16,11 @@ public class Keyboard {
 	Session session;
 
 	// ================== Mouse ===========================
-
-	// Position of the mouse cursor in the component
-	// (Used to pass clic to GUI (ex: Inventory))
-	public int mouseX;
-	public int mouseY;
-
 	// Keep the mouse cursor in the center of the component
-	Robot robot = new Robot();
-
-	// Position of the mouse cursor on previous tick
-	public int memX;
-	public int memY;
+	private Robot robot = new Robot();
+	// true : freeze the camera rotation until the cursor automatically reach the
+	// middle of the screen
+	private boolean mouseFreeze = false;
 
 	// Speed of the player rotation
 	double mouseSpeed = .1;
@@ -134,17 +127,19 @@ public class Keyboard {
 	 *            Y location of the mouse in the frame
 	 */
 	public void mouse(int frameLocationX, int frameLocationY, int mouseLocationX, int mouseLocationY) {
-		mouseX = mouseLocationX;
-		mouseY = mouseLocationY;
+		if (mouseFreeze) {
+			robot.mouseMove(frameLocationX + session.fen.getWidth() / 2, frameLocationY + session.fen.getHeight() / 2);
 
-		if (session.captureMouse) {
-			session.camera.setVx(session.camera.getVx() - ((memX - mouseLocationX) * mouseSpeed));
-			session.camera.setVy(session.camera.getVy() + ((memY - mouseLocationY) * mouseSpeed));
+			mouseFreeze = !(session.fen.getWidth() / 2 == mouseLocationX
+					&& session.fen.getHeight() / 2 == mouseLocationY);
+		}
 
-			memX = session.fen.getWidth() / 2;
-			memY = session.fen.getHeight() / 2;
+		if (session.stateGUI != StateHUD.PAUSE && session.stateGUI != StateHUD.DIALOG && !mouseFreeze) {
+			session.camera.setVx(session.camera.getVx() - ((session.fen.getWidth() / 2 - mouseLocationX) * mouseSpeed));
+			session.camera
+					.setVy(session.camera.getVy() + ((session.fen.getHeight() / 2 - mouseLocationY) * mouseSpeed));
 
-			robot.mouseMove(frameLocationX + memX, frameLocationY + memY);
+			robot.mouseMove(frameLocationX + session.fen.getWidth() / 2, frameLocationY + session.fen.getHeight() / 2);
 
 			if (session.camera.getVx() >= 360)
 				session.camera.setVx(session.camera.getVx() - 360);
@@ -163,11 +158,12 @@ public class Keyboard {
 				session.playerOrientation = Face.SOUTH;
 			else
 				session.playerOrientation = Face.WEST;
-
-		} else {
-			memX = mouseLocationX;
-			memY = mouseLocationY;
 		}
+	}
+
+	public void mouseToCenter() {
+		mouseFreeze = true;
+		robot.mouseMove(session.fen.getWidth() / 2, session.fen.getHeight() / 2);
 	}
 
 	// =========================================================================================================================
@@ -179,7 +175,6 @@ public class Keyboard {
 	// =========================================================================================================================
 
 	public void pause() {
-		session.captureMouse = false;
 		session.stateGUI = StateHUD.PAUSE;
 
 		session.fen.cursorVisible(true);
@@ -192,10 +187,11 @@ public class Keyboard {
 
 	public void resume() {
 		session.stateGUI = StateHUD.GAME;
-		session.captureMouse = true;
 
-		if (session.gamemode == GameMode.CREATIVE)
+		if (session.gamemode == GameMode.CREATIVE) {
 			session.fen.cursorVisible(false);
+			mouseToCenter();
+		}
 
 		session.fen.gui.resume.setVisible(false);
 		session.fen.gui.options.setVisible(false);

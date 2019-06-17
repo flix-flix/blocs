@@ -102,6 +102,7 @@ public class Fen extends JFrame {
 
 					if (k.getKeyCode() == Key.KEY_ENTER.code) {
 						session.messages.send();
+						session.keyboard.mouseToCenter();
 						session.stateGUI = StateHUD.GAME;
 					} else if (k.getKeyCode() == Key.KEY_DEL.code)
 						session.messages.deletePrevious();
@@ -122,7 +123,7 @@ public class Fen extends JFrame {
 					else if (k.getKeyCode() == Key.KEY_PAGE_DOWN.code)
 						session.messages.pageDown();
 					else if (k.getKeyCode() == Key.KEY_TAB.code)
-						session.messages.pageDown();
+						;
 					else if (k.getKeyCode() == Key.KEY_END.code)
 						session.messages.end();
 					else if (k.getKeyCode() == Key.KEY_START.code)
@@ -249,8 +250,7 @@ public class Fen extends JFrame {
 					mouseX = e.getX();
 					mouseY = e.getY();
 				} else if (session.gamemode == GameMode.CREATIVE)
-					if (session.stateGUI != StateHUD.DIALOG)
-						session.keyboard.mouse(getLocationOnScreen().x, getLocationOnScreen().y, e.getX(), e.getY());
+					session.keyboard.mouse(getLocationOnScreen().x, getLocationOnScreen().y, e.getX(), e.getY());
 			}
 
 			public void mouseDragged(MouseEvent e) {
@@ -258,8 +258,7 @@ public class Fen extends JFrame {
 					mouseX = e.getX();
 					mouseY = e.getY();
 				} else if (session.gamemode == GameMode.CREATIVE)
-					if (session.stateGUI != StateHUD.DIALOG)
-						session.keyboard.mouse(getLocationOnScreen().x, getLocationOnScreen().y, e.getX(), e.getY());
+					session.keyboard.mouse(getLocationOnScreen().x, getLocationOnScreen().y, e.getX(), e.getY());
 
 			}
 		});
@@ -293,8 +292,6 @@ public class Fen extends JFrame {
 			}
 
 			public void mouseEntered(MouseEvent e) {
-				session.keyboard.memX = e.getX();
-				session.keyboard.memY = e.getY();
 			}
 
 			public void mouseClicked(MouseEvent e) {
@@ -314,12 +311,10 @@ public class Fen extends JFrame {
 
 			@Override
 			public void componentMoved(ComponentEvent e) {
-
 			}
 
 			@Override
 			public void componentHidden(ComponentEvent e) {
-
 			}
 		});
 	}
@@ -387,7 +382,10 @@ public class Fen extends JFrame {
 
 					session.timeBefore = System.currentTimeMillis();
 
-					session.setTarget(mouseX, mouseY);
+					if (session.gamemode == GameMode.CLASSIC)
+						session.setTarget(mouseX - 8, mouseY - 32);
+					else if (session.gamemode == GameMode.CREATIVE)
+						session.setTarget(gui.centerX, gui.centerY);
 
 					pan.img = session.getImage(pan.getWidth(), pan.getHeight());
 

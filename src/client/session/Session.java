@@ -78,10 +78,6 @@ public class Session implements Serializable {
 	public MessageManager messages;
 	public CommandExecutor commands;
 
-	// true : keep replacing the mouse cursor on the center of the window
-	// (allow 1st person movement)
-	public boolean captureMouse = true;
-
 	// =========================================================================================================================
 
 	public Session(ModelMap m, boolean with3DEngine) throws AWTException {
@@ -138,6 +134,8 @@ public class Session implements Serializable {
 			fen.cursorVisible(true);
 			break;
 		case CREATIVE:
+			keyboard.mouseToCenter();
+
 			fen.cursorVisible(false);
 			break;
 		case SPECTATOR:
@@ -148,8 +146,8 @@ public class Session implements Serializable {
 	// =========================================================================================================================
 
 	public void setTarget(int x, int y) {
-		engine.cursorX = x - 8;
-		engine.cursorY = y - 32;
+		engine.cursorX = x;
+		engine.cursorY = y;
 	}
 
 	// =========================================================================================================================

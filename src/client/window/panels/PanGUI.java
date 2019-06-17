@@ -25,7 +25,7 @@ public class PanGUI extends JPanel {
 	// ======================= Graphics =========================
 
 	Graphics g;
-	int w, h, centerX, centerY;
+	public int w, h, centerX, centerY;
 
 	// Size of the central indicator (creative mode)
 	int crossSize = 7;
