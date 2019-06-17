@@ -10,16 +10,16 @@ import client.window.graphicEngine.calcul.Matrix;
 import client.window.graphicEngine.calcul.Point3D;
 import client.window.graphicEngine.calcul.StatePixel;
 import client.window.graphicEngine.calcul.Vector;
+import client.window.graphicEngine.models.ModelCube;
 import client.window.graphicEngine.structures.Draw;
 import client.window.graphicEngine.structures.Quadri;
 import data.enumeration.Face;
-import data.map.Cube;
 import utils.FlixBlocksUtils;
 
 public class DrawCubeFace extends Draw {
 
 	// Reference to the "data"
-	public Cube cube;
+	public ModelCube cube;
 
 	public static TexturePack texturePack;
 
@@ -29,10 +29,18 @@ public class DrawCubeFace extends Draw {
 	Vector vx, vy, vz;
 	Point3D[] points;
 
+	public final static int DEFAULT_ALPHA = -1;
+	int forcedAlpha;
+
 	// =========================================================================================================================
 
 	public DrawCubeFace(int id, Face face, Vector vx, Vector vy, Vector vz, Point3D[] points, Point3D center, int index,
-			Cube cube) {
+			ModelCube cube) {
+		this(id, face, vx, vy, vz, points, center, index, cube, DEFAULT_ALPHA);
+	}
+
+	public DrawCubeFace(int id, Face face, Vector vx, Vector vy, Vector vz, Point3D[] points, Point3D center, int index,
+			ModelCube cube, int forcedAlpha) {
 		this.id = id;
 		this.face = face;
 		this.vx = vx;
@@ -43,6 +51,8 @@ public class DrawCubeFace extends Draw {
 		this.index = index;
 
 		this.cube = cube;
+
+		this.forcedAlpha = forcedAlpha;
 	}
 
 	// =========================================================================================================================
@@ -98,8 +108,12 @@ public class DrawCubeFace extends Draw {
 			for (int j = 0; j < nbX1; j++)
 				tab2D[i][j] = engine.to2D(tab3D[i][j]);
 
-		quadri.add(new Quadri(tab2D[0][0], tab2D[0][nbX], tab2D[nbX][nbX], tab2D[nbX][0], -0xffffff, StatePixel.CONTOUR,
-				false));
+		if (cube.preview)
+			quadri.add(new Quadri(tab2D[0][0], tab2D[0][nbX], tab2D[nbX][nbX], tab2D[nbX][0], -0xffffff,
+					StatePixel.PREVIEW_CONTOUR, false));
+		else
+			quadri.add(new Quadri(tab2D[0][0], tab2D[0][nbX], tab2D[nbX][nbX], tab2D[nbX][0], -0xffffff,
+					StatePixel.CONTOUR, false));
 
 		for (int row = 0; row < nbY; row++)
 			for (int col = 0; col < nbX; col++) {
@@ -110,10 +124,18 @@ public class DrawCubeFace extends Draw {
 					color = texture.lighter(color, 75);
 
 				StatePixel state = StatePixel.FILL;
-				if (texture.getAlpha(row, col) == 0)
+				int alpha = forcedAlpha == DEFAULT_ALPHA ? texture.getAlpha(row, col) : forcedAlpha;
+
+				if (alpha == 0)
 					state = StatePixel.INVISIBLE;
-				else if (texture.getAlpha(row, col) != 255)
+				else if (alpha != 255)
 					state = StatePixel.TRANSPARENT;
+
+				if (cube.preview) {
+					state = StatePixel.PREVIEW;
+					if (cube.previewThrought)
+						state = StatePixel.PREVIEW_THROUGHT;
+				}
 
 				quadri.add(new Quadri(tab2D[row][col], tab2D[row + 1][col], tab2D[row + 1][col + 1],
 						tab2D[row][col + 1], color, state));

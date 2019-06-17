@@ -30,6 +30,13 @@ public class ModelCube extends Cube implements Model {
 	// true: the face won't be displayed (Set auto when an adjacent bloc is added)
 	public boolean[] hideFace = { false, false, false, false, false, false };
 
+	// true : the bloc will be transparent
+	public boolean preview = false;
+	// true : the bloc will be transparent (allow selection
+	public boolean previewThrought = false;
+	// true : pointed by the player
+	public boolean isTarget;
+
 	// =================== Model ===================
 	private boolean visible = true;
 	private ArrayList<Draw> draws = new ArrayList<>();
@@ -166,8 +173,12 @@ public class ModelCube extends Cube implements Model {
 		for (int j = 6; j >= 4; j--)
 			for (int i = 0; i < 6; i++)
 				if (faces[i] == j && !hideFace[i]) {
-					draws.add(new DrawCubeFace(itemID.id, Face.faces[i], vx, vy, vz, points, centerDecal,
-							index * 10 + 6 - j, this));
+					if (preview)
+						draws.add(new DrawCubeFace(itemID.id, Face.faces[i], vx, vy, vz, points, centerDecal,
+								index * 10 + 6 - j, this, 127));
+					else
+						draws.add(new DrawCubeFace(itemID.id, Face.faces[i], vx, vy, vz, points, centerDecal,
+								index * 10 + 6 - j, this));
 					break;
 				}
 

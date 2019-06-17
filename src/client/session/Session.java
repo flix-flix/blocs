@@ -13,10 +13,12 @@ import client.window.graphicEngine.calcul.Camera;
 import client.window.graphicEngine.calcul.Engine;
 import client.window.graphicEngine.calcul.Point3D;
 import client.window.graphicEngine.draws.DrawCubeFace;
+import client.window.graphicEngine.models.ModelCube;
 import client.window.graphicEngine.models.ModelMap;
 import client.window.panels.StateHUD;
 import data.enumeration.Face;
-import data.map.Cube;
+import data.enumeration.ItemID;
+import utils.Tuple;
 
 public class Session implements Serializable {
 	private static final long serialVersionUID = 8569378400890835470L;
@@ -38,8 +40,17 @@ public class Session implements Serializable {
 
 	// ============= Target ===================
 
-	public Cube cubeTarget;
+	public ModelCube cubeTarget;
 	public Face faceTarget;
+
+	// true : will dispaly the next added cube in transparent
+	// false : will highlight the selected bloc
+	public boolean preview = true;
+	// Coord of the preview cube
+	public Tuple previousPreview;
+
+	// ID of the next added cube
+	public ItemID selectedItemID = ItemID.GRASS;
 
 	// ============== F3 (Dev infos) ==================
 
@@ -162,13 +173,29 @@ public class Session implements Serializable {
 
 	public void targetUpdate() {
 		if (cubeTarget != null)
-			cubeTarget.isTarget = false;
+			if (preview) {
+				if (previousPreview != null && map.gridGet(previousPreview).preview)
+					map.gridRemove(previousPreview);
+			} else
+				cubeTarget.isTarget = false;
 
 		cubeTarget = Engine.cubeTarget;
 		faceTarget = Engine.faceTarget;
 
 		if (cubeTarget != null)
-			cubeTarget.isTarget = true;
+			if (preview) {
+				previousPreview = new Tuple(cubeTarget).face(faceTarget);
+
+				if (!map.gridAdd(previousPreview, selectedItemID))
+					return;
+
+				map.gridGet(previousPreview).preview = true;
+				map.gridGet(previousPreview).previewThrought = true;
+				map.gridGet(previousPreview).isTarget = true;
+
+				map.update(previousPreview);
+			} else
+				cubeTarget.isTarget = true;
 	}
 
 	// =========================================================================================================================
@@ -177,5 +204,4 @@ public class Session implements Serializable {
 		// TODO [Improve] Detect the player executing the command
 		commands.exec("Félix", line);
 	}
-
 }

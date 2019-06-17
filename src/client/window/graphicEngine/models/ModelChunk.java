@@ -26,7 +26,7 @@ public class ModelChunk extends AbstractChunk<ModelCube> implements Model {
 	// =========================================================================================================================
 
 	public ModelCube _gridGet(int x, int y, int z) {
-		return (ModelCube) grid[x][y][z];
+		return grid[x][y][z];
 	}
 
 	// =========================================================================================================================

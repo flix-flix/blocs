@@ -17,9 +17,6 @@ public class Cube {
 	public int x, y, z;
 	public ItemID itemID;
 
-	// true : pointed by the player
-	public boolean isTarget;
-
 	// Step of the bloc's "mining state"
 	public int miningState = FlixBlocksUtils.NO_MINING;
 
@@ -44,7 +41,6 @@ public class Cube {
 
 	public Cube(double x, double y, double z, int _decalX, int _decalY, int _decalZ, double _ax, double _ay,
 			double _sizeX, double _sizeY, double _sizeZ, ItemID itemID) {
-
 		this.itemID = itemID;
 
 		this.x = (int) x;

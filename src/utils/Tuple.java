@@ -28,13 +28,6 @@ public class Tuple {
 
 	// =========================================================================================================================
 
-	@Override
-	public Tuple clone() {
-		return new Tuple(x, y, z);
-	}
-
-	// =========================================================================================================================
-
 	public Tuple face(Face face) {
 		Tuple tuple = clone();
 		switch (face) {
@@ -58,5 +51,25 @@ public class Tuple {
 			break;
 		}
 		return tuple;
+	}
+
+	// =========================================================================================================================
+
+	public boolean equals(Cube cube) {
+		return x == cube.x && y == cube.y && z == cube.z;
+	}
+
+	public boolean equals(Tuple tuple) {
+		return x == tuple.x && y == tuple.y && z == tuple.z;
+	}
+
+	@Override
+	public Tuple clone() {
+		return new Tuple(x, y, z);
+	}
+
+	@Override
+	public String toString() {
+		return "Tuple [x=" + x + ", y=" + y + ", z=" + z + "]";
 	}
 }

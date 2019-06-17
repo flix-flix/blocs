@@ -7,11 +7,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import client.textures.TexturePack;
+import client.window.graphicEngine.models.ModelCube;
 import client.window.graphicEngine.structures.Draw;
 import client.window.graphicEngine.structures.Model;
 import client.window.graphicEngine.structures.Quadri;
 import data.enumeration.Face;
-import data.map.Cube;
 
 public class Engine {
 
@@ -31,11 +31,11 @@ public class Engine {
 	// ================ Target =====================
 	public int cursorX = 100, cursorY = 100;
 
-	static public Cube cubeTarget;
+	static public ModelCube cubeTarget;
 	static public Face faceTarget;
 
 	// ================ Target (Temp) =====================
-	static public Cube cubeTargetTemp;
+	static public ModelCube cubeTargetTemp;
 	static public Face faceTargetTemp;
 
 	// ================ Dev (F3) =====================
@@ -230,17 +230,16 @@ public class Engine {
 	}
 
 	public void setPixel(int row, int col, int rgb, StatePixel state, int alpha) {
-		if (statePixel[row * screenWidth + col].isEmpty) {
-			if (col == cursorX && row == cursorY && statePixel[row * screenWidth + col] == StatePixel.EMPTY) {
-				Engine.faceTarget = Engine.faceTargetTemp;
-				Engine.cubeTarget = Engine.cubeTargetTemp;
-			}
-			dataBuffer.setElem(row * screenWidth + col, rgb);
-			statePixel[row * screenWidth + col] = state;
-		} else if (statePixel[row * screenWidth + col] == StatePixel.TRANSPARENT) {
-			int colorPrev = dataBuffer.getElem(row * screenWidth + col);
+		if (col == cursorX && row == cursorY && statePixel[row * screenWidth + col].targetableThrought) {
+			Engine.faceTarget = Engine.faceTargetTemp;
+			Engine.cubeTarget = Engine.cubeTargetTemp;
+		}
 
-			dataBuffer.setElem(row * screenWidth + col, mix(rgb, colorPrev));
+		if (statePixel[row * screenWidth + col].isTransparent)
+			rgb = mix(rgb, dataBuffer.getElem(row * screenWidth + col));
+
+		if (statePixel[row * screenWidth + col].isDrawable) {
+			dataBuffer.setElem(row * screenWidth + col, rgb);
 			statePixel[row * screenWidth + col] = state;
 		}
 	}

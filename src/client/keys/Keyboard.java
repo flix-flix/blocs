@@ -8,7 +8,6 @@ import client.session.Session;
 import client.window.graphicEngine.models.ModelCube;
 import client.window.panels.StateHUD;
 import data.enumeration.Face;
-import data.enumeration.ItemID;
 import data.map.Cube;
 import utils.FlixBlocksUtils;
 
@@ -71,14 +70,23 @@ public class Keyboard {
 		if (session.gamemode == GameMode.CREATIVE) {
 			// ========== Add a cube to the map ==========
 			if (cube != null && face != null)
-				session.map.gridAddToFace(cube.x, cube.y, cube.z, ItemID.GLASS, face);
+				session.map.gridAddToFace(cube.x, cube.y, cube.z, session.selectedItemID, face);
 
 		} else if (session.gamemode == GameMode.CLASSIC) {
 			pressR = true;
 
 			// ========== Add a cube to the map ==========
-			if (cube != null && face != null)
-				session.map.gridAddToFace(cube.x, cube.y, cube.z, ItemID.GRASS, face);
+			if (cube != null && face != null) {
+				if (session.preview) {
+					ModelCube c = session.map.gridGetFace(cube.x, cube.y, cube.z, face);
+					if (c.preview) {
+						c.preview = false;
+						c.isTarget = false;
+						session.map.update(c);
+					}
+				} else
+					session.map.gridAddToFace(cube.x, cube.y, cube.z, session.selectedItemID, face);
+			}
 
 			// If the bloc is right-clickable do the action
 			// if (cube != null && !session.keyboard.sneakKeyEnabled && cube.hasAction())

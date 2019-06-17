@@ -94,6 +94,10 @@ public abstract class AbstractMap<T extends AbstractChunk<C>, C extends Cube> {
 		return getChunkAtCoord(x, z).gridGet(x, y, z);
 	}
 
+	public C gridGet(Tuple tuple) {
+		return gridGet(tuple.x, tuple.y, tuple.z);
+	}
+
 	/**
 	 * Returns the Bloc next to the indicated face
 	 * 
@@ -158,6 +162,10 @@ public abstract class AbstractMap<T extends AbstractChunk<C>, C extends Cube> {
 		return _gridAdd(createCube(cube));
 	}
 
+	public boolean gridAdd(Tuple tuple, ItemID item) {
+		return gridAdd(tuple.x, tuple.y, tuple.z, item);
+	}
+
 	// =========================================================================================================================
 
 	public void gridRemove(int x, int y, int z) {
@@ -168,6 +176,10 @@ public abstract class AbstractMap<T extends AbstractChunk<C>, C extends Cube> {
 
 	public void gridRemove(C b) {
 		gridRemove(b.x, b.y, b.z);
+	}
+
+	public void gridRemove(Tuple tuple) {
+		gridRemove(tuple.x, tuple.y, tuple.z);
 	}
 
 	// =========================================================================================================================

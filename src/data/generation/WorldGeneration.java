@@ -47,6 +47,15 @@ public class WorldGeneration {
 		// Off-grid cube
 		map.addCube(new Cube(-1, 1, 0, 0, 0, 0, 45, 45, 1, 1, 1, ItemID.TEST));
 
+		// ========== Preview cubes ==========
+		map.gridAdd(18, 1, 2, ItemID.GRASS);
+		map.gridGet(18, 1, 2).preview = true;
+		map.update(18, 1, 2);
+
+		map.gridAdd(13, 1, 13, ItemID.DIRT);
+		map.gridGet(13, 1, 13).preview = true;
+		map.update(13, 1, 13);
+
 		// Cubes with the differents step of the mining animation
 		for (int x = 0; x < 5; x++) {
 			Cube c = new Cube(x, 2, -3, ItemID.IRON_BLOC);

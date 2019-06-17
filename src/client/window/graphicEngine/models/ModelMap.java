@@ -13,6 +13,7 @@ import data.enumeration.ItemID;
 import data.map.AbstractMap;
 import data.map.Chunk;
 import data.map.Cube;
+import utils.Tuple;
 
 public class ModelMap extends AbstractMap<ModelChunk, ModelCube> implements Model {
 
@@ -51,20 +52,12 @@ public class ModelMap extends AbstractMap<ModelChunk, ModelCube> implements Mode
 
 	public void gridSet(ModelCube cube) {
 		super.gridSet(cube);
-
-		for (Face face : Face.faces)
-			checkHideFaceAdd((int) cube.x, (int) cube.y, (int) cube.z, face);
-
-		checkHideAround(cube);
+		update(cube.x, cube.y, cube.z);
 	}
 
 	public boolean _gridAdd(ModelCube cube) {
 		if (super._gridAdd(cube)) {
-
-			for (Face face : Face.faces)
-				checkHideFaceAdd(cube.x, cube.y, cube.z, face);
-
-			checkHideAround(cube);
+			update(cube.x, cube.y, cube.z);
 			return true;
 		}
 		return false;
@@ -76,35 +69,48 @@ public class ModelMap extends AbstractMap<ModelChunk, ModelCube> implements Mode
 		for (Face face : Face.faces)
 			checkHideFaceRemove(c.x, c.y, c.z, face);
 
-		checkHideAround(c.x, c.y, c.z);
+		checkIfAroundVisible(c.x, c.y, c.z);
+	}
+
+	public void update(int x, int y, int z) {
+		for (Face face : Face.faces)
+			checkHideFaceAdd(x, y, z, face);
+
+		checkIfAroundVisible(x, y, z);
+	}
+
+	public void update(ModelCube cube) {
+		update(cube.x, cube.y, cube.z);
+	}
+
+	public void update(Tuple tuple) {
+		update(tuple.x, tuple.y, tuple.z);
 	}
 
 	// =========================================================================================================================
 
 	public boolean isOpaque(int x, int y, int z) {
-		if (!gridContains(x, y, z))
-			return false;
-		return ItemTable.isOpaque(gridGet(x, y, z).itemID);
+		return gridContains(x, y, z) && ItemTable.isOpaque(gridGet(x, y, z).itemID) && !gridGet(x, y, z).preview;
 	}
 
 	// =========================================================================================================================
 
-	public void checkHideAround(Cube cube) {
-		checkHideAround((int) cube.x, (int) cube.y, (int) cube.z);
+	public void checkIfAroundVisible(Cube cube) {
+		checkIfAroundVisible((int) cube.x, (int) cube.y, (int) cube.z);
 	}
 
-	public void checkHideAround(int x, int y, int z) {
-		checkHide(x, y, z);
+	public void checkIfAroundVisible(int x, int y, int z) {
+		checkIfCubeVisible(x, y, z);
 
-		checkHide(x + 1, y, z);
-		checkHide(x - 1, y, z);
-		checkHide(x, y + 1, z);
-		checkHide(x, y - 1, z);
-		checkHide(x, y, z + 1);
-		checkHide(x, y, z - 1);
+		checkIfCubeVisible(x + 1, y, z);
+		checkIfCubeVisible(x - 1, y, z);
+		checkIfCubeVisible(x, y + 1, z);
+		checkIfCubeVisible(x, y - 1, z);
+		checkIfCubeVisible(x, y, z + 1);
+		checkIfCubeVisible(x, y, z - 1);
 	}
 
-	public void checkHide(int x, int y, int z) {
+	public void checkIfCubeVisible(int x, int y, int z) {
 		if (!gridContains(x, y, z))
 			return;
 

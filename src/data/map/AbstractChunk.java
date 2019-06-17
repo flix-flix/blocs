@@ -11,7 +11,7 @@ public abstract class AbstractChunk<C extends Cube> {
 	public int x, z;
 
 	// Array [X][Y][Z] to store the blocs
-	protected Cube[][][] grid;
+	protected C[][][] grid;
 
 	// Set to store the cubes
 	public HashSet<C> cubes = new HashSet<>();
