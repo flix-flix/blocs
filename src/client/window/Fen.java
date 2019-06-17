@@ -23,6 +23,7 @@ import client.session.Session;
 import client.window.panels.Pan;
 import client.window.panels.PanDevlop;
 import client.window.panels.PanGUI;
+import client.window.panels.PanPause;
 import client.window.panels.StateHUD;
 
 public class Fen extends JFrame {
@@ -35,11 +36,12 @@ public class Fen extends JFrame {
 	private static Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(cursorImg, new Point(0, 0),
 			"blank cursor");
 
-	private int mouseX, mouseY;
+	public int mouseX, mouseY;
 
 	// ============= Pan ===================
 	public Pan pan;
 
+	public PanPause pause;
 	public PanDevlop devlop;
 	public PanGUI gui;
 
@@ -62,8 +64,11 @@ public class Fen extends JFrame {
 
 		pan = new Pan(session);
 
+		pause = new PanPause(session);
 		devlop = new PanDevlop(session);
 		gui = new PanGUI(session);
+
+		pause.setVisible(false);
 
 		// ======================================
 
@@ -77,6 +82,7 @@ public class Fen extends JFrame {
 		this.setFocusTraversalKeysEnabled(false);
 
 		this.add(pan);
+		pan.add(pause, -1);
 		pan.add(devlop, -1);
 		pan.add(gui, -1);
 
@@ -274,17 +280,17 @@ public class Fen extends JFrame {
 			public void mouseReleased(MouseEvent e) {
 				if (session.stateGUI != StateHUD.PAUSE && session.stateGUI != StateHUD.DIALOG)
 					if (e.getButton() == 1)
-						session.keyboard.leftClicEnd();
+						session.keyboard.leftClickEnd();
 					else if (e.getButton() == 3)
-						session.keyboard.rightClicEnd();
+						session.keyboard.rightClickEnd();
 			}
 
 			public void mousePressed(MouseEvent e) {
 				if (session.stateGUI != StateHUD.PAUSE && session.stateGUI != StateHUD.DIALOG)
 					if (e.getButton() == 1)
-						session.keyboard.leftClic();
+						session.keyboard.leftClick();
 					else if (e.getButton() == 3)
-						session.keyboard.rightClic();
+						session.keyboard.rightClick();
 
 			}
 

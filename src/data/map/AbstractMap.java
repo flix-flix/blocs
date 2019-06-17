@@ -221,7 +221,11 @@ public abstract class AbstractMap<T extends AbstractChunk<C>, C extends Cube> {
 	}
 
 	public boolean gridContains(Cube cube) {
-		return gridContains((int) cube.x, (int) cube.y, (int) cube.z);
+		return gridContains(cube.x, cube.y, cube.z);
+	}
+
+	public boolean gridContains(Tuple tuple) {
+		return gridContains(tuple.x, tuple.y, tuple.z);
 	}
 
 	// =========================================================================================================================

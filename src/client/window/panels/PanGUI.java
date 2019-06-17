@@ -4,15 +4,17 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
-import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import client.messages.Message;
+import client.session.Action;
 import client.session.GameMode;
 import client.session.Session;
+import client.window.panels.emplacements.EmplacementAction;
+import client.window.panels.emplacements.EmplacementBlocSelection;
+import data.enumeration.ItemID;
 
 public class PanGUI extends JPanel {
 	private static final long serialVersionUID = 3929655843006244723L;
@@ -49,9 +51,13 @@ public class PanGUI extends JPanel {
 	// Store time since last cursor state switch
 	int cursorStateTime = 0;
 
-	// ======================= Pause =========================
+	// ======================= Emplacements =========================
 
-	public JButton resume, save, options, quit;
+	Action[] _actions = { Action.MOUSE, Action.SELECT, Action.BLOCS, Action.DESTROY };
+	EmplacementAction[] actions = new EmplacementAction[4];
+
+	ArrayList<ItemID> _items = new ArrayList<>();
+	ArrayList<EmplacementBlocSelection> items = new ArrayList<>();
 
 	// =========================================================================================================================
 
@@ -60,48 +66,34 @@ public class PanGUI extends JPanel {
 		this.setOpaque(false);
 		this.setLayout(null);
 
-		resume = new JButton("Reprendre");
-		save = new JButton("Sauvegarder");
-		quit = new JButton("Quitter");
-		options = new JButton("Options");
+		// ========================================================================================
 
-		resume.setBounds(900, 150, 200, 50);
-		options.setBounds(900, 300, 200, 50);
-		save.setBounds(900, 450, 200, 50);
-		quit.setBounds(900, 600, 200, 50);
+		_items.add(ItemID.BORDER);
+		_items.add(ItemID.GRASS);
+		_items.add(ItemID.DIRT);
+		_items.add(ItemID.OAK_TRUNK);
+		_items.add(ItemID.OAK_LEAVES);
+		_items.add(ItemID.OAK_BOARD);
+		_items.add(ItemID.STONE);
+		_items.add(ItemID.GLASS);
 
-		resume.setVisible(false);
-		options.setVisible(false);
-		save.setVisible(false);
-		quit.setVisible(false);
+		// ========================================================================================
 
-		add(resume);
-		add(options);
-		add(save);
-		add(quit);
+		int cols = 4, size = 90, border = 5;
+		int x = 10, y = 10;
 
-		options.setEnabled(false);
-		save.setEnabled(false);
+		for (int i = 0; i < _actions.length; i++) {
+			this.add((actions[i] = new EmplacementAction(x + border + (i % cols) * (size + border),
+					y + border + (i / cols) * (size + border), size, size, session, _actions[i])));
+		}
 
-		resume.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				session.keyboard.resume();
-				session.fen.requestFocusInWindow();
-			}
-		});
-		options.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
-		save.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
-		quit.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				System.exit(0);
-			}
-		});
+		y += 120;
+
+		for (int i = 0; i < _items.size(); i++) {
+			items.add(new EmplacementBlocSelection(x + border + (i % cols) * (size + border),
+					y + border + (i / cols) * (size + border), size, size, session, _items.get(i)));
+			this.add(items.get(i));
+		}
 	}
 
 	// =========================================================================================================================
@@ -116,26 +108,31 @@ public class PanGUI extends JPanel {
 		g = gg;
 
 		switch (session.stateGUI) {
-		case GAME:
-
-			if (session.gamemode == GameMode.CLASSIC) {
-
-			}
-
-			else if (session.gamemode == GameMode.CREATIVE) {
-				gg.setColor(Color.black);
-				gg.drawLine(centerX - crossSize, centerY - 1, centerX + crossSize - 1, centerY - 1);
-				gg.drawLine(centerX - crossSize, centerY, centerX + crossSize - 1, centerY);
-				gg.drawLine(centerX - 1, centerY - crossSize, centerX - 1, centerY + crossSize - 1);
-				gg.drawLine(centerX, centerY - crossSize, centerX, centerY + crossSize - 1);
-			}
-
-			break;
-
 		case PAUSE:
 			g.setColor(new Color(90, 90, 90, 90));
 			g.fillRect(0, 0, w, h);
+
+		case GAME:
+
+			if (session.gamemode == GameMode.CLASSIC) {
+				g.setColor(Color.GRAY);
+				g.fillRect(0, 0, 20 + 4 * 90 + (4 + 1) * 5, getHeight());
+
+				g.setColor(Color.lightGray);
+				g.fillRect(10, 10, 4 * 90 + (4 + 1) * 5, getHeight());
+			}
+
+			else if (session.gamemode == GameMode.CREATIVE) {
+				// Middle indicator : cross
+				g.setColor(Color.black);
+				g.drawLine(centerX - crossSize, centerY - 1, centerX + crossSize - 1, centerY - 1);
+				g.drawLine(centerX - crossSize, centerY, centerX + crossSize - 1, centerY);
+				g.drawLine(centerX - 1, centerY - crossSize, centerX - 1, centerY + crossSize - 1);
+				g.drawLine(centerX, centerY - crossSize, centerX, centerY + crossSize - 1);
+			}
+
 			break;
+
 		case DIALOG:
 			int grayBackground = 100;
 			Color msgColor = Color.WHITE;
@@ -179,6 +176,20 @@ public class PanGUI extends JPanel {
 		default:
 			System.err.println("ERROR: PanGUI enum invalid: " + session.stateGUI);
 			break;
+		}
+	}
+
+	// =========================================================================================================================
+
+	public void hideMenu() {
+		for (EmplacementAction e : actions) {
+			e.setVisible(session.gamemode == GameMode.CLASSIC);
+			e.selected = session.action == e.action;
+		}
+
+		for (EmplacementBlocSelection e : items) {
+			e.setVisible(session.gamemode == GameMode.CLASSIC && session.action == Action.BLOCS);
+			e.selected = session.selectedItemID == e.itemID;
 		}
 	}
 

@@ -17,12 +17,12 @@ public class FlixBlocksUtils {
 
 	// =========================================================================================================================
 
-	public static Image getImage(String path, String error) {
+	public static Image getImage(String path) {
 		URL url = Pan.class.getResource("/" + path + ".png");
 
 		if (url == null) {
 			System.err.println("ERROR: can't read file: " + ("/" + path + ".png"));
-			url = Pan.class.getResource(error);
+			url = Pan.class.getResource("/999.png");
 		}
 
 		try {

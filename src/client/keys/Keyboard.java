@@ -3,6 +3,7 @@ package client.keys;
 import java.awt.AWTException;
 import java.awt.Robot;
 
+import client.session.Action;
 import client.session.GameMode;
 import client.session.Session;
 import client.window.graphicEngine.models.ModelCube;
@@ -53,7 +54,7 @@ public class Keyboard {
 
 	// =========================================================================================================================
 
-	public void rightClic() {
+	public void rightClick() {
 		if (session.stateGUI != StateHUD.GAME)
 			return;
 
@@ -70,15 +71,14 @@ public class Keyboard {
 
 			// ========== Add a cube to the map ==========
 			if (cube != null && face != null) {
-				if (session.preview) {
+				if (session.action == Action.BLOCS) {
 					ModelCube c = session.map.gridGetFace(cube.x, cube.y, cube.z, face);
 					if (c.preview) {
 						c.preview = false;
 						c.isTarget = false;
 						session.map.update(c);
 					}
-				} else
-					session.map.gridAddToFace(cube.x, cube.y, cube.z, session.selectedItemID, face);
+				}
 			}
 
 			// If the bloc is right-clickable do the action
@@ -89,7 +89,7 @@ public class Keyboard {
 		}
 	}
 
-	public void leftClic() {
+	public void leftClick() {
 		if (session.stateGUI != StateHUD.GAME)
 			return;
 
@@ -101,15 +101,19 @@ public class Keyboard {
 					session.map._removeCube((ModelCube) session.cubeTarget);
 
 		} else if (session.gamemode == GameMode.CLASSIC) {
-
+			if (session.action == Action.DESTROY)
+				if (session.cubeTarget.onGrid)
+					session.map.removeGrid(session.cubeTarget);
+				else
+					session.map._removeCube((ModelCube) session.cubeTarget);
 		}
 	}
 
-	public void rightClicEnd() {
+	public void rightClickEnd() {
 		pressR = false;
 	}
 
-	public void leftClicEnd() {
+	public void leftClickEnd() {
 		pressL = false;
 	}
 
@@ -179,10 +183,7 @@ public class Keyboard {
 
 		session.fen.cursorVisible(true);
 
-		session.fen.gui.resume.setVisible(true);
-		session.fen.gui.options.setVisible(true);
-		session.fen.gui.save.setVisible(true);
-		session.fen.gui.quit.setVisible(true);
+		session.fen.pause.setVisible(true);
 	}
 
 	public void resume() {
@@ -193,10 +194,7 @@ public class Keyboard {
 			mouseToCenter();
 		}
 
-		session.fen.gui.resume.setVisible(false);
-		session.fen.gui.options.setVisible(false);
-		session.fen.gui.save.setVisible(false);
-		session.fen.gui.quit.setVisible(false);
+		session.fen.pause.setVisible(false);
 	}
 
 	// =========================================================================================================================

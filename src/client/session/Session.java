@@ -1,6 +1,7 @@
 package client.session;
 
 import java.awt.AWTException;
+import java.awt.MouseInfo;
 import java.awt.image.BufferedImage;
 import java.io.Serializable;
 
@@ -29,6 +30,8 @@ public class Session implements Serializable {
 
 	public GameMode gamemode = GameMode.CLASSIC;
 
+	public Action action = Action.BLOCS;
+
 	// ================================
 
 	private Engine engine;
@@ -43,14 +46,10 @@ public class Session implements Serializable {
 	public ModelCube cubeTarget;
 	public Face faceTarget;
 
-	// true : will dispaly the next added cube in transparent
-	// false : will highlight the selected bloc
-	public boolean preview = true;
-	// Coord of the preview cube
-	public Tuple previousPreview;
-
 	// ID of the next added cube
 	public ItemID selectedItemID = ItemID.GRASS;
+	// Coord of the preview cube
+	public Tuple previousPreview;
 
 	// ============== F3 (Dev infos) ==================
 
@@ -123,6 +122,9 @@ public class Session implements Serializable {
 
 	public void setGameMode(GameMode gameMode) {
 		this.gamemode = gameMode;
+
+		fen.gui.hideMenu();
+
 		switch (gameMode) {
 		case CLASSIC:
 			// Realign the camera with the grid
@@ -130,6 +132,10 @@ public class Session implements Serializable {
 			camera.setVy(-65);
 			// Replace the camera at the correct altitude
 			camera.vue.y = 25;
+
+			// Actualize the mouse position
+			fen.mouseX = MouseInfo.getPointerInfo().getLocation().x;
+			fen.mouseY = MouseInfo.getPointerInfo().getLocation().y;
 
 			fen.cursorVisible(true);
 			break;
@@ -141,6 +147,31 @@ public class Session implements Serializable {
 		case SPECTATOR:
 			break;
 		}
+	}
+
+	// =========================================================================================================================
+
+	public void setAction(Action action) {
+		this.action = action;
+
+		fen.gui.hideMenu();
+
+		switch (action) {
+		case BLOCS:
+			break;
+		case DESTROY:
+			break;
+		case MOUSE:
+			break;
+		case SELECT:
+			break;
+		}
+	}
+
+	public void setSelectedItemID(ItemID itemID) {
+		this.selectedItemID = itemID;
+
+		fen.gui.hideMenu();
 	}
 
 	// =========================================================================================================================
@@ -171,29 +202,31 @@ public class Session implements Serializable {
 
 	public void targetUpdate() {
 		if (cubeTarget != null)
-			if (preview) {
-				if (previousPreview != null && map.gridGet(previousPreview).preview)
+			if (action == Action.BLOCS) {
+				if (previousPreview != null && map.gridContains(previousPreview)
+						&& map.gridGet(previousPreview).preview)
 					map.gridRemove(previousPreview);
-			} else
+			} else if (action == Action.DESTROY)
 				cubeTarget.isTarget = false;
 
 		cubeTarget = Engine.cubeTarget;
 		faceTarget = Engine.faceTarget;
 
-		if (cubeTarget != null)
-			if (preview) {
-				previousPreview = new Tuple(cubeTarget).face(faceTarget);
+		if (gamemode == GameMode.CLASSIC)
+			if (cubeTarget != null)
+				if (action == Action.BLOCS) {
+					previousPreview = new Tuple(cubeTarget).face(faceTarget);
 
-				if (!map.gridAdd(previousPreview, selectedItemID))
-					return;
+					if (!map.gridAdd(previousPreview, selectedItemID))
+						return;
 
-				map.gridGet(previousPreview).preview = true;
-				map.gridGet(previousPreview).previewThrought = true;
-				map.gridGet(previousPreview).isTarget = true;
+					map.gridGet(previousPreview).preview = true;
+					map.gridGet(previousPreview).previewThrought = true;
+					map.gridGet(previousPreview).isTarget = true;
 
-				map.update(previousPreview);
-			} else
-				cubeTarget.isTarget = true;
+					map.update(previousPreview);
+				} else if (action == Action.DESTROY)
+					cubeTarget.isTarget = true;
 	}
 
 	// =========================================================================================================================

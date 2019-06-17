@@ -99,7 +99,7 @@ public class TextureSquare {
 	// =========================================================================================================================
 
 	public static TextureSquare generateSquare(String folder, String file) {
-		BufferedImage bimg = (BufferedImage) FlixBlocksUtils.getImage(folder + "/" + file, "/blocs/999.png");
+		BufferedImage bimg = (BufferedImage) FlixBlocksUtils.getImage(folder + "/" + file);
 
 		int[][] color = new int[bimg.getHeight()][bimg.getWidth()];
 
