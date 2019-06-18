@@ -2,7 +2,7 @@ package data.map;
 
 import java.util.HashSet;
 
-public abstract class AbstractChunk<C extends Cube> {
+public class Chunk {
 
 	// Size of a chunk
 	public static final int X = 10, Y = 50, Z = 10;
@@ -11,25 +11,26 @@ public abstract class AbstractChunk<C extends Cube> {
 	public int x, z;
 
 	// Array [X][Y][Z] to store the blocs
-	protected C[][][] grid;
+	protected Cube[][][] grid = new Cube[X][Y][Z];
 
 	// Set to store the off-grid cubes
-	public HashSet<C> cubes = new HashSet<>();
+	public HashSet<Cube> cubes = new HashSet<>();
 
 	// =========================================================================================================================
 
-	public AbstractChunk(int x, int z) {
+	public Chunk(int x, int z) {
 		this.x = x;
 		this.z = z;
 	}
 
 	// =========================================================================================================================
+	// grid access without X, Y, Z verification
 
-	protected C _gridGet(int x, int y, int z) {
+	protected Cube _gridGet(int x, int y, int z) {
 		return grid[x][y][z];
 	}
 
-	protected void _gridSet(int x, int y, int z, C cube) {
+	protected void _gridSet(int x, int y, int z, Cube cube) {
 		grid[x][y][z] = cube;
 	}
 
@@ -47,30 +48,24 @@ public abstract class AbstractChunk<C extends Cube> {
 		return y < 0 || y >= Y;
 	}
 
-	public static boolean wrongY(double y) {
-		return wrongY((int) y);
-	}
-
 	// =========================================================================================================================
+	// grid access with X, Y, Z verification
 
-	public C gridGet(int x, int y, int z) {
+	public Cube gridGet(int x, int y, int z) {
 		if (wrongY(y))
 			return null;
-
 		return _gridGet(toInChunkCoord(x), y, toInChunkCoord(z));
 	}
 
-	public void gridSet(C cube) {
-		if (wrongY(cube.getY()))
+	public void gridSet(Cube cube) {
+		if (wrongY(cube.y))
 			return;
-
-		_gridSet(toInChunkCoord(cube.x), (int) cube.getY(), toInChunkCoord(cube.z), cube);
+		_gridSet(toInChunkCoord(cube.x), cube.y, toInChunkCoord(cube.z), cube);
 	}
 
 	public void gridRemove(int x, int y, int z) {
 		if (wrongY(y))
 			return;
-
 		_gridRemove(toInChunkCoord(x), y, toInChunkCoord(z));
 	}
 
@@ -82,33 +77,18 @@ public abstract class AbstractChunk<C extends Cube> {
 
 	// =========================================================================================================================
 
-	public boolean gridAdd(C cube) {
-		if (gridContains(cube))
-			return false;
-
-		gridSet(cube);
-
-		return true;
-	}
-
-	public boolean gridContains(C cube) {
-		return gridContains((int) cube.getX(), (int) cube.getY(), (int) cube.getZ());
-	}
-
-	// =========================================================================================================================
-
-	public void addCube(C cube) {
+	public void addCube(Cube cube) {
 		cubes.add(cube);
 	}
 
-	public void removeCube(C cube) {
+	public void removeCube(Cube cube) {
 		cubes.remove(cube);
 	}
 
 	// =========================================================================================================================
 
 	/**
-	 * Returns the coordinate "in the chunk" [0-10] of the coordinate
+	 * Returns the coordinate "in the chunk" [0-9] of the coordinate
 	 * 
 	 * @param x
 	 * @return
@@ -123,15 +103,5 @@ public abstract class AbstractChunk<C extends Cube> {
 			else
 				return (int) (x % 10) + 10;
 		return (int) (x % 10) + 9;
-	}
-
-	/**
-	 * Returns the index of the chunk containing the coordinate
-	 * 
-	 * @param x
-	 * @return
-	 */
-	public static int toChunkCoord(double x) {
-		return (int) ((x < 0 ? x - 10 : x) / 10);
 	}
 }

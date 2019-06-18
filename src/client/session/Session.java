@@ -19,6 +19,7 @@ import client.window.graphicEngine.models.ModelMap;
 import client.window.panels.StateHUD;
 import data.enumeration.Face;
 import data.enumeration.ItemID;
+import data.map.Cube;
 import utils.Tuple;
 
 public class Session implements Serializable {
@@ -215,14 +216,14 @@ public class Session implements Serializable {
 				if (action == Action.BLOCS) {
 					previousPreview = new Tuple(cubeTarget).face(faceTarget);
 
-					if (!map.gridAdd(previousPreview, selectedItemID))
+					if (!map.gridAdd(new Cube(previousPreview, selectedItemID)))
 						return;
 
 					map.gridGet(previousPreview).preview = true;
 					map.gridGet(previousPreview).previewThrought = true;
 					map.gridGet(previousPreview).isTarget = true;
 
-					map.update(previousPreview);
+					map.update(previousPreview.x, previousPreview.y, previousPreview.z);
 				} else if (action == Action.DESTROY)
 					cubeTarget.isTarget = true;
 	}

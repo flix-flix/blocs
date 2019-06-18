@@ -1,18 +1,23 @@
 package client.window.graphicEngine.models;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import client.window.graphicEngine.calcul.Engine;
 import client.window.graphicEngine.calcul.Matrix;
 import client.window.graphicEngine.calcul.Point3D;
 import client.window.graphicEngine.structures.Draw;
 import client.window.graphicEngine.structures.Model;
-import data.map.AbstractChunk;
+import data.map.Chunk;
 
-public class ModelChunk extends AbstractChunk<ModelCube> implements Model {
+public class ModelChunk extends Chunk implements Model {
+
+	public Engine moteur;
+
+	// Set to store the off-grid cubes
+	public HashSet<ModelCube> cubes = new HashSet<>();
 
 	// ========== Model ===========
-	public Engine moteur;
 	public boolean visible = true;
 	private ArrayList<Draw> draws = new ArrayList<>();
 

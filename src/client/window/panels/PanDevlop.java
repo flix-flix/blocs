@@ -9,8 +9,8 @@ import javax.swing.JPanel;
 
 import client.session.Session;
 import data.enumeration.Face;
-import data.map.AbstractChunk;
 import data.map.Cube;
+import data.map.Map;
 
 public class PanDevlop extends JPanel {
 	private static final long serialVersionUID = -3167144738527114380L;
@@ -66,8 +66,8 @@ public class PanDevlop extends JPanel {
 			// ==================================================================================================================
 
 			writeLeft("Camera: " + session.camera.vue.toString());
-			writeLeft("Chunk: " + "X = " + AbstractChunk.toChunkCoord(session.camera.vue.x) + " Z = "
-					+ AbstractChunk.toChunkCoord(session.camera.vue.z));
+			writeLeft("Chunk: " + "X = " + Map.toChunkCoord(session.camera.vue.x) + " Z = "
+					+ Map.toChunkCoord(session.camera.vue.z));
 			writeLeft("Vue: vx = " + session.camera.getVx() + " vy = " + session.camera.getVy());
 			writeLeft(strBloc);
 			writeLeft(strFace);

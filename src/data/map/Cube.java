@@ -5,6 +5,7 @@ import client.window.graphicEngine.calcul.Point3D;
 import data.enumeration.ItemID;
 import data.enumeration.SensBloc;
 import utils.FlixBlocksUtils;
+import utils.Tuple;
 
 public class Cube {
 
@@ -61,18 +62,8 @@ public class Cube {
 		onGrid = true;
 	}
 
-	// =========================================================================================================================
-
-	public int getX() {
-		return (int) center.x;
-	}
-
-	public int getY() {
-		return (int) center.y;
-	}
-
-	public int getZ() {
-		return (int) center.z;
+	public Cube(Tuple tuple, ItemID itemID) {
+		this(tuple.x, tuple.y, tuple.z, itemID);
 	}
 
 	// =========================================================================================================================

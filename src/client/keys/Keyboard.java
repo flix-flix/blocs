@@ -11,6 +11,7 @@ import client.window.panels.StateHUD;
 import data.enumeration.Face;
 import data.map.Cube;
 import utils.FlixBlocksUtils;
+import utils.Tuple;
 
 public class Keyboard {
 
@@ -62,21 +63,21 @@ public class Keyboard {
 		Face face = session.faceTarget;
 
 		if (session.gamemode == GameMode.CREATIVE) {
-			// ========== Add a cube to the map ==========
+			// Add a cube to the map
 			if (cube != null && face != null)
-				session.map.gridAddToFace(cube.x, cube.y, cube.z, session.selectedItemID, face);
+				session.map.gridAdd(new Cube(new Tuple(cube).face(face), session.selectedItemID));
 
 		} else if (session.gamemode == GameMode.CLASSIC) {
 			pressR = true;
 
-			// ========== Add a cube to the map ==========
 			if (cube != null && face != null) {
+				// Add a cube to the map
 				if (session.action == Action.BLOCS) {
-					ModelCube c = session.map.gridGetFace(cube.x, cube.y, cube.z, face);
-					if (c.preview) {
-						c.preview = false;
-						c.isTarget = false;
-						session.map.update(c);
+					ModelCube model = session.map.gridGet(new Tuple(cube).face(face));
+					if (model.preview) {
+						model.preview = false;
+						model.isTarget = false;
+						session.map.update(model.x, model.y, model.z);
 					}
 				}
 			}
@@ -98,14 +99,14 @@ public class Keyboard {
 				if (session.cubeTarget.onGrid)
 					session.map.removeGrid(session.cubeTarget);
 				else
-					session.map._removeCube((ModelCube) session.cubeTarget);
+					session.map.removeCube((ModelCube) session.cubeTarget);
 
 		} else if (session.gamemode == GameMode.CLASSIC) {
 			if (session.action == Action.DESTROY)
 				if (session.cubeTarget.onGrid)
 					session.map.removeGrid(session.cubeTarget);
 				else
-					session.map._removeCube((ModelCube) session.cubeTarget);
+					session.map.removeCube((ModelCube) session.cubeTarget);
 		}
 	}
 

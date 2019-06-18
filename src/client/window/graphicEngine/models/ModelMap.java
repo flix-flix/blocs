@@ -9,13 +9,11 @@ import client.window.graphicEngine.structures.Draw;
 import client.window.graphicEngine.structures.Model;
 import data.ItemTable;
 import data.enumeration.Face;
-import data.enumeration.ItemID;
-import data.map.AbstractChunk;
-import data.map.AbstractMap;
 import data.map.Cube;
+import data.map.Map;
 import utils.Tuple;
 
-public class ModelMap extends AbstractMap<ModelChunk, ModelCube> implements Model {
+public class ModelMap extends Map implements Model {
 
 	public Engine engine;
 
@@ -24,14 +22,14 @@ public class ModelMap extends AbstractMap<ModelChunk, ModelCube> implements Mode
 	private ArrayList<Draw> draws = new ArrayList<>();
 
 	// ======== Parameters ========
-	// Range of visibles chunks
+	/** Range of chunks to draw */
 	int range = 3;
 
 	// =========================================================================================================================
 
 	@Override
-	public ModelChunk createChunk(int x, int y) {
-		return new ModelChunk(x, y);
+	public ModelChunk createChunk(int x, int z) {
+		return new ModelChunk(x, z);
 	}
 
 	@Override
@@ -39,87 +37,68 @@ public class ModelMap extends AbstractMap<ModelChunk, ModelCube> implements Mode
 		return new ModelCube(c);
 	}
 
+	// =========================================================================================================================
+	// Cast Cube to ModelCube
+
 	@Override
-	protected ModelCube createCube(int x, int y, int z, ItemID itemID) {
-		return new ModelCube(new Cube(x, y, z, itemID));
+	public ModelCube gridGet(Tuple t) {
+		return (ModelCube) super.gridGet(t);
+	}
+
+	@Override
+	public ModelCube gridGet(int x, int y, int z) {
+		return (ModelCube) super.gridGet(x, y, z);
+	}
+
+	@Override
+	public ModelChunk _getChunk(int x, int z) {
+		return (ModelChunk) super._getChunk(x, z);
 	}
 
 	// =========================================================================================================================
 
-	public void gridSet(ModelCube cube) {
+	@Override
+	public void gridSet(Cube cube) {
 		super.gridSet(cube);
 		update(cube.x, cube.y, cube.z);
 	}
 
-	public boolean _gridAdd(ModelCube cube) {
-		if (super._gridAdd(cube)) {
-			update(cube.x, cube.y, cube.z);
-			return true;
-		}
-		return false;
-	}
-
 	public void removeGrid(Cube c) {
 		super.gridRemove(c.x, c.y, c.z);
-
-		for (Face face : Face.faces) {
-			Tuple t = new Tuple(c.x, c.y, c.z).face(face);
-			if (gridContains(t))
-				gridGet(t).hideFace[face.opposite()] = false;
-		}
-
-		checkIfAroundVisible(c.x, c.y, c.z);
+		updateAround(c.x, c.y, c.z);
 	}
 
 	// =========================================================================================================================
 
+	/** Update the visibility of blocs and faces at the coords and around */
 	public void update(int x, int y, int z) {
+		updateBloc(x, y, z);
+		updateAround(x, y, z);
+	}
+
+	/** Update visibility of the bloc and its faces */
+	private void updateBloc(int x, int y, int z) {
+		if (gridContains(x, y, z))
+			for (Face face : Face.faces) {
+				Tuple t = new Tuple(x, y, z).face(face);
+				gridGet(x, y, z).hideFace[face.ordinal()] = isOpaque(t.x, t.y, t.z);
+			}
+
+		checkIfCubeVisible(x, y, z);
+	}
+
+	/** Update visibility of blocs and faces around coords */
+	private void updateAround(int x, int y, int z) {
 		for (Face face : Face.faces) {
 			Tuple t = new Tuple(x, y, z).face(face);
-
-			if (AbstractChunk.wrongY(y))
-				return;
-
-			gridGet(x, y, z).hideFace[face.ordinal()] = isOpaque(t.x, t.y, t.z);
-
-			if (gridContains(t.x, t.y, t.z))
-				gridGet(t.x, t.y, t.z).hideFace[face.opposite()] = isOpaque(x, y, z);
+			if (gridContains(t)) {
+				gridGet(t).hideFace[face.opposite()] = isOpaque(x, y, z);
+				checkIfCubeVisible(t.x, t.y, t.z);
+			}
 		}
-
-		checkIfAroundVisible(x, y, z);
 	}
 
-	public void update(ModelCube cube) {
-		update(cube.x, cube.y, cube.z);
-	}
-
-	public void update(Tuple tuple) {
-		update(tuple.x, tuple.y, tuple.z);
-	}
-
-	// =========================================================================================================================
-
-	public boolean isOpaque(int x, int y, int z) {
-		return gridContains(x, y, z) && ItemTable.isOpaque(gridGet(x, y, z).itemID) && !gridGet(x, y, z).preview;
-	}
-
-	// =========================================================================================================================
-
-	public void checkIfAroundVisible(Cube cube) {
-		checkIfAroundVisible((int) cube.x, (int) cube.y, (int) cube.z);
-	}
-
-	public void checkIfAroundVisible(int x, int y, int z) {
-		checkIfCubeVisible(x, y, z);
-
-		checkIfCubeVisible(x + 1, y, z);
-		checkIfCubeVisible(x - 1, y, z);
-		checkIfCubeVisible(x, y + 1, z);
-		checkIfCubeVisible(x, y - 1, z);
-		checkIfCubeVisible(x, y, z + 1);
-		checkIfCubeVisible(x, y, z - 1);
-	}
-
+	/** Update the visibility of the bloc */
 	public void checkIfCubeVisible(int x, int y, int z) {
 		if (!gridContains(x, y, z))
 			return;
@@ -130,15 +109,22 @@ public class ModelMap extends AbstractMap<ModelChunk, ModelCube> implements Mode
 
 	// =========================================================================================================================
 
+	/** Returns true if there is an opaque bloc at coords x,y,z */
+	public boolean isOpaque(int x, int y, int z) {
+		return gridContains(x, y, z) && ItemTable.isOpaque(gridGet(x, y, z).itemID) && !gridGet(x, y, z).preview;
+	}
+
+	// =========================================================================================================================
+
 	@Override
 	public ArrayList<Draw> getDraws() {
 		draws.clear();
 
-		int camChunkX = AbstractChunk.toChunkCoord(engine.camera.vue.x);
-		int camChunkZ = AbstractChunk.toChunkCoord(engine.camera.vue.z);
+		int camChunkX = toChunkCoord(engine.camera.vue.x);
+		int camChunkZ = toChunkCoord(engine.camera.vue.z);
 
-		for (int x = -range; x < range + 1; x++)
-			for (int z = -range; z < range + 1; z++)
+		for (int x = -range; x <= range; x++)
+			for (int z = -range; z <= range; z++)
 				if (_containsChunk(camChunkX + x, camChunkZ + z)) {
 					draws.addAll(_getChunk(camChunkX + x, camChunkZ + z).getDraws());
 					engine.nbChunks++;
@@ -151,11 +137,11 @@ public class ModelMap extends AbstractMap<ModelChunk, ModelCube> implements Mode
 
 	@Override
 	public void init(Point3D camera, Matrix matrice) {
-		int camChunkX = AbstractChunk.toChunkCoord(engine.camera.vue.x);
-		int camChunkZ = AbstractChunk.toChunkCoord(engine.camera.vue.z);
+		int camChunkX = toChunkCoord(engine.camera.vue.x);
+		int camChunkZ = toChunkCoord(engine.camera.vue.z);
 
-		for (int x = -range; x < range + 1; x++)
-			for (int z = -range; z < range + 1; z++)
+		for (int x = -range; x <= range; x++)
+			for (int z = -range; z <= range; z++)
 				if (_containsChunk(camChunkX + x, camChunkZ + z))
 					_getChunk(camChunkX + x, camChunkZ + z).init(camera, matrice);
 	}

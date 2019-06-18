@@ -13,15 +13,15 @@ public class WorldGeneration {
 			for (int z = 0; z < 100; z++)
 				if (x % 99 == 0 || z % 99 == 0)
 					for (int y = 0; y <= 3; y++)
-						map.gridAdd(x, y, z, ItemID.BORDER);
+						map.gridAdd(new Cube(x, y, z, ItemID.BORDER));
 				else
-					map.gridAdd(x, 0, z, ItemID.GRASS);
+					map.gridAdd(new Cube(x, 0, z, ItemID.GRASS));
 
 		// ========== Forest ==========
 		for (int x = 1; x < 30; x++)
 			for (int z = 1; z < 30; z++)
 				if (x / 2 + z < 15 || x + z / 2 < 15)
-					map.gridSet(x, 0, z, ItemID.DIRT);
+					map.gridSet(new Cube(x, 0, z, ItemID.DIRT));
 
 		addTree(map, 4, 1, 3);
 		addTree(map, 5, 1, 6);
@@ -48,11 +48,11 @@ public class WorldGeneration {
 		map.addCube(new Cube(-1, 1, 0, 0, 0, 0, 45, 45, 1, 1, 1, ItemID.TEST));
 
 		// ========== Preview cubes ==========
-		map.gridAdd(18, 1, 2, ItemID.GRASS);
+		map.gridAdd(new Cube(18, 1, 2, ItemID.GRASS));
 		map.gridGet(18, 1, 2).preview = true;
 		map.update(18, 1, 2);
 
-		map.gridAdd(13, 1, 13, ItemID.DIRT);
+		map.gridAdd(new Cube(13, 1, 13, ItemID.DIRT));
 		map.gridGet(13, 1, 13).preview = true;
 		map.update(13, 1, 13);
 
@@ -63,11 +63,11 @@ public class WorldGeneration {
 			map.gridAdd(c);
 		}
 
-		map.gridAdd(16, 1, 14, ItemID.GLASS);
+		map.gridAdd(new Cube(16, 1, 14, ItemID.GLASS));
 
-		map.gridAdd(15, 1, 15, ItemID.GLASS_GRAY);
+		map.gridAdd(new Cube(15, 1, 15, ItemID.GLASS_GRAY));
 
-		map.gridAdd(14, 1, 16, ItemID.GLASS_RED);
+		map.gridAdd(new Cube(14, 1, 16, ItemID.GLASS_RED));
 
 		return map;
 	}
