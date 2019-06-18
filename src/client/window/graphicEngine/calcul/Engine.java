@@ -230,7 +230,8 @@ public class Engine {
 	}
 
 	public void setPixel(int row, int col, int rgb, StatePixel state, int alpha) {
-		if (col == cursorX && row == cursorY && statePixel[row * screenWidth + col].targetableThrought) {
+		if (col == cursorX && row == cursorY && statePixel[row * screenWidth + col].targetableThrought
+				&& !state.targetableThrought) {
 			Engine.faceTarget = Engine.faceTargetTemp;
 			Engine.cubeTarget = Engine.cubeTargetTemp;
 		}

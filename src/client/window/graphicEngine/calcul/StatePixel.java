@@ -20,7 +20,7 @@ public enum StatePixel {
 	PREVIEW_THROUGHT(true, true, true),
 
 	// Background
-	SKY;
+	SKY(false, true, false);
 
 	public boolean isDrawable, targetableThrought, isTransparent;
 
