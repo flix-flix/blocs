@@ -2,6 +2,7 @@ package client.window.graphicEngine.models;
 
 import java.util.ArrayList;
 
+import client.window.graphicEngine.calcul.Engine;
 import client.window.graphicEngine.calcul.Matrix;
 import client.window.graphicEngine.calcul.Point3D;
 import client.window.graphicEngine.calcul.Vector;
@@ -24,6 +25,9 @@ public class ModelCube extends Cube implements Model {
 	public Vector vx, vy, vz;
 	// 3D Points of the cube calculed with the vectors
 	public Point3D[] points = new Point3D[8];
+
+	// Number of pixels
+	public int resoX, resoY, resoZ;
 
 	// Index of the cube (used to sort when centers are at the same location)
 	int index;
@@ -48,6 +52,10 @@ public class ModelCube extends Cube implements Model {
 		super(x, y, z, _decalX, _decalY, _decalZ, _ax, _ay, _sizeX, _sizeY, _sizeZ, itemID);
 
 		this.centerDecal = center.clone();
+
+		this.resoX = Engine.texturePack.getFace(itemID.id, Face.EAST).color[0].length;
+		this.resoY = Engine.texturePack.getFace(itemID.id, Face.NORTH).color.length;
+		this.resoZ = Engine.texturePack.getFace(itemID.id, Face.NORTH).color[0].length;
 
 		initPoints();
 

@@ -25,12 +25,6 @@ public class ModelChunk extends AbstractChunk<ModelCube> implements Model {
 
 	// =========================================================================================================================
 
-	public ModelCube _gridGet(int x, int y, int z) {
-		return grid[x][y][z];
-	}
-
-	// =========================================================================================================================
-
 	@Override
 	public ArrayList<Draw> getDraws() {
 		draws.clear();

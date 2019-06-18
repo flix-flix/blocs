@@ -56,8 +56,8 @@ public abstract class AbstractMap<T extends AbstractChunk<C>, C extends Cube> {
 	// =========================================================================================================================
 
 	public T getChunkAtCoord(double x, double z) {
-		int _x = Chunk.toChunkCoord(x);
-		int _z = Chunk.toChunkCoord(z);
+		int _x = AbstractChunk.toChunkCoord(x);
+		int _z = AbstractChunk.toChunkCoord(z);
 
 		if (!_containsChunk(_x, _z))
 			_setChunk(_x, _z, createChunk(_x, _z));
@@ -77,7 +77,7 @@ public abstract class AbstractMap<T extends AbstractChunk<C>, C extends Cube> {
 	// =========================================================================================================================
 
 	public boolean containsChunkAtCoord(double x, double z) {
-		return _containsChunk(Chunk.toChunkCoord(x), Chunk.toChunkCoord(z));
+		return _containsChunk(AbstractChunk.toChunkCoord(x), AbstractChunk.toChunkCoord(z));
 	}
 
 	public boolean containsChunkAtCoord(Point3D p) {

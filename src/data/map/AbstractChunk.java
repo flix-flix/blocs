@@ -13,7 +13,7 @@ public abstract class AbstractChunk<C extends Cube> {
 	// Array [X][Y][Z] to store the blocs
 	protected C[][][] grid;
 
-	// Set to store the cubes
+	// Set to store the off-grid cubes
 	public HashSet<C> cubes = new HashSet<>();
 
 	// =========================================================================================================================
@@ -25,7 +25,9 @@ public abstract class AbstractChunk<C extends Cube> {
 
 	// =========================================================================================================================
 
-	protected abstract C _gridGet(int x, int y, int z);
+	protected C _gridGet(int x, int y, int z) {
+		return grid[x][y][z];
+	}
 
 	protected void _gridSet(int x, int y, int z, C cube) {
 		grid[x][y][z] = cube;

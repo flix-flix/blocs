@@ -10,8 +10,8 @@ import client.window.graphicEngine.structures.Model;
 import data.ItemTable;
 import data.enumeration.Face;
 import data.enumeration.ItemID;
+import data.map.AbstractChunk;
 import data.map.AbstractMap;
-import data.map.Chunk;
 import data.map.Cube;
 import utils.Tuple;
 
@@ -77,7 +77,7 @@ public class ModelMap extends AbstractMap<ModelChunk, ModelCube> implements Mode
 		for (Face face : Face.faces) {
 			Tuple t = new Tuple(x, y, z).face(face);
 
-			if (Chunk.wrongY(y))
+			if (AbstractChunk.wrongY(y))
 				return;
 
 			gridGet(x, y, z).hideFace[face.ordinal()] = isOpaque(t.x, t.y, t.z);
@@ -134,8 +134,8 @@ public class ModelMap extends AbstractMap<ModelChunk, ModelCube> implements Mode
 	public ArrayList<Draw> getDraws() {
 		draws.clear();
 
-		int camChunkX = Chunk.toChunkCoord(engine.camera.vue.x);
-		int camChunkZ = Chunk.toChunkCoord(engine.camera.vue.z);
+		int camChunkX = AbstractChunk.toChunkCoord(engine.camera.vue.x);
+		int camChunkZ = AbstractChunk.toChunkCoord(engine.camera.vue.z);
 
 		for (int x = -range; x < range + 1; x++)
 			for (int z = -range; z < range + 1; z++)
@@ -151,8 +151,8 @@ public class ModelMap extends AbstractMap<ModelChunk, ModelCube> implements Mode
 
 	@Override
 	public void init(Point3D camera, Matrix matrice) {
-		int camChunkX = Chunk.toChunkCoord(engine.camera.vue.x);
-		int camChunkZ = Chunk.toChunkCoord(engine.camera.vue.z);
+		int camChunkX = AbstractChunk.toChunkCoord(engine.camera.vue.x);
+		int camChunkZ = AbstractChunk.toChunkCoord(engine.camera.vue.z);
 
 		for (int x = -range; x < range + 1; x++)
 			for (int z = -range; z < range + 1; z++)

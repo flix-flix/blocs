@@ -1,46 +1,41 @@
 package data.map;
 
 import client.session.Session;
-import client.window.graphicEngine.calcul.Engine;
 import client.window.graphicEngine.calcul.Point3D;
-import data.enumeration.Face;
 import data.enumeration.ItemID;
 import data.enumeration.SensBloc;
 import utils.FlixBlocksUtils;
 
 public class Cube {
 
-	public SensBloc sens = SensBloc.AUCUN;
+	public int x, y, z;
+	public ItemID itemID;
 
 	public Point3D center;
 
-	public int x, y, z;
-	public ItemID itemID;
+	// Another brick in the wall
+	public boolean onGrid = false;
+
+	// =========================================================================================================================
+
+	// Size of the cube
+	public double sizeX, sizeY, sizeZ;
+	// Shift the point of rotation (pixel)
+	public int shiftX, shiftY, shiftZ;
+	// Rotation relative to the shifted center (degree)
+	public double ax, ay;
+
+	// =========================================================================================================================
+
+	public SensBloc sens = SensBloc.AUCUN;
 
 	// Step of the bloc's "mining state"
 	public int miningState = FlixBlocksUtils.NO_MINING;
 
 	// =========================================================================================================================
 
-	// Shift the point of rotation (pixel)
-	public int shiftX, shiftY, shiftZ;
-
-	// Rotation relative to the shifted center (degree)
-	public double ax, ay;
-
-	// Number of pixels
-	public int resoX, resoY, resoZ;
-
-	// Size of the cube
-	public double sizeX, sizeY, sizeZ;
-
-	// Like a brick in the wall
-	public boolean onGrid = false;
-
-	// =========================================================================================================================
-
-	public Cube(double x, double y, double z, int _decalX, int _decalY, int _decalZ, double _ax, double _ay,
-			double _sizeX, double _sizeY, double _sizeZ, ItemID itemID) {
+	public Cube(double x, double y, double z, int shiftX, int shiftY, int shiftZ, double ax, double ay, double sizeX,
+			double sizeY, double sizeZ, ItemID itemID) {
 		this.itemID = itemID;
 
 		this.x = (int) x;
@@ -49,22 +44,16 @@ public class Cube {
 
 		this.center = new Point3D(x, y, z);
 
-		ax = _ax;
-		ay = _ay;
+		this.ax = -ax;
+		this.ay = ay;
 
-		shiftX = _decalX;
-		shiftY = _decalY;
-		shiftZ = _decalZ;
+		this.shiftX = shiftX;
+		this.shiftY = shiftY;
+		this.shiftZ = shiftZ;
 
-		this.resoX = Engine.texturePack.getFace(itemID.id, Face.EAST).color[0].length;
-		this.resoY = Engine.texturePack.getFace(itemID.id, Face.NORTH).color.length;
-		this.resoZ = Engine.texturePack.getFace(itemID.id, Face.NORTH).color[0].length;
-
-		sizeX = _sizeX;
-		sizeY = _sizeY;
-		sizeZ = _sizeZ;
-
-		ax *= -1;
+		this.sizeX = sizeX;
+		this.sizeY = sizeY;
+		this.sizeZ = sizeZ;
 	}
 
 	public Cube(int x, int y, int z, ItemID itemID) {
