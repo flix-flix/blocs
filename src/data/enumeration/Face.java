@@ -6,8 +6,8 @@ public enum Face {
 
 	public static Face[] faces = { UP, DOWN, NORTH, SOUTH, EAST, WEST };
 
-	public int opposite(Face face) {
-		switch (face) {
+	public int opposite() {
+		switch (this) {
 		case UP:
 			return DOWN.ordinal();
 		case DOWN:
@@ -17,7 +17,7 @@ public enum Face {
 		case SOUTH:
 			return NORTH.ordinal();
 		case EAST:
-			return WEST.ordinal();		
+			return WEST.ordinal();
 		case WEST:
 			return EAST.ordinal();
 		}

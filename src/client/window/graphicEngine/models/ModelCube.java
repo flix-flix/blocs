@@ -32,7 +32,7 @@ public class ModelCube extends Cube implements Model {
 
 	// true : the bloc will be transparent
 	public boolean preview = false;
-	// true : the bloc will be transparent (allow selection
+	// true : allow selection throught the bloc (enabled only if preview = true)
 	public boolean previewThrought = false;
 	// true : pointed by the player
 	public boolean isTarget;

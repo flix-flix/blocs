@@ -27,10 +27,6 @@ public class ModelMap extends AbstractMap<ModelChunk, ModelCube> implements Mode
 	// Range of visibles chunks
 	int range = 3;
 
-	// ======== Temp ========
-	// Coord of the bloc after initFaceCoord
-	static private int xFace, yFace, zFace;
-
 	// =========================================================================================================================
 
 	@Override
@@ -66,15 +62,29 @@ public class ModelMap extends AbstractMap<ModelChunk, ModelCube> implements Mode
 	public void removeGrid(Cube c) {
 		super.gridRemove(c.x, c.y, c.z);
 
-		for (Face face : Face.faces)
-			checkHideFaceRemove(c.x, c.y, c.z, face);
+		for (Face face : Face.faces) {
+			Tuple t = new Tuple(c.x, c.y, c.z).face(face);
+			if (gridContains(t))
+				gridGet(t).hideFace[face.opposite()] = false;
+		}
 
 		checkIfAroundVisible(c.x, c.y, c.z);
 	}
 
+	// =========================================================================================================================
+
 	public void update(int x, int y, int z) {
-		for (Face face : Face.faces)
-			checkHideFaceAdd(x, y, z, face);
+		for (Face face : Face.faces) {
+			Tuple t = new Tuple(x, y, z).face(face);
+
+			if (Chunk.wrongY(y))
+				return;
+
+			gridGet(x, y, z).hideFace[face.ordinal()] = isOpaque(t.x, t.y, t.z);
+
+			if (gridContains(t.x, t.y, t.z))
+				gridGet(t.x, t.y, t.z).hideFace[face.opposite()] = isOpaque(x, y, z);
+		}
 
 		checkIfAroundVisible(x, y, z);
 	}
@@ -116,74 +126,6 @@ public class ModelMap extends AbstractMap<ModelChunk, ModelCube> implements Mode
 
 		gridGet(x, y, z).setVisible(!(isOpaque(x + 1, y, z) && isOpaque(x - 1, y, z) && isOpaque(x, y + 1, z)
 				&& isOpaque(x, y - 1, z) && isOpaque(x, y, z + 1) && isOpaque(x, y, z - 1)));
-	}
-
-	/**
-	 * Bloc x, y, z must exist
-	 * 
-	 * @param x
-	 * @param y
-	 * @param z
-	 * @param face
-	 */
-	public void checkHideFaceAdd(int x, int y, int z, Face face) {
-		initFaceCoord(x, y, z, face);
-
-		if (Chunk.wrongY(y))
-			return;
-
-		if (isOpaque(xFace, yFace, zFace))
-			gridGet(x, y, z).hideFace[face.ordinal()] = true;
-		else
-			gridGet(x, y, z).hideFace[face.ordinal()] = false;
-
-		if (gridContains(xFace, yFace, zFace))
-			if (isOpaque(x, y, z))
-				gridGet(xFace, yFace, zFace).hideFace[face.opposite(face)] = true;
-			else
-				gridGet(xFace, yFace, zFace).hideFace[face.opposite(face)] = false;
-	}
-
-	/**
-	 * Bloc x, y, z mustn't exist
-	 * 
-	 * @param x
-	 * @param y
-	 * @param z
-	 * @param face
-	 */
-	public void checkHideFaceRemove(int x, int y, int z, Face face) {
-		initFaceCoord(x, y, z, face);
-		if (gridContains(xFace, yFace, zFace))
-			gridGet(xFace, yFace, zFace).hideFace[face.opposite(face)] = false;
-	}
-
-	// =========================================================================================================================
-
-	public void initFaceCoord(int x, int y, int z, Face face) {
-		xFace = x;
-		yFace = y;
-		zFace = z;
-		switch (face) {
-		case UP:
-			yFace++;
-			break;
-		case DOWN:
-			yFace--;
-			break;
-		case NORTH:
-			xFace++;
-			break;
-		case SOUTH:
-			xFace--;
-			break;
-		case EAST:
-			zFace++;
-			break;
-		case WEST:
-			zFace--;
-			break;
-		}
 	}
 
 	// =========================================================================================================================
