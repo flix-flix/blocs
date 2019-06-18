@@ -91,8 +91,16 @@ public class Map {
 	}
 
 	public void gridRemove(int x, int y, int z) {
-		if (containsChunkAtCoord(x, z))
-			getChunkAtCoord(x, z).gridRemove(x, y, z);
+		if (containsChunkAtCoord(x, z)) {
+			Multibloc m = gridGet(x, y, z).multibloc;
+			if (m == null)
+				getChunkAtCoord(x, z).gridRemove(x, y, z);
+			else
+				for (Cube c : m.list) {
+					c.multibloc = null;
+					gridRemove(c.x, c.y, c.z);
+				}
+		}
 	}
 
 	public boolean gridContains(int x, int y, int z) {
@@ -145,6 +153,11 @@ public class Map {
 		multi.list = l;
 
 		return true;
+	}
+
+	public void removeMulti(Multibloc multi) {
+		for (Cube c : multi.list)
+			gridRemove(c.x, c.y, c.z);
 	}
 
 	// =========================================================================================================================

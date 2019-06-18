@@ -97,14 +97,14 @@ public class Keyboard {
 		if (session.gamemode == GameMode.CREATIVE) {
 			if (session.cubeTarget != null)
 				if (session.cubeTarget.onGrid)
-					session.map.removeGrid(session.cubeTarget);
+					session.map.gridRemove(session.cubeTarget.coords());
 				else
 					session.map.removeCube((ModelCube) session.cubeTarget);
 
 		} else if (session.gamemode == GameMode.CLASSIC) {
 			if (session.action == Action.DESTROY) {
 				if (session.cubeTarget.onGrid)
-					session.map.removeGrid(session.cubeTarget);
+					session.map.gridRemove(session.cubeTarget.coords());
 				else
 					session.map.removeCube((ModelCube) session.cubeTarget);
 

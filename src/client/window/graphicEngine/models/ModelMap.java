@@ -63,9 +63,10 @@ public class ModelMap extends Map implements Model {
 		update(cube.x, cube.y, cube.z);
 	}
 
-	public void removeGrid(Cube c) {
-		super.gridRemove(c.x, c.y, c.z);
-		updateAround(c.x, c.y, c.z);
+	@Override
+	public void gridRemove(int x, int y, int z) {
+		super.gridRemove(x, y, z);
+		updateAround(x, y, z);
 	}
 
 	// =========================================================================================================================
