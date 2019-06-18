@@ -108,9 +108,9 @@ public class DrawCubeFace extends Draw {
 			for (int j = 0; j < nbX1; j++)
 				tab2D[i][j] = engine.to2D(tab3D[i][j]);
 
-		if (cube.preview)
+		if (cube.isPreview())
 			quadri.add(new Quadri(tab2D[0][0], tab2D[0][nbX], tab2D[nbX][nbX], tab2D[nbX][0], -0xffffff,
-					cube.previewThrought ? StatePixel.PREVIEW_THROUGHT : StatePixel.PREVIEW, false));
+					cube.isPreviewThrought() ? StatePixel.PREVIEW_THROUGHT : StatePixel.PREVIEW, false));
 		else
 			quadri.add(new Quadri(tab2D[0][0], tab2D[0][nbX], tab2D[nbX][nbX], tab2D[nbX][0], -0xffffff,
 					StatePixel.CONTOUR, false));
@@ -120,7 +120,7 @@ public class DrawCubeFace extends Draw {
 				int color = texture.getColor(row, col);
 
 				// If the bloc is targeted by the player : its color will be lighter
-				if (cube.isTarget)
+				if (cube.isHighlight())
 					color = texture.lighter(color, 75);
 
 				StatePixel state = StatePixel.FILL;
@@ -131,9 +131,9 @@ public class DrawCubeFace extends Draw {
 				else if (alpha != 255)
 					state = StatePixel.TRANSPARENT;
 
-				if (cube.preview) {
+				if (cube.isPreview()) {
 					state = StatePixel.PREVIEW;
-					if (cube.previewThrought)
+					if (cube.isPreviewThrought())
 						state = StatePixel.PREVIEW_THROUGHT;
 				}
 

@@ -74,9 +74,9 @@ public class Keyboard {
 				// Add a cube to the map
 				if (session.action == Action.BLOCS) {
 					ModelCube model = session.map.gridGet(new Tuple(cube).face(face));
-					if (model.preview) {
-						model.preview = false;
-						model.isTarget = false;
+					if (model.isPreview()) {
+						model.setPreview(false);
+						model.setHighlight(false);
 						session.map.update(model.x, model.y, model.z);
 					}
 				}

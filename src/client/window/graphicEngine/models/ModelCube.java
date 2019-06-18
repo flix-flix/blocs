@@ -35,11 +35,11 @@ public class ModelCube extends Cube implements Model {
 	public boolean[] hideFace = { false, false, false, false, false, false };
 
 	// true : the bloc will be transparent
-	public boolean preview = false;
+	private boolean preview = false;
 	// true : allow selection throught the bloc (enabled only if preview = true)
-	public boolean previewThrought = false;
+	private boolean previewThrought = false;
 	// true : pointed by the player
-	public boolean isTarget;
+	private boolean highlight;
 
 	// =================== Model ===================
 	private boolean visible = true;
@@ -101,6 +101,41 @@ public class ModelCube extends Cube implements Model {
 		points[5] = vy.multiply(points[1], resoY);
 		points[6] = vy.multiply(points[2], resoY);
 		points[7] = vy.multiply(points[3], resoY);
+	}
+
+	// =========================================================================================================================
+
+	public void setPreview(boolean b) {
+		preview = b;
+		if (multibloc != null)
+			for (Cube c : multibloc.list)
+				((ModelCube) c).preview = b;
+	}
+
+	public void setPreviewThrought(boolean b) {
+		previewThrought = b;
+		if (multibloc != null)
+			for (Cube c : multibloc.list)
+				((ModelCube) c).previewThrought = b;
+	}
+
+	public void setHighlight(boolean b) {
+		highlight = b;
+		if (multibloc != null)
+			for (Cube c : multibloc.list)
+				((ModelCube) c).highlight = b;
+	}
+
+	public boolean isPreview() {
+		return preview;
+	}
+
+	public boolean isPreviewThrought() {
+		return previewThrought;
+	}
+
+	public boolean isHighlight() {
+		return highlight;
 	}
 
 	// =========================================================================================================================

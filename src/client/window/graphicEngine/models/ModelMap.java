@@ -111,7 +111,7 @@ public class ModelMap extends Map implements Model {
 
 	/** Returns true if there is an opaque bloc at coords x,y,z */
 	public boolean isOpaque(int x, int y, int z) {
-		return gridContains(x, y, z) && ItemTable.isOpaque(gridGet(x, y, z).itemID) && !gridGet(x, y, z).preview;
+		return gridContains(x, y, z) && ItemTable.isOpaque(gridGet(x, y, z).itemID) && !gridGet(x, y, z).isPreview();
 	}
 
 	// =========================================================================================================================

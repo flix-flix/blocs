@@ -3,6 +3,7 @@ package data.generation;
 import client.window.graphicEngine.models.ModelMap;
 import data.enumeration.ItemID;
 import data.map.Cube;
+import data.multiblocs.Tree;
 
 public class WorldGeneration {
 
@@ -49,11 +50,11 @@ public class WorldGeneration {
 
 		// ========== Preview cubes ==========
 		map.gridAdd(new Cube(18, 1, 2, ItemID.GRASS));
-		map.gridGet(18, 1, 2).preview = true;
+		map.gridGet(18, 1, 2).setPreview(true);
 		map.update(18, 1, 2);
 
 		map.gridAdd(new Cube(13, 1, 13, ItemID.DIRT));
-		map.gridGet(13, 1, 13).preview = true;
+		map.gridGet(13, 1, 13).setPreview(true);
 		map.update(13, 1, 13);
 
 		// Cubes with the differents step of the mining animation
@@ -63,11 +64,14 @@ public class WorldGeneration {
 			map.gridAdd(c);
 		}
 
+		// Add Glass blocs
 		map.gridAdd(new Cube(16, 1, 14, ItemID.GLASS));
-
 		map.gridAdd(new Cube(15, 1, 15, ItemID.GLASS_GRAY));
-
 		map.gridAdd(new Cube(14, 1, 16, ItemID.GLASS_RED));
+
+		Tree tree = new Tree(20, 1, 10);
+
+		map.addMulti(tree);
 
 		return map;
 	}

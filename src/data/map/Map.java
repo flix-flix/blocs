@@ -2,6 +2,7 @@ package data.map;
 
 import java.util.HashMap;
 
+import data.multiblocs.Multibloc;
 import utils.Tuple;
 
 public class Map {
@@ -122,6 +123,19 @@ public class Map {
 
 	public void removeCube(Cube cube) {
 		getChunkAtCoord(cube).removeCube(cube);
+	}
+
+	// =========================================================================================================================
+
+	public boolean addMulti(Multibloc multi) {
+		for (Cube c : multi.list)
+			if (gridContains(c.x, c.y, c.z))
+				return false;
+
+		for (Cube c : multi.list)
+			gridAdd(c);
+		
+		return true;
 	}
 
 	// =========================================================================================================================

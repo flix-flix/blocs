@@ -203,9 +203,10 @@ public class Session implements Serializable {
 
 	public void targetUpdate() {
 		if (cubeTarget != null) {
-			if (previousPreview != null && map.gridContains(previousPreview) && map.gridGet(previousPreview).preview)
+			if (previousPreview != null && map.gridContains(previousPreview)
+					&& map.gridGet(previousPreview).isHighlight())
 				map.gridRemove(previousPreview);
-			cubeTarget.isTarget = false;
+			cubeTarget.setHighlight(false);
 		}
 
 		cubeTarget = Engine.cubeTarget;
@@ -219,13 +220,13 @@ public class Session implements Serializable {
 					if (!map.gridAdd(new Cube(previousPreview, selectedItemID)))
 						return;
 
-					map.gridGet(previousPreview).preview = true;
-					map.gridGet(previousPreview).previewThrought = true;
-					map.gridGet(previousPreview).isTarget = true;
+					map.gridGet(previousPreview).setPreview(true);
+					map.gridGet(previousPreview).setPreviewThrought(true);
+					map.gridGet(previousPreview).setHighlight(true);
 
 					map.update(previousPreview.x, previousPreview.y, previousPreview.z);
 				} else if (action == Action.DESTROY)
-					cubeTarget.isTarget = true;
+					cubeTarget.setHighlight(true);
 	}
 
 	// =========================================================================================================================

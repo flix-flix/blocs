@@ -4,6 +4,7 @@ import client.session.Session;
 import client.window.graphicEngine.calcul.Point3D;
 import data.enumeration.ItemID;
 import data.enumeration.SensBloc;
+import data.multiblocs.Multibloc;
 import utils.FlixBlocksUtils;
 import utils.Tuple;
 
@@ -25,6 +26,10 @@ public class Cube {
 	public int shiftX, shiftY, shiftZ;
 	// Rotation relative to the shifted center (degree)
 	public double ax, ay;
+
+	// =========================================================================================================================
+
+	public Multibloc multibloc;
 
 	// =========================================================================================================================
 
