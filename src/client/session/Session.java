@@ -201,13 +201,11 @@ public class Session implements Serializable {
 	}
 
 	public void targetUpdate() {
-		if (cubeTarget != null)
-			if (action == Action.BLOCS) {
-				if (previousPreview != null && map.gridContains(previousPreview)
-						&& map.gridGet(previousPreview).preview)
-					map.gridRemove(previousPreview);
-			} else if (action == Action.DESTROY)
-				cubeTarget.isTarget = false;
+		if (cubeTarget != null) {
+			if (previousPreview != null && map.gridContains(previousPreview) && map.gridGet(previousPreview).preview)
+				map.gridRemove(previousPreview);
+			cubeTarget.isTarget = false;
+		}
 
 		cubeTarget = Engine.cubeTarget;
 		faceTarget = Engine.faceTarget;
