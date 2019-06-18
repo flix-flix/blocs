@@ -102,11 +102,17 @@ public class Keyboard {
 					session.map.removeCube((ModelCube) session.cubeTarget);
 
 		} else if (session.gamemode == GameMode.CLASSIC) {
-			if (session.action == Action.DESTROY)
+			if (session.action == Action.DESTROY) {
 				if (session.cubeTarget.onGrid)
 					session.map.removeGrid(session.cubeTarget);
 				else
 					session.map.removeCube((ModelCube) session.cubeTarget);
+
+			} else if (session.action == Action.DESTROY) {
+
+			} else if (session.action == Action.MOUSE) {
+				session.fen.gui.select.setCube(session.cubeTarget);
+			}
 		}
 	}
 

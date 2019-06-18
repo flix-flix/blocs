@@ -1,11 +1,11 @@
 package data.multiblocs;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 import data.map.Cube;
 
 public class Multibloc {
 
-	public ArrayList<Cube> list = new ArrayList<>();
+	public LinkedList<Cube> list = new LinkedList<>();
 
 }

@@ -227,6 +227,8 @@ public class Session implements Serializable {
 					map.update(previousPreview.x, previousPreview.y, previousPreview.z);
 				} else if (action == Action.DESTROY)
 					cubeTarget.setHighlight(true);
+				else if (action == Action.MOUSE)
+					cubeTarget.setHighlight(true);
 	}
 
 	// =========================================================================================================================

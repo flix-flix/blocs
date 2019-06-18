@@ -14,6 +14,7 @@ import client.session.GameMode;
 import client.session.Session;
 import client.window.panels.emplacements.EmplacementAction;
 import client.window.panels.emplacements.EmplacementBlocSelection;
+import client.window.panels.emplacements.EmplacementSelect;
 import data.enumeration.ItemID;
 
 public class PanGUI extends JPanel {
@@ -59,6 +60,8 @@ public class PanGUI extends JPanel {
 	ArrayList<ItemID> _items = new ArrayList<>();
 	ArrayList<EmplacementBlocSelection> items = new ArrayList<>();
 
+	public EmplacementSelect select;
+
 	// =========================================================================================================================
 
 	public PanGUI(Session s) {
@@ -94,6 +97,10 @@ public class PanGUI extends JPanel {
 					y + border + (i / cols) * (size + border), size, size, session, _items.get(i)));
 			this.add(items.get(i));
 		}
+
+		this.add(select = new EmplacementSelect(x, y, 4 * 90 + (4 + 1) * 5, 400, session));
+		
+		hideMenu();
 	}
 
 	// =========================================================================================================================
@@ -191,6 +198,8 @@ public class PanGUI extends JPanel {
 			e.setVisible(session.gamemode == GameMode.CLASSIC && session.action == Action.BLOCS);
 			e.selected = session.selectedItemID == e.itemID;
 		}
+
+		select.setVisible(session.gamemode == GameMode.CLASSIC && session.action == Action.MOUSE);
 	}
 
 	// =========================================================================================================================

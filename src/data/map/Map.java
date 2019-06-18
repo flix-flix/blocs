@@ -1,6 +1,7 @@
 package data.map;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 
 import data.multiblocs.Multibloc;
 import utils.Tuple;
@@ -132,9 +133,17 @@ public class Map {
 			if (gridContains(c.x, c.y, c.z))
 				return false;
 
-		for (Cube c : multi.list)
+		LinkedList<Cube> l = new LinkedList<>();
+
+		Cube c;
+		while ((c = multi.list.pollFirst()) != null) {
 			gridAdd(c);
-		
+			l.add(gridGet(c.x, c.y, c.z));
+			l.getLast().multibloc = multi;
+		}
+
+		multi.list = l;
+
 		return true;
 	}
 
