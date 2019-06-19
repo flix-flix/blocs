@@ -64,8 +64,8 @@ public class Keyboard {
 
 		if (session.gamemode == GameMode.CREATIVE) {
 			// Add a cube to the map
-			if (cube != null && face != null) {
-				Cube cubeToAdd = session.getNextCube();
+			Cube cubeToAdd = session.getNextCube();
+			if (cube != null && face != null && cubeToAdd != null) {
 				cubeToAdd.setCoords(new Tuple(cube).face(face));
 
 				session.map.add(cubeToAdd);

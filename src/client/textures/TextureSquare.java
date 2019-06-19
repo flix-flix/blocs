@@ -47,7 +47,7 @@ public class TextureSquare {
 	// =========================================================================================================================
 
 	public int getAlpha(int row, int col) {
-		return alpha[(width - 1 - row) * width + col];
+		return alpha[(height - 1 - row) * width + col];
 	}
 
 	public void setAlpha(int row, int col, int alpha) {

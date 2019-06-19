@@ -73,16 +73,14 @@ public class DrawCubeFace extends Draw {
 		if (cube.miningState != FlixBlocksUtils.NO_MINING)
 			texture = texture.miningFusion(texturePack.getMiningFrame(cube.miningState));
 
-		int nbX = texture.color[0].length;
-		int nbY = texture.color.length;
-		int nbX1 = (int) (nbX + 1);
-		int nbY1 = (int) (nbY + 1);
+		int cols = texture.color[0].length;
+		int rows = texture.color.length;
 
-		Point3D[][] tab3D = new Point3D[nbY1][nbX1];
-		Point[][] tab2D = new Point[nbY1][nbX1];
+		Point3D[][] tab3D = new Point3D[rows + 1][cols + 1];
+		Point[][] tab2D = new Point[rows + 1][cols + 1];
 
-		for (int i = 0; i < nbY1; i++)
-			for (int j = 0; j < nbX1; j++)
+		for (int i = 0; i <= rows; i++)
+			for (int j = 0; j <= cols; j++)
 				switch (face) {
 				case UP:
 					tab3D[i][j] = vx.multiply(vz.multiply(points[4], j), i);
@@ -104,19 +102,19 @@ public class DrawCubeFace extends Draw {
 					break;
 				}
 
-		for (int i = 0; i < nbY1; i++)
-			for (int j = 0; j < nbX1; j++)
+		for (int i = 0; i <= rows; i++)
+			for (int j = 0; j <= cols; j++)
 				tab2D[i][j] = engine.to2D(tab3D[i][j]);
 
 		if (cube.isPreview())
-			quadri.add(new Quadri(tab2D[0][0], tab2D[0][nbX], tab2D[nbX][nbX], tab2D[nbX][0], -0xffffff,
+			quadri.add(new Quadri(tab2D[0][0], tab2D[0][cols], tab2D[rows][cols], tab2D[rows][0], -0xffffff,
 					cube.isPreviewThrought() ? StatePixel.PREVIEW_THROUGHT : StatePixel.PREVIEW, false));
 		else
-			quadri.add(new Quadri(tab2D[0][0], tab2D[0][nbX], tab2D[nbX][nbX], tab2D[nbX][0], -0xffffff,
+			quadri.add(new Quadri(tab2D[0][0], tab2D[0][cols], tab2D[rows][cols], tab2D[rows][0], -0xffffff,
 					StatePixel.CONTOUR, false));
 
-		for (int row = 0; row < nbY; row++)
-			for (int col = 0; col < nbX; col++) {
+		for (int row = 0; row < rows; row++)
+			for (int col = 0; col < cols; col++) {
 				int color = texture.getColor(row, col);
 
 				// If the cube is highlighted : its color will be lighter

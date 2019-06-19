@@ -78,7 +78,18 @@ public class WorldGeneration {
 		t.setCoords(25, 1, 10);
 		map.add(t.getCube());
 
+		// Add multibloc (mixed on-grid/off-grid cubes)
 		map.add(new E(10, 1, 20).getCube());
+
+		// Add off-grid cube
+		map.add(new Cube(19, 1, 19, 0, 0, 0, 0, 0, 3, 2, 2, ItemID.TEST_BIG));
+
+		// Add adjacent off-grid cubes
+		map.add(new Cube(5, 1, 25, 0, 0, 0, 0, 0, 3, 2, 2, ItemID.TEST_BIG));
+		map.add(new Cube(5, 1, 27, 0, 0, 0, 0, 0, 3, 2, 2, ItemID.TEST_BIG));
+
+		// Add rotated off-grid
+		map.add(new Cube(-2, 6, -2, 0, 0, 0, 0, 90, 1, 1, 1, ItemID.OAK_TRUNK));
 
 		return map;
 	}

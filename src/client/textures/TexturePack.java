@@ -12,7 +12,7 @@ public class TexturePack {
 	public static final int[] texturesToLoad = new int[] { 0, 1, 2, 3, 20, 21, 50, 51, 52 };
 
 	// Array to store the textures of the cubes (sorted by id)
-	TextureCube[] texturesCubes = new TextureCube[200];
+	TextureCube[] texturesCubes = new TextureCube[300];
 	// Array to store mining animations (intact to broken)
 	TextureSquare[] miningFrames = new TextureSquare[nbAnim];
 
@@ -21,6 +21,9 @@ public class TexturePack {
 
 	public TexturePack() {
 		texturesCubes[199] = new TextureCube("UP", "DOWN", "NORTH", "SOUTH", "EAST", "WEST");
+		texturesCubes[201] = new TextureCube(new TextureFace("multi", "test-up"), new TextureFace("multi", "test-down"),
+				new TextureFace("multi", "test-north"), new TextureFace("multi", "test-south"),
+				new TextureFace("multi", "test-east"), new TextureFace("multi", "test-west"));
 
 		for (int i : texturesToLoad)
 			if (texturesCubes[i] == null)
