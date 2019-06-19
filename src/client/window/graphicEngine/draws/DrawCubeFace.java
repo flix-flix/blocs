@@ -119,9 +119,13 @@ public class DrawCubeFace extends Draw {
 			for (int col = 0; col < nbX; col++) {
 				int color = texture.getColor(row, col);
 
-				// If the bloc is targeted by the player : its color will be lighter
+				// If the cube is highlighted : its color will be lighter
 				if (cube.isHighlight())
 					color = texture.lighter(color, 75);
+
+				// If the cube is invalid : its color will have a red hue
+				if (cube.isPreview() && cube.multibloc != null && !cube.multibloc.valid)
+					color = Engine.mix(color, -0x00ffff);
 
 				StatePixel state = StatePixel.FILL;
 				int alpha = forcedAlpha == DEFAULT_ALPHA ? texture.getAlpha(row, col) : forcedAlpha;

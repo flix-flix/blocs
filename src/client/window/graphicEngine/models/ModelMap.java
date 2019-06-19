@@ -11,6 +11,7 @@ import data.ItemTable;
 import data.enumeration.Face;
 import data.map.Cube;
 import data.map.Map;
+import data.multiblocs.Multibloc;
 import utils.Tuple;
 
 public class ModelMap extends Map implements Model {
@@ -71,6 +72,20 @@ public class ModelMap extends Map implements Model {
 
 	// =========================================================================================================================
 
+	@Override
+	public void addMultiError(Multibloc multi) {
+		multi.valid = false;
+	}
+
+	@Override
+	public boolean addMulti(Multibloc multi, boolean full) {
+		super.addMulti(multi, full);
+		// Cubes are always displayed (in red if errors)
+		return true;
+	}
+
+	// =========================================================================================================================
+
 	public void update(Tuple t) {
 		update(t.x, t.y, t.z);
 	}
@@ -89,6 +104,8 @@ public class ModelMap extends Map implements Model {
 		updateBloc(x, y, z);
 		updateAround(x, y, z);
 	}
+
+	// =========================================================================================================================
 
 	/** Update visibility of the bloc and its faces */
 	private void updateBloc(int x, int y, int z) {

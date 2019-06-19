@@ -46,10 +46,8 @@ public class Session implements Serializable {
 	public ModelCube cubeTarget;
 	public Face faceTarget;
 
-	// ID of the next added cube
-	// public ItemID selectedItemID = ItemID.GRASS;
-	// Next added cube (wrong coords)
-	public Cube nextCube;
+	// Next cube to add (wrong coords)
+	private Cube nextCube;
 	// Coord of the preview cube
 	public Tuple previousPreview;
 
@@ -61,7 +59,7 @@ public class Session implements Serializable {
 	// Number of cubes and chunks displayed
 	public int nbChunks, nbCubes;
 	// Number of frames displayed the last second
-	public volatile int fps, ticksPhys;
+	public int fps, ticksPhys;
 	// true : show on-screen the dev infos
 	public boolean devlop;
 
@@ -172,13 +170,12 @@ public class Session implements Serializable {
 
 	public void setNextCube(Cube cube) {
 		nextCube = cube;
-
-		fen.gui.hideMenu();
 	}
 
-	public void recreateNextCube() {
-		if (nextCube.multibloc != null)
-			nextCube = nextCube.multibloc.getNew().getCube();
+	public Cube getNextCube() {
+		if (nextCube != null && nextCube.multibloc != null)
+			return nextCube.multibloc.clone().getCube();
+		return nextCube;
 	}
 
 	// =========================================================================================================================
@@ -208,37 +205,56 @@ public class Session implements Serializable {
 	}
 
 	public void targetUpdate() {
-		if (cubeTarget != null) {
-			if (previousPreview != null && map.gridContains(previousPreview)
-					&& map.gridGet(previousPreview).isHighlight())
-				map.gridRemove(previousPreview);
-			cubeTarget.setHighlight(false);
-		}
+		boolean sameTarget = cubeTarget == Engine.cubeTarget && faceTarget == Engine.faceTarget;
 
+		// Removes previous selection display
+		if (cubeTarget != null)
+			if (!sameTarget) {
+				// Removes highlight from previous
+				cubeTarget.setHighlight(false);
+
+				// Removes preview cubes
+				if (map.gridContains(previousPreview) && map.gridGet(previousPreview).isPreview())
+					map.gridRemove(previousPreview);
+			}
+
+		// Refresh target
 		cubeTarget = Engine.cubeTarget;
 		faceTarget = Engine.faceTarget;
 
 		if (gamemode == GameMode.CLASSIC)
 			if (cubeTarget != null)
 				if (action == Action.BLOCS) {
-					if (nextCube == null)
+					// If same target : No need to do something more than the previous iteration
+					if (sameTarget)
 						return;
+
+					// Test if there is a cube(s) to add
+					Cube cubeToAdd = getNextCube();
+					if (cubeToAdd == null)
+						return;
+
+					// Calcul coords of the new cube(s)
 					previousPreview = new Tuple(cubeTarget).face(faceTarget);
+					cubeToAdd.setCoords(previousPreview);
 
-					nextCube.setCoords(previousPreview);
-
-					if (!map.gridAdd(nextCube))
+					// Test if there is place for the cube(s) at the coords
+					if (!map.gridAdd(cubeToAdd))
 						return;
 
+					// Mark cube(s) as "selection display"
 					map.gridGet(previousPreview).setPreview(true);
 					map.gridGet(previousPreview).setPreviewThrought(true);
 					map.gridGet(previousPreview).setHighlight(true);
 
 					map.update(previousPreview);
-				} else if (action == Action.DESTROY)
+
+				} else if (action == Action.DESTROY) {
 					cubeTarget.setHighlight(true);
-				else if (action == Action.MOUSE)
+
+				} else if (action == Action.MOUSE) {
 					cubeTarget.setHighlight(true);
+				}
 	}
 
 	// =========================================================================================================================

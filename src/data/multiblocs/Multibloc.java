@@ -8,7 +8,9 @@ public class Multibloc {
 
 	public LinkedList<Cube> list = new LinkedList<>();
 
-	int x, y, z;
+	protected int x, y, z;
+
+	public boolean valid = true;
 
 	public Multibloc(int x, int y, int z) {
 		this.x = x;
@@ -40,7 +42,7 @@ public class Multibloc {
 		this.z = z;
 	}
 
-	public Multibloc getNew() {
-		return new Multibloc();
+	public Multibloc clone() {
+		return new Multibloc(x, y, z);
 	}
 }

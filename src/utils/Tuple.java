@@ -56,10 +56,14 @@ public class Tuple {
 	// =========================================================================================================================
 
 	public boolean equals(Cube cube) {
+		if (cube == null)
+			return false;
 		return x == cube.x && y == cube.y && z == cube.z;
 	}
 
 	public boolean equals(Tuple tuple) {
+		if (tuple == null)
+			return false;
 		return x == tuple.x && y == tuple.y && z == tuple.z;
 	}
 

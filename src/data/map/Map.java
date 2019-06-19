@@ -83,28 +83,6 @@ public class Map {
 		getChunkAtCoord(cube).gridSet(createCube(cube));
 	}
 
-	public boolean gridAdd(Cube cube) {
-		if (gridContains(cube.x, cube.y, cube.z))
-			return false;
-
-		if (cube.multibloc == null)
-			gridSet(cube);
-		else
-			return addMulti(cube.multibloc);
-
-		return true;
-	}
-
-	public void gridRemove(int x, int y, int z) {
-		if (containsChunkAtCoord(x, z)) {
-			Multibloc m = gridGet(x, y, z).multibloc;
-			if (m == null)
-				_gridRemove(x, y, z);
-			else
-				removeMulti(m);
-		}
-	}
-
 	public void _gridRemove(int x, int y, int z) {
 		if (containsChunkAtCoord(x, z))
 			getChunkAtCoord(x, z).gridRemove(x, y, z);
@@ -117,7 +95,37 @@ public class Map {
 	}
 
 	// =========================================================================================================================
-	// Previous function but with tuple for coordinates
+
+	public boolean _gridAdd(Cube cube) {
+		if (gridContains(cube.x, cube.y, cube.z))
+			return false;
+
+		gridSet(cube);
+
+		return true;
+	}
+
+	// =========================================================================================================================
+	// Handle multiblocs
+
+	public boolean gridAdd(Cube cube) {
+		if (cube.multibloc == null)
+			return _gridAdd(cube);
+		return addMulti(cube.multibloc, true);
+	}
+
+	public void gridRemove(int x, int y, int z) {
+		if (containsChunkAtCoord(x, z)) {
+			Multibloc m = gridGet(x, y, z).multibloc;
+			if (m == null)
+				_gridRemove(x, y, z);
+			else
+				removeMulti(m);
+		}
+	}
+
+	// =========================================================================================================================
+	// Allow tuple for coordinates
 
 	public Cube gridGet(Tuple tuple) {
 		return gridGet(tuple.x, tuple.y, tuple.z);
@@ -128,6 +136,8 @@ public class Map {
 	}
 
 	public boolean gridContains(Tuple tuple) {
+		if (tuple == null)
+			return false;
 		return gridContains(tuple.x, tuple.y, tuple.z);
 	}
 
@@ -143,22 +153,38 @@ public class Map {
 
 	// =========================================================================================================================
 
-	public boolean addMulti(Multibloc multi) {
-		for (Cube c : multi.list)
-			if (gridContains(c.x, c.y, c.z))
-				return false;
-
-		LinkedList<Cube> l = new LinkedList<>();
+	/**
+	 * 
+	 * @param multi
+	 *            - multibloc to add
+	 * @param full
+	 *            true : add blocs only if all can be added. false : add blocs where
+	 *            grid is empty
+	 * @return true if the multibloc have been added
+	 */
+	public boolean addMulti(Multibloc multi, boolean full) {
+		// All blocs have been added
+		boolean all = true;
+		LinkedList<Cube> added = new LinkedList<>();
 
 		Cube c;
-		while ((c = multi.list.pollFirst()) != null) {
-			gridSet(c);
-			l.add(gridGet(c.x, c.y, c.z));
+		while ((c = multi.list.pollFirst()) != null)
+			if (_gridAdd(c))
+				added.add(gridGet(c.x, c.y, c.z));
+			else
+				all = false;
+
+		multi.list = added;
+
+		if (full && !all) {
+			addMultiError(multi);
 		}
 
-		multi.list = l;
+		return all;
+	}
 
-		return true;
+	public void addMultiError(Multibloc multi) {
+		removeMulti(multi);
 	}
 
 	public void removeMulti(Multibloc multi) {

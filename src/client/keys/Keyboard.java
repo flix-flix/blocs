@@ -65,8 +65,11 @@ public class Keyboard {
 		if (session.gamemode == GameMode.CREATIVE) {
 			// Add a cube to the map
 			if (cube != null && face != null) {
-				session.nextCube.setCoords(new Tuple(cube).face(face));
-				session.map.gridAdd(session.nextCube);
+				Cube cubeToAdd = session.getNextCube();
+				cubeToAdd.setCoords(new Tuple(cube).face(face));
+
+				session.map.gridAdd(cubeToAdd);
+				session.map.update(cubeToAdd.coords());
 			}
 
 		} else if (session.gamemode == GameMode.CLASSIC) {
@@ -77,15 +80,18 @@ public class Keyboard {
 				if (session.action == Action.BLOCS) {
 					ModelCube model = session.map.gridGet(new Tuple(cube).face(face));
 					if (model != null && model.isPreview()) {
+						// Multibloc can't be added at this position
+						if (model.multibloc != null && !model.multibloc.valid)
+							return;
+
 						model.setPreview(false);
 						model.setHighlight(false);
 						session.map.update(model.x, model.y, model.z);
-						session.recreateNextCube();
 					}
 				}
 			}
 
-			// If the bloc is right-clickable do the action
+			// If the cube is right-clickable do the action
 			// if (cube != null && !session.keyboard.sneakKeyEnabled && cube.hasAction())
 			// cube.doAction(session);
 
@@ -127,6 +133,8 @@ public class Keyboard {
 	public void leftClickEnd() {
 		pressL = false;
 	}
+
+	// =========================================================================================================================
 
 	/**
 	 * Move the Player orientation in function of the mouse cursor position then

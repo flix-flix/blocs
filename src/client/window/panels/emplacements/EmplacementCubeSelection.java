@@ -39,6 +39,7 @@ public class EmplacementCubeSelection extends Emplacement {
 	@Override
 	public void click() {
 		session.setNextCube(cube);
+		session.fen.gui.hideMenu();
 		selected = true;
 	}
 }
