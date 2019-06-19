@@ -68,7 +68,7 @@ public class Keyboard {
 				Cube cubeToAdd = session.getNextCube();
 				cubeToAdd.setCoords(new Tuple(cube).face(face));
 
-				session.map.gridAdd(cubeToAdd);
+				session.map.add(cubeToAdd);
 				session.map.update(cubeToAdd.coords());
 			}
 
@@ -105,18 +105,12 @@ public class Keyboard {
 
 		if (session.gamemode == GameMode.CREATIVE) {
 			if (session.cubeTarget != null)
-				if (session.cubeTarget.onGrid)
-					session.map.gridRemove(session.cubeTarget.coords());
-				else
-					session.map.removeCube((ModelCube) session.cubeTarget);
+				session.map.remove((ModelCube) session.cubeTarget);
 
 		} else if (session.gamemode == GameMode.CLASSIC) {
 			if (session.action == Action.DESTROY) {
 				if (session.cubeTarget != null)
-					if (session.cubeTarget.onGrid)
-						session.map.gridRemove(session.cubeTarget.coords());
-					else
-						session.map.removeCube((ModelCube) session.cubeTarget);
+					session.map.remove((ModelCube) session.cubeTarget);
 
 			} else if (session.action == Action.DESTROY) {
 

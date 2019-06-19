@@ -3,6 +3,7 @@ package data.generation;
 import client.window.graphicEngine.models.ModelMap;
 import data.enumeration.ItemID;
 import data.map.Cube;
+import data.multiblocs.E;
 import data.multiblocs.Tree;
 
 public class WorldGeneration {
@@ -14,15 +15,15 @@ public class WorldGeneration {
 			for (int z = 0; z < 100; z++)
 				if (x % 99 == 0 || z % 99 == 0)
 					for (int y = 0; y <= 3; y++)
-						map.gridAdd(new Cube(x, y, z, ItemID.BORDER));
+						map.add(new Cube(x, y, z, ItemID.BORDER));
 				else
-					map.gridAdd(new Cube(x, 0, z, ItemID.GRASS));
+					map.add(new Cube(x, 0, z, ItemID.GRASS));
 
 		// ========== Forest ==========
 		for (int x = 1; x < 30; x++)
 			for (int z = 1; z < 30; z++)
 				if (x / 2 + z < 15 || x + z / 2 < 15)
-					map.gridSet(new Cube(x, 0, z, ItemID.DIRT));
+					map.set(new Cube(x, 0, z, ItemID.DIRT));
 
 		addTree(map, 4, 1, 3);
 		addTree(map, 5, 1, 6);
@@ -46,14 +47,14 @@ public class WorldGeneration {
 		}
 
 		// Off-grid cube
-		map.addCube(new Cube(-1, 1, 0, 0, 0, 0, 45, 45, 1, 1, 1, ItemID.TEST));
+		map.add(new Cube(-1, 1, 0, 0, 0, 0, 45, 45, 1, 1, 1, ItemID.TEST));
 
 		// ========== Preview cubes ==========
-		map.gridAdd(new Cube(18, 1, 2, ItemID.GRASS));
+		map.add(new Cube(18, 1, 2, ItemID.GRASS));
 		map.gridGet(18, 1, 2).setPreview(true);
 		map.update(18, 1, 2);
 
-		map.gridAdd(new Cube(13, 1, 13, ItemID.DIRT));
+		map.add(new Cube(13, 1, 13, ItemID.DIRT));
 		map.gridGet(13, 1, 13).setPreview(true);
 		map.update(13, 1, 13);
 
@@ -61,41 +62,43 @@ public class WorldGeneration {
 		for (int x = 0; x < 5; x++) {
 			Cube c = new Cube(x, 2, -3, ItemID.IRON_BLOC);
 			c.miningState = x;
-			map.gridAdd(c);
+			map.add(c);
 		}
 
 		// Add Glass blocs
-		map.gridAdd(new Cube(16, 1, 14, ItemID.GLASS));
-		map.gridAdd(new Cube(15, 1, 15, ItemID.GLASS_GRAY));
-		map.gridAdd(new Cube(14, 1, 16, ItemID.GLASS_RED));
+		map.add(new Cube(16, 1, 14, ItemID.GLASS));
+		map.add(new Cube(15, 1, 15, ItemID.GLASS_GRAY));
+		map.add(new Cube(14, 1, 16, ItemID.GLASS_RED));
 
 		// Add multibloc
-		map.gridAdd(new Tree(20, 1, 10).getCube());
+		map.add(new Tree(20, 1, 10).getCube());
 
 		// Add shifted multibloc
 		Tree t = new Tree();
 		t.setCoords(25, 1, 10);
-		map.gridAdd(t.getCube());
+		map.add(t.getCube());
+
+		map.add(new E(10, 1, 20).getCube());
 
 		return map;
 	}
 
 	public static void addTree(ModelMap map, int x, int y, int z) {
-		map.gridAdd(new Cube(x, y, z, ItemID.OAK_TRUNK));
-		map.gridAdd(new Cube(x, y + 1, z, ItemID.OAK_TRUNK));
+		map.add(new Cube(x, y, z, ItemID.OAK_TRUNK));
+		map.add(new Cube(x, y + 1, z, ItemID.OAK_TRUNK));
 		addLeaves(map, x, y + 2, z);
 		addLeaves(map, x, y + 3, z);
 
-		map.gridAdd(new Cube(x, y + 4, z, ItemID.OAK_LEAVES));
+		map.add(new Cube(x, y + 4, z, ItemID.OAK_LEAVES));
 	}
 
 	public static void addLeaves(ModelMap map, int x, int y, int z) {
-		map.gridAdd(new Cube(x, y, z, ItemID.OAK_TRUNK));
+		map.add(new Cube(x, y, z, ItemID.OAK_TRUNK));
 
-		map.gridAdd(new Cube(x - 1, y, z, ItemID.OAK_LEAVES));
-		map.gridAdd(new Cube(x + 1, y, z, ItemID.OAK_LEAVES));
-		map.gridAdd(new Cube(x, y, z + 1, ItemID.OAK_LEAVES));
-		map.gridAdd(new Cube(x, y, z - 1, ItemID.OAK_LEAVES));
+		map.add(new Cube(x - 1, y, z, ItemID.OAK_LEAVES));
+		map.add(new Cube(x + 1, y, z, ItemID.OAK_LEAVES));
+		map.add(new Cube(x, y, z + 1, ItemID.OAK_LEAVES));
+		map.add(new Cube(x, y, z - 1, ItemID.OAK_LEAVES));
 	}
 
 	public static void addMountain(ModelMap map, int x, int y, int z) {
@@ -104,10 +107,10 @@ public class WorldGeneration {
 			for (int j = -a; j <= a; j++)
 				for (int k = -a; k <= a; k++)
 					if (!((j == -a || j == a) && (k == -a || k == a) && (7 - i) % 2 == 0))
-						map.gridAdd(new Cube(x + j, y + i, z + k, ItemID.STONE));
+						map.add(new Cube(x + j, y + i, z + k, ItemID.STONE));
 
-			map.gridAdd(new Cube(x, y + 7, z, ItemID.STONE));
-			map.gridAdd(new Cube(x, y + 6, z, ItemID.STONE));
+			map.add(new Cube(x, y + 7, z, ItemID.STONE));
+			map.add(new Cube(x, y + 6, z, ItemID.STONE));
 		}
 	}
 }

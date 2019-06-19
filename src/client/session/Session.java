@@ -215,7 +215,7 @@ public class Session implements Serializable {
 
 				// Removes preview cubes
 				if (map.gridContains(previousPreview) && map.gridGet(previousPreview).isPreview())
-					map.gridRemove(previousPreview);
+					map.remove(previousPreview);
 			}
 
 		// Refresh target
@@ -239,7 +239,7 @@ public class Session implements Serializable {
 					cubeToAdd.setCoords(previousPreview);
 
 					// Test if there is place for the cube(s) at the coords
-					if (!map.gridAdd(cubeToAdd))
+					if (!map.add(cubeToAdd))
 						return;
 
 					// Mark cube(s) as "selection display"

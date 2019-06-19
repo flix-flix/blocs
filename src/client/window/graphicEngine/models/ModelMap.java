@@ -27,6 +27,7 @@ public class ModelMap extends Map implements Model {
 	int range = 3;
 
 	// =========================================================================================================================
+	// Create displayable-data
 
 	@Override
 	public ModelChunk createChunk(int x, int z) {
@@ -39,7 +40,7 @@ public class ModelMap extends Map implements Model {
 	}
 
 	// =========================================================================================================================
-	// Cast Cube to ModelCube
+	// Getters : cast Cube to ModelCube
 
 	@Override
 	public ModelCube gridGet(Tuple t) {
@@ -57,28 +58,31 @@ public class ModelMap extends Map implements Model {
 	}
 
 	// =========================================================================================================================
+	// Intercept grid modifications for update
 
 	@Override
-	public void gridSet(Cube cube) {
-		super.gridSet(cube);
+	protected Cube gridAdd(Cube cube) {
+		Cube c = super.gridAdd(cube);
 		update(cube.x, cube.y, cube.z);
+		return c;
 	}
 
 	@Override
-	public void _gridRemove(int x, int y, int z) {
-		super._gridRemove(x, y, z);
+	protected void gridRemove(int x, int y, int z) {
+		super.gridRemove(x, y, z);
 		updateAround(x, y, z);
 	}
 
 	// =========================================================================================================================
+	// Intercept invalid multibloc position. Force to display it with a red hue
 
 	@Override
-	public void addMultiError(Multibloc multi) {
+	protected void addMultiError(Multibloc multi) {
 		multi.valid = false;
 	}
 
 	@Override
-	public boolean addMulti(Multibloc multi, boolean full) {
+	protected boolean addMulti(Multibloc multi, boolean full) {
 		super.addMulti(multi, full);
 		// Cubes are always displayed (in red if errors)
 		return true;
