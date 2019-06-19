@@ -243,8 +243,12 @@ public class Engine {
 
 		// Set color and state
 		if (statePixel[row * screenWidth + col].isDrawable) {
+			// If invisible : don't draw anything
 			if (state != StatePixel.INVISIBLE)
-				dataBuffer.setElem(row * screenWidth + col, rgb);
+				// If multibloc preview, hide preview blocs on the back
+				if (state != StatePixel.PREVIEW_THROUGHT
+						|| statePixel[row * screenWidth + col] != StatePixel.PREVIEW_THROUGHT)
+					dataBuffer.setElem(row * screenWidth + col, rgb);
 			statePixel[row * screenWidth + col] = state;
 		}
 	}

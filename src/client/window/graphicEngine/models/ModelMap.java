@@ -71,8 +71,21 @@ public class ModelMap extends Map implements Model {
 
 	// =========================================================================================================================
 
-	/** Update the visibility of blocs and faces at the coords and around */
+	public void update(Tuple t) {
+		update(t.x, t.y, t.z);
+	}
+
 	public void update(int x, int y, int z) {
+		if (gridContains(x, y, z) && gridGet(x, y, z).multibloc != null)
+			for (Cube c : gridGet(x, y, z).multibloc.list)
+				_update(c.x, c.y, c.z);
+		else
+			_update(x, y, z);
+
+	}
+
+	/** Update the visibility of blocs and faces at the coords and around */
+	public void _update(int x, int y, int z) {
 		updateBloc(x, y, z);
 		updateAround(x, y, z);
 	}

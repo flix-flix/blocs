@@ -234,7 +234,7 @@ public class Session implements Serializable {
 					map.gridGet(previousPreview).setPreviewThrought(true);
 					map.gridGet(previousPreview).setHighlight(true);
 
-					map.update(previousPreview.x, previousPreview.y, previousPreview.z);
+					map.update(previousPreview);
 				} else if (action == Action.DESTROY)
 					cubeTarget.setHighlight(true);
 				else if (action == Action.MOUSE)

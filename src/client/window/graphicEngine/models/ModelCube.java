@@ -129,6 +129,8 @@ public class ModelCube extends Cube implements Model {
 			}
 	}
 
+	// =========================================================================================================================
+
 	public boolean isPreview() {
 		return preview;
 	}
