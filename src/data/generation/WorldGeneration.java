@@ -69,8 +69,13 @@ public class WorldGeneration {
 		map.gridAdd(new Cube(15, 1, 15, ItemID.GLASS_GRAY));
 		map.gridAdd(new Cube(14, 1, 16, ItemID.GLASS_RED));
 
-		// Add Multibloc
-		map.addMulti(new Tree(20, 1, 10));
+		// Add multibloc
+		map.gridAdd(new Tree(20, 1, 10).getCube());
+
+		// Add shifted multibloc
+		Tree t = new Tree();
+		t.setCoords(25, 1, 10);
+		map.gridAdd(t.getCube());
 
 		return map;
 	}

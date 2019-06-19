@@ -18,7 +18,6 @@ import client.window.graphicEngine.models.ModelCube;
 import client.window.graphicEngine.models.ModelMap;
 import client.window.panels.StateHUD;
 import data.enumeration.Face;
-import data.enumeration.ItemID;
 import data.map.Cube;
 import utils.Tuple;
 
@@ -48,7 +47,9 @@ public class Session implements Serializable {
 	public Face faceTarget;
 
 	// ID of the next added cube
-	public ItemID selectedItemID = ItemID.GRASS;
+	// public ItemID selectedItemID = ItemID.GRASS;
+	// Next added cube (wrong coords)
+	public Cube nextCube;
 	// Coord of the preview cube
 	public Tuple previousPreview;
 
@@ -169,10 +170,15 @@ public class Session implements Serializable {
 		}
 	}
 
-	public void setSelectedItemID(ItemID itemID) {
-		this.selectedItemID = itemID;
+	public void setNextCube(Cube cube) {
+		nextCube = cube;
 
 		fen.gui.hideMenu();
+	}
+
+	public void recreateNextCube() {
+		if (nextCube.multibloc != null)
+			nextCube = nextCube.multibloc.getNew().getCube();
 	}
 
 	// =========================================================================================================================
@@ -215,9 +221,13 @@ public class Session implements Serializable {
 		if (gamemode == GameMode.CLASSIC)
 			if (cubeTarget != null)
 				if (action == Action.BLOCS) {
+					if (nextCube == null)
+						return;
 					previousPreview = new Tuple(cubeTarget).face(faceTarget);
 
-					if (!map.gridAdd(new Cube(previousPreview, selectedItemID)))
+					nextCube.setCoords(previousPreview);
+
+					if (!map.gridAdd(nextCube))
 						return;
 
 					map.gridGet(previousPreview).setPreview(true);

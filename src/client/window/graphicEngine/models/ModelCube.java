@@ -67,6 +67,7 @@ public class ModelCube extends Cube implements Model {
 				c.itemID);
 		this.miningState = c.miningState;
 		this.onGrid = c.onGrid;
+		this.multibloc = c.multibloc;
 	}
 
 	// =========================================================================================================================
@@ -108,8 +109,9 @@ public class ModelCube extends Cube implements Model {
 	public void setPreview(boolean b) {
 		preview = b;
 		if (multibloc != null)
-			for (Cube c : multibloc.list)
+			for (Cube c : multibloc.list) {
 				((ModelCube) c).preview = b;
+			}
 	}
 
 	public void setPreviewThrought(boolean b) {
@@ -122,8 +124,9 @@ public class ModelCube extends Cube implements Model {
 	public void setHighlight(boolean b) {
 		highlight = b;
 		if (multibloc != null)
-			for (Cube c : multibloc.list)
+			for (Cube c : multibloc.list) {
 				((ModelCube) c).highlight = b;
+			}
 	}
 
 	public boolean isPreview() {

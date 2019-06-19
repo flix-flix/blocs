@@ -64,8 +64,10 @@ public class Keyboard {
 
 		if (session.gamemode == GameMode.CREATIVE) {
 			// Add a cube to the map
-			if (cube != null && face != null)
-				session.map.gridAdd(new Cube(new Tuple(cube).face(face), session.selectedItemID));
+			if (cube != null && face != null) {
+				session.nextCube.setCoords(new Tuple(cube).face(face));
+				session.map.gridAdd(session.nextCube);
+			}
 
 		} else if (session.gamemode == GameMode.CLASSIC) {
 			pressR = true;
@@ -74,10 +76,11 @@ public class Keyboard {
 				// Add a cube to the map
 				if (session.action == Action.BLOCS) {
 					ModelCube model = session.map.gridGet(new Tuple(cube).face(face));
-					if (model.isPreview()) {
+					if (model != null && model.isPreview()) {
 						model.setPreview(false);
 						model.setHighlight(false);
 						session.map.update(model.x, model.y, model.z);
+						session.recreateNextCube();
 					}
 				}
 			}
@@ -103,10 +106,11 @@ public class Keyboard {
 
 		} else if (session.gamemode == GameMode.CLASSIC) {
 			if (session.action == Action.DESTROY) {
-				if (session.cubeTarget.onGrid)
-					session.map.gridRemove(session.cubeTarget.coords());
-				else
-					session.map.removeCube((ModelCube) session.cubeTarget);
+				if (session.cubeTarget != null)
+					if (session.cubeTarget.onGrid)
+						session.map.gridRemove(session.cubeTarget.coords());
+					else
+						session.map.removeCube((ModelCube) session.cubeTarget);
 
 			} else if (session.action == Action.DESTROY) {
 

@@ -71,10 +71,37 @@ public class Cube {
 		this(tuple.x, tuple.y, tuple.z, itemID);
 	}
 
+	public Cube(ItemID itemID) {
+		this(0, 0, 0, itemID);
+	}
+
 	// =========================================================================================================================
 
 	public Tuple coords() {
 		return new Tuple(this);
+	}
+
+	public void setCoords(Tuple tuple) {
+		setCoords(tuple.x, tuple.y, tuple.z);
+	}
+
+	public void setCoords(int x, int y, int z) {
+		if (multibloc == null) {
+			this.x = x;
+			this.y = y;
+			this.z = z;
+
+			center = new Point3D(x, y, z);
+		} else
+			multibloc.setCoords(x, y, z);
+	}
+
+	public void shiftCoords(int x, int y, int z) {
+		this.x += x;
+		this.y += y;
+		this.z += z;
+
+		center = new Point3D(this.x, this.y, this.z);
 	}
 
 	// =========================================================================================================================

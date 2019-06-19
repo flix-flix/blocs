@@ -78,6 +78,8 @@ public class Map {
 	}
 
 	public void gridSet(Cube cube) {
+		if (gridContains(cube.coords()))
+			gridRemove(cube.coords());
 		getChunkAtCoord(cube).gridSet(createCube(cube));
 	}
 
@@ -85,7 +87,10 @@ public class Map {
 		if (gridContains(cube.x, cube.y, cube.z))
 			return false;
 
-		gridSet(cube);
+		if (cube.multibloc == null)
+			gridSet(cube);
+		else
+			return addMulti(cube.multibloc);
 
 		return true;
 	}
@@ -94,13 +99,15 @@ public class Map {
 		if (containsChunkAtCoord(x, z)) {
 			Multibloc m = gridGet(x, y, z).multibloc;
 			if (m == null)
-				getChunkAtCoord(x, z).gridRemove(x, y, z);
+				_gridRemove(x, y, z);
 			else
-				for (Cube c : m.list) {
-					c.multibloc = null;
-					gridRemove(c.x, c.y, c.z);
-				}
+				removeMulti(m);
 		}
+	}
+
+	public void _gridRemove(int x, int y, int z) {
+		if (containsChunkAtCoord(x, z))
+			getChunkAtCoord(x, z).gridRemove(x, y, z);
 	}
 
 	public boolean gridContains(int x, int y, int z) {
@@ -145,9 +152,8 @@ public class Map {
 
 		Cube c;
 		while ((c = multi.list.pollFirst()) != null) {
-			gridAdd(c);
+			gridSet(c);
 			l.add(gridGet(c.x, c.y, c.z));
-			l.getLast().multibloc = multi;
 		}
 
 		multi.list = l;
@@ -157,7 +163,7 @@ public class Map {
 
 	public void removeMulti(Multibloc multi) {
 		for (Cube c : multi.list)
-			gridRemove(c.x, c.y, c.z);
+			_gridRemove(c.x, c.y, c.z);
 	}
 
 	// =========================================================================================================================

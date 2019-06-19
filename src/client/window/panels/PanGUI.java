@@ -13,9 +13,11 @@ import client.session.Action;
 import client.session.GameMode;
 import client.session.Session;
 import client.window.panels.emplacements.EmplacementAction;
-import client.window.panels.emplacements.EmplacementBlocSelection;
+import client.window.panels.emplacements.EmplacementCubeSelection;
 import client.window.panels.emplacements.EmplacementSelect;
 import data.enumeration.ItemID;
+import data.map.Cube;
+import data.multiblocs.Tree;
 
 public class PanGUI extends JPanel {
 	private static final long serialVersionUID = 3929655843006244723L;
@@ -57,8 +59,8 @@ public class PanGUI extends JPanel {
 	Action[] _actions = { Action.MOUSE, Action.SELECT, Action.BLOCS, Action.DESTROY };
 	EmplacementAction[] actions = new EmplacementAction[4];
 
-	ArrayList<ItemID> _items = new ArrayList<>();
-	ArrayList<EmplacementBlocSelection> items = new ArrayList<>();
+	ArrayList<Cube> _items = new ArrayList<>();
+	ArrayList<EmplacementCubeSelection> items = new ArrayList<>();
 
 	public EmplacementSelect select;
 
@@ -71,14 +73,15 @@ public class PanGUI extends JPanel {
 
 		// ========================================================================================
 
-		_items.add(ItemID.BORDER);
-		_items.add(ItemID.GRASS);
-		_items.add(ItemID.DIRT);
-		_items.add(ItemID.OAK_TRUNK);
-		_items.add(ItemID.OAK_LEAVES);
-		_items.add(ItemID.OAK_BOARD);
-		_items.add(ItemID.STONE);
-		_items.add(ItemID.GLASS);
+		_items.add(new Cube(ItemID.BORDER));
+		_items.add(new Cube(ItemID.GRASS));
+		_items.add(new Cube(ItemID.DIRT));
+		_items.add(new Cube(ItemID.OAK_TRUNK));
+		_items.add(new Cube(ItemID.OAK_LEAVES));
+		_items.add(new Cube(ItemID.OAK_BOARD));
+		_items.add(new Cube(ItemID.STONE));
+		_items.add(new Cube(ItemID.GLASS));
+		_items.add(new Tree().getCube());
 
 		// ========================================================================================
 
@@ -93,13 +96,13 @@ public class PanGUI extends JPanel {
 		y += 120;
 
 		for (int i = 0; i < _items.size(); i++) {
-			items.add(new EmplacementBlocSelection(x + border + (i % cols) * (size + border),
+			items.add(new EmplacementCubeSelection(x + border + (i % cols) * (size + border),
 					y + border + (i / cols) * (size + border), size, size, session, _items.get(i)));
 			this.add(items.get(i));
 		}
 
 		this.add(select = new EmplacementSelect(x, y, 4 * 90 + (4 + 1) * 5, 400, session));
-		
+
 		hideMenu();
 	}
 
@@ -194,10 +197,8 @@ public class PanGUI extends JPanel {
 			e.selected = session.action == e.action;
 		}
 
-		for (EmplacementBlocSelection e : items) {
+		for (EmplacementCubeSelection e : items)
 			e.setVisible(session.gamemode == GameMode.CLASSIC && session.action == Action.BLOCS);
-			e.selected = session.selectedItemID == e.itemID;
-		}
 
 		select.setVisible(session.gamemode == GameMode.CLASSIC && session.action == Action.MOUSE);
 	}

@@ -4,22 +4,20 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 import client.session.Session;
-import data.enumeration.ItemID;
+import data.map.Cube;
 
-public class EmplacementBlocSelection extends Emplacement {
+public class EmplacementCubeSelection extends Emplacement {
 	private static final long serialVersionUID = -8393842761922506846L;
 
-	public ItemID itemID;
+	public Cube cube;
 
 	public boolean selected = false;
 
-	public EmplacementBlocSelection(int x, int y, int width, int height, Session session, ItemID itemID) {
+	public EmplacementCubeSelection(int x, int y, int width, int height, Session session, Cube cube) {
 		super(x, y, width, height, session);
-		this.itemID = itemID;
+		this.cube = cube;
 
 		this.setBackground(Color.GRAY);
-
-		selected = session.selectedItemID == itemID;
 	}
 
 	@Override
@@ -35,12 +33,12 @@ public class EmplacementBlocSelection extends Emplacement {
 		}
 
 		g.setColor(Color.BLACK);
-		g.drawString(itemID.name(), 10, getHeight() / 2);
+		g.drawString(cube.itemID.name(), 10, getHeight() / 2);
 	}
 
 	@Override
 	public void click() {
-		session.setSelectedItemID(itemID);
+		session.setNextCube(cube);
 		selected = true;
 	}
 }

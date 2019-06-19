@@ -64,8 +64,8 @@ public class ModelMap extends Map implements Model {
 	}
 
 	@Override
-	public void gridRemove(int x, int y, int z) {
-		super.gridRemove(x, y, z);
+	public void _gridRemove(int x, int y, int z) {
+		super._gridRemove(x, y, z);
 		updateAround(x, y, z);
 	}
 
