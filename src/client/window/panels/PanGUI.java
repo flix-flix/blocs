@@ -81,6 +81,8 @@ public class PanGUI extends JPanel {
 		_items.add(new Cube(ItemID.OAK_BOARD));
 		_items.add(new Cube(ItemID.STONE));
 		_items.add(new Cube(ItemID.GLASS));
+		_items.add(new Cube(ItemID.GLASS_GRAY));
+		_items.add(new Cube(ItemID.GLASS_RED));
 		_items.add(new Tree().getCube());
 
 		// ========================================================================================

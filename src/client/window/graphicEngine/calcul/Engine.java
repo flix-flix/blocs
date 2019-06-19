@@ -230,17 +230,21 @@ public class Engine {
 	}
 
 	public void setPixel(int row, int col, int rgb, StatePixel state, int alpha) {
+		// If draw on cursor : set target
 		if (col == cursorX && row == cursorY && statePixel[row * screenWidth + col].targetableThrought
 				&& !state.targetableThrought) {
 			Engine.faceTarget = Engine.faceTargetTemp;
 			Engine.cubeTarget = Engine.cubeTargetTemp;
 		}
 
+		// If colored transparence : generate mixed color
 		if (statePixel[row * screenWidth + col].isTransparent)
 			rgb = mix(rgb, dataBuffer.getElem(row * screenWidth + col));
 
+		// Set color and state
 		if (statePixel[row * screenWidth + col].isDrawable) {
-			dataBuffer.setElem(row * screenWidth + col, rgb);
+			if (state != StatePixel.INVISIBLE)
+				dataBuffer.setElem(row * screenWidth + col, rgb);
 			statePixel[row * screenWidth + col] = state;
 		}
 	}
