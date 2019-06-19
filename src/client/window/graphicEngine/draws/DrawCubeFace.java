@@ -13,6 +13,7 @@ import client.window.graphicEngine.calcul.Vector;
 import client.window.graphicEngine.models.ModelCube;
 import client.window.graphicEngine.structures.Draw;
 import client.window.graphicEngine.structures.Quadri;
+import data.ItemTable;
 import data.enumeration.Face;
 import utils.FlixBlocksUtils;
 
@@ -106,12 +107,13 @@ public class DrawCubeFace extends Draw {
 			for (int j = 0; j <= cols; j++)
 				tab2D[i][j] = engine.to2D(tab3D[i][j]);
 
-		if (cube.isPreview())
-			quadri.add(new Quadri(tab2D[0][0], tab2D[0][cols], tab2D[rows][cols], tab2D[rows][0], -0xffffff,
-					cube.isPreviewThrought() ? StatePixel.PREVIEW_THROUGHT : StatePixel.PREVIEW, false));
-		else
-			quadri.add(new Quadri(tab2D[0][0], tab2D[0][cols], tab2D[rows][cols], tab2D[rows][0], -0xffffff,
-					StatePixel.CONTOUR, false));
+		if (ItemTable.drawContour(cube.itemID))
+			if (cube.isPreview())
+				quadri.add(new Quadri(tab2D[0][0], tab2D[0][cols], tab2D[rows][cols], tab2D[rows][0], -0xffffff,
+						cube.isPreviewThrought() ? StatePixel.PREVIEW_THROUGHT : StatePixel.PREVIEW, false));
+			else
+				quadri.add(new Quadri(tab2D[0][0], tab2D[0][cols], tab2D[rows][cols], tab2D[rows][0], -0xffffff,
+						StatePixel.CONTOUR, false));
 
 		for (int row = 0; row < rows; row++)
 			for (int col = 0; col < cols; col++) {

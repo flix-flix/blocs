@@ -4,6 +4,7 @@ import client.window.graphicEngine.models.ModelMap;
 import data.enumeration.ItemID;
 import data.map.Cube;
 import data.multiblocs.E;
+import data.multiblocs.Multibloc;
 import data.multiblocs.Tree;
 
 public class WorldGeneration {
@@ -84,9 +85,17 @@ public class WorldGeneration {
 		// Add off-grid cube
 		map.add(new Cube(19, 1, 19, 0, 0, 0, 0, 0, 3, 2, 2, ItemID.TEST_BIG));
 
-		// Add adjacent off-grid cubes
-		map.add(new Cube(5, 1, 25, 0, 0, 0, 0, 0, 3, 2, 2, ItemID.TEST_BIG));
-		map.add(new Cube(5, 1, 27, 0, 0, 0, 0, 0, 3, 2, 2, ItemID.TEST_BIG));
+		// Add multibloc of off-grids without border
+		Multibloc m = new Multibloc();
+		m.add(new Cube(0, 0, 0, 0, 0, 0, 0, 0, 3, 2, 2, ItemID.TEST_BIG));
+		m.add(new Cube(0, 0, 2, 0, 0, 0, 0, 0, 3, 2, 2, ItemID.TEST_BIG));
+		m.add(new Cube(0, 0, 4, 0, 0, 0, 0, 0, 3, 2, 2, ItemID.TEST_BIG));
+		m.add(new Cube(5, 0, 0, 0, 0, 0, -90, 0, 3, 2, 2, ItemID.TEST_BIG));
+		m.add(new Cube(5, 0, 3, 0, 0, 0, -90, 0, 3, 2, 2, ItemID.TEST_BIG));
+		
+		m.setCoords(5, 1, 25);
+		
+		map.add(m.getCube());
 
 		// Add rotated off-grid
 		map.add(new Cube(-2, 6, -2, 0, 0, 0, 0, 90, 1, 1, 1, ItemID.OAK_TRUNK));

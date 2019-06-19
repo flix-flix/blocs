@@ -16,4 +16,13 @@ public class ItemTable {
 			return true;
 		}
 	}
+
+	public static boolean drawContour(ItemID itemID) {
+		switch (itemID) {
+		case TEST_BIG:
+			return false;
+		default:
+			return true;
+		}
+	}
 }
