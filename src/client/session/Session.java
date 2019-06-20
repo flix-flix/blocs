@@ -211,7 +211,7 @@ public class Session implements Serializable {
 		if (cubeTarget != null)
 			if (!sameTarget) {
 				// Removes highlight from previous
-				cubeTarget.setHighlight(false);
+				map.setHighlight(cubeTarget, false);
 
 				// Removes preview cubes
 				if (map.gridContains(previousPreview) && map.gridGet(previousPreview).isPreview())
@@ -243,17 +243,14 @@ public class Session implements Serializable {
 						return;
 
 					// Mark cube(s) as "selection display"
-					map.gridGet(previousPreview).setPreview(true);
-					map.gridGet(previousPreview).setPreviewThrought(true);
-					map.gridGet(previousPreview).setHighlight(true);
-
-					map.update(previousPreview);
-
+					map.setPreview(previousPreview, true);
+					map.setPreviewThrought(previousPreview, true);
+					map.setHighlight(previousPreview, true);
 				} else if (action == Action.DESTROY) {
-					cubeTarget.setHighlight(true);
+					map.setHighlight(cubeTarget, true);
 
 				} else if (action == Action.MOUSE) {
-					cubeTarget.setHighlight(true);
+					map.setHighlight(cubeTarget, true);
 				}
 	}
 

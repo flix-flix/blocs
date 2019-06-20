@@ -69,7 +69,6 @@ public class Keyboard {
 				cubeToAdd.setCoords(new Tuple(cube).face(face));
 
 				session.map.add(cubeToAdd);
-				session.map.update(cubeToAdd.coords());
 			}
 
 		} else if (session.gamemode == GameMode.CLASSIC) {
@@ -80,13 +79,12 @@ public class Keyboard {
 				if (session.action == Action.BLOCS) {
 					ModelCube model = session.map.gridGet(new Tuple(cube).face(face));
 					if (model != null && model.isPreview()) {
-						// Multibloc can't be added at this position
+						// Check if multibloc can be added at this position
 						if (model.multibloc != null && !model.multibloc.valid)
 							return;
 
-						model.setPreview(false);
-						model.setHighlight(false);
-						session.map.update(model.x, model.y, model.z);
+						session.map.setHighlight(model, false);
+						session.map.setPreview(model, false);
 					}
 				}
 			}

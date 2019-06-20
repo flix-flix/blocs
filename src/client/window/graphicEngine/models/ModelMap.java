@@ -84,27 +84,58 @@ public class ModelMap extends Map implements Model {
 	@Override
 	protected boolean addMulti(Multibloc multi, boolean full) {
 		super.addMulti(multi, full);
+		update(multi.getCube().coords());
 		// Cubes are always displayed (in red if errors)
 		return true;
 	}
 
 	// =========================================================================================================================
+	// Status modifications (+update if needed)
 
-	public void update(Tuple t) {
+	public void setHighlight(ModelCube cube, boolean b) {
+		cube.setHighlight(b);
+	}
+
+	public void setPreview(ModelCube cube, boolean b) {
+		cube.setPreview(b);
+		update(cube.coords());
+	}
+
+	public void setPreviewThrought(ModelCube cube, boolean b) {
+		cube.setPreviewThrought(b);
+	}
+
+	// =========================================================================================================================
+	// Allow coords for status modifications
+
+	public void setHighlight(Tuple tuple, boolean b) {
+		setHighlight(gridGet(tuple), b);
+	}
+
+	public void setPreview(Tuple tuple, boolean b) {
+		setPreview(gridGet(tuple), b);
+	}
+
+	public void setPreviewThrought(Tuple tuple, boolean b) {
+		setPreviewThrought(gridGet(tuple), b);
+	}
+
+	// =========================================================================================================================
+
+	private void update(Tuple t) {
 		update(t.x, t.y, t.z);
 	}
 
-	public void update(int x, int y, int z) {
+	private void update(int x, int y, int z) {
 		if (gridContains(x, y, z) && gridGet(x, y, z).multibloc != null)
 			for (Cube c : gridGet(x, y, z).multibloc.list)
 				_update(c.x, c.y, c.z);
 		else
 			_update(x, y, z);
-
 	}
 
 	/** Update the visibility of blocs and faces at the coords and around */
-	public void _update(int x, int y, int z) {
+	private void _update(int x, int y, int z) {
 		updateBloc(x, y, z);
 		updateAround(x, y, z);
 	}
@@ -134,7 +165,7 @@ public class ModelMap extends Map implements Model {
 	}
 
 	/** Update the visibility of the bloc */
-	public void checkIfCubeVisible(int x, int y, int z) {
+	private void checkIfCubeVisible(int x, int y, int z) {
 		if (!gridContains(x, y, z))
 			return;
 
@@ -145,7 +176,7 @@ public class ModelMap extends Map implements Model {
 	// =========================================================================================================================
 
 	/** Returns true if there is an opaque bloc at coords x,y,z */
-	public boolean isOpaque(int x, int y, int z) {
+	private boolean isOpaque(int x, int y, int z) {
 		return gridContains(x, y, z) && ItemTable.isOpaque(gridGet(x, y, z).itemID) && !gridGet(x, y, z).isPreview();
 	}
 

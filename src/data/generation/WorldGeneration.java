@@ -52,12 +52,10 @@ public class WorldGeneration {
 
 		// ========== Preview cubes ==========
 		map.add(new Cube(18, 1, 2, ItemID.GRASS));
-		map.gridGet(18, 1, 2).setPreview(true);
-		map.update(18, 1, 2);
+		map.setPreview(map.gridGet(18, 1, 2), true);
 
 		map.add(new Cube(13, 1, 13, ItemID.DIRT));
-		map.gridGet(13, 1, 13).setPreview(true);
-		map.update(13, 1, 13);
+		map.setPreview(map.gridGet(13, 1, 13), true);
 
 		// Cubes with the differents step of the mining animation
 		for (int x = 0; x < 5; x++) {
@@ -92,9 +90,9 @@ public class WorldGeneration {
 		m.add(new Cube(0, 0, 4, 0, 0, 0, 0, 0, 3, 2, 2, ItemID.TEST_BIG));
 		m.add(new Cube(5, 0, 0, 0, 0, 0, -90, 0, 3, 2, 2, ItemID.TEST_BIG));
 		m.add(new Cube(5, 0, 3, 0, 0, 0, -90, 0, 3, 2, 2, ItemID.TEST_BIG));
-		
+
 		m.setCoords(5, 1, 25);
-		
+
 		map.add(m.getCube());
 
 		// Add rotated off-grid
