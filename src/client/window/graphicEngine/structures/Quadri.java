@@ -1,6 +1,7 @@
 package client.window.graphicEngine.structures;
 
 import java.awt.Point;
+import java.awt.Polygon;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -11,7 +12,7 @@ import client.window.graphicEngine.calcul.StatePixel;
 public class Quadri {
 
 	public Point[] points;
-	public int color, alpha;
+	public int color, alpha = 255;
 	public StatePixel statePixel;
 	public boolean fill = true;
 
@@ -19,24 +20,16 @@ public class Quadri {
 
 	private static ArrayList<Point> list = new ArrayList<>();
 
-	public Quadri(Point[] points, int color, StatePixel etat) {
-		this.points = points;
+	public Quadri(Point p0, Point p1, Point p2, Point p3, int color, StatePixel etat, boolean fill) {
+		this.points = new Point[] { p0, p1, p2, p3 };
 		this.color = color;
 		this.statePixel = etat;
-	}
-
-	public Quadri(Point p0, Point p1, Point p2, Point p3, int color, StatePixel etat) {
-		this(new Point[] { p0, p1, p2, p3 }, color, etat);
-	}
-
-	public Quadri(Point p0, Point p1, Point p2, Point p3, int color, StatePixel etat, int alpha) {
-		this(new Point[] { p0, p1, p2, p3 }, color, etat);
-		this.alpha = alpha;
-	}
-
-	public Quadri(Point p0, Point p1, Point p2, Point p3, int color, StatePixel etat, boolean fill) {
-		this(new Point[] { p0, p1, p2, p3 }, color, etat);
 		this.fill = fill;
+	}
+
+	public Quadri(Point p0, Point p1, Point p2, Point p3, int color, StatePixel etat, boolean fill, int alpha) {
+		this(p0, p1, p2, p3, color, etat, fill);
+		this.alpha = alpha;
 	}
 
 	// =========================================================================================================================
@@ -56,6 +49,13 @@ public class Quadri {
 		list.sort(comp);
 
 		return list;
+	}
+
+	// =========================================================================================================================
+
+	public Polygon getPoly() {
+		return new Polygon(new int[] { points[0].x, points[1].x, points[2].x, points[3].x },
+				new int[] { points[0].y, points[1].y, points[2].y, points[3].y }, 4);
 	}
 
 	// =========================================================================================================================

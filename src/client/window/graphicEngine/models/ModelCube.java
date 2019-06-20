@@ -36,8 +36,8 @@ public class ModelCube extends Cube implements Model {
 
 	// true : the bloc will be transparent
 	private boolean preview = false;
-	// true : allow selection throught the bloc (enabled only if preview = true)
-	private boolean previewThrought = false;
+	// true : allow the bloc to be selected
+	private boolean targetable = true;
 	// true : pointed by the player
 	private boolean highlight;
 
@@ -114,11 +114,11 @@ public class ModelCube extends Cube implements Model {
 			}
 	}
 
-	public void setPreviewThrought(boolean b) {
-		previewThrought = b;
+	public void setTargetable(boolean b) {
+		targetable = b;
 		if (multibloc != null)
 			for (Cube c : multibloc.list)
-				((ModelCube) c).previewThrought = b;
+				((ModelCube) c).targetable = b;
 	}
 
 	public void setHighlight(boolean b) {
@@ -135,8 +135,8 @@ public class ModelCube extends Cube implements Model {
 		return preview;
 	}
 
-	public boolean isPreviewThrought() {
-		return previewThrought;
+	public boolean isTargetable() {
+		return targetable;
 	}
 
 	public boolean isHighlight() {

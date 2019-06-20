@@ -244,7 +244,7 @@ public class Session implements Serializable {
 
 					// Mark cube(s) as "selection display"
 					map.setPreview(previousPreview, true);
-					map.setPreviewThrought(previousPreview, true);
+					map.setTargetable(previousPreview, false);
 					map.setHighlight(previousPreview, true);
 				} else if (action == Action.DESTROY) {
 					map.setHighlight(cubeTarget, true);

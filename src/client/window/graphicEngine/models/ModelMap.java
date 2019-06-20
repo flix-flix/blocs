@@ -101,8 +101,8 @@ public class ModelMap extends Map implements Model {
 		update(cube.coords());
 	}
 
-	public void setPreviewThrought(ModelCube cube, boolean b) {
-		cube.setPreviewThrought(b);
+	public void setTargetable(ModelCube cube, boolean b) {
+		cube.setTargetable(b);
 	}
 
 	// =========================================================================================================================
@@ -116,8 +116,8 @@ public class ModelMap extends Map implements Model {
 		setPreview(gridGet(tuple), b);
 	}
 
-	public void setPreviewThrought(Tuple tuple, boolean b) {
-		setPreviewThrought(gridGet(tuple), b);
+	public void setTargetable(Tuple tuple, boolean b) {
+		setTargetable(gridGet(tuple), b);
 	}
 
 	// =========================================================================================================================

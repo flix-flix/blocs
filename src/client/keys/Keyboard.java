@@ -85,6 +85,7 @@ public class Keyboard {
 
 						session.map.setHighlight(model, false);
 						session.map.setPreview(model, false);
+						session.map.setTargetable(model, true);
 					}
 				}
 			}

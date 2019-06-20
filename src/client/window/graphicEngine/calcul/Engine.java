@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import client.textures.TexturePack;
+import client.window.graphicEngine.draws.DrawCubeFace;
 import client.window.graphicEngine.models.ModelCube;
 import client.window.graphicEngine.structures.Draw;
 import client.window.graphicEngine.structures.Model;
@@ -33,10 +34,6 @@ public class Engine {
 
 	static public ModelCube cubeTarget;
 	static public Face faceTarget;
-
-	// ================ Target (Temp) =====================
-	static public ModelCube cubeTargetTemp;
-	static public Face faceTargetTemp;
 
 	// ================ Dev (F3) =====================
 	public long timeInit = 0, timeMat = 0, timeDraw = 0, timePixel;
@@ -70,9 +67,6 @@ public class Engine {
 
 		cubeTarget = null;
 		faceTarget = null;
-
-		cubeTargetTemp = null;
-		faceTargetTemp = null;
 
 		timeInit = System.currentTimeMillis();
 
@@ -119,12 +113,12 @@ public class Engine {
 			if (row < top)
 				// Fill the top with blue
 				for (int col = 0; col < screenWidth; col++)
-					setPixel(row, col, -13_396_261, StatePixel.SKY);
+					setPixel(row, col, -13_396_261, StatePixel.FILL);
 
 			else if (row <= middle)
 				// Fill the "middle top" with a blue to light blue gradient
 				for (int col = 0; col < screenWidth; col++)
-					setPixel(row, col, (-13_396_261 - ((int) (top - row) / 7 * 65792)), StatePixel.SKY);
+					setPixel(row, col, (-13_396_261 - ((int) (top - row) / 7 * 65792)), StatePixel.FILL);
 
 			else if (row <= bottom) {
 				// Fill the "middle bottom" with a light blue to black gradient
@@ -135,11 +129,11 @@ public class Engine {
 				int dB = (int) (blue * lala);
 
 				for (int col = 0; col < screenWidth; col++)
-					setPixel(row, col, middleColor - (dR * 256 * 256 + dG * 256 + dB), StatePixel.SKY);
+					setPixel(row, col, middleColor - (dR * 256 * 256 + dG * 256 + dB), StatePixel.FILL);
 			} else
 				// Fill the bottom with black
 				for (int col = 0; col < screenWidth; col++)
-					setPixel(row, col, -0xffffff, StatePixel.SKY);
+					setPixel(row, col, -0xffffff, StatePixel.FILL);
 		}
 	}
 
@@ -159,13 +153,15 @@ public class Engine {
 
 		for (Draw d : draws) {
 			d.engine = this;
-			// quadri.addAll(d.getQuadri(camera.vue, matrice));
-			for (Quadri q : d.getQuadri(camera.vue, matrice))
+			for (Quadri q : d.getQuadri(camera.vue, matrice)) {
+				if (cubeTarget == null && q.statePixel == StatePixel.CONTOUR && q.getPoly().contains(cursorX, cursorY)
+						&& ((DrawCubeFace) d).cube.isTargetable()) {
+					faceTarget = ((DrawCubeFace) d).face;
+					cubeTarget = ((DrawCubeFace) d).cube;
+				}
 				drawQuadri(q);
+			}
 		}
-
-		// for (Quadri q : quadri)
-		// drawQuadri(q);
 
 		timePixel = System.currentTimeMillis();
 	}
@@ -219,10 +215,6 @@ public class Engine {
 			}
 	}
 
-	public void drawQuadri(Point[] p, int rgb, boolean fill, StatePixel statePixel) {
-		drawQuadri(new Quadri(p, rgb, statePixel));
-	}
-
 	// =========================================================================================================================
 
 	public void setPixel(int row, int col, int rgb, StatePixel state) {
@@ -230,25 +222,14 @@ public class Engine {
 	}
 
 	public void setPixel(int row, int col, int rgb, StatePixel state, int alpha) {
-		// If draw on cursor : set target
-		if (col == cursorX && row == cursorY && statePixel[row * screenWidth + col].targetableThrought
-				&& !state.targetableThrought) {
-			Engine.faceTarget = Engine.faceTargetTemp;
-			Engine.cubeTarget = Engine.cubeTargetTemp;
-		}
-
 		// If colored transparence : generate mixed color
-		if (statePixel[row * screenWidth + col].isTransparent)
+		if (statePixel[row * screenWidth + col] == StatePixel.TRANSPARENT)
 			rgb = mix(rgb, dataBuffer.getElem(row * screenWidth + col));
 
 		// Set color and state
-		if (statePixel[row * screenWidth + col].isDrawable) {
-			// If invisible : don't draw anything
-			if (state != StatePixel.INVISIBLE)
-				// If multibloc preview, hide preview blocs on the back
-				if (state != StatePixel.PREVIEW_THROUGHT
-						|| statePixel[row * screenWidth + col] != StatePixel.PREVIEW_THROUGHT)
-					dataBuffer.setElem(row * screenWidth + col, rgb);
+		if (statePixel[row * screenWidth + col] != StatePixel.FILL
+				&& statePixel[row * screenWidth + col] != StatePixel.CONTOUR) {
+			dataBuffer.setElem(row * screenWidth + col, rgb);
 			statePixel[row * screenWidth + col] = state;
 		}
 	}

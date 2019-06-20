@@ -13,7 +13,6 @@ import client.window.graphicEngine.calcul.Vector;
 import client.window.graphicEngine.models.ModelCube;
 import client.window.graphicEngine.structures.Draw;
 import client.window.graphicEngine.structures.Quadri;
-import data.ItemTable;
 import data.enumeration.Face;
 import utils.FlixBlocksUtils;
 
@@ -26,7 +25,7 @@ public class DrawCubeFace extends Draw {
 
 	// =================== Basic infos ==================
 	int id;
-	Face face;
+	public Face face;
 	Vector vx, vy, vz;
 	Point3D[] points;
 
@@ -65,10 +64,8 @@ public class DrawCubeFace extends Draw {
 
 	@Override
 	public ArrayList<Quadri> getQuadri(Point3D camera, Matrix matrice) {
-		Engine.faceTargetTemp = face;
-		Engine.cubeTargetTemp = cube;
-
 		quadri.clear();
+
 		TextureSquare texture = Engine.texturePack.getFace(id, face);
 
 		if (cube.miningState != FlixBlocksUtils.NO_MINING)
@@ -107,16 +104,16 @@ public class DrawCubeFace extends Draw {
 			for (int j = 0; j <= cols; j++)
 				tab2D[i][j] = engine.to2D(tab3D[i][j]);
 
-		if (ItemTable.drawContour(cube.itemID))
-			if (cube.isPreview())
-				quadri.add(new Quadri(tab2D[0][0], tab2D[0][cols], tab2D[rows][cols], tab2D[rows][0], -0xffffff,
-						cube.isPreviewThrought() ? StatePixel.PREVIEW_THROUGHT : StatePixel.PREVIEW, false));
-			else
-				quadri.add(new Quadri(tab2D[0][0], tab2D[0][cols], tab2D[rows][cols], tab2D[rows][0], -0xffffff,
-						StatePixel.CONTOUR, false));
+		// Draw the black contour of the face
+		quadri.add(new Quadri(tab2D[0][0], tab2D[0][cols], tab2D[rows][cols], tab2D[rows][0], -0xffffff,
+				StatePixel.CONTOUR, false));
 
 		for (int row = 0; row < rows; row++)
 			for (int col = 0; col < cols; col++) {
+				// If the quadri is invisible -> next
+				if (texture.getAlpha(row, col) == 0)
+					continue;
+
 				int color = texture.getColor(row, col);
 
 				// If the cube is highlighted : its color will be lighter
@@ -130,19 +127,11 @@ public class DrawCubeFace extends Draw {
 				StatePixel state = StatePixel.FILL;
 				int alpha = forcedAlpha == DEFAULT_ALPHA ? texture.getAlpha(row, col) : forcedAlpha;
 
-				if (alpha == 0)
-					state = StatePixel.INVISIBLE;
-				else if (alpha != 255)
+				if (0 < alpha && alpha < 255)
 					state = StatePixel.TRANSPARENT;
 
-				if (cube.isPreview()) {
-					state = StatePixel.PREVIEW;
-					if (cube.isPreviewThrought())
-						state = StatePixel.PREVIEW_THROUGHT;
-				}
-
 				quadri.add(new Quadri(tab2D[row][col], tab2D[row + 1][col], tab2D[row + 1][col + 1],
-						tab2D[row][col + 1], color, state));
+						tab2D[row][col + 1], color, state, true));
 			}
 		return quadri;
 	}
