@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import client.textures.TexturePack;
 import client.textures.TextureSquare;
 import client.window.graphicEngine.calcul.Engine;
-import client.window.graphicEngine.calcul.Matrix;
 import client.window.graphicEngine.calcul.Point3D;
 import client.window.graphicEngine.calcul.StatePixel;
 import client.window.graphicEngine.calcul.Vector;
@@ -31,6 +30,11 @@ public class DrawCubeFace extends Draw {
 
 	public final static int DEFAULT_ALPHA = -1;
 	int forcedAlpha;
+
+	TextureSquare texture;
+	int cols, rows;
+	Point3D[] tab3D;
+	Point[] tab2D;
 
 	// =========================================================================================================================
 
@@ -58,54 +62,50 @@ public class DrawCubeFace extends Draw {
 	// =========================================================================================================================
 
 	@Override
-	public void init(Point3D camera, Matrix matrice) {
-		dist = center.distToOrigin();
-	}
-
-	@Override
-	public ArrayList<Quadri> getQuadri(Point3D camera, Matrix matrice) {
+	public ArrayList<Quadri> getQuadri() {
 		quadri.clear();
 
-		TextureSquare texture = Engine.texturePack.getFace(id, face);
+		texture = texturePack.getFace(id, face);
 
 		if (cube.miningState != FlixBlocksUtils.NO_MINING)
 			texture = texture.miningFusion(texturePack.getMiningFrame(cube.miningState));
 
-		int cols = texture.color[0].length;
-		int rows = texture.color.length;
+		cols = texture.width;
+		rows = texture.height;
+		int cols1 = cols + 1, rows1 = rows + 1;
 
-		Point3D[][] tab3D = new Point3D[rows + 1][cols + 1];
-		Point[][] tab2D = new Point[rows + 1][cols + 1];
+		tab3D = new Point3D[rows1 * cols1];
+		tab2D = new Point[rows1 * cols1];
 
-		for (int i = 0; i <= rows; i++)
-			for (int j = 0; j <= cols; j++)
+		for (int row = 0; row <= rows; row++)
+			for (int col = 0; col <= cols; col++)
 				switch (face) {
 				case UP:
-					tab3D[i][j] = vx.multiply(vz.multiply(points[4], j), i);
+					tab3D[row * cols1 + col] = vx.multiply(vz.multiply(points[4], col), row);
 					break;
 				case DOWN:
-					tab3D[i][j] = vx.multiply(vz.multiply(points[2], j), -i);
+					tab3D[row * cols1 + col] = vx.multiply(vz.multiply(points[2], col), -row);
 					break;
 				case EAST:
-					tab3D[i][j] = vy.multiply(vx.multiply(points[1], j), i);
+					tab3D[row * cols1 + col] = vy.multiply(vx.multiply(points[1], col), row);
 					break;
 				case WEST:
-					tab3D[i][j] = vy.multiply(vx.multiply(points[2], -j), i);
+					tab3D[row * cols1 + col] = vy.multiply(vx.multiply(points[2], -col), row);
 					break;
 				case SOUTH:
-					tab3D[i][j] = vy.multiply(vz.multiply(points[0], j), i);
+					tab3D[row * cols1 + col] = vy.multiply(vz.multiply(points[0], col), row);
 					break;
 				case NORTH:
-					tab3D[i][j] = vy.multiply(vz.multiply(points[3], -j), i);
+					tab3D[row * cols1 + col] = vy.multiply(vz.multiply(points[3], -col), row);
 					break;
 				}
 
-		for (int i = 0; i <= rows; i++)
-			for (int j = 0; j <= cols; j++)
-				tab2D[i][j] = engine.to2D(tab3D[i][j]);
+		for (int row = 0; row <= rows; row++)
+			for (int col = 0; col <= cols; col++)
+				tab2D[row * cols1 + col] = engine.to2D(tab3D[row * cols1 + col]);
 
 		// Draw the black contour of the face
-		quadri.add(new Quadri(tab2D[0][0], tab2D[0][cols], tab2D[rows][cols], tab2D[rows][0], -0xffffff,
+		quadri.add(new Quadri(tab2D[0], tab2D[cols], tab2D[rows1 * cols + rows], tab2D[rows * cols1], -0xffffff,
 				StatePixel.CONTOUR, false));
 
 		for (int row = 0; row < rows; row++)
@@ -130,8 +130,8 @@ public class DrawCubeFace extends Draw {
 				if (0 < alpha && alpha < 255)
 					state = StatePixel.TRANSPARENT;
 
-				quadri.add(new Quadri(tab2D[row][col], tab2D[row + 1][col], tab2D[row + 1][col + 1],
-						tab2D[row][col + 1], color, state, true));
+				quadri.add(new Quadri(tab2D[row * cols1 + col], tab2D[(row + 1) * cols1 + col],
+						tab2D[(row + 1) * cols1 + col + 1], tab2D[row * cols1 + col + 1], color, state, true));
 			}
 		return quadri;
 	}

@@ -229,9 +229,6 @@ public class ModelCube extends Cube implements Model {
 								index * 10 + 6 - j, this));
 					break;
 				}
-
-		for (Draw draw : draws)
-			draw.init(camera, matrice);
 	}
 
 	@Override

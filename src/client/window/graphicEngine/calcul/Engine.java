@@ -27,7 +27,9 @@ public class Engine {
 
 	// TODO [Improve] Set the view angle in function of the frame size
 	// View angles (degrees)
-	public int vueX = 60, vueY = 45;
+	public int vueXDeg = 60, vueYDeg = 45;
+	// View angles (radian) calculated from degree on window's size changes
+	public double vueXRad, vueYRad;
 
 	// ================ Target =====================
 	public int cursorX = 100, cursorY = 100;
@@ -48,7 +50,6 @@ public class Engine {
 	private StatePixel[] statePixel;
 
 	public int screenWidth = 100, screenHeight = 100, centerX, centerY;
-	public double[] vue = new double[2];
 
 	// =========================================================================================================================
 
@@ -80,8 +81,8 @@ public class Engine {
 		screenWidth = w;
 		screenHeight = h;
 
-		vue[0] = Math.tan(vueX * toRadian);
-		vue[1] = Math.tan(vueY * toRadian);
+		vueXRad = Math.tan(vueXDeg * toRadian);
+		vueYRad = Math.tan(vueYDeg * toRadian);
 
 		centerX = screenWidth / 2;
 		centerY = screenHeight / 2;
@@ -95,7 +96,7 @@ public class Engine {
 	// =========================================================================================================================
 
 	public void drawSky() {
-		double angleToRow = screenHeight / (vueY * 2);
+		double angleToRow = screenHeight / (vueYDeg * 2);
 
 		int top = (int) (screenHeight / 2 + (camera.getVy() - 20) * angleToRow);
 
@@ -153,7 +154,9 @@ public class Engine {
 
 		for (Draw d : draws) {
 			d.engine = this;
-			for (Quadri q : d.getQuadri(camera.vue, matrice)) {
+			for (Quadri q : d.getQuadri()) {
+				// TODO [Improve] Ised on 1st person : target cubes in the back of the camera
+				// (off-screen)
 				if (cubeTarget == null && q.statePixel == StatePixel.CONTOUR && q.getPoly().contains(cursorX, cursorY)
 						&& ((DrawCubeFace) d).cube.isTargetable()) {
 					faceTarget = ((DrawCubeFace) d).face;
@@ -260,8 +263,8 @@ public class Engine {
 	public Point to2D(Point3D p) {
 		if (p.x <= 0)
 			return new Point(0, 0);
-		double xx = p.z / (vue[0] * p.x);
-		double yy = p.y / (vue[1] * p.x);
+		double xx = p.z / (vueXRad * p.x);
+		double yy = p.y / (vueYRad * p.x);
 
 		int x = centerX + (int) (xx * screenWidth);
 		int y = centerY + (int) (-yy * screenHeight);
