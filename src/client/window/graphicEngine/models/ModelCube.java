@@ -51,7 +51,7 @@ public class ModelCube extends Cube implements Model {
 			double _sizeX, double _sizeY, double _sizeZ, ItemID itemID) {
 		super(x, y, z, _decalX, _decalY, _decalZ, _ax, _ay, _sizeX, _sizeY, _sizeZ, itemID);
 
-		this.centerDecal = center.clone();
+		this.centerDecal = new Point3D(x, y, z);
 
 		this.resoX = Engine.texturePack.getFace(itemID.id, Face.EAST).color[0].length;
 		this.resoY = Engine.texturePack.getFace(itemID.id, Face.NORTH).color.length;
@@ -63,8 +63,7 @@ public class ModelCube extends Cube implements Model {
 	}
 
 	public ModelCube(Cube c) {
-		this(c.center.x, c.center.y, c.center.z, c.shiftX, c.shiftY, c.shiftZ, c.ax, c.ay, c.sizeX, c.sizeY, c.sizeZ,
-				c.itemID);
+		this(c.x, c.y, c.z, c.shiftX, c.shiftY, c.shiftZ, c.ax, c.ay, c.sizeX, c.sizeY, c.sizeZ, c.itemID);
 		this.miningState = c.miningState;
 		this.onGrid = c.onGrid;
 		this.multibloc = c.multibloc;
@@ -73,18 +72,19 @@ public class ModelCube extends Cube implements Model {
 	// =========================================================================================================================
 
 	public void initPoints() {
-		centerDecal = center.clone();
+		Point3D start = new Point3D(x, y, z);
+		centerDecal = start.clone();
 
-		this.ppx = new Point3D(center.x + Math.cos(ax * toRadian) * Math.cos(ay * toRadian) * sizeX,
-				center.y + Math.sin(ay * toRadian) * sizeX,
-				center.z - Math.sin(ax * toRadian) * Math.cos(ay * toRadian) * sizeX);
+		this.ppx = new Point3D(start.x + Math.cos(ax * toRadian) * Math.cos(ay * toRadian) * sizeX,
+				start.y + Math.sin(ay * toRadian) * sizeX,
+				start.z - Math.sin(ax * toRadian) * Math.cos(ay * toRadian) * sizeX);
 
-		this.ppy = new Point3D(center.x - Math.sin(ay * toRadian) * Math.cos(ax * toRadian) * sizeY,
-				center.y + Math.cos(ay * toRadian) * sizeY,
-				center.z + Math.sin(ay * toRadian) * Math.sin(ax * toRadian) * sizeY);
+		this.ppy = new Point3D(start.x - Math.sin(ay * toRadian) * Math.cos(ax * toRadian) * sizeY,
+				start.y + Math.cos(ay * toRadian) * sizeY,
+				start.z + Math.sin(ay * toRadian) * Math.sin(ax * toRadian) * sizeY);
 
-		this.ppz = new Point3D(center.x + Math.sin(ax * toRadian) * sizeZ, center.y,
-				center.z + Math.cos(ax * toRadian) * sizeZ);
+		this.ppz = new Point3D(start.x + Math.sin(ax * toRadian) * sizeZ, start.y,
+				start.z + Math.cos(ax * toRadian) * sizeZ);
 	}
 
 	public void recalcul() {

@@ -30,12 +30,8 @@ public abstract class Draw implements Comparable<Draw> {
 
 	@Override
 	public int compareTo(Draw d) {
-		if (center.x != d.center.x)
-			return center.x > d.center.x ? 1 : -1;
-		else if (center.y != d.center.y)
-			return center.y > d.center.y ? 1 : -1;
-		else if (center.z != d.center.z)
-			return center.z > d.center.z ? 1 : -1;
+		if (center.distToOrigin() != d.center.distToOrigin())
+			return center.distToOrigin() > d.center.distToOrigin() ? 1 : -1;
 		else if (index != d.index)
 			return index - d.index;
 		return 0;
