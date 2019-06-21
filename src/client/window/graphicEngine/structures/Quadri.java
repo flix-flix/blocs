@@ -2,9 +2,6 @@ package client.window.graphicEngine.structures;
 
 import java.awt.Point;
 import java.awt.Polygon;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 
 import client.window.graphicEngine.calcul.Line;
 import client.window.graphicEngine.calcul.StatePixel;
@@ -16,15 +13,18 @@ public class Quadri {
 	public StatePixel statePixel;
 	public boolean fill = true;
 
-	private static Comparator<Point> comp = new CompPoint();
-
-	private static ArrayList<Point> list = new ArrayList<>();
+	public Line[] lines = new Line[4];
 
 	public Quadri(Point p0, Point p1, Point p2, Point p3, int color, StatePixel etat, boolean fill) {
 		this.points = new Point[] { p0, p1, p2, p3 };
 		this.color = color;
 		this.statePixel = etat;
 		this.fill = fill;
+
+		lines[0] = new Line(points[0], points[1]);
+		lines[1] = new Line(points[1], points[2]);
+		lines[2] = new Line(points[3], points[2]);
+		lines[3] = new Line(points[0], points[3]);
 	}
 
 	public Quadri(Point p0, Point p1, Point p2, Point p3, int color, StatePixel etat, boolean fill, int alpha) {
@@ -34,21 +34,42 @@ public class Quadri {
 
 	// =========================================================================================================================
 
-	public ArrayList<Point> getList() {
-		Line l1 = new Line(points[0], points[1]);
-		Line l2 = new Line(points[1], points[2]);
-		Line l3 = new Line(points[3], points[2]);
-		Line l4 = new Line(points[0], points[3]);
+	public int getLeft(int row) {
+		int col = 10_000;
 
-		list.clear();
-		list.addAll(l1.getPoints());
-		list.addAll(l2.getPoints());
-		list.addAll(l3.getPoints());
-		list.addAll(l4.getPoints());
+		for (Line l : lines)
+			if (l.min <= row && row <= l.max)
+				col = Math.min(col, l.getLeft(row));
 
-		list.sort(comp);
+		return col;
+	}
 
-		return list;
+	public int getRight(int row) {
+		int col = -1;
+
+		for (Line l : lines)
+			if (l.min <= row && row <= l.max)
+				col = Math.max(col, l.getRight(row));
+
+		return col;
+	}
+
+	public int getTop() {
+		int row = 10_000;
+
+		for (Point p : points)
+			row = Math.min(row, p.y);
+
+		return row;
+	}
+
+	public int getBottom() {
+		int row = -1;
+
+		for (Point p : points)
+			row = Math.max(row, p.y);
+
+		return row;
 	}
 
 	// =========================================================================================================================
@@ -56,26 +77,5 @@ public class Quadri {
 	public Polygon getPoly() {
 		return new Polygon(new int[] { points[0].x, points[1].x, points[2].x, points[3].x },
 				new int[] { points[0].y, points[1].y, points[2].y, points[3].y }, 4);
-	}
-
-	// =========================================================================================================================
-
-	public static class CompPoint implements Comparator<Point> {
-
-		@Override
-		public int compare(Point p1, Point p2) {
-			if (p1.y != p2.y)
-				return p1.y - p2.y;
-			if (p1.x != p2.x)
-				return p1.x - p2.x;
-			return 0;
-		}
-	}
-
-	// =========================================================================================================================
-
-	@Override
-	public String toString() {
-		return "Quadri [points=" + Arrays.toString(points) + ", color=" + color + "]";
 	}
 }

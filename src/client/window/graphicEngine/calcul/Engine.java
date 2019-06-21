@@ -145,7 +145,6 @@ public class Engine {
 
 		timeMat = System.currentTimeMillis();
 
-		// TODO [Question] Switch list of draws to PriorityQueue ?
 		ArrayList<Draw> draws = model.getDraws();
 		nbCubes = draws.size();
 		draws.sort(null);
@@ -155,14 +154,18 @@ public class Engine {
 		for (Draw d : draws) {
 			d.engine = this;
 			for (Quadri q : d.getQuadri()) {
-				// TODO [Improve] Ised on 1st person : target cubes in the back of the camera
-				// (off-screen)
-				if (cubeTarget == null && q.statePixel == StatePixel.CONTOUR && q.getPoly().contains(cursorX, cursorY)
-						&& ((DrawCubeFace) d).cube.isTargetable()) {
-					faceTarget = ((DrawCubeFace) d).face;
-					cubeTarget = ((DrawCubeFace) d).cube;
-				}
-				drawQuadri(q);
+				// Test if at least one of the points appear on the screen
+				for (int index = 0; index < 4; index++)
+					if (q.points[index].x < screenWidth && q.points[index].x > 0 && q.points[index].y < screenHeight
+							&& q.points[index].y > 0) {
+						if (cubeTarget == null && q.statePixel == StatePixel.CONTOUR
+								&& q.getPoly().contains(cursorX, cursorY) && ((DrawCubeFace) d).cube.isTargetable()) {
+							faceTarget = ((DrawCubeFace) d).face;
+							cubeTarget = ((DrawCubeFace) d).cube;
+						}
+						drawQuadri(q);
+						break;
+					}
 			}
 		}
 
@@ -190,41 +193,36 @@ public class Engine {
 	// =========================================================================================================================
 
 	private void drawQuadri(Quadri q) {
-		// Test if at least one of the points appear on the screen
-		for (int index = 0; index < 4; index++)
-			if (q.points[index].x < screenWidth && q.points[index].x > 0 && q.points[index].y < screenHeight
-					&& q.points[index].y > 0) {
+		if (q.fill) {
+			int top = yInScreen(q.getTop());
+			int bottom = yInScreen(q.getBottom());
+			for (int row = top; row <= bottom; row++) {
+				int right = xInScreen(q.getRight(row));
+				for (int col = xInScreen(q.getLeft(row)); col <= right; col++)
+					setPixel(row, col, q.color, q.statePixel, q.alpha);
+			}
+		} else
+			for (Line l : q.lines) {
+				if (l.max < 0 || l.min >= screenHeight)
+					return;
 
-				// TODO [Improve] Avoid the generation of the list of the contour of the quadri
-				ArrayList<Point> list = q.getList();
+				int max = yInScreen(l.max);
+				for (int row = yInScreen(l.min); row <= max; row++) {
 
-				if (q.fill)
-					for (int i = 0; i < list.size(); i++) {
-						int row = yInScreen(list.get(i).y);
-						int col = xInScreen(list.get(i).x);
-
-						while (++i < list.size() && list.get(i).y == row)
-							;
-
-						for (int k = col; k < xInScreen(list.get(i - 1).x); k++)
-							setPixel(row, k, q.color, q.statePixel, q.alpha);
-						i--;
-					}
-				else
-					for (Point p : list)
-						if (p.x >= 0 && p.x < screenWidth && p.y >= 0 && p.y < screenHeight)
-							setPixel(p.y, p.x, q.color, q.statePixel);
-				return;
+					int right = xInScreen(l.getRight(row));
+					for (int col = xInScreen(l.getLeft(row)); col <= right; col++)
+						setPixel(row, col, q.color, q.statePixel, q.alpha);
+				}
 			}
 	}
 
 	// =========================================================================================================================
 
-	public void setPixel(int row, int col, int rgb, StatePixel state) {
+	private void setPixel(int row, int col, int rgb, StatePixel state) {
 		setPixel(row, col, rgb, state, 0);
 	}
 
-	public void setPixel(int row, int col, int rgb, StatePixel state, int alpha) {
+	private void setPixel(int row, int col, int rgb, StatePixel state, int alpha) {
 		// If colored transparence : generate mixed color
 		if (statePixel[row * screenWidth + col] == StatePixel.TRANSPARENT)
 			rgb = mix(rgb, dataBuffer.getElem(row * screenWidth + col));
