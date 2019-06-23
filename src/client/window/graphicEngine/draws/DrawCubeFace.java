@@ -84,7 +84,7 @@ public class DrawCubeFace extends Draw {
 					tab3D[row * cols1 + col] = vx.multiply(vz.multiply(points[4], col), row);
 					break;
 				case DOWN:
-					tab3D[row * cols1 + col] = vx.multiply(vz.multiply(points[2], col), -row);
+					tab3D[row * cols1 + col] = vx.multiply(vz.multiply(points[0], col), row);
 					break;
 				case EAST:
 					tab3D[row * cols1 + col] = vy.multiply(vx.multiply(points[1], col), row);

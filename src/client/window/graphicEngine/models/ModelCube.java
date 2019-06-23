@@ -24,6 +24,7 @@ public class ModelCube extends Cube implements Model {
 	// Vectors of the cube for the 3 axes (centerDecal to ppx, ppy, ppz)
 	public Vector vx, vy, vz;
 	// 3D Points of the cube calculed with the vectors
+	// 0 (0,0,0) 1 (0,0,1) 2 (1,0,1) 3 (1,0,0) | 4,5,6,7 => y+1
 	public Point3D[] points = new Point3D[8];
 
 	// Number of pixels
