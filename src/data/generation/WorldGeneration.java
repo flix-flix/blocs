@@ -6,56 +6,62 @@ import data.map.Cube;
 import data.multiblocs.E;
 import data.multiblocs.Multibloc;
 import data.multiblocs.Tree;
+import utils.FlixBlocksUtils;
 
 public class WorldGeneration {
 
 	public static ModelMap generateMap(ModelMap map) {
 
+		int ground = 10;
+
 		// ========== Ground and Borders ==========
 		for (int x = 0; x < 100; x++)
 			for (int z = 0; z < 100; z++)
 				if (x % 99 == 0 || z % 99 == 0)
-					for (int y = 0; y <= 3; y++)
+					for (int y = 0; y <= ground + 3; y++)
 						map.add(new Cube(x, y, z, ItemID.BORDER));
-				else
-					map.add(new Cube(x, 0, z, ItemID.GRASS));
+				else {
+					for (int y = 0; y < ground - 1; y++)
+						map.add(new Cube(x, y, z, ItemID.DIRT));
+					map.add(new Cube(x, ground - 1, z, ItemID.GRASS));
+				}
 
 		// ========== Forest ==========
 		for (int x = 1; x < 30; x++)
 			for (int z = 1; z < 30; z++)
 				if (x / 2 + z < 15 || x + z / 2 < 15)
-					map.set(new Cube(x, 0, z, ItemID.DIRT));
+					map.set(new Cube(x, ground - 1, z, ItemID.DIRT));
 
-		addTree(map, 4, 1, 3);
-		addTree(map, 5, 1, 6);
-		addTree(map, 8, 1, 8);
-		addTree(map, 3, 1, 8);
-		addTree(map, 10, 1, 5);
+		addTree(map, 4, ground, 3);
+		addTree(map, 5, ground, 6);
+		addTree(map, 8, ground, 8);
+		addTree(map, 3, ground, 8);
+		addTree(map, 10, ground, 5);
 
-		addTree(map, 15, 1, 5);
-		addTree(map, 5, 1, 15);
-		addTree(map, 2, 1, 17);
-		addTree(map, 13, 1, 5);
+		addTree(map, 15, ground, 5);
+		addTree(map, 5, ground, 15);
+		addTree(map, 2, ground, 17);
+		addTree(map, 13, ground, 5);
 
 		// ========== Mountain ==========
 		for (int i = 5; i < 45; i++) {
 			if (i % 3 == 0)
-				addMountain(map, 50 - i, 1, i);
+				addMountain(map, 50 - i, ground, i);
 			if (i % 4 == 0) {
-				addMountain(map, 50 - i + 2, 1, i + 2);
-				addMountain(map, 50 - i, 1, i);
+				addMountain(map, 50 - i + 2, ground, i + 2);
+				addMountain(map, 50 - i, ground, i);
 			}
 		}
 
 		// Off-grid cube
-		map.add(new Cube(-1, 1, 0, 0, 0, 0, 45, 45, 1, 1, 1, ItemID.TEST));
+		map.add(new Cube(-1, ground, 0, 0, 0, 0, 45, 45, 1, 1, 1, ItemID.TEST));
 
 		// ========== Preview cubes ==========
-		map.add(new Cube(18, 1, 2, ItemID.GRASS));
-		map.setPreview(map.gridGet(18, 1, 2), true);
+		map.add(new Cube(18, ground, 2, ItemID.GRASS));
+		map.setPreview(map.gridGet(18, ground, 2), true);
 
-		map.add(new Cube(13, 1, 13, ItemID.DIRT));
-		map.setPreview(map.gridGet(13, 1, 13), true);
+		map.add(new Cube(13, ground, 13, ItemID.DIRT));
+		map.setPreview(map.gridGet(13, ground, 13), true);
 
 		// Cubes with the differents step of the mining animation
 		for (int x = 0; x < 5; x++) {
@@ -65,23 +71,23 @@ public class WorldGeneration {
 		}
 
 		// Add Glass blocs
-		map.add(new Cube(16, 1, 14, ItemID.GLASS));
-		map.add(new Cube(15, 1, 15, ItemID.GLASS_GRAY));
-		map.add(new Cube(14, 1, 16, ItemID.GLASS_RED));
+		map.add(new Cube(16, ground, 14, ItemID.GLASS));
+		map.add(new Cube(15, ground, 15, ItemID.GLASS_GRAY));
+		map.add(new Cube(14, ground, 16, ItemID.GLASS_RED));
 
 		// Add multibloc
-		map.add(new Tree(20, 1, 10).getCube());
+		map.add(new Tree(20, ground, 10).getCube());
 
 		// Add shifted multibloc
 		Tree t = new Tree();
-		t.setCoords(25, 1, 10);
+		t.setCoords(25, ground, 10);
 		map.add(t.getCube());
 
 		// Add multibloc (mixed on-grid/off-grid cubes)
-		map.add(new E(10, 1, 20).getCube());
+		map.add(new E(10, ground, 20).getCube());
 
 		// Add off-grid cube
-		map.add(new Cube(19, 1, 19, 0, 0, 0, 0, 0, 3, 2, 2, ItemID.TEST_BIG));
+		map.add(new Cube(19, ground, 19, 0, 0, 0, 0, 0, 3, 2, 2, ItemID.TEST_BIG));
 
 		// Add multibloc of off-grids without border
 		Multibloc m = new Multibloc();
@@ -91,12 +97,17 @@ public class WorldGeneration {
 		m.add(new Cube(5, 0, 0, 0, 0, 0, -90, 0, 3, 2, 2, ItemID.TEST_BIG));
 		m.add(new Cube(5, 0, 3, 0, 0, 0, -90, 0, 3, 2, 2, ItemID.TEST_BIG));
 
-		m.setCoords(5, 1, 25);
+		m.setCoords(5, ground, 25);
 
 		map.add(m.getCube());
 
 		// Add rotated off-grid
 		map.add(new Cube(-2, 6, -2, 0, 0, 0, 0, 90, 1, 1, 1, ItemID.OAK_TRUNK));
+
+		// Add River
+		for (int i = 0; i < 90; i++)
+			dig(map, (int) (50 * Math.cos(i * FlixBlocksUtils.toRadian)), ground,
+					(int) (50 * Math.sin(i * FlixBlocksUtils.toRadian)));
 
 		return map;
 	}
@@ -129,6 +140,16 @@ public class WorldGeneration {
 
 			map.add(new Cube(x, y + 7, z, ItemID.STONE));
 			map.add(new Cube(x, y + 6, z, ItemID.STONE));
+		}
+	}
+
+	public static void dig(ModelMap map, int x, int y, int z) {
+		for (int i = 0; i < 7; i++) {
+			int a = (7 - i) / 2;
+			for (int j = -a; j <= a; j++)
+				for (int k = -a; k <= a; k++)
+					if (!((j == -a || j == a) && (k == -a || k == a) && (7 - i) % 2 == 0))
+						map.remove(x + j, y - i, z + k);
 		}
 	}
 }

@@ -88,7 +88,7 @@ public class Session implements Serializable {
 
 		keyboard = new Keyboard(this);
 
-		camera = new Camera(new Point3D(15, 25, 0));
+		camera = new Camera(new Point3D(15, 35, 0));
 		camera.setVx(90);
 		camera.setVy(-65);
 
@@ -131,7 +131,7 @@ public class Session implements Serializable {
 			camera.setVx(90);
 			camera.setVy(-65);
 			// Replace the camera at the correct altitude
-			camera.vue.y = 25;
+			camera.vue.y = 35;
 
 			// Actualize the mouse position
 			fen.mouseX = MouseInfo.getPointerInfo().getLocation().x;
