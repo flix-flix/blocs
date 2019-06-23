@@ -30,7 +30,7 @@ public class Session implements Serializable {
 
 	public GameMode gamemode = GameMode.CLASSIC;
 
-	public Action action = Action.BLOCS;
+	public Action action = Action.CUBES;
 
 	// ================================
 
@@ -157,7 +157,7 @@ public class Session implements Serializable {
 		fen.gui.hideMenu();
 
 		switch (action) {
-		case BLOCS:
+		case CUBES:
 			break;
 		case DESTROY:
 			break;
@@ -224,7 +224,7 @@ public class Session implements Serializable {
 
 		if (gamemode == GameMode.CLASSIC)
 			if (cubeTarget != null)
-				if (action == Action.BLOCS) {
+				if (action == Action.CUBES) {
 					// If same target : No need to do something more than the previous iteration
 					if (sameTarget)
 						return;

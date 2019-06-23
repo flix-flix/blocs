@@ -20,9 +20,9 @@ import javax.swing.JFrame;
 import client.keys.Key;
 import client.session.GameMode;
 import client.session.Session;
-import client.window.panels.Pan;
 import client.window.panels.PanDevlop;
 import client.window.panels.PanGUI;
+import client.window.panels.PanGame;
 import client.window.panels.PanPause;
 import client.window.panels.StateHUD;
 
@@ -39,7 +39,7 @@ public class Fen extends JFrame {
 	public int mouseX, mouseY;
 
 	// ============= Pan ===================
-	public Pan pan;
+	public PanGame game;
 
 	public PanPause pause;
 	public PanDevlop devlop;
@@ -62,7 +62,7 @@ public class Fen extends JFrame {
 
 		// ======================================
 
-		pan = new Pan(session);
+		game = new PanGame(session);
 
 		pause = new PanPause(session);
 		devlop = new PanDevlop(session);
@@ -75,16 +75,18 @@ public class Fen extends JFrame {
 		this.setTitle("Blocs");
 		this.setVisible(true);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-		this.setSize(800, 600);
-		this.setLocationRelativeTo(null);
+		this.setSize(1200, 800);
+		this.setLocation(10, 200);
 		this.setExtendedState(this.getExtendedState() | MAXIMIZED_BOTH);
 
 		this.setFocusTraversalKeysEnabled(false);
 
-		this.add(pan);
-		pan.add(pause, -1);
-		pan.add(devlop, -1);
-		pan.add(gui, -1);
+		// ======================================
+
+		this.add(game);
+		game.add(pause, -1);
+		game.add(devlop, -1);
+		game.add(gui, -1);
 
 		threadActu = new Thread(new Actu());
 
@@ -305,7 +307,6 @@ public class Fen extends JFrame {
 		});
 
 		this.addComponentListener(new ComponentListener() {
-
 			@Override
 			public void componentShown(ComponentEvent e) {
 			}
@@ -329,9 +330,9 @@ public class Fen extends JFrame {
 
 	public void cursorVisible(boolean visible) {
 		if (visible)
-			pan.setCursor(Cursor.getDefaultCursor());
+			game.setCursor(Cursor.getDefaultCursor());
 		else
-			pan.setCursor(blankCursor);
+			game.setCursor(blankCursor);
 	}
 
 	// =========================================================================================================================
@@ -393,12 +394,12 @@ public class Fen extends JFrame {
 					else if (session.gamemode == GameMode.CREATIVE)
 						session.setTarget(gui.centerX, gui.centerY);
 
-					pan.img = session.getImage(pan.getWidth(), pan.getHeight());
+					game.img = session.getImage(game.getWidth(), game.getHeight());
 
 					session.updateTimeDev();
 					session.targetUpdate();
 
-					pan.repaint();
+					game.repaint();
 				}
 				try {
 					Thread.sleep(1);

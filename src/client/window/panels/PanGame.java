@@ -11,7 +11,7 @@ import javax.swing.JPanel;
 
 import client.session.Session;
 
-public class Pan extends JPanel {
+public class PanGame extends JPanel {
 
 	private static final long serialVersionUID = -8972445552589270416L;
 
@@ -22,7 +22,7 @@ public class Pan extends JPanel {
 	private AffineTransform affinetransform = new AffineTransform();
 	private FontRenderContext frc = new FontRenderContext(affinetransform, true, true);
 
-	public Pan(Session session) {
+	public PanGame(Session session) {
 		this.session = session;
 	}
 

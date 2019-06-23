@@ -32,4 +32,11 @@ public class E extends Multibloc {
 	public E() {
 		this(0, 0, 0);
 	}
+
+	// =========================================================================================================================
+
+	@Override
+	public Multibloc clone() {
+		return new E(x, y, z);
+	}
 }

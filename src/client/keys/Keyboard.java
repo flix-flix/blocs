@@ -76,7 +76,7 @@ public class Keyboard {
 
 			if (cube != null && face != null) {
 				// Add a cube to the map
-				if (session.action == Action.BLOCS) {
+				if (session.action == Action.CUBES) {
 					ModelCube model = session.map.gridGet(new Tuple(cube).face(face));
 					if (model != null && model.isPreview()) {
 						// Check if multibloc can be added at this position

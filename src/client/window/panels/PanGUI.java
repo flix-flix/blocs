@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
@@ -12,11 +14,14 @@ import client.messages.Message;
 import client.session.Action;
 import client.session.GameMode;
 import client.session.Session;
-import client.window.panels.emplacements.EmplacementAction;
-import client.window.panels.emplacements.EmplacementCubeSelection;
-import client.window.panels.emplacements.EmplacementSelect;
+import client.window.panels.menus.MenuAction;
+import client.window.panels.menus.MenuCol;
+import client.window.panels.menus.MenuCubeSelection;
+import client.window.panels.menus.MenuGrid;
+import client.window.panels.menus.MenuSelectInfos;
 import data.enumeration.ItemID;
 import data.map.Cube;
+import data.multiblocs.E;
 import data.multiblocs.Tree;
 
 public class PanGUI extends JPanel {
@@ -54,15 +59,21 @@ public class PanGUI extends JPanel {
 	// Store time since last cursor state switch
 	int cursorStateTime = 0;
 
-	// ======================= Emplacements =========================
+	// ======================= Menu =========================
+	int menuWidth = 400;
 
-	Action[] _actions = { Action.MOUSE, Action.SELECT, Action.BLOCS, Action.DESTROY };
-	EmplacementAction[] actions = new EmplacementAction[4];
+	MenuCol menu = new MenuCol(session);
+
+	Action[] _actions = { Action.MOUSE, Action.SELECT, Action.CUBES, Action.DESTROY };
+	MenuAction[] actions = new MenuAction[4];
 
 	ArrayList<Cube> _items = new ArrayList<>();
-	ArrayList<EmplacementCubeSelection> items = new ArrayList<>();
+	ArrayList<MenuCubeSelection> cubes = new ArrayList<>();
 
-	public EmplacementSelect select;
+	MenuGrid gridActions;
+	MenuGrid gridCubes;
+
+	public MenuSelectInfos select;
 
 	// =========================================================================================================================
 
@@ -84,26 +95,30 @@ public class PanGUI extends JPanel {
 		_items.add(new Cube(ItemID.GLASS_GRAY));
 		_items.add(new Cube(ItemID.GLASS_RED));
 		_items.add(new Tree().getCube());
+		_items.add(new E().getCube());
 
 		// ========================================================================================
 
-		int cols = 4, size = 90, border = 5;
-		int x = 10, y = 10;
+		menu.setBounds(0, 0, menuWidth, getHeight());
+		this.add(menu);
+
+		gridActions = new MenuGrid(session);
+		menu.addItem(gridActions, 100);
 
 		for (int i = 0; i < _actions.length; i++) {
-			this.add((actions[i] = new EmplacementAction(x + border + (i % cols) * (size + border),
-					y + border + (i / cols) * (size + border), size, size, session, _actions[i])));
+			actions[i] = new MenuAction(session, _actions[i]);
+			gridActions.addItem(actions[i]);
 		}
 
-		y += 120;
+		gridCubes = new MenuGrid(session);
+		menu.addItem(gridCubes, 400);
 
 		for (int i = 0; i < _items.size(); i++) {
-			items.add(new EmplacementCubeSelection(x + border + (i % cols) * (size + border),
-					y + border + (i / cols) * (size + border), size, size, session, _items.get(i)));
-			this.add(items.get(i));
+			cubes.add(new MenuCubeSelection(session, _items.get(i)));
+			gridCubes.addItem(cubes.get(i));
 		}
 
-		this.add(select = new EmplacementSelect(x, y, 4 * 90 + (4 + 1) * 5, 400, session));
+		this.add(select = new MenuSelectInfos(session));
 
 		hideMenu();
 	}
@@ -120,21 +135,8 @@ public class PanGUI extends JPanel {
 		g = gg;
 
 		switch (session.stateGUI) {
-		case PAUSE:
-			g.setColor(new Color(90, 90, 90, 90));
-			g.fillRect(0, 0, w, h);
-
 		case GAME:
-
-			if (session.gamemode == GameMode.CLASSIC) {
-				g.setColor(Color.GRAY);
-				g.fillRect(0, 0, 20 + 4 * 90 + (4 + 1) * 5, getHeight());
-
-				g.setColor(Color.lightGray);
-				g.fillRect(10, 10, 4 * 90 + (4 + 1) * 5, getHeight());
-			}
-
-			else if (session.gamemode == GameMode.CREATIVE) {
+			if (session.gamemode == GameMode.CREATIVE) {
 				// Middle indicator : cross
 				g.setColor(Color.black);
 				g.drawLine(centerX - crossSize, centerY - 1, centerX + crossSize - 1, centerY - 1);
@@ -186,23 +188,45 @@ public class PanGUI extends JPanel {
 
 			break;
 		default:
-			System.err.println("ERROR: PanGUI enum invalid: " + session.stateGUI);
 			break;
 		}
+
+		addComponentListener(new ComponentListener() {
+			@Override
+			public void componentShown(ComponentEvent e) {
+			}
+
+			@Override
+			public void componentResized(ComponentEvent e) {
+				menu.setBounds(0, 0, menuWidth, getHeight());
+			}
+
+			@Override
+			public void componentMoved(ComponentEvent e) {
+			}
+
+			@Override
+			public void componentHidden(ComponentEvent e) {
+			}
+		});
 	}
 
 	// =========================================================================================================================
 
 	public void hideMenu() {
-		for (EmplacementAction e : actions) {
-			e.setVisible(session.gamemode == GameMode.CLASSIC);
+		menu.setVisible(session.gamemode == GameMode.CLASSIC);
+
+		for (MenuAction e : actions)
 			e.selected = session.action == e.action;
-		}
 
-		for (EmplacementCubeSelection e : items)
-			e.setVisible(session.gamemode == GameMode.CLASSIC && session.action == Action.BLOCS);
+		gridCubes.setVisible(session.action == Action.CUBES);
 
-		select.setVisible(session.gamemode == GameMode.CLASSIC && session.action == Action.MOUSE);
+		select.setVisible(session.action == Action.MOUSE);
+	}
+
+	public void resetCubeSelection() {
+		for (MenuCubeSelection e : cubes)
+			e.selected = false;
 	}
 
 	// =========================================================================================================================

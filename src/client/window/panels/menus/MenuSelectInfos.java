@@ -1,4 +1,4 @@
-package client.window.panels.emplacements;
+package client.window.panels.menus;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -6,15 +6,15 @@ import java.awt.Graphics;
 import client.session.Session;
 import data.map.Cube;
 
-public class EmplacementSelect extends Emplacement {
+public class MenuSelectInfos extends Menu {
 	private static final long serialVersionUID = 8252009605405911305L;
 
 	private Cube cube;
 
 	// =========================================================================================================================
 
-	public EmplacementSelect(int x, int y, int width, int height, Session session) {
-		super(x, y, width, height, session);
+	public MenuSelectInfos(Session session) {
+		super(session);
 	}
 
 	// =========================================================================================================================

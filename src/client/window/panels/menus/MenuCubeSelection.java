@@ -1,4 +1,4 @@
-package client.window.panels.emplacements;
+package client.window.panels.menus;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -6,15 +6,15 @@ import java.awt.Graphics;
 import client.session.Session;
 import data.map.Cube;
 
-public class EmplacementCubeSelection extends Emplacement {
+public class MenuCubeSelection extends Menu {
 	private static final long serialVersionUID = -8393842761922506846L;
 
 	public Cube cube;
 
 	public boolean selected = false;
 
-	public EmplacementCubeSelection(int x, int y, int width, int height, Session session, Cube cube) {
-		super(x, y, width, height, session);
+	public MenuCubeSelection(Session session, Cube cube) {
+		super(session);
 		this.cube = cube;
 
 		this.setBackground(Color.GRAY);
@@ -33,13 +33,18 @@ public class EmplacementCubeSelection extends Emplacement {
 		}
 
 		g.setColor(Color.BLACK);
-		g.drawString(cube.itemID.name(), 10, getHeight() / 2);
+		if (cube.multibloc == null)
+			g.drawString(cube.itemID.name(), 10, getHeight() / 2);
+		else {
+			String name = cube.multibloc.getClass().getName();
+			g.drawString(name.substring(name.lastIndexOf(".") + 1), 10, getHeight() / 2);
+		}
 	}
 
 	@Override
 	public void click() {
 		session.setNextCube(cube);
-		session.fen.gui.hideMenu();
+		session.fen.gui.resetCubeSelection();
 		selected = true;
 	}
 }

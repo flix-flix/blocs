@@ -1,5 +1,5 @@
 package client.session;
 
 public enum Action {
-	MOUSE, SELECT, BLOCS, DESTROY;
+	MOUSE, SELECT, CUBES, DESTROY;
 }

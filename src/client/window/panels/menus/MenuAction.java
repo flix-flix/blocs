@@ -1,4 +1,4 @@
-package client.window.panels.emplacements;
+package client.window.panels.menus;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -8,7 +8,7 @@ import client.session.Action;
 import client.session.Session;
 import utils.FlixBlocksUtils;
 
-public class EmplacementAction extends Emplacement {
+public class MenuAction extends Menu {
 	private static final long serialVersionUID = -2696383944798968722L;
 
 	public Action action;
@@ -17,8 +17,8 @@ public class EmplacementAction extends Emplacement {
 
 	public boolean selected;
 
-	public EmplacementAction(int x, int y, int width, int height, Session session, Action action) {
-		super(x, y, width, height, session);
+	public MenuAction(Session session, Action action) {
+		super(session);
 		this.action = action;
 
 		img = FlixBlocksUtils.getImage("menu/" + action.name().toLowerCase());
@@ -29,6 +29,7 @@ public class EmplacementAction extends Emplacement {
 	@Override
 	public void paintComponent(Graphics g) {
 		g.setColor(selected ? Color.LIGHT_GRAY : Color.GRAY);
+
 		g.fillRect(0, 0, getWidth(), getHeight());
 
 		if (selected) {
@@ -44,6 +45,7 @@ public class EmplacementAction extends Emplacement {
 	@Override
 	public void click() {
 		session.setAction(action);
+		session.fen.gui.hideMenu();
 		selected = true;
 	}
 }
