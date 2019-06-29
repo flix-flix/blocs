@@ -22,11 +22,11 @@ public class E extends Multibloc {
 
 		int a = 60, b = 90 - a;
 
-		add(new Cube(x, y + 7.3, z, 0, 0, 0, 0, a, 1, 1, 1, ItemID.BORDER));
-		add(new Cube(x - Math.cos(b * Engine.toRadian), y + 7.3 + Math.sin(b * Engine.toRadian), z, 0, 0, 0, 0, a, 1, 1,
-				1, ItemID.BORDER));
+		add(new Cube(x, y + 7.3, z, 0, 0, 0, 0, 0, a, 1, 1, 1, ItemID.BORDER));
+		add(new Cube(x - Math.cos(b * Engine.toRadian), y + 7.3 + Math.sin(b * Engine.toRadian), z, 0, 0, 0, 0, 0, a, 1,
+				1, 1, ItemID.BORDER));
 		add(new Cube(x - 2 * Math.cos(b * Engine.toRadian), y + 7.3 + 2 * Math.sin(b * Engine.toRadian), z, 0, 0, 0, 0,
-				a, 1, 1, 1, ItemID.BORDER));
+				0, a, 1, 1, 1, ItemID.BORDER));
 	}
 
 	public E() {
@@ -38,5 +38,12 @@ public class E extends Multibloc {
 	@Override
 	public Multibloc clone() {
 		return new E(x, y, z);
+	}
+
+	// =========================================================================================================================
+
+	@Override
+	public String toString() {
+		return String.format("I'm an E. I'm at coord %d, %d, %d", x, y, z);
 	}
 }

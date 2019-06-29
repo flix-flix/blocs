@@ -39,7 +39,7 @@ public class Session implements Serializable {
 	public Camera camera;
 	public Keyboard keyboard;
 	public Fen fen;
-	// public TickClock clock;
+	public TickClock clock;
 
 	// ============= Target ===================
 
@@ -59,7 +59,7 @@ public class Session implements Serializable {
 	// Number of cubes and chunks displayed
 	public int nbChunks, nbCubes;
 	// Number of frames displayed the last second
-	public int fps, ticksPhys;
+	public int fps, ticksKeyBoard, ticksPhys;
 	// true : show on-screen the dev infos
 	public boolean devlop;
 
@@ -82,9 +82,8 @@ public class Session implements Serializable {
 	public Session(ModelMap m, boolean with3DEngine) throws AWTException {
 		map = m;
 
-		// clock = new TickClock();
-		// Thread clockThread = new Thread(clock);
-		// clockThread.start();
+		clock = new TickClock(this);
+		clock.add(map);
 
 		keyboard = new Keyboard(this);
 
@@ -109,6 +108,7 @@ public class Session implements Serializable {
 
 		fen.start();
 		keyboard.start();
+		new Thread(clock).start();
 	}
 
 	public void setTexturePack(TexturePack texturePack) {

@@ -6,6 +6,7 @@ import data.map.Cube;
 import data.multiblocs.E;
 import data.multiblocs.Multibloc;
 import data.multiblocs.Tree;
+import data.units.Unit;
 import utils.FlixBlocksUtils;
 
 public class WorldGeneration {
@@ -54,7 +55,7 @@ public class WorldGeneration {
 		}
 
 		// Off-grid cube
-		map.add(new Cube(-1, ground, 0, 0, 0, 0, 45, 45, 1, 1, 1, ItemID.TEST));
+		map.add(new Cube(-1, ground, 0, 0, 0, 0, 0, 45, 45, 1, 1, 1, ItemID.TEST));
 
 		// ========== Preview cubes ==========
 		map.add(new Cube(18, ground, 2, ItemID.GRASS));
@@ -87,30 +88,40 @@ public class WorldGeneration {
 		map.add(new E(10, ground, 20).getCube());
 
 		// Add off-grid cube
-		map.add(new Cube(19, ground, 19, 0, 0, 0, 0, 0, 3, 2, 2, ItemID.TEST_BIG));
+		map.add(new Cube(19, ground, 19, 0, 0, 0, 0, 0, 0, 3, 2, 2, ItemID.TEST_BIG));
 
 		// Add multibloc of off-grids without border
 		Multibloc m = new Multibloc();
-		m.add(new Cube(0, 0, 0, 0, 0, 0, 0, 0, 3, 2, 2, ItemID.TEST_BIG));
-		m.add(new Cube(0, 0, 2, 0, 0, 0, 0, 0, 3, 2, 2, ItemID.TEST_BIG));
-		m.add(new Cube(0, 0, 4, 0, 0, 0, 0, 0, 3, 2, 2, ItemID.TEST_BIG));
-		m.add(new Cube(5, 0, 0, 0, 0, 0, -90, 0, 3, 2, 2, ItemID.TEST_BIG));
-		m.add(new Cube(5, 0, 3, 0, 0, 0, -90, 0, 3, 2, 2, ItemID.TEST_BIG));
+		m.add(new Cube(0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 2, 2, ItemID.TEST_BIG));
+		m.add(new Cube(0, 0, 2, 0, 0, 0, 0, 0, 0, 3, 2, 2, ItemID.TEST_BIG));
+		m.add(new Cube(0, 0, 4, 0, 0, 0, 0, 0, 0, 3, 2, 2, ItemID.TEST_BIG));
+		m.add(new Cube(5, 0, 0, 0, 0, 0, 0, -90, 0, 3, 2, 2, ItemID.TEST_BIG));
+		m.add(new Cube(5, 0, 3, 0, 0, 0, 0, -90, 0, 3, 2, 2, ItemID.TEST_BIG));
 
 		m.setCoords(5, ground, 25);
 
 		map.add(m.getCube());
 
 		// Add rotated off-grid
-		map.add(new Cube(-2, 6, -2, 0, 0, 0, 0, 90, 1, 1, 1, ItemID.OAK_TRUNK));
+		map.add(new Cube(-2, 6, -2, 0, 0, 0, 0, 0, 90, 1, 1, 1, ItemID.OAK_TRUNK));
 
 		// Add River
 		for (int i = 0; i < 90; i++)
 			dig(map, (int) (50 * Math.cos(i * FlixBlocksUtils.toRadian)), ground,
 					(int) (50 * Math.sin(i * FlixBlocksUtils.toRadian)));
 
+		// Add Unit
+		Unit u = new Unit(5, 15, 5);
+		map.addUnit(u);
+		u.goTo(15, 10);
+		
+		// Add cube with UNIT texture
+		map.add(new Cube(0, 15, 0, ItemID.UNIT));
+
 		return map;
 	}
+
+	// =========================================================================================================================
 
 	public static void addTree(ModelMap map, int x, int y, int z) {
 		map.add(new Cube(x, y, z, ItemID.OAK_TRUNK));
@@ -129,6 +140,8 @@ public class WorldGeneration {
 		map.add(new Cube(x, y, z + 1, ItemID.OAK_LEAVES));
 		map.add(new Cube(x, y, z - 1, ItemID.OAK_LEAVES));
 	}
+
+	// =========================================================================================================================
 
 	public static void addMountain(ModelMap map, int x, int y, int z) {
 		for (int i = 0; i < 7; i++) {

@@ -19,6 +19,7 @@ public class ModelCube extends Cube implements Model {
 
 	// center cloned and changed by map rotation
 	public Point3D centerDecal;
+	public Point3D grid;
 	// The 3 adjacents points of centerDecal after the map and cube rotations
 	public Point3D ppx, ppy, ppz;
 	// Vectors of the cube for the 3 axes (centerDecal to ppx, ppy, ppz)
@@ -48,11 +49,12 @@ public class ModelCube extends Cube implements Model {
 
 	// =========================================================================================================================
 
-	public ModelCube(double x, double y, double z, int _decalX, int _decalY, int _decalZ, double _ax, double _ay,
-			double _sizeX, double _sizeY, double _sizeZ, ItemID itemID) {
-		super(x, y, z, _decalX, _decalY, _decalZ, _ax, _ay, _sizeX, _sizeY, _sizeZ, itemID);
+	public ModelCube(double x, double y, double z, int shiftX, int shiftY, int shiftZ, double rotaX, double rotaY,
+			double rotaZ, double sizeX, double sizeY, double sizeZ, ItemID itemID) {
+		super(x, y, z, shiftX, shiftY, shiftZ, rotaX, rotaY, rotaZ, sizeX, sizeY, sizeZ, itemID);
 
 		this.centerDecal = new Point3D(x, y, z);
+		this.grid = new Point3D(x, y, z);
 
 		this.resoX = Engine.texturePack.getFace(itemID.id, Face.EAST).color[0].length;
 		this.resoY = Engine.texturePack.getFace(itemID.id, Face.NORTH).color.length;
@@ -64,28 +66,42 @@ public class ModelCube extends Cube implements Model {
 	}
 
 	public ModelCube(Cube c) {
-		this(c.x, c.y, c.z, c.shiftX, c.shiftY, c.shiftZ, c.ax, c.ay, c.sizeX, c.sizeY, c.sizeZ, c.itemID);
+		this(c.x, c.y, c.z, c.shiftX, c.shiftY, c.shiftZ, c.rotaX, c.rotaY, c.rotaZ, c.sizeX, c.sizeY, c.sizeZ,
+				c.itemID);
+
+		this.rotation = c.rotation;
+		this.orientation = c.orientation;
+
 		this.miningState = c.miningState;
 		this.onGrid = c.onGrid;
 		this.multibloc = c.multibloc;
+		this.unit = c.unit;
 	}
 
 	// =========================================================================================================================
 
 	public void initPoints() {
-		Point3D start = new Point3D(x, y, z);
+		Point3D start = new Point3D(x + (shiftX / (double) resoX), y + (shiftY / (double) resoY),
+				z + (shiftZ / (double) resoZ));
 		centerDecal = start.clone();
+		grid = new Point3D(x, y, z);
 
-		this.ppx = new Point3D(start.x + Math.cos(ax * toRadian) * Math.cos(ay * toRadian) * sizeX,
-				start.y + Math.sin(ay * toRadian) * sizeX,
-				start.z - Math.sin(ax * toRadian) * Math.cos(ay * toRadian) * sizeX);
+		this.ppx = new Point3D(start.x + Math.cos(rotaY * toRadian) * Math.cos(rotaZ * toRadian) * sizeX,
+				start.y + Math.sin(rotaZ * toRadian) * Math.cos(rotaX * toRadian) * sizeX,
+				start.z + (Math.sin(rotaY * toRadian) * Math.cos(rotaZ * toRadian)
+						+ Math.sin(rotaZ * toRadian) * Math.sin(rotaX * toRadian)) * sizeX);
 
-		this.ppy = new Point3D(start.x - Math.sin(ay * toRadian) * Math.cos(ax * toRadian) * sizeY,
-				start.y + Math.cos(ay * toRadian) * sizeY,
-				start.z + Math.sin(ay * toRadian) * Math.sin(ax * toRadian) * sizeY);
+		this.ppy = new Point3D(
+				start.x - ((Math.sin(rotaZ * toRadian) * Math.cos(rotaY * toRadian))
+						+ Math.sin(rotaX * toRadian) * Math.sin(rotaY * toRadian) * Math.cos(rotaZ * toRadian)) * sizeY,
+				start.y + Math.cos(rotaZ * toRadian) * Math.cos(rotaX * toRadian) * sizeY,
+				start.z + ((-Math.sin(rotaZ * toRadian) * Math.sin(rotaY * toRadian))
+						+ Math.sin(rotaX * toRadian) * Math.cos(rotaY * toRadian) * Math.cos(rotaZ * toRadian))
+						* sizeY);
 
-		this.ppz = new Point3D(start.x + Math.sin(ax * toRadian) * sizeZ, start.y,
-				start.z + Math.cos(ax * toRadian) * sizeZ);
+		this.ppz = new Point3D(start.x + (-Math.sin(rotaY * toRadian) * Math.cos(rotaX * toRadian)) * sizeZ,
+				start.y - Math.sin(rotaX * toRadian) * sizeZ,
+				start.z + Math.cos(rotaY * toRadian) * Math.cos(rotaX * toRadian) * sizeZ);
 	}
 
 	public void recalcul() {
@@ -93,8 +109,7 @@ public class ModelCube extends Cube implements Model {
 		vy = new Vector(centerDecal, ppy, resoY);
 		vz = new Vector(centerDecal, ppz, resoZ);
 
-		points[0] = vx.multiply(vy.multiply(vz.multiply(-resoZ * shiftZ / resoZ), -resoY * shiftY / resoY),
-				-resoX * shiftX / resoX);
+		points[0] = vx.multiply(vy.multiply(vz.multiply(-shiftZ), -shiftY), -shiftX);
 		points[1] = vz.multiply(points[0], resoZ);
 		points[2] = vx.multiply(points[0], resoX);
 		points[3] = vx.multiply(points[1], resoX);
@@ -146,8 +161,51 @@ public class ModelCube extends Cube implements Model {
 
 	// =========================================================================================================================
 
+	public void updateFromUnit() {
+		if (unit == null)
+			return;
+
+		rotaX = unit.ax;
+		rotaY = unit.ay;
+		rotaZ = unit.az;
+
+		x = unit.coord.x;
+		y = unit.coord.y;
+		z = unit.coord.z;
+
+		rotation = unit.rotation;
+		orientation = unit.orientation;
+
+		switch (unit.rotationPoint) {
+		case 0:
+			shiftX = 0;
+			shiftZ = 0;
+			break;
+		case 1:
+			shiftX = 0;
+			shiftZ = resoZ;
+			break;
+		case 2:
+			shiftX = resoX;
+			shiftZ = resoZ;
+			break;
+		case 3:
+			shiftX = resoX;
+			shiftZ = 0;
+			break;
+		case 4:// center
+			shiftX = resoX / 2;
+			shiftZ = resoZ / 2;
+			break;
+		}
+	}
+
+	// =========================================================================================================================
+
 	@Override
 	public void init(Point3D camera, Matrix matrice) {
+		updateFromUnit();
+
 		matrice.transform(this);
 
 		double[] mem = new double[] { 1000000, 1000000, 1000000 };
@@ -223,10 +281,10 @@ public class ModelCube extends Cube implements Model {
 			for (int i = 0; i < 6; i++)
 				if (faces[i] == j && !hideFace[i]) {
 					if (preview)
-						draws.add(new DrawCubeFace(itemID.id, Face.faces[i], vx, vy, vz, points, centerDecal,
+						draws.add(new DrawCubeFace(itemID.id, Face.faces[i], vx, vy, vz, points, grid,
 								index * 10 + 6 - j, this, 127));
 					else
-						draws.add(new DrawCubeFace(itemID.id, Face.faces[i], vx, vy, vz, points, centerDecal,
+						draws.add(new DrawCubeFace(itemID.id, Face.faces[i], vx, vy, vz, points, grid,
 								index * 10 + 6 - j, this));
 					break;
 				}

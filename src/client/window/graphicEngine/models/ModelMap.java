@@ -12,6 +12,7 @@ import data.enumeration.Face;
 import data.map.Cube;
 import data.map.Map;
 import data.multiblocs.Multibloc;
+import data.units.Unit;
 import utils.Tuple;
 
 public class ModelMap extends Map implements Model {
@@ -37,6 +38,11 @@ public class ModelMap extends Map implements Model {
 	@Override
 	protected ModelCube createCube(Cube c) {
 		return new ModelCube(c);
+	}
+
+	@Override
+	protected ModelCube createUnit(Unit unit) {
+		return new ModelCube(super.createUnit(unit));
 	}
 
 	// =========================================================================================================================
@@ -196,6 +202,8 @@ public class ModelMap extends Map implements Model {
 					engine.nbChunks++;
 				}
 
+		for (Cube u : units)
+			draws.addAll(((ModelCube) u).getDraws());
 		engine.nbCubes = draws.size();
 
 		return draws;
@@ -210,6 +218,9 @@ public class ModelMap extends Map implements Model {
 			for (int z = -range; z <= range; z++)
 				if (_containsChunk(camChunkX + x, camChunkZ + z))
 					_getChunk(camChunkX + x, camChunkZ + z).init(camera, matrice);
+		
+		for(Cube u : units)
+			((ModelCube) u).init(camera, matrice);
 	}
 
 	// =========================================================================================================================

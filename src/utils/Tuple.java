@@ -2,6 +2,7 @@ package utils;
 
 import client.window.graphicEngine.calcul.Point3D;
 import data.enumeration.Face;
+import data.enumeration.Orientation;
 import data.map.Cube;
 
 public class Tuple {
@@ -28,6 +29,7 @@ public class Tuple {
 
 	// =========================================================================================================================
 
+	/** Returns the Coords of the cube of the other side of the given face */
 	public Tuple face(Face face) {
 		Tuple tuple = clone();
 		switch (face) {
@@ -51,6 +53,49 @@ public class Tuple {
 			break;
 		}
 		return tuple;
+	}
+
+	// =========================================================================================================================
+
+	/**
+	 * Returns the Orientation connecting the two Coords (from this to the given
+	 * one)
+	 */
+	public Orientation getOrientation(Tuple t) {
+		if (t.y != y)
+			return null;
+
+		if (t.z == z) {
+			if (t.x == x + 1)
+				return Orientation.NORTH;
+			if (t.x == x - 1)
+				return Orientation.SOUTH;
+		}
+
+		if (t.x == x) {
+			if (t.z == z + 1)
+				return Orientation.EAST;
+			if (t.z == z - 1)
+				return Orientation.WEST;
+		}
+
+		return null;
+	}
+
+	// =========================================================================================================================
+
+	/** Returns the index of the point connecting the two Coords */
+	public int getRotationPoint(Tuple t) {
+		if (t.z == z - 1 && t.x == x - 1)
+			return 0;
+		if (t.z == z + 1 && t.x == x - 1)
+			return 1;
+		if (t.z == z + 1 && t.x == x + 1)
+			return 2;
+		if (t.z == z - 1 && t.x == x + 1)
+			return 3;
+
+		return -1;
 	}
 
 	// =========================================================================================================================

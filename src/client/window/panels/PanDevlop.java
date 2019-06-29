@@ -81,6 +81,7 @@ public class PanDevlop extends JPanel {
 					+ session.timeDraw + " timePixel: " + session.timePixel);
 			writeRight("FPS: " + session.fps);
 			writeRight("Ticks (phys): " + session.ticksPhys);
+			writeRight("Ticks (key): " + session.ticksKeyBoard);
 		}
 	}
 

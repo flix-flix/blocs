@@ -1,12 +1,15 @@
 package client.textures;
 
 import data.enumeration.Face;
-import data.enumeration.SensBloc;
+import data.enumeration.Orientation;
+import data.enumeration.Rotation;
 
 public class TextureCube {
 
-	// Faces : up, down, north, south, east, west
+	/** Textures of the cube (up, down, north, south, east, west) */
 	private TextureFace[] textures = new TextureFace[6];
+	/** Textures of the cube with simulated rotation/orientation */
+	private TextureFace[] preview = new TextureFace[6];
 
 	// =========================================================================================================================
 
@@ -21,18 +24,14 @@ public class TextureCube {
 
 	// =========================================================================================================================
 
-	public TextureCube(TextureFace up, TextureFace down, TextureFace north, TextureFace south, TextureFace east,
-			TextureFace west) {
-		textures[0] = up;
-		textures[1] = down;
-		textures[2] = north;
-		textures[3] = south;
-		textures[4] = east;
-		textures[5] = west;
+	public TextureCube(TextureFace[] textures) {
+		for (int i = 0; i < 6; i++)
+			this.textures[i] = textures[i];
 	}
 
-	public TextureCube(TextureFace up, TextureFace down, TextureFace cote) {
-		this(up, down, cote, cote, cote, cote);
+	public TextureCube(TextureFace up, TextureFace down, TextureFace north, TextureFace south, TextureFace east,
+			TextureFace west) {
+		this(new TextureFace[] { up, down, north, south, east, west });
 	}
 
 	public TextureCube(String up, String down, String north, String south, String east, String west) {
@@ -40,131 +39,95 @@ public class TextureCube {
 				new TextureFace(east), new TextureFace(west));
 	}
 
-	public TextureCube(String up, String down, String pro) {
-		this(new TextureFace(up), new TextureFace(down), new TextureFace(pro));
+	// =========================================================================================================================
+
+	public TextureSquare getTexture(Face face, Rotation rota, Orientation ori) {
+		for (int i = 0; i < 6; i++) {
+			textures[i].rotation = 0;
+			preview[i] = textures[i];
+		}
+
+		switch (rota) {
+		case NONE:
+			break;
+		case BACK:
+			rotateZ();
+		case UPSIDE_DOWN_Z:
+			rotateZ();
+		case FRONT:
+			rotateZ();
+			break;
+		case LEFT:
+			rotateX();
+		case UPSIDE_DOWN_X:
+			rotateX();
+		case RIGHT:
+			rotateX();
+			break;
+		default:
+			return null;
+		}
+
+		switch (ori) {
+		case NORTH:
+			break;
+		case WEST:
+			rotateY();
+		case SOUTH:
+			rotateY();
+		case EAST:
+			rotateY();
+			break;
+		default:
+			return null;
+		}
+
+		return preview[face.ordinal()].getRotated();
 	}
 
 	// =========================================================================================================================
 
-	public TextureSquare getTexture(Face face) {
-		return textures[face.ordinal()].normal;
+	public void rotateX() {
+		preview[2].rotation += 3;
+		preview[3].rotation++;
+
+		TextureFace t = preview[0];
+
+		preview[0] = preview[5];
+		preview[5] = preview[1];
+		preview[1] = preview[4];
+		preview[4] = t;
+
+		preview[0].rotation++;
+		preview[4].rotation++;
+		preview[1].rotation++;
+		preview[5].rotation++;
 	}
 
-	public TextureFace getTextureFace(Face face) {
-		return textures[face.ordinal()];
+	public void rotateZ() {
+		preview[4].rotation++;
+		preview[5].rotation += 3;
+
+		TextureFace t = preview[0];
+
+		preview[0] = preview[3];
+		preview[3] = preview[1];
+		preview[1] = preview[2];
+		preview[2] = t;
+
+		preview[2].rotation += 2;
+		preview[1].rotation += 2;
 	}
 
-	public TextureSquare getTexture(Face face, SensBloc sens) {
-		switch (sens) {
-		case AUCUN:
-			return getTextureFace(face).normal;
-		case X:
-			switch (face) {
-			case UP:
-				return getTextureFace(Face.WEST).right;
-			case DOWN:
-				return getTextureFace(Face.EAST).right;
-			case NORTH:
-				return getTextureFace(Face.NORTH).left;
-			case SOUTH:
-				return getTextureFace(Face.SOUTH).right;
-			case EAST:
-				return getTextureFace(Face.UP).left;
-			case WEST:
-				return getTextureFace(Face.DOWN).left;
-			}
+	public void rotateY() {
+		preview[0].rotation++;
+		preview[1].rotation += 3;
 
-		case Y:
-			return getTextureFace(face).normal;
+		TextureFace t = preview[2];
 
-		case Z:
-		case LOOK_DOWN:
-			switch (face) {
-			case UP:
-				return getTextureFace(Face.SOUTH).normal;
-			case DOWN:
-				return getTextureFace(Face.NORTH).reverse;
-			case NORTH:
-				return getTextureFace(Face.UP).reverse;
-			case SOUTH:
-				return getTextureFace(Face.DOWN).normal;
-			case EAST:
-				return getTextureFace(Face.EAST).right;
-			case WEST:
-				return getTextureFace(Face.WEST).left;
-			}
-
-			// =========================================================================================================================
-
-		case LOOK_NORTH:
-			return getTextureFace(face).normal;
-
-		case LOOK_SOUTH:
-			switch (face) {
-			case UP:
-				return getTextureFace(Face.UP).reverse;
-			case DOWN:
-				return getTextureFace(Face.DOWN).reverse;
-			case NORTH:
-				return getTextureFace(Face.SOUTH).normal;
-			case SOUTH:
-				return getTextureFace(Face.NORTH).normal;
-			case EAST:
-				return getTextureFace(Face.WEST).normal;
-			case WEST:
-				return getTextureFace(Face.EAST).normal;
-			}
-
-		case LOOK_EAST:
-			switch (face) {
-			case UP:
-				return getTextureFace(Face.UP).right;
-			case DOWN:
-				return getTextureFace(Face.DOWN).left;
-			case NORTH:
-				return getTextureFace(Face.WEST).normal;
-			case SOUTH:
-				return getTextureFace(Face.EAST).normal;
-			case EAST:
-				return getTextureFace(Face.NORTH).normal;
-			case WEST:
-				return getTextureFace(Face.SOUTH).normal;
-			}
-
-		case LOOK_WEST:
-			switch (face) {
-			case UP:
-				return getTextureFace(Face.UP).left;
-			case DOWN:
-				return getTextureFace(Face.DOWN).right;
-			case NORTH:
-				return getTextureFace(Face.EAST).normal;
-			case SOUTH:
-				return getTextureFace(Face.WEST).normal;
-			case EAST:
-				return getTextureFace(Face.SOUTH).normal;
-			case WEST:
-				return getTextureFace(Face.NORTH).normal;
-			}
-
-			// =========================================================================================================================
-
-		case LOOK_UP:
-			switch (face) {
-			case UP:
-				return getTextureFace(Face.NORTH).reverse;
-			case DOWN:
-				return getTextureFace(Face.SOUTH).normal;
-			case NORTH:
-				return getTextureFace(Face.DOWN).reverse;
-			case SOUTH:
-				return getTextureFace(Face.UP).normal;
-			case EAST:
-				return getTextureFace(Face.WEST).right;
-			case WEST:
-				return getTextureFace(Face.EAST).left;
-			}
-		}
-		return null;
+		preview[2] = preview[5];
+		preview[5] = preview[3];
+		preview[3] = preview[4];
+		preview[4] = t;
 	}
 }

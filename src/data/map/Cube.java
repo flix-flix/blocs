@@ -3,8 +3,10 @@ package data.map;
 import client.session.Session;
 import client.window.graphicEngine.calcul.Point3D;
 import data.enumeration.ItemID;
-import data.enumeration.SensBloc;
+import data.enumeration.Orientation;
+import data.enumeration.Rotation;
 import data.multiblocs.Multibloc;
+import data.units.Unit;
 import utils.FlixBlocksUtils;
 import utils.Tuple;
 
@@ -25,23 +27,26 @@ public class Cube {
 	// Shift the point of rotation (pixel)
 	public int shiftX, shiftY, shiftZ;
 	// Rotation relative to the shifted center (degree)
-	public double ax, ay;
+	public double rotaX, rotaY, rotaZ;
 
 	// =========================================================================================================================
 
 	public Multibloc multibloc;
 
+	public Unit unit;
+
 	// =========================================================================================================================
 
-	public SensBloc sens = SensBloc.AUCUN;
+	public Orientation orientation = Orientation.NORTH;
+	public Rotation rotation = Rotation.NONE;
 
 	// Step of the bloc's "mining state"
 	public int miningState = FlixBlocksUtils.NO_MINING;
 
 	// =========================================================================================================================
 
-	public Cube(double x, double y, double z, int shiftX, int shiftY, int shiftZ, double ax, double ay, double sizeX,
-			double sizeY, double sizeZ, ItemID itemID) {
+	public Cube(double x, double y, double z, int shiftX, int shiftY, int shiftZ, double rotaX, double rotaY,
+			double rotaZ, double sizeX, double sizeY, double sizeZ, ItemID itemID) {
 		this.itemID = itemID;
 
 		this.x = (int) x;
@@ -50,8 +55,9 @@ public class Cube {
 
 		this.center = new Point3D(x, y, z);
 
-		this.ax = -ax;
-		this.ay = ay;
+		this.rotaX = rotaX;
+		this.rotaY = rotaY;
+		this.rotaZ = rotaZ;
 
 		this.shiftX = shiftX;
 		this.shiftY = shiftY;
@@ -63,7 +69,7 @@ public class Cube {
 	}
 
 	public Cube(int x, int y, int z, ItemID itemID) {
-		this(x, y, z, 0, 0, 0, 0, 0, 1, 1, 1, itemID);
+		this(x, y, z, 0, 0, 0, 0, 0, 0, 1, 1, 1, itemID);
 		onGrid = true;
 	}
 
@@ -75,7 +81,13 @@ public class Cube {
 		this(0, 0, 0, itemID);
 	}
 
+	public Cube(Unit unit) {
+		this(unit.coord, ItemID.UNIT);
+		this.unit = unit;
+	}
+
 	// =========================================================================================================================
+	// Coords
 
 	public Tuple coords() {
 		return new Tuple(this);

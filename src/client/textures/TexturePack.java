@@ -1,15 +1,15 @@
 package client.textures;
 
 import data.enumeration.Face;
-import data.enumeration.ItemID;
-import data.enumeration.SensBloc;
+import data.enumeration.Orientation;
+import data.enumeration.Rotation;
 
 public class TexturePack {
 
 	// Number of mining animation frames to load
 	public static final int nbAnim = 5;
 	// ID of textures blocks to load
-	public static final int[] texturesToLoad = new int[] { 0, 1, 2, 3, 20, 21, 50, 51, 52 };
+	public static final int[] texturesToLoad = new int[] { 0, 1, 2, 3, 20, 21, 50, 51, 52, 202 };
 
 	// Array to store the textures of the cubes (sorted by id)
 	TextureCube[] texturesCubes = new TextureCube[300];
@@ -35,24 +35,18 @@ public class TexturePack {
 
 	// =========================================================================================================================
 
-	public TextureSquare getFace(ItemID itemID, Face face) {
-		return getFace(itemID, face, SensBloc.AUCUN);
+	public TextureSquare getFace(int id, Face face) {
+		return getFace(id, face, Rotation.NONE, Orientation.NORTH);
 	}
 
-	public TextureSquare getFace(ItemID itemID, Face face, SensBloc sens) {
-		if (itemID.id < 0 || itemID.id > texturesCubes.length || texturesCubes[itemID.id] == null)
+	public TextureSquare getFace(int id, Face face, Rotation rota, Orientation ori) {
+		if (id < 0 || id > texturesCubes.length || texturesCubes[id] == null)
 			return faceError;
 
-		return texturesCubes[itemID.id].getTexture(face, sens);
+		return texturesCubes[id].getTexture(face, rota, ori);
 	}
 
 	// =========================================================================================================================
-
-	public TextureSquare getFace(int id, Face face) {
-		if (id < 0 || texturesCubes[id] == null)
-			return faceError;
-		return texturesCubes[id].getTexture(face);
-	}
 
 	public TextureSquare getMiningFrame(int step) {
 		return miningFrames[Math.min(step, nbAnim - 1)];

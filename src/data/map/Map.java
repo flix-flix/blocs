@@ -1,17 +1,22 @@
 package data.map;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 
+import client.session.Tickable;
 import data.multiblocs.Multibloc;
+import data.units.Unit;
 import utils.Tuple;
 
-public class Map {
+public class Map implements Tickable {
 
 	String nom = "Default Map Name";
 
 	// Chunks of the map (see getNumero(x, z))
 	private HashMap<Integer, Chunk> chunks = new HashMap<>();
+
+	protected HashSet<Cube> units = new HashSet<>();
 
 	// =========================================================================================================================
 
@@ -28,6 +33,10 @@ public class Map {
 
 	protected Cube createCube(Cube cube) {
 		return cube;
+	}
+
+	protected Cube createUnit(Unit unit) {
+		return new Cube(unit);
 	}
 
 	// =========================================================================================================================
@@ -215,6 +224,31 @@ public class Map {
 		if (tuple == null)
 			return false;
 		return gridContains(tuple.x, tuple.y, tuple.z);
+	}
+
+	// =========================================================================================================================
+	// Units
+
+	public void addUnit(Unit unit) {
+		units.add(createUnit(unit));
+	}
+
+	public void removeUnit(Unit unit) {
+		for (Cube c : units)
+			if (c.unit == unit) {
+				units.remove(c);
+				return;
+			}
+	}
+
+	// =========================================================================================================================
+	// Tickable
+
+	@Override
+	public void tick() {
+		for (Cube u : units) {
+			u.unit.doStep();
+		}
 	}
 
 	// =========================================================================================================================

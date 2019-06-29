@@ -81,6 +81,9 @@ public class Matrix {
 
 	public void transform(ModelCube c) {
 		c.initPoints();
+
+		transform(c.grid);
+
 		transform(c.centerDecal);
 		transform(c.ppx);
 		transform(c.ppy);

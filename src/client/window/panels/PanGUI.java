@@ -73,7 +73,7 @@ public class PanGUI extends JPanel {
 	MenuGrid gridActions;
 	MenuGrid gridCubes;
 
-	public MenuSelectInfos select;
+	public MenuSelectInfos selectInfos;
 
 	// =========================================================================================================================
 
@@ -118,7 +118,7 @@ public class PanGUI extends JPanel {
 			gridCubes.addItem(cubes.get(i));
 		}
 
-		this.add(select = new MenuSelectInfos(session));
+		menu.addItem(selectInfos = new MenuSelectInfos(session), 400);
 
 		hideMenu();
 	}
@@ -220,8 +220,7 @@ public class PanGUI extends JPanel {
 			e.selected = session.action == e.action;
 
 		gridCubes.setVisible(session.action == Action.CUBES);
-
-		select.setVisible(session.action == Action.MOUSE);
+		selectInfos.setVisible(true);
 	}
 
 	public void resetCubeSelection() {

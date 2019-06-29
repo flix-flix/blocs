@@ -27,10 +27,10 @@ public class MenuSelectInfos extends Menu {
 		g.setColor(Color.BLACK);
 
 		if (cube != null)
-			if (cube.multibloc == null)
-				g.drawString("Bloc : " + cube.itemID.name().toLowerCase(), 10, 30);
-			else
+			if (cube.multibloc != null)
 				g.drawString("Multi : " + cube.multibloc.toString(), 10, 30);
+			else if (cube.unit != null)
+				g.drawString("Unit : " + cube.unit.toString(), 10, 30);
 	}
 
 	// =========================================================================================================================

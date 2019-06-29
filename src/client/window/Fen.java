@@ -297,6 +297,10 @@ public class Fen extends JFrame {
 			}
 
 			public void mouseExited(MouseEvent e) {
+				if (session.gamemode == GameMode.CLASSIC) {
+					mouseX = 1_000_000;
+					mouseY = 1_000_000;
+				}
 			}
 
 			public void mouseEntered(MouseEvent e) {
@@ -359,7 +363,10 @@ public class Fen extends JFrame {
 					session.fps = fps;
 					fps = 0;
 
-					session.ticksPhys = session.keyboard.ticks;
+					session.ticksKeyBoard = session.keyboard.ticks;
+					session.ticksPhys = session.clock.ticks;
+					
+					session.clock.ticks = 0;
 					session.keyboard.ticks = 0;
 				}
 

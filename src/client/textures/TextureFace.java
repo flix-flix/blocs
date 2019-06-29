@@ -7,22 +7,21 @@ public class TextureFace {
 
 	private static String folder = "blocs";
 
-	public int rows = 0, cols = 0;
+	/** Texture of the face pre-generated in the 4 possibles */
+	private TextureSquare normal, reverse, right, left;
 
-	public TextureSquare normal, reverse, right, left;
+	public int rotation = 0;
 
 	// =========================================================================================================================
 
 	public TextureFace(String folder, String file) {
 		normal = TextureSquare.generateSquare(folder, file);
-		// generateRotatedTexture();
+		generateRotatedTexture();
 	}
 
 	public TextureFace(String file) {
 		this(folder, file);
 	}
-
-	// =========================================================================================================================
 
 	public TextureFace(String id, Face face) {
 		this(folder, getFileName(id, face));
@@ -53,8 +52,11 @@ public class TextureFace {
 	// =========================================================================================================================
 
 	public void generateRotatedTexture() {
-		rows = normal.color.length;
-		cols = normal.color[0].length;
+		int rows = normal.color.length;
+		int cols = normal.color[0].length;
+
+		if (cols != rows)
+			return;
 
 		reverse = new TextureSquare(rows, cols);
 		right = new TextureSquare(rows, cols);
@@ -77,5 +79,21 @@ public class TextureFace {
 				left.color[col][rows - 1 - row] = normal.color[row][col];
 				left.setAlpha(col, rows - 1 - row, normal.getAlpha(row, col));
 			}
+	}
+
+	// =========================================================================================================================
+
+	public TextureSquare getRotated() {
+		switch (rotation % 4) {
+		case 0:
+			return normal;
+		case 1:
+			return right;
+		case 2:
+			return reverse;
+		case 3:
+			return left;
+		}
+		return null;
 	}
 }
