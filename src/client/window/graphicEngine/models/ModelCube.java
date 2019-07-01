@@ -56,9 +56,9 @@ public class ModelCube extends Cube implements Model {
 		this.centerDecal = new Point3D(x, y, z);
 		this.grid = new Point3D(x, y, z);
 
-		this.resoX = Engine.texturePack.getFace(itemID.id, Face.EAST).color[0].length;
-		this.resoY = Engine.texturePack.getFace(itemID.id, Face.NORTH).color.length;
-		this.resoZ = Engine.texturePack.getFace(itemID.id, Face.NORTH).color[0].length;
+		this.resoX = Engine.texturePack.getFace(itemID.id, Face.EAST).width;
+		this.resoY = Engine.texturePack.getFace(itemID.id, Face.NORTH).height;
+		this.resoZ = Engine.texturePack.getFace(itemID.id, Face.NORTH).width;
 
 		initPoints();
 

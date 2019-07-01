@@ -10,36 +10,34 @@ public class TextureSquare {
 
 	public int width, height;
 
-	// TODO color[][] -> []
-	// line [0] = down | column [0] = left
-	public int color[][];
-	public int alpha[];
+	// row * width + col
+	private int color[];
+	private int alpha[];
 
 	// =========================================================================================================================
 
-	public TextureSquare(int rows, int cols) {
-		this(new int[rows][cols]);
+	public TextureSquare(int height, int width) {
+		this(new int[height * width], width);
 	}
 
-	public TextureSquare(int[][] color) {
-		this(color, new int[color.length * color[0].length]);
+	public TextureSquare(int[] color, int width) {
+		this(color, new int[color.length], width);
 		Arrays.fill(alpha, 255);
 	}
 
-	public TextureSquare(int[][] color, int[] alpha) {
-		this.width = color[0].length;
-		this.height = color.length;
+	public TextureSquare(int[] color, int[] alpha, int width) {
+		this.width = width;
+		this.height = color.length / width;
 		this.color = color;
 
 		// Remove alpha data from color
-		for (int i = 0; i < color.length; i++)
-			for (int j = 0; j < color[0].length; j++) {
-				int x = color[i][j] + 16_777_216 < -1 ? color[i][j] : color[i][j] + 16_777_216;
-				int red = x / 256 / 256 % 256;
-				int green = x / 256 % 256;
-				int blue = x % 256;
-				this.color[i][j] = -16_777_216 + red * 256 * 256 + green * 256 + blue;
-			}
+		for (int i = 0; i < color.length; i++) {
+			int x = color[i] + 16_777_216 < -1 ? color[i] : color[i] + 16_777_216;
+			int red = x / 256 / 256 % 256;
+			int green = x / 256 % 256;
+			int blue = x % 256;
+			this.color[i] = -16_777_216 + red * 256 * 256 + green * 256 + blue;
+		}
 
 		this.alpha = alpha;
 	}
@@ -55,29 +53,17 @@ public class TextureSquare {
 	}
 
 	public int getColor(int row, int col) {
-		return color[row][col];
+		return color[row * width + col];
+	}
+
+	public void setColor(int row, int col, int color) {
+		this.color[row * width + col] = color;
 	}
 
 	// =========================================================================================================================
 
 	public TextureSquare miningFusion(TextureSquare texture) {
-		int[][] tab = new int[color.length][color[0].length];
-		for (int row = 0; row < color.length; row++)
-			for (int col = 0; col < color[0].length; col++)
-
-				// if (texture.color[row][col] < -16000000)
-				// tab[row][col] = ;
-				// else
-				// tab[row][col] = color[row][col];
-
-				// TODO Handle alpha in fusion()
-				if (texture.getAlpha(row, col) == 0)
-					tab[row][col] = color[row][col];
-				else
-					tab[row][col] = texture.color[row][col];
-
-		// TODO Handle alpha in fusion()
-		return new TextureSquare(tab);
+		return this;
 	}
 
 	// =========================================================================================================================
@@ -101,11 +87,11 @@ public class TextureSquare {
 	public static TextureSquare generateSquare(String folder, String file) {
 		BufferedImage bimg = (BufferedImage) FlixBlocksUtils.getImage(folder + "/" + file);
 
-		int[][] color = new int[bimg.getHeight()][bimg.getWidth()];
+		int[] color = new int[bimg.getHeight() * bimg.getWidth()];
 
-		for (int i = 0; i < color.length; i++)
-			for (int j = 0; j < color[0].length; j++)
-				color[color.length - 1 - i][j] = bimg.getRGB(j, i);
+		for (int i = 0; i < bimg.getHeight(); i++)
+			for (int j = 0; j < bimg.getWidth(); j++)
+				color[(bimg.getHeight() - 1 - i) * bimg.getWidth() + j] = bimg.getRGB(j, i);
 
 		WritableRaster raster = bimg.getAlphaRaster();
 
@@ -116,7 +102,7 @@ public class TextureSquare {
 		else
 			raster.getPixels(0, 0, bimg.getWidth(), bimg.getHeight(), alpha);
 
-		return new TextureSquare(color, alpha);
+		return new TextureSquare(color, alpha, bimg.getWidth());
 	}
 
 	// =========================================================================================================================

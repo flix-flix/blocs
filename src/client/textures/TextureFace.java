@@ -52,8 +52,8 @@ public class TextureFace {
 	// =========================================================================================================================
 
 	public void generateRotatedTexture() {
-		int rows = normal.color.length;
-		int cols = normal.color[0].length;
+		int rows = normal.height;
+		int cols = normal.width;
 
 		if (cols != rows)
 			return;
@@ -64,19 +64,19 @@ public class TextureFace {
 
 		for (int row = 0; row < rows; row++)
 			for (int col = 0; col < cols; col++) {
-				reverse.color[rows - 1 - row][cols - 1 - col] = normal.color[row][col];
+				reverse.setColor(rows - 1 - row, cols - 1 - col, normal.getColor(row, col));
 				reverse.setAlpha(rows - 1 - row, cols - 1 - col, normal.getAlpha(row, col));
 			}
 
 		for (int row = 0; row < rows; row++)
 			for (int col = 0; col < cols; col++) {
-				right.color[cols - 1 - col][row] = normal.color[row][col];
+				right.setColor(cols - 1 - col, row, normal.getColor(row, col));
 				right.setAlpha(cols - 1 - col, row, normal.getAlpha(row, col));
 			}
 
 		for (int row = 0; row < rows; row++)
 			for (int col = 0; col < cols; col++) {
-				left.color[col][rows - 1 - row] = normal.color[row][col];
+				left.setColor(col, rows - 1 - row, normal.getColor(row, col));
 				left.setAlpha(col, rows - 1 - row, normal.getAlpha(row, col));
 			}
 	}
