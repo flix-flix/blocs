@@ -153,7 +153,7 @@ public class ModelMap extends Map implements Model {
 		if (gridContains(x, y, z))
 			for (Face face : Face.faces) {
 				Tuple t = new Tuple(x, y, z).face(face);
-				gridGet(x, y, z).hideFace[face.ordinal()] = isOpaque(t.x, t.y, t.z);
+				gridGet(x, y, z).hideFace[face.ordinal()] = isOpaque(x, y, z, t.x, t.y, t.z);
 			}
 
 		checkIfCubeVisible(x, y, z);
@@ -164,7 +164,7 @@ public class ModelMap extends Map implements Model {
 		for (Face face : Face.faces) {
 			Tuple t = new Tuple(x, y, z).face(face);
 			if (gridContains(t)) {
-				gridGet(t).hideFace[face.opposite()] = isOpaque(x, y, z);
+				gridGet(t).hideFace[face.opposite()] = isOpaque(t.x, t.y, t.z, x, y, z);
 				checkIfCubeVisible(t.x, t.y, t.z);
 			}
 		}
@@ -175,15 +175,17 @@ public class ModelMap extends Map implements Model {
 		if (!gridContains(x, y, z))
 			return;
 
-		gridGet(x, y, z).setVisible(!(isOpaque(x + 1, y, z) && isOpaque(x - 1, y, z) && isOpaque(x, y + 1, z)
-				&& isOpaque(x, y - 1, z) && isOpaque(x, y, z + 1) && isOpaque(x, y, z - 1)));
+		gridGet(x, y, z).setVisible(!(isOpaque(x, y, z, x + 1, y, z) && isOpaque(x, y, z, x - 1, y, z)
+				&& isOpaque(x, y, z, x, y + 1, z) && isOpaque(x, y, z, x, y - 1, z) && isOpaque(x, y, z, x, y, z + 1)
+				&& isOpaque(x, y, z, x, y, z - 1)));
 	}
 
 	// =========================================================================================================================
 
 	/** Returns true if there is an opaque bloc at coords x,y,z */
-	private boolean isOpaque(int x, int y, int z) {
-		return gridContains(x, y, z) && ItemTable.isOpaque(gridGet(x, y, z).itemID) && !gridGet(x, y, z).isPreview();
+	private boolean isOpaque(int x1, int y1, int z1, int x2, int y2, int z2) {
+		return gridContains(x2, y2, z2) && (ItemTable.isOpaque(gridGet(x2, y2, z2).itemID) || gridGet(x1, y1, z1).itemID == gridGet(x2, y2, z2).itemID)
+				&& !gridGet(x2, y2, z2).isPreview();
 	}
 
 	// =========================================================================================================================
@@ -218,8 +220,8 @@ public class ModelMap extends Map implements Model {
 			for (int z = -range; z <= range; z++)
 				if (_containsChunk(camChunkX + x, camChunkZ + z))
 					_getChunk(camChunkX + x, camChunkZ + z).init(camera, matrice);
-		
-		for(Cube u : units)
+
+		for (Cube u : units)
 			((ModelCube) u).init(camera, matrice);
 	}
 

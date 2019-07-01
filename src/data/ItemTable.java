@@ -21,8 +21,6 @@ public class ItemTable {
 
 	public static boolean drawContour(ItemID itemID) {
 		switch (itemID) {
-		case TEST_BIG:
-			return false;
 		case WATER:
 			return false;
 		default:
