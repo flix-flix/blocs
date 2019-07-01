@@ -12,6 +12,7 @@ import client.window.graphicEngine.calcul.Vector;
 import client.window.graphicEngine.models.ModelCube;
 import client.window.graphicEngine.structures.Draw;
 import client.window.graphicEngine.structures.Quadri;
+import data.ItemTable;
 import data.enumeration.Face;
 import utils.FlixBlocksUtils;
 
@@ -105,8 +106,9 @@ public class DrawCubeFace extends Draw {
 				tab2D[row * cols1 + col] = engine.to2D(tab3D[row * cols1 + col]);
 
 		// Draw the black contour of the face
-		quadri.add(new Quadri(tab2D[0], tab2D[cols], tab2D[rows1 * cols + rows], tab2D[rows * cols1], -0xffffff,
-				StatePixel.CONTOUR, false));
+		if (ItemTable.drawContour(cube.itemID))
+			quadri.add(new Quadri(tab2D[0], tab2D[cols], tab2D[rows1 * cols + rows], tab2D[rows * cols1], -0xffffff,
+					StatePixel.CONTOUR, false));
 
 		for (int row = 0; row < rows; row++)
 			for (int col = 0; col < cols; col++) {

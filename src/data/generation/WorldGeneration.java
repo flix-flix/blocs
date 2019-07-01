@@ -95,26 +95,23 @@ public class WorldGeneration {
 		m.add(new Cube(0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 2, 2, ItemID.TEST_BIG));
 		m.add(new Cube(0, 0, 2, 0, 0, 0, 0, 0, 0, 3, 2, 2, ItemID.TEST_BIG));
 		m.add(new Cube(0, 0, 4, 0, 0, 0, 0, 0, 0, 3, 2, 2, ItemID.TEST_BIG));
-		m.add(new Cube(5, 0, 0, 0, 0, 0, 0, -90, 0, 3, 2, 2, ItemID.TEST_BIG));
-		m.add(new Cube(5, 0, 3, 0, 0, 0, 0, -90, 0, 3, 2, 2, ItemID.TEST_BIG));
+		m.add(new Cube(5, 0, 0, 0, 0, 0, 0, 90, 0, 3, 2, 2, ItemID.TEST_BIG));
+		m.add(new Cube(5, 0, 3, 0, 0, 0, 0, 90, 0, 3, 2, 2, ItemID.TEST_BIG));
 
 		m.setCoords(5, ground, 25);
 
 		map.add(m.getCube());
 
-		// Add rotated off-grid
-		map.add(new Cube(-2, 6, -2, 0, 0, 0, 0, 0, 90, 1, 1, 1, ItemID.OAK_TRUNK));
-
 		// Add River
 		for (int i = 0; i < 90; i++)
-			dig(map, (int) (50 * Math.cos(i * FlixBlocksUtils.toRadian)), ground,
+			dig(map, (int) (50 * Math.cos(i * FlixBlocksUtils.toRadian)), ground - 1,
 					(int) (50 * Math.sin(i * FlixBlocksUtils.toRadian)));
 
 		// Add Unit
 		Unit u = new Unit(5, 15, 5);
 		map.addUnit(u);
 		u.goTo(15, 10);
-		
+
 		// Add cube with UNIT texture
 		map.add(new Cube(0, 15, 0, ItemID.UNIT));
 
@@ -157,12 +154,15 @@ public class WorldGeneration {
 	}
 
 	public static void dig(ModelMap map, int x, int y, int z) {
-		for (int i = 0; i < 7; i++) {
-			int a = (7 - i) / 2;
-			for (int j = -a; j <= a; j++)
-				for (int k = -a; k <= a; k++)
-					if (!((j == -a || j == a) && (k == -a || k == a) && (7 - i) % 2 == 0))
-						map.remove(x + j, y - i, z + k);
+		for (int _y = 0; _y < 7; _y++) {
+			int a = (7 - _y) / 2;
+			for (int _x = -a; _x <= a; _x++)
+				for (int _z = -a; _z <= a; _z++)
+					if (!((_x == -a || _x == a) && (_z == -a || _z == a) && (7 - _y) % 2 == 0)) {
+						map.remove(x + _x, y - _y, z + _z);
+						if (_y == 0)
+							map.add(new Cube(x + _x, y - _y, z + _z, 1, .8, 1, ItemID.WATER));
+					}
 		}
 	}
 }

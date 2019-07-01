@@ -68,9 +68,18 @@ public class Cube {
 		this.sizeZ = sizeZ;
 	}
 
-	public Cube(int x, int y, int z, ItemID itemID) {
-		this(x, y, z, 0, 0, 0, 0, 0, 0, 1, 1, 1, itemID);
+	public Cube(double x, double y, double z, int rotaX, int rotaY, int rotaZ, double sizeX, double sizeY, double sizeZ,
+			ItemID itemID) {
+		this(x, y, z, 0, 0, 0, rotaX, rotaY, rotaZ, sizeX, sizeY, sizeZ, itemID);
 		onGrid = true;
+	}
+
+	public Cube(double x, double y, double z, double sizeX, double sizeY, double sizeZ, ItemID itemID) {
+		this(x, y, z, 0, 0, 0, sizeX, sizeY, sizeZ, itemID);
+	}
+
+	public Cube(int x, int y, int z, ItemID itemID) {
+		this(x, y, z, 1, 1, 1, itemID);
 	}
 
 	public Cube(Tuple tuple, ItemID itemID) {

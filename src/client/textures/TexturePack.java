@@ -9,7 +9,7 @@ public class TexturePack {
 	// Number of mining animation frames to load
 	public static final int nbAnim = 5;
 	// ID of textures blocks to load
-	public static final int[] texturesToLoad = new int[] { 0, 1, 2, 3, 20, 21, 50, 51, 52, 202 };
+	public static final int[] texturesToLoad = new int[] { 0, 1, 2, 3, 20, 21, 50, 51, 52, 100, 202 };
 
 	// Array to store the textures of the cubes (sorted by id)
 	TextureCube[] texturesCubes = new TextureCube[300];
