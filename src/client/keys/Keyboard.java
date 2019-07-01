@@ -11,7 +11,7 @@ import client.window.panels.StateHUD;
 import data.enumeration.Face;
 import data.map.Cube;
 import utils.FlixBlocksUtils;
-import utils.Tuple;
+import utils.Coord;
 
 public class Keyboard {
 
@@ -66,7 +66,7 @@ public class Keyboard {
 			// Add a cube to the map
 			Cube cubeToAdd = session.getNextCube();
 			if (cube != null && face != null && cubeToAdd != null) {
-				cubeToAdd.setCoords(new Tuple(cube).face(face));
+				cubeToAdd.setCoords(new Coord(cube).face(face));
 
 				session.map.add(cubeToAdd);
 			}
@@ -77,7 +77,7 @@ public class Keyboard {
 			if (cube != null && face != null) {
 				// Add a cube to the map
 				if (session.action == Action.CUBES) {
-					ModelCube model = session.map.gridGet(new Tuple(cube).face(face));
+					ModelCube model = session.map.gridGet(new Coord(cube).face(face));
 					if (model != null && model.isPreview()) {
 						// Check if multibloc can be added at this position
 						if (model.multibloc != null && !model.multibloc.valid)

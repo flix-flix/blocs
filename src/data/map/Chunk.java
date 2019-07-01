@@ -58,9 +58,9 @@ public class Chunk {
 	}
 
 	public void gridSet(Cube cube) {
-		if (wrongY(cube.y))
+		if (wrongY(cube.gridCoord.y))
 			return;
-		_gridSet(toInChunkCoord(cube.x), cube.y, toInChunkCoord(cube.z), cube);
+		_gridSet(toInChunkCoord(cube.x), cube.gridCoord.y, toInChunkCoord(cube.z), cube);
 	}
 
 	public void gridRemove(int x, int y, int z) {

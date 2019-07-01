@@ -7,12 +7,13 @@ import data.enumeration.Orientation;
 import data.enumeration.Rotation;
 import data.multiblocs.Multibloc;
 import data.units.Unit;
+import utils.Coord;
 import utils.FlixBlocksUtils;
-import utils.Tuple;
 
 public class Cube {
 
-	public int x, y, z;
+	public double x, y, z;
+	public Coord gridCoord;
 	public ItemID itemID;
 
 	public Point3D center;
@@ -49,9 +50,11 @@ public class Cube {
 			double rotaZ, double sizeX, double sizeY, double sizeZ, ItemID itemID) {
 		this.itemID = itemID;
 
-		this.x = (int) x;
-		this.y = (int) y;
-		this.z = (int) z;
+		this.x = x;
+		this.y = y;
+		this.z = z;
+
+		gridCoord = new Coord((int) x, (int) y, (int) z);
 
 		this.center = new Point3D(x, y, z);
 
@@ -82,7 +85,7 @@ public class Cube {
 		this(x, y, z, 1, 1, 1, itemID);
 	}
 
-	public Cube(Tuple tuple, ItemID itemID) {
+	public Cube(Coord tuple, ItemID itemID) {
 		this(tuple.x, tuple.y, tuple.z, itemID);
 	}
 
@@ -98,11 +101,11 @@ public class Cube {
 	// =========================================================================================================================
 	// Coords
 
-	public Tuple coords() {
-		return new Tuple(this);
+	public Coord coords() {
+		return new Coord(this);
 	}
 
-	public void setCoords(Tuple tuple) {
+	public void setCoords(Coord tuple) {
 		setCoords(tuple.x, tuple.y, tuple.z);
 	}
 
@@ -111,6 +114,10 @@ public class Cube {
 			this.x = x;
 			this.y = y;
 			this.z = z;
+
+			gridCoord.x = x;
+			gridCoord.y = y;
+			gridCoord.z = z;
 
 			center = new Point3D(x, y, z);
 		} else
@@ -122,7 +129,11 @@ public class Cube {
 		this.y += y;
 		this.z += z;
 
-		center = new Point3D(this.x, this.y, this.z);
+		gridCoord.x += x;
+		gridCoord.y += y;
+		gridCoord.z += z;
+
+		center = new Point3D(gridCoord.x, gridCoord.y, gridCoord.z);
 	}
 
 	// =========================================================================================================================
@@ -139,6 +150,6 @@ public class Cube {
 
 	@Override
 	public String toString() {
-		return "Cube [x=" + x + ", y=" + y + ", z=" + z + ", itemID=" + itemID + "]";
+		return "Cube [coord=" + gridCoord + ", itemID=" + itemID + "]";
 	}
 }

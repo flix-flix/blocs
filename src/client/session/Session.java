@@ -19,7 +19,7 @@ import client.window.graphicEngine.models.ModelMap;
 import client.window.panels.StateHUD;
 import data.enumeration.Face;
 import data.map.Cube;
-import utils.Tuple;
+import utils.Coord;
 
 public class Session implements Serializable {
 	private static final long serialVersionUID = 8569378400890835470L;
@@ -49,7 +49,7 @@ public class Session implements Serializable {
 	// Next cube to add (wrong coords)
 	private Cube nextCube;
 	// Coord of the preview cube
-	public Tuple previousPreview;
+	public Coord previousPreview;
 
 	// ============== F3 (Dev infos) ==================
 
@@ -235,7 +235,7 @@ public class Session implements Serializable {
 						return;
 
 					// Calcul coords of the new cube(s)
-					previousPreview = new Tuple(cubeTarget).face(faceTarget);
+					previousPreview = new Coord(cubeTarget).face(faceTarget);
 					cubeToAdd.setCoords(previousPreview);
 
 					// Test if there is place for the cube(s) at the coords

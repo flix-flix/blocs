@@ -13,7 +13,7 @@ import data.map.Cube;
 import data.map.Map;
 import data.multiblocs.Multibloc;
 import data.units.Unit;
-import utils.Tuple;
+import utils.Coord;
 
 public class ModelMap extends Map implements Model {
 
@@ -49,7 +49,7 @@ public class ModelMap extends Map implements Model {
 	// Getters : cast Cube to ModelCube
 
 	@Override
-	public ModelCube gridGet(Tuple t) {
+	public ModelCube gridGet(Coord t) {
 		return (ModelCube) super.gridGet(t);
 	}
 
@@ -69,7 +69,7 @@ public class ModelMap extends Map implements Model {
 	@Override
 	protected Cube gridAdd(Cube cube) {
 		Cube c = super.gridAdd(cube);
-		update(cube.x, cube.y, cube.z);
+		update(cube.gridCoord);
 		return c;
 	}
 
@@ -114,28 +114,32 @@ public class ModelMap extends Map implements Model {
 	// =========================================================================================================================
 	// Allow coords for status modifications
 
-	public void setHighlight(Tuple tuple, boolean b) {
+	public void setHighlight(Coord tuple, boolean b) {
 		setHighlight(gridGet(tuple), b);
 	}
 
-	public void setPreview(Tuple tuple, boolean b) {
+	public void setPreview(Coord tuple, boolean b) {
 		setPreview(gridGet(tuple), b);
 	}
 
-	public void setTargetable(Tuple tuple, boolean b) {
+	public void setTargetable(Coord tuple, boolean b) {
 		setTargetable(gridGet(tuple), b);
 	}
 
 	// =========================================================================================================================
 
-	private void update(Tuple t) {
+	private void update(Coord t) {
 		update(t.x, t.y, t.z);
+	}
+
+	private void _update(Coord t) {
+		_update(t.x, t.y, t.z);
 	}
 
 	private void update(int x, int y, int z) {
 		if (gridContains(x, y, z) && gridGet(x, y, z).multibloc != null)
 			for (Cube c : gridGet(x, y, z).multibloc.list)
-				_update(c.x, c.y, c.z);
+				_update(c.gridCoord);
 		else
 			_update(x, y, z);
 	}
@@ -152,7 +156,7 @@ public class ModelMap extends Map implements Model {
 	private void updateBloc(int x, int y, int z) {
 		if (gridContains(x, y, z))
 			for (Face face : Face.faces) {
-				Tuple t = new Tuple(x, y, z).face(face);
+				Coord t = new Coord(x, y, z).face(face);
 				gridGet(x, y, z).hideFace[face.ordinal()] = isOpaque(x, y, z, t.x, t.y, t.z);
 			}
 
@@ -162,7 +166,7 @@ public class ModelMap extends Map implements Model {
 	/** Update visibility of blocs and faces around coords */
 	private void updateAround(int x, int y, int z) {
 		for (Face face : Face.faces) {
-			Tuple t = new Tuple(x, y, z).face(face);
+			Coord t = new Coord(x, y, z).face(face);
 			if (gridContains(t)) {
 				gridGet(t).hideFace[face.opposite()] = isOpaque(t.x, t.y, t.z, x, y, z);
 				checkIfCubeVisible(t.x, t.y, t.z);
@@ -184,7 +188,9 @@ public class ModelMap extends Map implements Model {
 
 	/** Returns true if there is an opaque bloc at coords x,y,z */
 	private boolean isOpaque(int x1, int y1, int z1, int x2, int y2, int z2) {
-		return gridContains(x2, y2, z2) && (ItemTable.isOpaque(gridGet(x2, y2, z2).itemID) || gridGet(x1, y1, z1).itemID == gridGet(x2, y2, z2).itemID)
+		return gridContains(x2, y2, z2)
+				&& (ItemTable.isOpaque(gridGet(x2, y2, z2).itemID)
+						|| gridGet(x1, y1, z1).itemID == gridGet(x2, y2, z2).itemID)
 				&& !gridGet(x2, y2, z2).isPreview();
 	}
 

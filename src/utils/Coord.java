@@ -5,33 +5,33 @@ import data.enumeration.Face;
 import data.enumeration.Orientation;
 import data.map.Cube;
 
-public class Tuple {
+public class Coord {
 
 	public int x, y, z;
 
-	public Tuple(double x, double y, double z) {
+	public Coord(double x, double y, double z) {
 		this.x = (int) x;
 		this.y = (int) y;
 		this.z = (int) z;
 	}
 
-	public Tuple(double x, double z) {
+	public Coord(double x, double z) {
 		this(x, 0, z);
 	}
 
-	public Tuple(Point3D point) {
+	public Coord(Point3D point) {
 		this(point.x, point.y, point.z);
 	}
 
-	public Tuple(Cube cube) {
+	public Coord(Cube cube) {
 		this(cube.x, cube.y, cube.z);
 	}
 
 	// =========================================================================================================================
 
 	/** Returns the Coords of the cube of the other side of the given face */
-	public Tuple face(Face face) {
-		Tuple tuple = clone();
+	public Coord face(Face face) {
+		Coord tuple = clone();
 		switch (face) {
 		case UP:
 			tuple.y++;
@@ -61,7 +61,7 @@ public class Tuple {
 	 * Returns the Orientation connecting the two Coords (from this to the given
 	 * one)
 	 */
-	public Orientation getOrientation(Tuple t) {
+	public Orientation getOrientation(Coord t) {
 		if (t.y != y)
 			return null;
 
@@ -85,7 +85,7 @@ public class Tuple {
 	// =========================================================================================================================
 
 	/** Returns the index of the point connecting the two Coords */
-	public int getRotationPoint(Tuple t) {
+	public int getRotationPoint(Coord t) {
 		if (t.z == z - 1 && t.x == x - 1)
 			return 0;
 		if (t.z == z + 1 && t.x == x - 1)
@@ -100,21 +100,15 @@ public class Tuple {
 
 	// =========================================================================================================================
 
-	public boolean equals(Cube cube) {
-		if (cube == null)
-			return false;
-		return x == cube.x && y == cube.y && z == cube.z;
-	}
-
-	public boolean equals(Tuple tuple) {
+	public boolean equals(Coord tuple) {
 		if (tuple == null)
 			return false;
 		return x == tuple.x && y == tuple.y && z == tuple.z;
 	}
 
 	@Override
-	public Tuple clone() {
-		return new Tuple(x, y, z);
+	public Coord clone() {
+		return new Coord(x, y, z);
 	}
 
 	@Override

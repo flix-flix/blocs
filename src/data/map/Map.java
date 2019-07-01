@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import client.session.Tickable;
 import data.multiblocs.Multibloc;
 import data.units.Unit;
-import utils.Tuple;
+import utils.Coord;
 
 public class Map implements Tickable {
 
@@ -115,7 +115,7 @@ public class Map implements Tickable {
 			remove(gridGet(x, y, z));
 	}
 
-	public void remove(Tuple tuple) {
+	public void remove(Coord tuple) {
 		remove(tuple.x, tuple.y, tuple.z);
 	}
 
@@ -176,7 +176,7 @@ public class Map implements Tickable {
 
 	protected void removeCube(Cube cube) {
 		if (cube.onGrid)
-			gridRemove(cube.x, cube.y, cube.z);
+			gridRemove(cube.gridCoord);
 		else
 			getChunkAtCoord(cube).removeCube(cube);
 	}
@@ -189,7 +189,7 @@ public class Map implements Tickable {
 	}
 
 	protected Cube gridAdd(Cube cube) {
-		if (gridContains(cube.x, cube.y, cube.z))
+		if (gridContains(cube.gridCoord))
 			return null;
 
 		Cube c = createCube(cube);
@@ -212,15 +212,15 @@ public class Map implements Tickable {
 	// =========================================================================================================================
 	// Allow tuple for coordinates
 
-	public Cube gridGet(Tuple tuple) {
+	public Cube gridGet(Coord tuple) {
 		return gridGet(tuple.x, tuple.y, tuple.z);
 	}
 
-	protected void gridRemove(Tuple tuple) {
+	protected void gridRemove(Coord tuple) {
 		gridRemove(tuple.x, tuple.y, tuple.z);
 	}
 
-	public boolean gridContains(Tuple tuple) {
+	public boolean gridContains(Coord tuple) {
 		if (tuple == null)
 			return false;
 		return gridContains(tuple.x, tuple.y, tuple.z);

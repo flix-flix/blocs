@@ -6,7 +6,7 @@ import java.util.Queue;
 import data.enumeration.Face;
 import data.enumeration.Orientation;
 import data.enumeration.Rotation;
-import utils.Tuple;
+import utils.Coord;
 
 public class Unit {
 
@@ -18,7 +18,7 @@ public class Unit {
 	// private static final int FILL = -999;
 
 	/** Coords of the unit */
-	public Tuple coord;
+	public Coord coord;
 	/** The unit orientation (the "north texture" looking to ...) */
 	public Orientation orientation = Orientation.NORTH;
 	/** The unit rotation (only on Rotation.axeX) */
@@ -41,17 +41,17 @@ public class Unit {
 	public double ax = 0, ay = 0, az = 0;
 
 	/** This unit is currently moving to this coord (null if not moving) */
-	private Tuple movingTo;
+	private Coord movingTo;
 
 	/** Coord of the destination */
-	private Tuple destination;
+	private Coord destination;
 	/** List of the coords to the destination */
-	private LinkedList<Tuple> path;
+	private LinkedList<Coord> path;
 
 	// =========================================================================================================================
 
 	public Unit(int x, int y, int z) {
-		coord = new Tuple(x, y, z);
+		coord = new Coord(x, y, z);
 	}
 
 	// =========================================================================================================================
@@ -272,11 +272,11 @@ public class Unit {
 			return false;
 		}
 
-		destination = new Tuple(endX, coord.y, endZ);
+		destination = new Coord(endX, coord.y, endZ);
 
 		// === Finding path from values ===
 		path = new LinkedList<>();
-		path.add(new Tuple(endX, this.coord.y, endZ));
+		path.add(new Coord(endX, this.coord.y, endZ));
 
 		while (map[endX][endZ] != START) {
 			// Generates diagonal path (instead of full north then full right)
@@ -334,7 +334,7 @@ public class Unit {
 		if (map[x][z] >= value || map[x][z] == EMPTY)
 			return false;
 
-		path.add(new Tuple(x, this.coord.y, z));
+		path.add(new Coord(x, this.coord.y, z));
 
 		return true;
 	}
@@ -351,11 +351,11 @@ public class Unit {
 
 	// =========================================================================================================================
 
-	public Tuple getDestination() {
+	public Coord getDestination() {
 		return destination;
 	}
 
-	public LinkedList<Tuple> getPath() {
+	public LinkedList<Coord> getPath() {
 		return path;
 	}
 

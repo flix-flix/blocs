@@ -173,6 +173,8 @@ public class ModelCube extends Cube implements Model {
 		y = unit.coord.y;
 		z = unit.coord.z;
 
+		gridCoord = unit.coord;
+
 		rotation = unit.rotation;
 		orientation = unit.orientation;
 
