@@ -40,18 +40,17 @@ public class Fen extends JFrame {
 
 	// ============= Pan ===================
 	public PanGame game;
-
 	public PanPause pause;
 	public PanDevlop devlop;
 	public PanGUI gui;
 
 	// ============= Thread ===================
-	// Refresh the image
-	Thread threadActu;
-	// Processing the next image doesn't affect the others tasks
-	Thread threadImage;
+	/** Refresh the image */
+	private Thread threadActu;
+	/** Processing the next image doesn't affect the others tasks */
+	private Thread threadImage;
 
-	// true => generate a new image then turn to false
+	/** true : start the generation of a new image then turn to false */
 	boolean repaint = false;
 
 	// =========================================================================================================================
@@ -365,7 +364,7 @@ public class Fen extends JFrame {
 
 					session.ticksKeyBoard = session.keyboard.ticks;
 					session.ticksPhys = session.clock.ticks;
-					
+
 					session.clock.ticks = 0;
 					session.keyboard.ticks = 0;
 				}
@@ -401,7 +400,8 @@ public class Fen extends JFrame {
 					else if (session.gamemode == GameMode.CREATIVE)
 						session.setTarget(gui.centerX, gui.centerY);
 
-					game.img = session.getImage(game.getWidth(), game.getHeight());
+					if (game.getWidth() != 0)
+						game.img = session.getImage(game.getWidth(), game.getHeight());
 
 					session.updateTimeDev();
 					session.targetUpdate();

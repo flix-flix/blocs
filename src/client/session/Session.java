@@ -18,6 +18,7 @@ import client.window.graphicEngine.models.ModelCube;
 import client.window.graphicEngine.models.ModelMap;
 import client.window.panels.StateHUD;
 import data.enumeration.Face;
+import data.enumeration.Orientation;
 import data.map.Cube;
 import utils.Coord;
 
@@ -46,31 +47,36 @@ public class Session implements Serializable {
 	public ModelCube cubeTarget;
 	public Face faceTarget;
 
-	// Next cube to add (wrong coords)
+	/** Next cube to add (its coords aren't valid) */
 	private Cube nextCube;
-	// Coord of the preview cube
+	/** Coord of the preview cube */
 	public Coord previousPreview;
 
 	// ============== F3 (Dev infos) ==================
 
-	public Face playerOrientation = Face.NORTH;
-	// Various chronometric marks
+	/** The orientation of the player */
+	public Orientation playerOrientation = Orientation.NORTH;
+	/** Chronometric marks */
 	public long timeBefore, timeInit, timeMat, timeDraw, timePixel;
-	// Number of cubes and chunks displayed
-	public int nbChunks, nbCubes;
-	// Number of frames displayed the last second
-	public int fps, ticksKeyBoard, ticksPhys;
-	// true : show on-screen the dev infos
+	/** Number of cubes and chunks displayed */
+	public int nbChunks, nbFaces;
+	/** Number of frames displayed the last second */
+	public int fps;
+	/** Number of state-checks of the mouse and keyboard */
+	public int ticksKeyBoard;
+	/** Number of steps of the simulated environment */
+	public int ticksPhys;
+	/** true : show on-screen the dev infos */
 	public boolean devlop;
 
 	// ============ Options ============
-	// Max frames/seconde allowed
+	/** Max frames/seconde allowed */
 	public int FPSmax = 60;
 
-	// true : currently generating an image
+	/** true : currently generating an image */
 	public boolean processing = false;
 
-	// State of the window [GAME, PAUSE, DIALOG, ...]
+	/** State of the window [GAME, PAUSE, DIALOG, ...] */
 	public StateHUD stateGUI = StateHUD.GAME;
 
 	// =============== Dialog =================
@@ -92,11 +98,8 @@ public class Session implements Serializable {
 		camera.setVy(-65);
 
 		if (with3DEngine) {
-			engine = new Engine();
-			engine.camera = camera;
-
-			engine.model = map;
-			map.engine = engine;
+			setTexturePack(new TexturePack());
+			engine = new Engine(camera, map);
 		}
 	}
 
@@ -116,6 +119,7 @@ public class Session implements Serializable {
 
 		Engine.texturePack = texturePack;
 		DrawCubeFace.texturePack = texturePack;
+		ModelCube.texturePack = texturePack;
 	}
 
 	// =========================================================================================================================
@@ -197,11 +201,10 @@ public class Session implements Serializable {
 		timeDraw = engine.timeDraw - engine.timeMat;
 		timePixel = engine.timePixel - engine.timeDraw;
 
-		nbChunks = engine.nbChunks;
-		nbCubes = engine.nbCubes;
+		nbChunks = map.nbChunks;
+		nbFaces = map.nbFaces;
 
-		engine.nbChunks = 0;
-		engine.nbCubes = 0;
+		map.nbChunks = 0;
 	}
 
 	public void targetUpdate() {

@@ -4,17 +4,23 @@ public class Camera {
 
 	// ==== Camera infos ====
 
-	// Position of the camera
+	/** Position of the camera */
 	public Point3D vue = new Point3D(0, 0, 0);
-	// Rotation of the camera (right - left)
-	private double vx = 0;
-	// Rotation of the camera (up - down)
-	private double vy = 0;
+	/** Rotation of the camera on the horizontal axe */
+	private double vx;
+	/** Rotation of the camera on the vertical axe */
+	private double vy;
 
 	// =========================================================================================================================
 
-	public Camera(Point3D vue) {
+	public Camera(Point3D vue, int vx, int vy) {
 		this.vue = vue;
+		this.vx = vx;
+		this.vy = vy;
+	}
+
+	public Camera(Point3D vue) {
+		this(vue, 0, 0);
 	}
 
 	// =========================================================================================================================

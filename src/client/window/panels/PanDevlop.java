@@ -17,15 +17,15 @@ public class PanDevlop extends JPanel {
 
 	Session session;
 
-	// Text-backgrounds are bigger than <margin> pixels
+	/** Space between text and background border (pixels) */
 	static final int margin = 5;
-	// Height of the text-backgrounds
+	/** Height of the text-backgrounds */
 	static final int size = 20;
 
 	FontMetrics fm;
 	Graphics graphics;
 
-	// Number of strings already drawn (left/right)
+	/** Number of strings already drawn (left/right) */
 	int right = 0, left = 0;
 
 	public PanDevlop(Session session) {
@@ -76,7 +76,7 @@ public class PanDevlop extends JPanel {
 
 			// ==================================================================================================================
 
-			writeRight("nbChunks: " + session.nbChunks + " nbCubes: " + session.nbCubes);
+			writeRight("nbChunks: " + session.nbChunks + " nbFaces: " + session.nbFaces);
 			writeRight("timeInit: " + session.timeInit + " timeMat: " + session.timeMat + " timeDraw: "
 					+ session.timeDraw + " timePixel: " + session.timePixel);
 			writeRight("FPS: " + session.fps);

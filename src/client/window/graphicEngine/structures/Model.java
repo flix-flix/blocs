@@ -2,14 +2,14 @@ package client.window.graphicEngine.structures;
 
 import java.util.ArrayList;
 
+import client.window.graphicEngine.calcul.Camera;
 import client.window.graphicEngine.calcul.Matrix;
-import client.window.graphicEngine.calcul.Point3D;
 
 public interface Model {
 
-	public abstract ArrayList<Draw> getDraws();
+	public abstract ArrayList<Draw> getDraws(Camera camera);
 
-	public abstract void init(Point3D camera, Matrix matrice);
+	public abstract void init(Camera camera, Matrix matrice);
 
 	// =========================================================================================================================
 

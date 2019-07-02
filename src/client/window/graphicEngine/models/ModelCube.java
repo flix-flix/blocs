@@ -2,7 +2,8 @@ package client.window.graphicEngine.models;
 
 import java.util.ArrayList;
 
-import client.window.graphicEngine.calcul.Engine;
+import client.textures.TexturePack;
+import client.window.graphicEngine.calcul.Camera;
 import client.window.graphicEngine.calcul.Matrix;
 import client.window.graphicEngine.calcul.Point3D;
 import client.window.graphicEngine.calcul.Vector;
@@ -17,30 +18,37 @@ public class ModelCube extends Cube implements Model {
 
 	private static final double toRadian = Math.PI / 180;
 
-	// center cloned and changed by map rotation
+	public static TexturePack texturePack;
+
+	/** center after map rotation */
 	public Point3D centerDecal;
-	public Point3D grid;
-	// The 3 adjacents points of centerDecal after the map and cube rotations
+	/** The 3 adjacents points of centerDecal after the map and cube rotations */
 	public Point3D ppx, ppy, ppz;
-	// Vectors of the cube for the 3 axes (centerDecal to ppx, ppy, ppz)
+	/** Vectors of the cube for the 3 axes (centerDecal to ppx, ppy, ppz) */
 	public Vector vx, vy, vz;
-	// 3D Points of the cube calculed with the vectors
-	// 0 (0,0,0) 1 (0,0,1) 2 (1,0,1) 3 (1,0,0) | 4,5,6,7 => y+1
+	/**
+	 * 3D Points of the cube calculed with the vectors
+	 * 
+	 * 0 (0,0,0) 1 (0,0,1) 2 (1,0,1) 3 (1,0,0) | 4,5,6,7 => y+1
+	 */
 	public Point3D[] points = new Point3D[8];
 
-	// Number of pixels
+	/** Cube resolution (pixels) */
 	public int resoX, resoY, resoZ;
 
-	// Index of the cube (used to sort when centers are at the same location)
+	/** Index of the cube (used to sort when centers are at the same location) */
 	int index;
-	// true: the face won't be displayed (Set auto when an adjacent bloc is added)
+	/**
+	 * true: the face won't be displayed (Handled by ModelMap when an adjacent cube
+	 * is added)
+	 */
 	public boolean[] hideFace = { false, false, false, false, false, false };
 
-	// true : the bloc will be transparent
+	/** true : the cube will be transparent */
 	private boolean preview = false;
-	// true : allow the bloc to be selected
+	/** true : allow the cube to be selected */
 	private boolean targetable = true;
-	// true : pointed by the player
+	/** true : pointed by the player */
 	private boolean highlight;
 
 	// =================== Model ===================
@@ -54,15 +62,10 @@ public class ModelCube extends Cube implements Model {
 		super(x, y, z, shiftX, shiftY, shiftZ, rotaX, rotaY, rotaZ, sizeX, sizeY, sizeZ, itemID);
 
 		this.centerDecal = new Point3D(x, y, z);
-		this.grid = new Point3D(x, y, z);
 
-		this.resoX = Engine.texturePack.getFace(itemID.id, Face.EAST).width;
-		this.resoY = Engine.texturePack.getFace(itemID.id, Face.NORTH).height;
-		this.resoZ = Engine.texturePack.getFace(itemID.id, Face.NORTH).width;
-
-		initPoints();
-
-		recalcul();
+		this.resoX = texturePack.getFace(itemID.id, Face.EAST).width;
+		this.resoY = texturePack.getFace(itemID.id, Face.NORTH).height;
+		this.resoZ = texturePack.getFace(itemID.id, Face.NORTH).width;
 	}
 
 	public ModelCube(Cube c) {
@@ -81,27 +84,25 @@ public class ModelCube extends Cube implements Model {
 	// =========================================================================================================================
 
 	public void initPoints() {
-		Point3D start = new Point3D(x + (shiftX / (double) resoX), y + (shiftY / (double) resoY),
+		centerDecal = new Point3D(x + (shiftX / (double) resoX), y + (shiftY / (double) resoY),
 				z + (shiftZ / (double) resoZ));
-		centerDecal = start.clone();
-		grid = new Point3D(x, y, z);
 
-		this.ppx = new Point3D(start.x + Math.cos(rotaY * toRadian) * Math.cos(rotaZ * toRadian) * sizeX,
-				start.y + Math.sin(rotaZ * toRadian) * Math.cos(rotaX * toRadian) * sizeX,
-				start.z + (Math.sin(rotaY * toRadian) * Math.cos(rotaZ * toRadian)
+		this.ppx = new Point3D(centerDecal.x + Math.cos(rotaY * toRadian) * Math.cos(rotaZ * toRadian) * sizeX,
+				centerDecal.y + Math.sin(rotaZ * toRadian) * Math.cos(rotaX * toRadian) * sizeX,
+				centerDecal.z + (Math.sin(rotaY * toRadian) * Math.cos(rotaZ * toRadian)
 						+ Math.sin(rotaZ * toRadian) * Math.sin(rotaX * toRadian)) * sizeX);
 
 		this.ppy = new Point3D(
-				start.x - ((Math.sin(rotaZ * toRadian) * Math.cos(rotaY * toRadian))
+				centerDecal.x - ((Math.sin(rotaZ * toRadian) * Math.cos(rotaY * toRadian))
 						+ Math.sin(rotaX * toRadian) * Math.sin(rotaY * toRadian) * Math.cos(rotaZ * toRadian)) * sizeY,
-				start.y + Math.cos(rotaZ * toRadian) * Math.cos(rotaX * toRadian) * sizeY,
-				start.z + ((-Math.sin(rotaZ * toRadian) * Math.sin(rotaY * toRadian))
+				centerDecal.y + Math.cos(rotaZ * toRadian) * Math.cos(rotaX * toRadian) * sizeY,
+				centerDecal.z + ((-Math.sin(rotaZ * toRadian) * Math.sin(rotaY * toRadian))
 						+ Math.sin(rotaX * toRadian) * Math.cos(rotaY * toRadian) * Math.cos(rotaZ * toRadian))
 						* sizeY);
 
-		this.ppz = new Point3D(start.x + (-Math.sin(rotaY * toRadian) * Math.cos(rotaX * toRadian)) * sizeZ,
-				start.y - Math.sin(rotaX * toRadian) * sizeZ,
-				start.z + Math.cos(rotaY * toRadian) * Math.cos(rotaX * toRadian) * sizeZ);
+		this.ppz = new Point3D(centerDecal.x + (-Math.sin(rotaY * toRadian) * Math.cos(rotaX * toRadian)) * sizeZ,
+				centerDecal.y - Math.sin(rotaX * toRadian) * sizeZ,
+				centerDecal.z + Math.cos(rotaY * toRadian) * Math.cos(rotaX * toRadian) * sizeZ);
 	}
 
 	public void recalcul() {
@@ -205,7 +206,7 @@ public class ModelCube extends Cube implements Model {
 	// =========================================================================================================================
 
 	@Override
-	public void init(Point3D camera, Matrix matrice) {
+	public void init(Camera camera, Matrix matrice) {
 		updateFromUnit();
 
 		matrice.transform(this);
@@ -282,18 +283,14 @@ public class ModelCube extends Cube implements Model {
 		for (int j = 6; j >= 4; j--)
 			for (int i = 0; i < 6; i++)
 				if (faces[i] == j && !hideFace[i]) {
-					if (preview)
-						draws.add(new DrawCubeFace(itemID.id, Face.faces[i], vx, vy, vz, points, grid,
-								index * 10 + 6 - j, this, 127));
-					else
-						draws.add(new DrawCubeFace(itemID.id, Face.faces[i], vx, vy, vz, points, grid,
-								index * 10 + 6 - j, this));
+					draws.add(new DrawCubeFace(this, Face.faces[i], centerDecal, index * 10 + 6 - j,
+							preview ? 127 : DrawCubeFace.DEFAULT_ALPHA));
 					break;
 				}
 	}
 
 	@Override
-	public ArrayList<Draw> getDraws() {
+	public ArrayList<Draw> getDraws(Camera camera) {
 		return draws;
 	}
 

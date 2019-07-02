@@ -2,9 +2,8 @@ package client.window.graphicEngine.models;
 
 import java.util.ArrayList;
 
-import client.window.graphicEngine.calcul.Engine;
+import client.window.graphicEngine.calcul.Camera;
 import client.window.graphicEngine.calcul.Matrix;
-import client.window.graphicEngine.calcul.Point3D;
 import client.window.graphicEngine.structures.Draw;
 import client.window.graphicEngine.structures.Model;
 import data.ItemTable;
@@ -17,8 +16,6 @@ import utils.Coord;
 
 public class ModelMap extends Map implements Model {
 
-	public Engine engine;
-
 	// ===== Model =====
 	public boolean visible = true;
 	private ArrayList<Draw> draws = new ArrayList<>();
@@ -26,6 +23,9 @@ public class ModelMap extends Map implements Model {
 	// ======== Parameters ========
 	/** Range of chunks to draw */
 	int range = 3;
+
+	// ===== Infos =====
+	public int nbFaces, nbChunks;
 
 	// =========================================================================================================================
 	// Create displayable-data
@@ -197,30 +197,30 @@ public class ModelMap extends Map implements Model {
 	// =========================================================================================================================
 
 	@Override
-	public ArrayList<Draw> getDraws() {
+	public ArrayList<Draw> getDraws(Camera camera) {
 		draws.clear();
 
-		int camChunkX = toChunkCoord(engine.camera.vue.x);
-		int camChunkZ = toChunkCoord(engine.camera.vue.z);
+		int camChunkX = toChunkCoord(camera.vue.x);
+		int camChunkZ = toChunkCoord(camera.vue.z);
 
 		for (int x = -range; x <= range; x++)
 			for (int z = -range; z <= range; z++)
 				if (_containsChunk(camChunkX + x, camChunkZ + z)) {
-					draws.addAll(_getChunk(camChunkX + x, camChunkZ + z).getDraws());
-					engine.nbChunks++;
+					draws.addAll(_getChunk(camChunkX + x, camChunkZ + z).getDraws(camera));
+					nbChunks++;
 				}
 
 		for (Cube u : units)
-			draws.addAll(((ModelCube) u).getDraws());
-		engine.nbCubes = draws.size();
+			draws.addAll(((ModelCube) u).getDraws(camera));
+		nbFaces = draws.size();
 
 		return draws;
 	}
 
 	@Override
-	public void init(Point3D camera, Matrix matrice) {
-		int camChunkX = toChunkCoord(engine.camera.vue.x);
-		int camChunkZ = toChunkCoord(engine.camera.vue.z);
+	public void init(Camera camera, Matrix matrice) {
+		int camChunkX = toChunkCoord(camera.vue.x);
+		int camChunkZ = toChunkCoord(camera.vue.z);
 
 		for (int x = -range; x <= range; x++)
 			for (int z = -range; z <= range; z++)

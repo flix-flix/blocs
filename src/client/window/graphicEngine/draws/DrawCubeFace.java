@@ -8,7 +8,6 @@ import client.textures.TextureSquare;
 import client.window.graphicEngine.calcul.Engine;
 import client.window.graphicEngine.calcul.Point3D;
 import client.window.graphicEngine.calcul.StatePixel;
-import client.window.graphicEngine.calcul.Vector;
 import client.window.graphicEngine.models.ModelCube;
 import client.window.graphicEngine.structures.Draw;
 import client.window.graphicEngine.structures.Quadri;
@@ -18,86 +17,69 @@ import utils.FlixBlocksUtils;
 
 public class DrawCubeFace extends Draw {
 
-	// Reference to the "data"
-	public ModelCube cube;
-
 	public static TexturePack texturePack;
 
-	// =================== Basic infos ==================
-	int id;
+	/** Reference to the "data" */
+	public ModelCube cube;
+	/** Face to draw */
 	public Face face;
-	Vector vx, vy, vz;
-	Point3D[] points;
 
 	public final static int DEFAULT_ALPHA = -1;
 	int forcedAlpha;
 
-	TextureSquare texture;
-	int cols, rows;
-	Point3D[] tab3D;
-	Point[] tab2D;
-
 	// =========================================================================================================================
 
-	public DrawCubeFace(int id, Face face, Vector vx, Vector vy, Vector vz, Point3D[] points, Point3D center, int index,
-			ModelCube cube) {
-		this(id, face, vx, vy, vz, points, center, index, cube, DEFAULT_ALPHA);
-	}
-
-	public DrawCubeFace(int id, Face face, Vector vx, Vector vy, Vector vz, Point3D[] points, Point3D center, int index,
-			ModelCube cube, int forcedAlpha) {
-		this.id = id;
+	public DrawCubeFace(ModelCube cube, Face face, Point3D center, int index, int forcedAlpha) {
+		this.cube = cube;
 		this.face = face;
-		this.vx = vx;
-		this.vy = vy;
-		this.vz = vz;
-		this.points = points;
 		this.center = center;
 		this.index = index;
 
-		this.cube = cube;
-
 		this.forcedAlpha = forcedAlpha;
+	}
+
+	public DrawCubeFace(ModelCube cube, Face face, Point3D center, int index) {
+		this(cube, face, center, index, DEFAULT_ALPHA);
 	}
 
 	// =========================================================================================================================
 
 	@Override
-	public ArrayList<Quadri> getQuadri() {
-		quadri.clear();
+	public ArrayList<Quadri> getQuadri(Engine engine) {
+		ArrayList<Quadri> quadri = new ArrayList<>();
 
-		texture = texturePack.getFace(id, face, cube.rotation, cube.orientation);
+		TextureSquare texture = texturePack.getFace(cube.itemID.id, face, cube.rotation, cube.orientation);
 
 		if (cube.miningState != FlixBlocksUtils.NO_MINING)
 			texture = texture.miningFusion(texturePack.getMiningFrame(cube.miningState));
 
-		cols = texture.width;
-		rows = texture.height;
+		int cols = texture.width;
+		int rows = texture.height;
 		int cols1 = cols + 1, rows1 = rows + 1;
 
-		tab3D = new Point3D[rows1 * cols1];
-		tab2D = new Point[rows1 * cols1];
+		Point3D[] tab3D = new Point3D[rows1 * cols1];
+		Point[] tab2D = new Point[rows1 * cols1];
 
 		for (int row = 0; row <= rows; row++)
 			for (int col = 0; col <= cols; col++)
 				switch (face) {
 				case UP:
-					tab3D[row * cols1 + col] = vx.multiply(vz.multiply(points[4], col), row);
+					tab3D[row * cols1 + col] = cube.vx.multiply(cube.vz.multiply(cube.points[4], col), row);
 					break;
 				case DOWN:
-					tab3D[row * cols1 + col] = vx.multiply(vz.multiply(points[2], col), -row);
+					tab3D[row * cols1 + col] = cube.vx.multiply(cube.vz.multiply(cube.points[2], col), -row);
 					break;
 				case EAST:
-					tab3D[row * cols1 + col] = vy.multiply(vx.multiply(points[1], col), row);
+					tab3D[row * cols1 + col] = cube.vy.multiply(cube.vx.multiply(cube.points[1], col), row);
 					break;
 				case WEST:
-					tab3D[row * cols1 + col] = vy.multiply(vx.multiply(points[2], -col), row);
+					tab3D[row * cols1 + col] = cube.vy.multiply(cube.vx.multiply(cube.points[2], -col), row);
 					break;
 				case SOUTH:
-					tab3D[row * cols1 + col] = vy.multiply(vz.multiply(points[0], col), row);
+					tab3D[row * cols1 + col] = cube.vy.multiply(cube.vz.multiply(cube.points[0], col), row);
 					break;
 				case NORTH:
-					tab3D[row * cols1 + col] = vy.multiply(vz.multiply(points[3], -col), row);
+					tab3D[row * cols1 + col] = cube.vy.multiply(cube.vz.multiply(cube.points[3], -col), row);
 					break;
 				}
 

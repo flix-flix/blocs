@@ -6,7 +6,8 @@ public class Matrix {
 
 	private static final double toRadian = Math.PI / 180;
 
-	double[][] tab = new double[3][3];// x - y - z
+	/** Vectors vx, vy, vz and for each x,y,z */
+	double[][] tab = new double[3][3];
 	Point3D point;
 
 	double memX, memY, memZ;
@@ -81,8 +82,6 @@ public class Matrix {
 
 	public void transform(ModelCube c) {
 		c.initPoints();
-
-		transform(c.grid);
 
 		transform(c.centerDecal);
 		transform(c.ppx);

@@ -9,25 +9,28 @@ import client.session.Session;
 import client.window.graphicEngine.models.ModelCube;
 import client.window.panels.StateHUD;
 import data.enumeration.Face;
+import data.enumeration.Orientation;
 import data.map.Cube;
-import utils.FlixBlocksUtils;
 import utils.Coord;
+import utils.FlixBlocksUtils;
 
 public class Keyboard {
 
 	Session session;
 
 	// ================== Mouse ===========================
-	// Keep the mouse cursor in the center of the component
+	/** Keep the mouse cursor in the center of the component */
 	private Robot robot = new Robot();
-	// true : freeze the camera rotation until the cursor automatically reach the
-	// middle of the screen
+	/**
+	 * true : freeze the camera rotation until the cursor automatically reach the
+	 * middle of the screen
+	 */
 	private boolean mouseFreeze = false;
 
-	// Speed of the player rotation
+	/** Speed of the player rotation */
 	double mouseSpeed = .1;
 
-	// State of the right/left mouse buttons
+	/** State of the right/left mouse buttons */
 	public boolean pressR = false, pressL = false;
 
 	// ================== Keyboard ===========================
@@ -37,7 +40,7 @@ public class Keyboard {
 
 	// =========================== Infos Dev ===========================
 
-	// Ticks count (camera movements/sec)
+	/** Ticks count (camera movements/sec) */
 	public int ticks = 0;
 
 	// =========================================================================================================================
@@ -109,7 +112,7 @@ public class Keyboard {
 		} else if (session.gamemode == GameMode.CLASSIC) {
 			if (session.action == Action.DESTROY) {
 				if (session.cubeTarget != null)
-					if(session.cubeTarget.unit != null)
+					if (session.cubeTarget.unit != null)
 						session.map.removeUnit(session.cubeTarget.unit);
 					else
 						session.map.remove((ModelCube) session.cubeTarget);
@@ -170,13 +173,13 @@ public class Keyboard {
 				session.camera.setVy(-90);
 
 			if (session.camera.getVx() >= 45 && session.camera.getVx() < 135)
-				session.playerOrientation = Face.EAST;
+				session.playerOrientation = Orientation.EAST;
 			else if (session.camera.getVx() >= 315 || session.camera.getVx() < 45)
-				session.playerOrientation = Face.NORTH;
+				session.playerOrientation = Orientation.NORTH;
 			else if (session.camera.getVx() < 225)
-				session.playerOrientation = Face.SOUTH;
+				session.playerOrientation = Orientation.SOUTH;
 			else
-				session.playerOrientation = Face.WEST;
+				session.playerOrientation = Orientation.WEST;
 		}
 	}
 

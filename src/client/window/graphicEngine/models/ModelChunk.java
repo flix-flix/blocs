@@ -2,9 +2,9 @@ package client.window.graphicEngine.models;
 
 import java.util.ArrayList;
 
+import client.window.graphicEngine.calcul.Camera;
 import client.window.graphicEngine.calcul.Engine;
 import client.window.graphicEngine.calcul.Matrix;
-import client.window.graphicEngine.calcul.Point3D;
 import client.window.graphicEngine.structures.Draw;
 import client.window.graphicEngine.structures.Model;
 import data.map.Chunk;
@@ -28,7 +28,7 @@ public class ModelChunk extends Chunk implements Model {
 	// =========================================================================================================================
 
 	@Override
-	public ArrayList<Draw> getDraws() {
+	public ArrayList<Draw> getDraws(Camera camera) {
 		draws.clear();
 
 		for (int x = 0; x < X; x++)
@@ -36,16 +36,16 @@ public class ModelChunk extends Chunk implements Model {
 				for (int z = 0; z < Z; z++)
 					if (grid[x][y][z] != null)
 						if (((ModelCube) grid[x][y][z]).isVisible())
-							draws.addAll(((ModelCube) grid[x][y][z]).getDraws());
+							draws.addAll(((ModelCube) grid[x][y][z]).getDraws(camera));
 
 		for (Cube cube : cubes)
-			draws.addAll(((ModelCube) cube).getDraws());
+			draws.addAll(((ModelCube) cube).getDraws(camera));
 
 		return draws;
 	}
 
 	@Override
-	public void init(Point3D camera, Matrix matrice) {
+	public void init(Camera camera, Matrix matrice) {
 		for (int x = 0; x < X; x++)
 			for (int y = 0; y < Y; y++)
 				for (int z = 0; z < Z; z++)
