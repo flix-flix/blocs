@@ -68,22 +68,6 @@ public class TextureSquare {
 
 	// =========================================================================================================================
 
-	public int lighter(int color, int shade) {
-		color += 16_777_216;
-
-		int red = (color / (256 * 256)) % 256;
-		int green = (color / 256) % 256;
-		int blue = color % 256;
-
-		red = Math.min(255, red + shade);
-		green = Math.min(255, green + shade);
-		blue = Math.min(255, blue + shade);
-
-		return -16_777_216 + red * 256 * 256 + green * 256 + blue;
-	}
-
-	// =========================================================================================================================
-
 	public static TextureSquare generateSquare(String folder, String file) {
 		BufferedImage bimg = (BufferedImage) FlixBlocksUtils.getImage(folder + "/" + file);
 

@@ -10,17 +10,20 @@ public class Quadri {
 
 	public Point[] points;
 	public int color, alpha;
-	public StatePixel statePixel;
+	public StatePixel state;
 	public boolean fill = true;
 
 	public Line[] lines = new Line[4];
 
-	public Quadri(Point p0, Point p1, Point p2, Point p3, int color, StatePixel etat, boolean fill, int alpha) {
+	// =========================================================================================================================
+
+	public Quadri(Point p0, Point p1, Point p2, Point p3, int color, int alpha, boolean fill) {
 		this.points = new Point[] { p0, p1, p2, p3 };
 		this.color = color;
-		this.statePixel = etat;
-		this.fill = fill;
 		this.alpha = alpha;
+		this.fill = fill;
+
+		state = alpha == 255 ? StatePixel.FILL : StatePixel.TRANSPARENT;
 
 		lines[0] = new Line(points[0], points[1]);
 		lines[1] = new Line(points[1], points[2]);

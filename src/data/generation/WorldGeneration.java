@@ -1,6 +1,6 @@
 package data.generation;
 
-import client.window.graphicEngine.models.ModelMap;
+import client.window.graphicEngine.extended.ModelMap;
 import data.enumeration.ItemID;
 import data.map.Cube;
 import data.multiblocs.E;
@@ -64,9 +64,16 @@ public class WorldGeneration {
 		map.add(new Cube(13, ground, 13, ItemID.DIRT));
 		map.setPreview(map.gridGet(13, ground, 13), true);
 
-		// Cubes with the differents step of the mining animation
+		// Cubes (texture 16x16) with the differents step of the mining animation
 		for (int x = 0; x < 5; x++) {
 			Cube c = new Cube(x, 2, -3, ItemID.IRON_BLOC);
+			c.miningState = x;
+			map.add(c);
+		}
+
+		// Cubes (texture 3x3) with the differents step of the mining animation
+		for (int x = 0; x < 5; x++) {
+			Cube c = new Cube(x, 2, -5, ItemID.GRASS);
 			c.miningState = x;
 			map.add(c);
 		}

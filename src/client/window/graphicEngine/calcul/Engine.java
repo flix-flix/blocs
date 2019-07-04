@@ -1,14 +1,15 @@
 package client.window.graphicEngine.calcul;
 
 import java.awt.Point;
+import java.awt.Polygon;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import client.textures.TexturePack;
-import client.window.graphicEngine.draws.DrawCubeFace;
-import client.window.graphicEngine.models.ModelCube;
+import client.window.graphicEngine.extended.DrawCubeFace;
+import client.window.graphicEngine.extended.ModelCube;
 import client.window.graphicEngine.structures.Draw;
 import client.window.graphicEngine.structures.Model;
 import client.window.graphicEngine.structures.Quadri;
@@ -18,7 +19,7 @@ public class Engine {
 
 	public static final double toRadian = Math.PI / 180;
 
-	public static TexturePack texturePack;
+	public TexturePack texturePack;
 
 	/** Contains the data to be drawn */
 	private Model model;
@@ -59,9 +60,10 @@ public class Engine {
 
 	// =========================================================================================================================
 
-	public Engine(Camera camera, Model model) {
+	public Engine(Camera camera, Model model, TexturePack texturePack) {
 		this.camera = camera;
 		this.model = model;
+		this.texturePack = texturePack;
 	}
 
 	// =========================================================================================================================
@@ -159,21 +161,27 @@ public class Engine {
 
 		timeDraw = System.currentTimeMillis();
 
-		for (Draw d : draws)
-			for (Quadri q : d.getQuadri(this)) {
+		for (Draw d : draws) {
+			Polygon poly = d.getPoly(this);
+			// Test if at least one of the points appear on the screen
+			for (int index = 0; index < 4; index++)
+				if (poly.xpoints[index] < imgWidth && poly.xpoints[index] > 0 && poly.ypoints[index] < imgHeight
+						&& poly.ypoints[index] > 0) {
+					if (cubeTarget == null && poly.contains(cursorX, cursorY)
+							&& ((DrawCubeFace) d).cube.isTargetable()) {
+						faceTarget = ((DrawCubeFace) d).face;
+						cubeTarget = ((DrawCubeFace) d).cube;
+					}
+				}
+			for (Quadri q : d.getQuadri(this))
 				// Test if at least one of the points appear on the screen
 				for (int index = 0; index < 4; index++)
 					if (q.points[index].x < imgWidth && q.points[index].x > 0 && q.points[index].y < imgHeight
 							&& q.points[index].y > 0) {
-						if (cubeTarget == null && q.statePixel == StatePixel.CONTOUR
-								&& q.getPoly().contains(cursorX, cursorY) && ((DrawCubeFace) d).cube.isTargetable()) {
-							faceTarget = ((DrawCubeFace) d).face;
-							cubeTarget = ((DrawCubeFace) d).cube;
-						}
 						drawQuadri(q);
 						break;
 					}
-			}
+		}
 
 		timePixel = System.currentTimeMillis();
 	}
@@ -205,7 +213,7 @@ public class Engine {
 			for (int row = top; row <= bottom; row++) {
 				int right = xInScreen(q.getRight(row));
 				for (int col = xInScreen(q.getLeft(row)); col <= right; col++)
-					setPixel(row, col, q.color, q.statePixel, q.alpha);
+					setPixel(row, col, q.color, q.state, q.alpha);
 			}
 		} else
 			for (Line l : q.lines) {
@@ -217,7 +225,7 @@ public class Engine {
 
 					int right = xInScreen(l.getRight(row));
 					for (int col = xInScreen(l.getLeft(row)); col <= right; col++)
-						setPixel(row, col, q.color, q.statePixel, q.alpha);
+						setPixel(row, col, q.color, q.state, q.alpha);
 				}
 			}
 	}
@@ -230,8 +238,7 @@ public class Engine {
 			rgb = mix(rgb, dataBuffer.getElem(row * imgWidth + col));
 
 		// Set color and state
-		if (statePixel[row * imgWidth + col] != StatePixel.FILL
-				&& statePixel[row * imgWidth + col] != StatePixel.CONTOUR) {
+		if (statePixel[row * imgWidth + col] != StatePixel.FILL) {
 			dataBuffer.setElem(row * imgWidth + col, (alpha << 24) + rgb);
 			statePixel[row * imgWidth + col] = state;
 		}
@@ -262,6 +269,20 @@ public class Engine {
 		int blue = (aB + bB) / 2;
 
 		return ((((red) << 8) + green) << 8) + blue;
+	}
+
+	public static int lighter(int color, int shade) {
+		color += 16_777_216;
+
+		int red = (color / (256 * 256)) % 256;
+		int green = (color / 256) % 256;
+		int blue = color % 256;
+
+		red = Math.min(255, red + shade);
+		green = Math.min(255, green + shade);
+		blue = Math.min(255, blue + shade);
+
+		return -16_777_216 + red * 256 * 256 + green * 256 + blue;
 	}
 
 	// =========================================================================================================================

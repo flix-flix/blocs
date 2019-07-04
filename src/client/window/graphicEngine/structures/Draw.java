@@ -1,5 +1,6 @@
 package client.window.graphicEngine.structures;
 
+import java.awt.Polygon;
 import java.util.ArrayList;
 
 import client.window.graphicEngine.calcul.Engine;
@@ -22,6 +23,9 @@ public abstract class Draw implements Comparable<Draw> {
 
 	/** Returns the list of quadri corresponding to this Draw */
 	public abstract ArrayList<Quadri> getQuadri(Engine engine);
+
+	/** Returns the on-screen polygon representative of this draw */
+	public abstract Polygon getPoly(Engine engine);
 
 	// =========================================================================================================================
 

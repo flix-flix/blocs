@@ -13,7 +13,7 @@ import client.session.Session;
 import client.window.graphicEngine.calcul.Camera;
 import client.window.graphicEngine.calcul.Engine;
 import client.window.graphicEngine.calcul.Point3D;
-import client.window.graphicEngine.models.ModelCube;
+import client.window.graphicEngine.extended.ModelCube;
 import data.map.Cube;
 
 public class MenuCubeSelection extends Menu {
@@ -23,7 +23,7 @@ public class MenuCubeSelection extends Menu {
 
 	public boolean selected = false;
 
-	Engine engine;
+	public Engine engine;
 	FontMetrics fm;
 	Image img;
 
@@ -31,7 +31,7 @@ public class MenuCubeSelection extends Menu {
 		super(session);
 		this.cube = cube;
 
-		engine = new Engine(new Camera(new Point3D(-.4, 1.5, -1), 58, -35), new ModelCube(cube));
+		engine = new Engine(new Camera(new Point3D(-.4, 1.5, -1), 58, -35), new ModelCube(cube), session.texturePack);
 		engine.drawSky = false;
 
 		Font font = new Font("monospace", Font.PLAIN, 12);

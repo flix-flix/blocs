@@ -4,7 +4,7 @@ import java.awt.AWTException;
 
 import client.session.Session;
 import client.window.Fen;
-import client.window.graphicEngine.models.ModelMap;
+import client.window.graphicEngine.extended.ModelMap;
 import data.generation.WorldGeneration;
 
 public class Main {
@@ -17,6 +17,7 @@ public class Main {
 		WorldGeneration.generateMap(map);
 
 		new Fen(session);
+
 		session.start();
 	}
 }

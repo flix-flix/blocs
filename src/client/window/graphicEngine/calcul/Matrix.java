@@ -1,6 +1,6 @@
 package client.window.graphicEngine.calcul;
 
-import client.window.graphicEngine.models.ModelCube;
+import client.window.graphicEngine.extended.ModelCube;
 
 public class Matrix {
 

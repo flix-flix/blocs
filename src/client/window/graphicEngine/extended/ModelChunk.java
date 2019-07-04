@@ -1,4 +1,4 @@
-package client.window.graphicEngine.models;
+package client.window.graphicEngine.extended;
 
 import java.util.ArrayList;
 

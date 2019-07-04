@@ -228,6 +228,11 @@ public class PanGUI extends JPanel {
 			e.selected = false;
 	}
 
+	public void updateTexturePack() {
+		for (MenuCubeSelection m : cubes)
+			m.engine.texturePack = session.texturePack;
+	}
+
 	// =========================================================================================================================
 
 	@Override

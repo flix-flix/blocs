@@ -5,8 +5,6 @@ public enum StatePixel {
 	EMPTY,
 	// Painted
 	FILL,
-	// Black line
-	CONTOUR,
 	// Colored Transparency
 	TRANSPARENT;
 }

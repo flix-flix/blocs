@@ -18,22 +18,21 @@ public class Cube {
 
 	public Point3D center;
 
-	// Another brick in the wall
+	/** Another brick in the wall */
 	public boolean onGrid = false;
 
 	// =========================================================================================================================
 
-	// Size of the cube
+	/** Size of the cube */
 	public double sizeX, sizeY, sizeZ;
-	// Shift the point of rotation (pixel)
+	/** Shift the point of rotation (pixel) */
 	public int shiftX, shiftY, shiftZ;
-	// Rotation relative to the shifted center (degree)
+	/** Rotation relative to the shifted center (degree) */
 	public double rotaX, rotaY, rotaZ;
 
 	// =========================================================================================================================
 
 	public Multibloc multibloc;
-
 	public Unit unit;
 
 	// =========================================================================================================================
@@ -41,7 +40,7 @@ public class Cube {
 	public Orientation orientation = Orientation.NORTH;
 	public Rotation rotation = Rotation.NONE;
 
-	// Step of the bloc's "mining state"
+	/** Step of the bloc's "mining state" */
 	public int miningState = FlixBlocksUtils.NO_MINING;
 
 	// =========================================================================================================================

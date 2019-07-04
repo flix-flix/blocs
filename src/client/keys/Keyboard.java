@@ -6,7 +6,7 @@ import java.awt.Robot;
 import client.session.Action;
 import client.session.GameMode;
 import client.session.Session;
-import client.window.graphicEngine.models.ModelCube;
+import client.window.graphicEngine.extended.ModelCube;
 import client.window.panels.StateHUD;
 import data.enumeration.Face;
 import data.enumeration.Orientation;

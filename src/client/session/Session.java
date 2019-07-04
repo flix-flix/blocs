@@ -13,9 +13,8 @@ import client.window.Fen;
 import client.window.graphicEngine.calcul.Camera;
 import client.window.graphicEngine.calcul.Engine;
 import client.window.graphicEngine.calcul.Point3D;
-import client.window.graphicEngine.draws.DrawCubeFace;
-import client.window.graphicEngine.models.ModelCube;
-import client.window.graphicEngine.models.ModelMap;
+import client.window.graphicEngine.extended.ModelCube;
+import client.window.graphicEngine.extended.ModelMap;
 import client.window.panels.StateHUD;
 import data.enumeration.Face;
 import data.enumeration.Orientation;
@@ -98,8 +97,9 @@ public class Session implements Serializable {
 		camera.setVy(-65);
 
 		if (with3DEngine) {
-			setTexturePack(new TexturePack());
-			engine = new Engine(camera, map);
+			texturePack = new TexturePack();
+			engine = new Engine(camera, map, texturePack);
+			ModelCube.texturePack = texturePack;
 		}
 	}
 
@@ -117,9 +117,9 @@ public class Session implements Serializable {
 	public void setTexturePack(TexturePack texturePack) {
 		this.texturePack = texturePack;
 
-		Engine.texturePack = texturePack;
-		DrawCubeFace.texturePack = texturePack;
-		ModelCube.texturePack = texturePack;
+		engine.texturePack = texturePack;
+		if (fen != null)
+			fen.gui.updateTexturePack();
 	}
 
 	// =========================================================================================================================

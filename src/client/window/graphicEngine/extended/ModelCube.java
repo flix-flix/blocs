@@ -1,4 +1,4 @@
-package client.window.graphicEngine.models;
+package client.window.graphicEngine.extended;
 
 import java.util.ArrayList;
 
@@ -7,7 +7,6 @@ import client.window.graphicEngine.calcul.Camera;
 import client.window.graphicEngine.calcul.Matrix;
 import client.window.graphicEngine.calcul.Point3D;
 import client.window.graphicEngine.calcul.Vector;
-import client.window.graphicEngine.draws.DrawCubeFace;
 import client.window.graphicEngine.structures.Draw;
 import client.window.graphicEngine.structures.Model;
 import data.enumeration.Face;
@@ -106,19 +105,20 @@ public class ModelCube extends Cube implements Model {
 	}
 
 	public void recalcul() {
-		vx = new Vector(centerDecal, ppx, resoX);
-		vy = new Vector(centerDecal, ppy, resoY);
-		vz = new Vector(centerDecal, ppz, resoZ);
+		vx = new Vector(centerDecal, ppx);
+		vy = new Vector(centerDecal, ppy);
+		vz = new Vector(centerDecal, ppz);
 
-		points[0] = vx.multiply(vy.multiply(vz.multiply(-shiftZ), -shiftY), -shiftX);
-		points[1] = vz.multiply(points[0], resoZ);
-		points[2] = vx.multiply(points[0], resoX);
-		points[3] = vx.multiply(points[1], resoX);
+		points[0] = vx.divise(resoX).multiply(vy.divise(resoY).multiply(vz.divise(resoZ).multiply(-shiftZ), -shiftY),
+				-shiftX);
+		points[1] = vz.multiply(points[0], 1);
+		points[2] = vx.multiply(points[0], 1);
+		points[3] = vx.multiply(points[1], 1);
 
-		points[4] = vy.multiply(points[0], resoY);
-		points[5] = vy.multiply(points[1], resoY);
-		points[6] = vy.multiply(points[2], resoY);
-		points[7] = vy.multiply(points[3], resoY);
+		points[4] = vy.multiply(points[0], 1);
+		points[5] = vy.multiply(points[1], 1);
+		points[6] = vy.multiply(points[2], 1);
+		points[7] = vy.multiply(points[3], 1);
 	}
 
 	// =========================================================================================================================
@@ -283,7 +283,7 @@ public class ModelCube extends Cube implements Model {
 		for (int j = 6; j >= 4; j--)
 			for (int i = 0; i < 6; i++)
 				if (faces[i] == j && !hideFace[i]) {
-					draws.add(new DrawCubeFace(this, Face.faces[i], centerDecal, index * 10 + 6 - j,
+					draws.add(new DrawCubeFace(this, Face.faces[i], centerDecal, index + 10 + 6 - j,
 							preview ? 127 : DrawCubeFace.DEFAULT_ALPHA));
 					break;
 				}
