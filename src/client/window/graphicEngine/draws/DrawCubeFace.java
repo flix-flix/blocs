@@ -90,7 +90,7 @@ public class DrawCubeFace extends Draw {
 		// Draw the black contour of the face
 		if (ItemTable.drawContour(cube.itemID))
 			quadri.add(new Quadri(tab2D[0], tab2D[cols], tab2D[rows1 * cols + rows], tab2D[rows * cols1], -0xffffff,
-					StatePixel.CONTOUR, false));
+					StatePixel.CONTOUR, false, 255));
 
 		for (int row = 0; row < rows; row++)
 			for (int col = 0; col < cols; col++) {
@@ -115,7 +115,7 @@ public class DrawCubeFace extends Draw {
 					state = StatePixel.TRANSPARENT;
 
 				quadri.add(new Quadri(tab2D[row * cols1 + col], tab2D[(row + 1) * cols1 + col],
-						tab2D[(row + 1) * cols1 + col + 1], tab2D[row * cols1 + col + 1], color, state, true));
+						tab2D[(row + 1) * cols1 + col + 1], tab2D[row * cols1 + col + 1], color, state, true, alpha));
 			}
 		return quadri;
 	}

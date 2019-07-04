@@ -25,6 +25,7 @@ public class PanPause extends JPanel {
 		this.session = session;
 		this.setOpaque(false);
 		this.setLayout(null);
+		this.setVisible(false);
 
 		add(resume = new JButton("Resume"));
 		add(options = new JButton("Options"));

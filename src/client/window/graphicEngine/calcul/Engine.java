@@ -1,6 +1,5 @@
 package client.window.graphicEngine.calcul;
 
-import java.awt.Color;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
@@ -55,10 +54,8 @@ public class Engine {
 	 */
 	public int widthRatio;
 
-	/** if true draw a sky on the background else fill it with background Color */
+	/** true : draw a sky on the background | false : it will be transparent */
 	public boolean drawSky = true;
-	/** Color of the backgroud if the sky isn't drawn */
-	public Color background = Color.BLACK;
 
 	// =========================================================================================================================
 
@@ -86,10 +83,6 @@ public class Engine {
 
 		if (drawSky)
 			drawSky();
-		else
-			for (int row = 0; row < h; row++)
-				for (int col = 0; col < w; col++)
-					setPixel(row, col, background.getRGB(), StatePixel.FILL);
 
 		return bimg;
 	}
@@ -130,12 +123,12 @@ public class Engine {
 			if (row < top)
 				// Fill the top with blue
 				for (int col = 0; col < imgWidth; col++)
-					setPixel(row, col, -13_396_261, StatePixel.FILL);
+					setPixel(row, col, -13_396_261, StatePixel.FILL, 255);
 
 			else if (row <= middle)
 				// Fill the "middle top" with a blue to light blue gradient
 				for (int col = 0; col < imgWidth; col++)
-					setPixel(row, col, (-13_396_261 - ((int) (top - row) / 7 * 65792)), StatePixel.FILL);
+					setPixel(row, col, (-13_396_261 - ((int) (top - row) / 7 * 65792)), StatePixel.FILL, 255);
 
 			else if (row <= bottom) {
 				// Fill the "middle bottom" with a light blue to black gradient
@@ -146,11 +139,11 @@ public class Engine {
 				int dB = (int) (blue * lala);
 
 				for (int col = 0; col < imgWidth; col++)
-					setPixel(row, col, middleColor - (dR * 256 * 256 + dG * 256 + dB), StatePixel.FILL);
+					setPixel(row, col, middleColor - (dR * 256 * 256 + dG * 256 + dB), StatePixel.FILL, 255);
 			} else
 				// Fill the bottom with black
 				for (int col = 0; col < imgWidth; col++)
-					setPixel(row, col, -0xffffff, StatePixel.FILL);
+					setPixel(row, col, -0xffffff, StatePixel.FILL, 255);
 		}
 	}
 
@@ -231,10 +224,6 @@ public class Engine {
 
 	// =========================================================================================================================
 
-	private void setPixel(int row, int col, int rgb, StatePixel state) {
-		setPixel(row, col, rgb, state, 0);
-	}
-
 	private void setPixel(int row, int col, int rgb, StatePixel state, int alpha) {
 		// If colored transparence : generate mixed color
 		if (statePixel[row * imgWidth + col] == StatePixel.TRANSPARENT)
@@ -243,30 +232,36 @@ public class Engine {
 		// Set color and state
 		if (statePixel[row * imgWidth + col] != StatePixel.FILL
 				&& statePixel[row * imgWidth + col] != StatePixel.CONTOUR) {
-			dataBuffer.setElem(row * imgWidth + col, rgb);
+			dataBuffer.setElem(row * imgWidth + col, (alpha << 24) + rgb);
 			statePixel[row * imgWidth + col] = state;
 		}
 	}
 
 	// =========================================================================================================================
 
+	/**
+	 * Returns the mixed color from the two given colors
+	 * 
+	 * @param a
+	 *            - first color {@link BufferedImage#TYPE_INT_RGB}
+	 * @param b
+	 *            - second color {@link BufferedImage#TYPE_INT_RGB}
+	 * @return mixed color {@link BufferedImage#TYPE_INT_RGB}
+	 */
 	public static int mix(int a, int b) {
-		a += 16_777_216;
-		b += 16_777_216;
+		int aR = (a >> 16) & 0xff;
+		int aG = (a >> 8) & 0xff;
+		int aB = a & 0xff;
 
-		int aR = a / (256 * 256);
-		int aG = (a / 256) % 256;
-		int aB = a % 256;
-
-		int bR = b / (256 * 256);
-		int bG = (b / 256) % 256;
-		int bB = b % 256;
+		int bR = (b >> 16) & 0xff;
+		int bG = (b >> 8) & 0xff;
+		int bB = b & 0xff;
 
 		int red = (aR + bR) / 2;
 		int green = (aG + bG) / 2;
 		int blue = (aB + bB) / 2;
 
-		return -16_777_216 + red * 256 * 256 + green * 256 + blue;
+		return ((((red) << 8) + green) << 8) + blue;
 	}
 
 	// =========================================================================================================================

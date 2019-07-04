@@ -3,7 +3,6 @@ package client.window.panels;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.Rectangle;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.util.ArrayList;
@@ -96,6 +95,7 @@ public class PanGUI extends JPanel {
 		_items.add(new Cube(ItemID.GLASS_RED));
 		_items.add(new Tree().getCube());
 		_items.add(new E().getCube());
+		_items.add(new Cube(ItemID.WATER));
 
 		// ========================================================================================
 
@@ -230,7 +230,9 @@ public class PanGUI extends JPanel {
 
 	// =========================================================================================================================
 
-	public void roundRect(Rectangle rect) {
-		g.fillRoundRect(rect.x, rect.y, rect.width, rect.height, 100, 50);
+	@Override
+	public void setBounds(int x, int y, int width, int height) {
+		super.setBounds(x, y, width, height);
+		menu.setBounds(x, y, menuWidth, height);
 	}
 }

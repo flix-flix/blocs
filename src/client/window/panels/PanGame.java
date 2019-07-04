@@ -24,6 +24,7 @@ public class PanGame extends JPanel {
 
 	public PanGame(Session session) {
 		this.session = session;
+		setLayout(null);
 	}
 
 	// =========================================================================================================================

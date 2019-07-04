@@ -62,27 +62,28 @@ public class Fen extends JFrame {
 		// ======================================
 
 		game = new PanGame(session);
-
 		pause = new PanPause(session);
 		devlop = new PanDevlop(session);
 		gui = new PanGUI(session);
 
-		pause.setVisible(false);
-
 		// ======================================
 
 		this.setTitle("Blocs");
-		this.setVisible(true);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setSize(1200, 800);
 		this.setLocation(10, 200);
-		this.setExtendedState(this.getExtendedState() | MAXIMIZED_BOTH);
-
-		this.setFocusTraversalKeysEnabled(false);
+		this.setExtendedState(MAXIMIZED_BOTH);
 
 		// ======================================
 
-		this.add(game);
+		this.setLayout(null);
+
+		game.setSize(getContentPane().getSize());
+		gui.setSize(getContentPane().getSize());
+		devlop.setSize(getContentPane().getSize());
+		pause.setSize(getContentPane().getSize());
+
+		this.setContentPane(game);
 		game.add(pause, -1);
 		game.add(devlop, -1);
 		game.add(gui, -1);
@@ -316,7 +317,10 @@ public class Fen extends JFrame {
 
 			@Override
 			public void componentResized(ComponentEvent e) {
-				repaint();
+				game.setSize(getContentPane().getSize());
+				gui.setSize(getContentPane().getSize());
+				devlop.setSize(getContentPane().getSize());
+				pause.setSize(getContentPane().getSize());
 			}
 
 			@Override
@@ -327,6 +331,8 @@ public class Fen extends JFrame {
 			public void componentHidden(ComponentEvent e) {
 			}
 		});
+
+		this.setVisible(true);
 	}
 
 	// =========================================================================================================================
@@ -400,7 +406,7 @@ public class Fen extends JFrame {
 					else if (session.gamemode == GameMode.CREATIVE)
 						session.setTarget(gui.centerX, gui.centerY);
 
-					if (game.getWidth() != 0)
+					if (game.getWidth() != 0 && game.getHeight() != 0)
 						game.img = session.getImage(game.getWidth(), game.getHeight());
 
 					session.updateTimeDev();

@@ -8,8 +8,6 @@ import java.awt.Graphics;
 import javax.swing.JPanel;
 
 import client.session.Session;
-import data.enumeration.Face;
-import data.map.Cube;
 import data.map.Map;
 
 public class PanDevlop extends JPanel {
@@ -38,7 +36,6 @@ public class PanDevlop extends JPanel {
 	}
 
 	public void paintComponent(Graphics g) {
-		this.setBounds(getParent().getBounds());
 		graphics = g;
 		right = 0;
 		left = 0;
@@ -50,12 +47,9 @@ public class PanDevlop extends JPanel {
 
 			// ======================= Bloc/Target =========================
 
-			Cube cube = session.cubeTarget;
-			Face face = session.faceTarget;
-
-			if (cube != null) {
-				strBloc += cube.toString();
-				strFace += face.toString();
+			if (session.cubeTarget != null) {
+				strBloc += session.cubeTarget.toString();
+				strFace += session.faceTarget.toString();
 			} else {
 				strBloc += "None";
 				strFace += "None";

@@ -9,27 +9,23 @@ import client.window.graphicEngine.calcul.StatePixel;
 public class Quadri {
 
 	public Point[] points;
-	public int color, alpha = 255;
+	public int color, alpha;
 	public StatePixel statePixel;
 	public boolean fill = true;
 
 	public Line[] lines = new Line[4];
 
-	public Quadri(Point p0, Point p1, Point p2, Point p3, int color, StatePixel etat, boolean fill) {
+	public Quadri(Point p0, Point p1, Point p2, Point p3, int color, StatePixel etat, boolean fill, int alpha) {
 		this.points = new Point[] { p0, p1, p2, p3 };
 		this.color = color;
 		this.statePixel = etat;
 		this.fill = fill;
+		this.alpha = alpha;
 
 		lines[0] = new Line(points[0], points[1]);
 		lines[1] = new Line(points[1], points[2]);
 		lines[2] = new Line(points[3], points[2]);
 		lines[3] = new Line(points[0], points[3]);
-	}
-
-	public Quadri(Point p0, Point p1, Point p2, Point p3, int color, StatePixel etat, boolean fill, int alpha) {
-		this(p0, p1, p2, p3, color, etat, fill);
-		this.alpha = alpha;
 	}
 
 	// =========================================================================================================================
