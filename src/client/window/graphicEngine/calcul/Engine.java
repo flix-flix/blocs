@@ -99,45 +99,30 @@ public class Engine {
 	// =========================================================================================================================
 
 	public void drawSky() {
-		double angleToRow = imgHeight / 120;
+		int blue = createColor(255, 51, 150, 219);
+		int light_blue = createColor(255, 160, 200, 230);
+		int black = createColor(255, 0, 0, 0);
 
-		int top = (int) (imgHeight / 2 + (camera.getVy() - 20) * angleToRow);
+		double angleToRow = imgHeight / 45;
 
-		int middle = (int) (imgHeight / 2 + (camera.getVy() + 10) * angleToRow);
+		int sky = (int) (imgHeight / 2 + (camera.getVy() - 10) * angleToRow);
+		int horizon = (int) (imgHeight / 2 + (camera.getVy() + 10) * angleToRow);
+		int voiD = (int) (imgHeight / 2 + (camera.getVy() + 30) * angleToRow);
 
-		int bottom = (int) (imgHeight / 2 + (camera.getVy() + 40) * angleToRow);
-
-		int middleColor = (-13_396_261 - (int) (top - middle) / 7 * 65_792);
-
-		int red = ((middleColor + 16_777_216) / (256 * 256)) % 256;
-		int green = ((middleColor + 16_777_216) / 256) % 256;
-		int blue = (middleColor + 16_777_216) % 256;
+		int color;
 
 		for (int row = 0; row < imgHeight; row++) {
-			if (row < top)
-				// Fill the top with blue
-				for (int col = 0; col < imgWidth; col++)
-					setPixel(row, col, -13_396_261);
+			if (row < sky)
+				color = blue;
+			else if (row <= horizon) // blue -> light_blue
+				color = addHue(blue, light_blue, (row - sky) / ((double) horizon - sky));
+			else if (row <= voiD) // light_blue -> black
+				color = addHue(light_blue, black, (row - horizon) / ((double) voiD - horizon));
+			else
+				color = black;
 
-			else if (row <= middle)
-				// Fill the "middle top" with a blue to light blue gradient
-				for (int col = 0; col < imgWidth; col++)
-					setPixel(row, col, (-13_396_261 - ((int) (top - row) / 7 * 65792)));
-
-			else if (row <= bottom) {
-				// Fill the "middle bottom" with a light blue to black gradient
-				double lala = 1 - (bottom - row) / ((double) bottom - middle);
-
-				int dR = (int) (red * lala);
-				int dG = (int) (green * lala);
-				int dB = (int) (blue * lala);
-
-				for (int col = 0; col < imgWidth; col++)
-					setPixel(row, col, middleColor - (dR * 256 * 256 + dG * 256 + dB));
-			} else
-				// Fill the bottom with black
-				for (int col = 0; col < imgWidth; col++)
-					setPixel(row, col, -0xffffff);
+			for (int col = 0; col < imgWidth; col++)
+				setPixel(col, row, color);
 		}
 	}
 
@@ -205,7 +190,7 @@ public class Engine {
 			for (int row = top; row <= bottom; row++) {
 				int right = xInScreen(q.getRight(row));
 				for (int col = xInScreen(q.getLeft(row)); col <= right; col++)
-					setPixel(row, col, q.color);
+					setPixel(col, row, q.color);
 			}
 		} else
 			for (Line l : q.lines) {
@@ -217,14 +202,14 @@ public class Engine {
 
 					int right = xInScreen(l.getRight(row));
 					for (int col = xInScreen(l.getLeft(row)); col <= right; col++)
-						setPixel(row, col, q.color);
+						setPixel(col, row, q.color);
 				}
 			}
 	}
 
 	// =========================================================================================================================
 
-	private void setPixel(int row, int col, int rgb) {
+	private void setPixel(int col, int row, int rgb) {
 		// Returns if the pixel is already paint
 		if ((getElem(col, row) >> 24 & 0xff) == 255)
 			return;
