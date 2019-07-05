@@ -4,26 +4,21 @@ import java.awt.Point;
 import java.awt.Polygon;
 
 import client.window.graphicEngine.calcul.Line;
-import client.window.graphicEngine.calcul.StatePixel;
 
 public class Quadri {
 
 	public Point[] points;
-	public int color, alpha;
-	public StatePixel state;
+	public int color;
 	public boolean fill = true;
 
 	public Line[] lines = new Line[4];
 
 	// =========================================================================================================================
 
-	public Quadri(Point p0, Point p1, Point p2, Point p3, int color, int alpha, boolean fill) {
+	public Quadri(Point p0, Point p1, Point p2, Point p3, int color, boolean fill) {
 		this.points = new Point[] { p0, p1, p2, p3 };
 		this.color = color;
-		this.alpha = alpha;
 		this.fill = fill;
-
-		state = alpha == 255 ? StatePixel.FILL : StatePixel.TRANSPARENT;
 
 		lines[0] = new Line(points[0], points[1]);
 		lines[1] = new Line(points[1], points[2]);

@@ -63,22 +63,16 @@ public class TextureFace {
 		left = new TextureSquare(rows, cols);
 
 		for (int row = 0; row < rows; row++)
-			for (int col = 0; col < cols; col++) {
+			for (int col = 0; col < cols; col++)
 				reverse.setColor(rows - 1 - row, cols - 1 - col, normal.getColor(row, col));
-				reverse.setAlpha(rows - 1 - row, cols - 1 - col, normal.getAlpha(row, col));
-			}
 
 		for (int row = 0; row < rows; row++)
-			for (int col = 0; col < cols; col++) {
+			for (int col = 0; col < cols; col++)
 				right.setColor(cols - 1 - col, row, normal.getColor(row, col));
-				right.setAlpha(cols - 1 - col, row, normal.getAlpha(row, col));
-			}
 
 		for (int row = 0; row < rows; row++)
-			for (int col = 0; col < cols; col++) {
+			for (int col = 0; col < cols; col++)
 				left.setColor(col, rows - 1 - row, normal.getColor(row, col));
-				left.setAlpha(col, rows - 1 - row, normal.getAlpha(row, col));
-			}
 	}
 
 	// =========================================================================================================================

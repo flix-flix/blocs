@@ -5,7 +5,6 @@ import java.awt.Polygon;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import client.textures.TexturePack;
 import client.window.graphicEngine.extended.DrawCubeFace;
@@ -44,8 +43,6 @@ public class Engine {
 
 	private BufferedImage bimg;
 	private DataBuffer dataBuffer;
-	/** Mark the already filled pixels */
-	private StatePixel[] statePixel;
 
 	public int imgWidth = 100, imgHeight = 100;
 	public int centerX, centerY;
@@ -69,12 +66,9 @@ public class Engine {
 	// =========================================================================================================================
 
 	public BufferedImage getImage(int w, int h) {
-		if (imgWidth != w || imgHeight != h)
-			init(w, h);
+		init(w, h);
 
 		matrice = new Matrix(-camera.getVx(), -camera.getVy(), camera.vue);
-
-		Arrays.fill(statePixel, StatePixel.EMPTY);
 
 		cubeTarget = null;
 		faceTarget = null;
@@ -100,8 +94,6 @@ public class Engine {
 
 		bimg = new BufferedImage(imgWidth, imgHeight, BufferedImage.TYPE_INT_ARGB);
 		dataBuffer = bimg.getRaster().getDataBuffer();
-
-		statePixel = new StatePixel[imgWidth * imgHeight];
 	}
 
 	// =========================================================================================================================
@@ -125,12 +117,12 @@ public class Engine {
 			if (row < top)
 				// Fill the top with blue
 				for (int col = 0; col < imgWidth; col++)
-					setPixel(row, col, -13_396_261, StatePixel.FILL, 255);
+					setPixel(row, col, -13_396_261);
 
 			else if (row <= middle)
 				// Fill the "middle top" with a blue to light blue gradient
 				for (int col = 0; col < imgWidth; col++)
-					setPixel(row, col, (-13_396_261 - ((int) (top - row) / 7 * 65792)), StatePixel.FILL, 255);
+					setPixel(row, col, (-13_396_261 - ((int) (top - row) / 7 * 65792)));
 
 			else if (row <= bottom) {
 				// Fill the "middle bottom" with a light blue to black gradient
@@ -141,11 +133,11 @@ public class Engine {
 				int dB = (int) (blue * lala);
 
 				for (int col = 0; col < imgWidth; col++)
-					setPixel(row, col, middleColor - (dR * 256 * 256 + dG * 256 + dB), StatePixel.FILL, 255);
+					setPixel(row, col, middleColor - (dR * 256 * 256 + dG * 256 + dB));
 			} else
 				// Fill the bottom with black
 				for (int col = 0; col < imgWidth; col++)
-					setPixel(row, col, -0xffffff, StatePixel.FILL, 255);
+					setPixel(row, col, -0xffffff);
 		}
 	}
 
@@ -213,7 +205,7 @@ public class Engine {
 			for (int row = top; row <= bottom; row++) {
 				int right = xInScreen(q.getRight(row));
 				for (int col = xInScreen(q.getLeft(row)); col <= right; col++)
-					setPixel(row, col, q.color, q.state, q.alpha);
+					setPixel(row, col, q.color);
 			}
 		} else
 			for (Line l : q.lines) {
@@ -225,64 +217,95 @@ public class Engine {
 
 					int right = xInScreen(l.getRight(row));
 					for (int col = xInScreen(l.getLeft(row)); col <= right; col++)
-						setPixel(row, col, q.color, q.state, q.alpha);
+						setPixel(row, col, q.color);
 				}
 			}
 	}
 
 	// =========================================================================================================================
 
-	private void setPixel(int row, int col, int rgb, StatePixel state, int alpha) {
-		// If colored transparence : generate mixed color
-		if (statePixel[row * imgWidth + col] == StatePixel.TRANSPARENT)
-			rgb = mix(rgb, dataBuffer.getElem(row * imgWidth + col));
+	private void setPixel(int row, int col, int rgb) {
+		// Returns if the pixel is already paint
+		if ((getElem(col, row) >> 24 & 0xff) == 255)
+			return;
 
-		// Set color and state
-		if (statePixel[row * imgWidth + col] != StatePixel.FILL) {
-			dataBuffer.setElem(row * imgWidth + col, (alpha << 24) + rgb);
-			statePixel[row * imgWidth + col] = state;
-		}
+		// If colored transparence : generate mixed color
+		if (getElem(col, row) != 0)
+			rgb = mixARGB(getElem(col, row), rgb);
+
+		setElem(col, row, rgb);
+	}
+
+	public int getElem(int col, int row) {
+		return dataBuffer.getElem(row * imgWidth + col);
+	}
+
+	public void setElem(int col, int row, int val) {
+		dataBuffer.setElem(row * imgWidth + col, val);
 	}
 
 	// =========================================================================================================================
+	// Color manipulations
 
 	/**
 	 * Returns the mixed color from the two given colors
 	 * 
 	 * @param a
-	 *            - first color {@link BufferedImage#TYPE_INT_RGB}
+	 *            - first color {@link BufferedImage#TYPE_INT_ARGB}
 	 * @param b
-	 *            - second color {@link BufferedImage#TYPE_INT_RGB}
-	 * @return mixed color {@link BufferedImage#TYPE_INT_RGB}
+	 *            - second color {@link BufferedImage#TYPE_INT_ARGB}
+	 * @return mixed color {@link BufferedImage#TYPE_INT_ARGB}
 	 */
-	public static int mix(int a, int b) {
+	public static int mixARGB(int a, int b) {
+		int aA = (a >> 24) & 0xff;
 		int aR = (a >> 16) & 0xff;
 		int aG = (a >> 8) & 0xff;
 		int aB = a & 0xff;
 
+		int bA = (b >> 24) & 0xff;
 		int bR = (b >> 16) & 0xff;
 		int bG = (b >> 8) & 0xff;
 		int bB = b & 0xff;
 
-		int red = (aR + bR) / 2;
-		int green = (aG + bG) / 2;
-		int blue = (aB + bB) / 2;
+		double l = (255. - aA) * bA / 255.;
+		int alpha = (int) Math.round(aA + l);
+		int red = (int) ((aR * aA + bR * l) / (aA + l));
+		int green = (int) ((aG * aA + bG * l) / (aA + l));
+		int blue = (int) ((aB * aA + bB * l) / (aA + l));
 
-		return ((((red) << 8) + green) << 8) + blue;
+		return createColor(alpha, red, green, blue);
 	}
 
-	public static int lighter(int color, int shade) {
-		color += 16_777_216;
+	/**
+	 * Add the hue to the color (doesn't modify the alpha)
+	 * 
+	 * @param color
+	 *            - the original color {@link BufferedImage#TYPE_INT_ARGB}
+	 * @param hue
+	 *            - the hue {@link BufferedImage#TYPE_INT_RGB}
+	 * @param percent
+	 *            - in bounds [0, 1]
+	 * @return mixed color {@link BufferedImage#TYPE_INT_ARGB}
+	 */
+	public static int addHue(int color, int hue, double percent) {
+		int alpha = (color >> 24) & 0xff;
+		int red = (color >> 16) & 0xff;
+		int green = (color >> 8) & 0xff;
+		int blue = color & 0xff;
 
-		int red = (color / (256 * 256)) % 256;
-		int green = (color / 256) % 256;
-		int blue = color % 256;
+		int hueRed = (hue >> 16) & 0xff;
+		int hueGreen = (hue >> 8) & 0xff;
+		int hueBlue = hue & 0xff;
 
-		red = Math.min(255, red + shade);
-		green = Math.min(255, green + shade);
-		blue = Math.min(255, blue + shade);
+		red = Math.min(255, red + (int) ((hueRed - red) * percent));
+		green = Math.min(255, green + (int) ((hueGreen - green) * percent));
+		blue = Math.min(255, blue + (int) ((hueBlue - blue) * percent));
 
-		return -16_777_216 + red * 256 * 256 + green * 256 + blue;
+		return createColor(alpha, red, green, blue);
+	}
+
+	public static int createColor(int alpha, int red, int green, int blue) {
+		return (((((alpha << 8) + red) << 8) + green) << 8) + blue;
 	}
 
 	// =========================================================================================================================

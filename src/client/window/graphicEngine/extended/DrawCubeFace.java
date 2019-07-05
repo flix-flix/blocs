@@ -50,7 +50,7 @@ public class DrawCubeFace extends Draw {
 		// Draw the black contour of the face
 		if (ItemTable.drawContour(cube.itemID)) {
 			Point[] points2D = generate2D(engine, 1, 1);
-			quadri.add(new Quadri(points2D[0], points2D[1], points2D[3], points2D[2], -0xffffff, 255, false));
+			quadri.add(new Quadri(points2D[0], points2D[1], points2D[3], points2D[2], -0xffffff, false));
 		}
 
 		// Draw the mining animation
@@ -75,23 +75,31 @@ public class DrawCubeFace extends Draw {
 
 		for (int row = 0; row < texture.height; row++)
 			for (int col = 0; col < texture.width; col++) {
-				int alpha = forcedAlpha == DEFAULT_ALPHA ? texture.getAlpha(row, col) : forcedAlpha;
+				int color = texture.getColor(row, col);
+
 				// If the quadri is invisible -> next
-				if (alpha == 0)
+				if (((color >> 24) & 0xff) == 0)
 					continue;
 
-				int color = texture.getColor(row, col);
+				// Remplace default alpha by the forced one
+				if (forcedAlpha != DEFAULT_ALPHA)
+					color = (forcedAlpha << 24) + (color & 0xffffff);
 
 				// If the cube is highlighted : its color will be lighter
 				if (cube.isHighlight())
-					color = Engine.lighter(color, 75);
+					color = Engine.addHue(color, Engine.createColor(255, 255, 255, 255), .4);
 
-				// If the multibloc is invalid : its color will have a red hue
-				if (cube.isPreview() && cube.multibloc != null && !cube.multibloc.valid)
-					color = Engine.mix(color, -0x00ffff);
+				// If the cube is preview makes it transparent
+				if (cube.isPreview()) {
+					color = (127 << 24) + (color & 0xffffff);
+					// If the multibloc is invalid : its color will have a red hue
+					if (cube.multibloc != null && !cube.multibloc.valid)
+						// color = Engine.mixARGB(color, Engine.createColor(127, 255, 0, 0));
+						color = Engine.addHue(color, Engine.createColor(255, 255, 0, 0), .4);
+				}
 
 				quadri.add(new Quadri(points2D[row * cols1 + col], points2D[(row + 1) * cols1 + col],
-						points2D[(row + 1) * cols1 + col + 1], points2D[row * cols1 + col + 1], color, alpha, true));
+						points2D[(row + 1) * cols1 + col + 1], points2D[row * cols1 + col + 1], color, true));
 			}
 	}
 

@@ -283,8 +283,7 @@ public class ModelCube extends Cube implements Model {
 		for (int j = 6; j >= 4; j--)
 			for (int i = 0; i < 6; i++)
 				if (faces[i] == j && !hideFace[i]) {
-					draws.add(new DrawCubeFace(this, Face.faces[i], centerDecal, index + 10 + 6 - j,
-							preview ? 127 : DrawCubeFace.DEFAULT_ALPHA));
+					draws.add(new DrawCubeFace(this, Face.faces[i], centerDecal, index + 10 + 6 - j));
 					break;
 				}
 	}
