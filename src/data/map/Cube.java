@@ -25,8 +25,8 @@ public class Cube {
 
 	/** Size of the cube */
 	public double sizeX, sizeY, sizeZ;
-	/** Shift the point of rotation (pixel) */
-	public int shiftX, shiftY, shiftZ;
+	/** Shift the point of rotation (coef multiplied by the size of the cube) */
+	public double shiftX, shiftY, shiftZ;
 	/** Rotation relative to the shifted center (degree) */
 	public double rotaX, rotaY, rotaZ;
 
@@ -45,8 +45,8 @@ public class Cube {
 
 	// =========================================================================================================================
 
-	public Cube(double x, double y, double z, int shiftX, int shiftY, int shiftZ, double rotaX, double rotaY,
-			double rotaZ, double sizeX, double sizeY, double sizeZ, ItemID itemID) {
+	public Cube(double x, double y, double z, double rotaX, double rotaY, double rotaZ, double sizeX, double sizeY,
+			double sizeZ, ItemID itemID) {
 		this.itemID = itemID;
 
 		this.x = x;
@@ -61,19 +61,9 @@ public class Cube {
 		this.rotaY = rotaY;
 		this.rotaZ = rotaZ;
 
-		this.shiftX = shiftX;
-		this.shiftY = shiftY;
-		this.shiftZ = shiftZ;
-
 		this.sizeX = sizeX;
 		this.sizeY = sizeY;
 		this.sizeZ = sizeZ;
-	}
-
-	public Cube(double x, double y, double z, int rotaX, int rotaY, int rotaZ, double sizeX, double sizeY, double sizeZ,
-			ItemID itemID) {
-		this(x, y, z, 0, 0, 0, rotaX, rotaY, rotaZ, sizeX, sizeY, sizeZ, itemID);
-		onGrid = true;
 	}
 
 	public Cube(double x, double y, double z, double sizeX, double sizeY, double sizeZ, ItemID itemID) {
@@ -82,6 +72,7 @@ public class Cube {
 
 	public Cube(int x, int y, int z, ItemID itemID) {
 		this(x, y, z, 1, 1, 1, itemID);
+		onGrid = true;
 	}
 
 	public Cube(Coord tuple, ItemID itemID) {
@@ -95,6 +86,7 @@ public class Cube {
 	public Cube(Unit unit) {
 		this(unit.coord, ItemID.UNIT);
 		this.unit = unit;
+		this.onGrid = false;
 	}
 
 	// =========================================================================================================================

@@ -55,7 +55,7 @@ public class WorldGeneration {
 		}
 
 		// Off-grid cube
-		map.add(new Cube(-1, ground, 0, 0, 0, 0, 0, 45, 45, 1, 1, 1, ItemID.TEST));
+		map.add(new Cube(-1, ground, 0, 0,  45, 45, 1, 1, 1, ItemID.TEST));
 
 		// ========== Preview cubes ==========
 		map.add(new Cube(18, ground, 2, ItemID.GRASS));
@@ -95,15 +95,15 @@ public class WorldGeneration {
 		map.add(new E(10, ground, 20).getCube());
 
 		// Add off-grid cube
-		map.add(new Cube(19, ground, 19, 0, 0, 0, 0, 0, 0, 3, 2, 2, ItemID.TEST_BIG));
+		map.add(new Cube(19, ground, 19,  0, 0, 0, 3, 2, 2, ItemID.TEST_BIG));
 
 		// Add multibloc of off-grids without border
 		Multibloc m = new Multibloc();
-		m.add(new Cube(0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 2, 2, ItemID.TEST_BIG));
-		m.add(new Cube(0, 0, 2, 0, 0, 0, 0, 0, 0, 3, 2, 2, ItemID.TEST_BIG));
-		m.add(new Cube(0, 0, 4, 0, 0, 0, 0, 0, 0, 3, 2, 2, ItemID.TEST_BIG));
-		m.add(new Cube(5, 0, 0, 0, 0, 0, 0, 90, 0, 3, 2, 2, ItemID.TEST_BIG));
-		m.add(new Cube(5, 0, 3, 0, 0, 0, 0, 90, 0, 3, 2, 2, ItemID.TEST_BIG));
+		m.add(new Cube(0, 0, 0, 0, 0,  0, 3, 2, 2, ItemID.TEST_BIG));
+		m.add(new Cube(0, 0, 2, 0,  0, 0, 3, 2, 2, ItemID.TEST_BIG));
+		m.add(new Cube(0, 0, 4, 0,  0, 0, 3, 2, 2, ItemID.TEST_BIG));
+		m.add(new Cube(5, 0, 0, 0,  90, 0, 3, 2, 2, ItemID.TEST_BIG));
+		m.add(new Cube(5, 0, 3, 0,  90, 0, 3, 2, 2, ItemID.TEST_BIG));
 
 		m.setCoords(5, ground, 25);
 
@@ -167,8 +167,11 @@ public class WorldGeneration {
 				for (int _z = -a; _z <= a; _z++)
 					if (!((_x == -a || _x == a) && (_z == -a || _z == a) && (7 - _y) % 2 == 0)) {
 						map.remove(x + _x, y - _y, z + _z);
-						if (_y == 0)
-							map.add(new Cube(x + _x, y - _y, z + _z, 1, .8, 1, ItemID.WATER));
+						if (_y == 0) {
+							Cube c = new Cube(x + _x, y - _y, z + _z, 1, .8, 1, ItemID.WATER);
+							c.onGrid = true;
+							map.add(c);
+						}
 					}
 		}
 	}

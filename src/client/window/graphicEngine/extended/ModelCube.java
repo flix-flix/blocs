@@ -56,9 +56,9 @@ public class ModelCube extends Cube implements Model {
 
 	// =========================================================================================================================
 
-	public ModelCube(double x, double y, double z, int shiftX, int shiftY, int shiftZ, double rotaX, double rotaY,
-			double rotaZ, double sizeX, double sizeY, double sizeZ, ItemID itemID) {
-		super(x, y, z, shiftX, shiftY, shiftZ, rotaX, rotaY, rotaZ, sizeX, sizeY, sizeZ, itemID);
+	public ModelCube(double x, double y, double z, double rotaX, double rotaY, double rotaZ, double sizeX, double sizeY,
+			double sizeZ, ItemID itemID) {
+		super(x, y, z, rotaX, rotaY, rotaZ, sizeX, sizeY, sizeZ, itemID);
 
 		this.centerDecal = new Point3D(x, y, z);
 
@@ -68,8 +68,11 @@ public class ModelCube extends Cube implements Model {
 	}
 
 	public ModelCube(Cube c) {
-		this(c.x, c.y, c.z, c.shiftX, c.shiftY, c.shiftZ, c.rotaX, c.rotaY, c.rotaZ, c.sizeX, c.sizeY, c.sizeZ,
-				c.itemID);
+		this(c.x, c.y, c.z, c.rotaX, c.rotaY, c.rotaZ, c.sizeX, c.sizeY, c.sizeZ, c.itemID);
+
+		this.shiftX = c.shiftX;
+		this.shiftY = c.shiftY;
+		this.shiftZ = c.shiftZ;
 
 		this.rotation = c.rotation;
 		this.orientation = c.orientation;
@@ -83,8 +86,7 @@ public class ModelCube extends Cube implements Model {
 	// =========================================================================================================================
 
 	public void initPoints() {
-		centerDecal = new Point3D(x + (shiftX / (double) resoX), y + (shiftY / (double) resoY),
-				z + (shiftZ / (double) resoZ));
+		centerDecal = new Point3D(x + shiftX * sizeX, y + shiftY * sizeY, z + shiftZ * sizeZ);
 
 		this.ppx = new Point3D(centerDecal.x + Math.cos(rotaY * toRadian) * Math.cos(rotaZ * toRadian) * sizeX,
 				centerDecal.y + Math.sin(rotaZ * toRadian) * Math.cos(rotaX * toRadian) * sizeX,
@@ -109,8 +111,7 @@ public class ModelCube extends Cube implements Model {
 		vy = new Vector(centerDecal, ppy);
 		vz = new Vector(centerDecal, ppz);
 
-		points[0] = vx.divise(resoX).multiply(vy.divise(resoY).multiply(vz.divise(resoZ).multiply(-shiftZ), -shiftY),
-				-shiftX);
+		points[0] = vx.multiply(vy.multiply(vz.multiply(-shiftZ), -shiftY), -shiftX);
 		points[1] = vz.multiply(points[0], 1);
 		points[2] = vx.multiply(points[0], 1);
 		points[3] = vx.multiply(points[1], 1);
@@ -186,19 +187,15 @@ public class ModelCube extends Cube implements Model {
 			break;
 		case 1:
 			shiftX = 0;
-			shiftZ = resoZ;
+			shiftZ = 1;
 			break;
 		case 2:
-			shiftX = resoX;
-			shiftZ = resoZ;
+			shiftX = 1;
+			shiftZ = 1;
 			break;
 		case 3:
-			shiftX = resoX;
+			shiftX = 1;
 			shiftZ = 0;
-			break;
-		case 4:// center
-			shiftX = resoX / 2;
-			shiftZ = resoZ / 2;
 			break;
 		}
 	}
