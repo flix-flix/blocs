@@ -86,9 +86,12 @@ public class DrawCubeFace extends Draw {
 					color = (forcedAlpha << 24) + (color & 0xffffff);
 
 				// If the cube is highlighted : its color will be lighter
-				if (cube.isHighlight())
-					color = Engine.addHue(color, Engine.createColor(255, 255, 255, 255), .4);
-
+				if (cube.isHighlight()) {
+					if ((color & 0xff) + (color >> 8 & 0xff) + (color >> 16 & 0xff) > 600)
+						color = Engine.addHue(color, Engine.createColor(255, 0, 0, 0), .4);
+					else
+						color = Engine.addHue(color, Engine.createColor(255, 255, 255, 255), .4);
+				}
 				// If the cube is preview makes it transparent
 				if (cube.isPreview()) {
 					color = (127 << 24) + (color & 0xffffff);
