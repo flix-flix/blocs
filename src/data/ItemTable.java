@@ -14,6 +14,8 @@ public class ItemTable {
 			return false;
 		case WATER:
 			return false;
+		case TEST_TRANSPARENT:
+			return false;
 		default:
 			return true;
 		}

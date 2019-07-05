@@ -96,6 +96,7 @@ public class PanGUI extends JPanel {
 		_items.add(new Tree().getCube());
 		_items.add(new E().getCube());
 		_items.add(new Cube(ItemID.WATER));
+		_items.add(new Cube(ItemID.TEST_TRANSPARENT));
 
 		// ========================================================================================
 
