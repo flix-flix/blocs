@@ -188,10 +188,14 @@ public class ModelMap extends Map implements Model {
 
 	/** Returns true if there is an opaque bloc at coords x,y,z */
 	private boolean isOpaque(int x1, int y1, int z1, int x2, int y2, int z2) {
+		// Must contain a cube to be opaque
 		return gridContains(x2, y2, z2)
+				// The cube must be opaque...
 				&& (ItemTable.isOpaque(gridGet(x2, y2, z2).itemID)
+						// ... or having the same ID than the next one
 						|| gridGet(x1, y1, z1).itemID == gridGet(x2, y2, z2).itemID)
-				&& !gridGet(x2, y2, z2).isPreview();
+				// The cube musn't be a preview ... or the next one must be one too
+				&& (!gridGet(x2, y2, z2).isPreview() || gridGet(x1, y1, z1).isPreview());
 	}
 
 	// =========================================================================================================================
