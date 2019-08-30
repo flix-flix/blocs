@@ -185,7 +185,13 @@ public class Keyboard {
 
 	public void mouseToCenter() {
 		mouseFreeze = true;
-		robot.mouseMove(session.fen.getWidth() / 2, session.fen.getHeight() / 2);
+		robot.mouseMove(session.fen.getWidth() / 2, session.fen.getHeight() / 2); 
+	}
+
+	// =========================================================================================================================
+
+	public void wheelRotation(int wheelRotation) {
+		session.camera.moveY(wheelRotation * 10);
 	}
 
 	// =========================================================================================================================

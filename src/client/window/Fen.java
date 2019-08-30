@@ -267,14 +267,13 @@ public class Fen extends JFrame {
 					mouseY = e.getY();
 				} else if (session.gamemode == GameMode.CREATIVE)
 					session.keyboard.mouse(getLocationOnScreen().x, getLocationOnScreen().y, e.getX(), e.getY());
-
 			}
 		});
 
 		this.addMouseWheelListener(new MouseWheelListener() {
 			public void mouseWheelMoved(MouseWheelEvent e) {
-				// if (session.stateGUI == StateGUI.JEU)
-				// e.getWheelRotation());
+				if (session.stateGUI == StateHUD.GAME)
+					session.keyboard.wheelRotation(e.getWheelRotation());
 			}
 		});
 
@@ -398,8 +397,6 @@ public class Fen extends JFrame {
 			while (true) {
 				if (repaint) {
 					repaint = false;
-
-					session.timeBefore = System.currentTimeMillis();
 
 					if (session.gamemode == GameMode.CLASSIC)
 						session.setTarget(mouseX - 8, mouseY - 32);

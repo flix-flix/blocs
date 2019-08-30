@@ -164,9 +164,6 @@ public class ModelCube extends Cube implements Model {
 	// =========================================================================================================================
 
 	public void updateFromUnit() {
-		if (unit == null)
-			return;
-
 		rotaX = unit.ax;
 		rotaY = unit.ay;
 		rotaZ = unit.az;
@@ -204,7 +201,8 @@ public class ModelCube extends Cube implements Model {
 
 	@Override
 	public void init(Camera camera, Matrix matrice) {
-		updateFromUnit();
+		if (unit != null)
+			updateFromUnit();
 
 		matrice.transform(this);
 
@@ -212,7 +210,6 @@ public class ModelCube extends Cube implements Model {
 		int[] sommets = new int[] { 0, 0, 0 };
 
 		for (int i = 0; i < 8; i++) {
-
 			double d = points[i].distToOrigin();
 			for (int j = 0; j < 3; j++)
 				if (d < mem[j]) {

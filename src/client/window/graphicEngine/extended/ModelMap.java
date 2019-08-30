@@ -22,7 +22,7 @@ public class ModelMap extends Map implements Model {
 
 	// ======== Parameters ========
 	/** Range of chunks to draw */
-	int range = 3;
+	int range = 5;
 
 	// ===== Infos =====
 	public int nbFaces, nbChunks;

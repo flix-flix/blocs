@@ -56,7 +56,7 @@ public class Session implements Serializable {
 	/** The orientation of the player */
 	public Orientation playerOrientation = Orientation.NORTH;
 	/** Chronometric marks */
-	public long timeBefore, timeInit, timeMat, timeDraw, timePixel;
+	public long timeMat, timeDraw, timeQuadri;
 	/** Number of cubes and chunks displayed */
 	public int nbChunks, nbFaces;
 	/** Number of frames displayed the last second */
@@ -196,10 +196,9 @@ public class Session implements Serializable {
 	}
 
 	public void updateTimeDev() {
-		timeInit = engine.timeInit - timeBefore;
-		timeMat = engine.timeMat - engine.timeInit;
+		timeMat = engine.timeMat - engine.timeStart;
 		timeDraw = engine.timeDraw - engine.timeMat;
-		timePixel = engine.timePixel - engine.timeDraw;
+		timeQuadri = engine.timeEnd - engine.timeDraw;
 
 		nbChunks = map.nbChunks;
 		nbFaces = map.nbFaces;

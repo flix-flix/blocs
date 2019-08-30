@@ -36,7 +36,7 @@ public class Engine {
 	static public Face faceTarget;
 
 	// ================ Dev (F3) =====================
-	public long timeInit = 0, timeMat = 0, timeDraw = 0, timePixel;
+	public long timeStart, timeMat, timeDraw, timeEnd;
 
 	// ================ Data =====================
 	private Matrix matrice;
@@ -66,6 +66,7 @@ public class Engine {
 	// =========================================================================================================================
 
 	public BufferedImage getImage(int w, int h) {
+		timeStart = System.currentTimeMillis();
 		init(w, h);
 
 		matrice = new Matrix(-camera.getVx(), -camera.getVy(), camera.vue);
@@ -73,9 +74,9 @@ public class Engine {
 		cubeTarget = null;
 		faceTarget = null;
 
-		timeInit = System.currentTimeMillis();
-
 		draw();
+
+		timeEnd = System.currentTimeMillis();
 
 		if (drawSky)
 			drawSky();
@@ -160,7 +161,6 @@ public class Engine {
 					}
 		}
 
-		timePixel = System.currentTimeMillis();
 	}
 
 	// =========================================================================================================================

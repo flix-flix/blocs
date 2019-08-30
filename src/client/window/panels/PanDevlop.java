@@ -43,9 +43,8 @@ public class PanDevlop extends JPanel {
 		if (session.devlop) {
 			String strBloc = "Bloc: ";
 			String strFace = "Face: ";
-			String strTarget = "Target: ";
 
-			// ======================= Bloc/Target =========================
+			// ======================= Target =========================
 
 			if (session.cubeTarget != null) {
 				strBloc += session.cubeTarget.toString();
@@ -55,24 +54,25 @@ public class PanDevlop extends JPanel {
 				strFace += "None";
 			}
 
-			strTarget += "None";
-
 			// ==================================================================================================================
 
-			writeLeft("Camera: " + session.camera.vue.toString());
+			writeLeft(String.format("Camera: X = %.1f  Y = %.1f  Z = %.1f", session.camera.vue.x, session.camera.vue.y,
+					session.camera.vue.z));
 			writeLeft("Chunk: " + "X = " + Map.toChunkCoord(session.camera.vue.x) + " Z = "
 					+ Map.toChunkCoord(session.camera.vue.z));
-			writeLeft("Vue: vx = " + session.camera.getVx() + " vy = " + session.camera.getVy());
+			writeLeft("View: X = " + session.camera.getVx() + " Y = " + session.camera.getVy());
+			writeLeft("Orientation: " + session.playerOrientation.toString());
+			left++;
 			writeLeft(strBloc);
 			writeLeft(strFace);
-			writeLeft(session.playerOrientation.toString());
-			writeLeft(strTarget);
 
 			// ==================================================================================================================
 
-			writeRight("nbChunks: " + session.nbChunks + " nbFaces: " + session.nbFaces);
-			writeRight("timeInit: " + session.timeInit + " timeMat: " + session.timeMat + " timeDraw: "
-					+ session.timeDraw + " timePixel: " + session.timePixel);
+			writeRight("Chunks: " + session.nbChunks + " Faces: " + session.nbFaces);
+			right++;
+			writeRight("timeMat: " + session.timeMat + " timeDraw: " + session.timeDraw + " timePixel: "
+					+ session.timeQuadri);
+			right++;
 			writeRight("FPS: " + session.fps);
 			writeRight("Ticks (phys): " + session.ticksPhys);
 			writeRight("Ticks (key): " + session.ticksKeyBoard);
