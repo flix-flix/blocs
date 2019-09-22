@@ -16,6 +16,10 @@ public class ItemTable {
 			return false;
 		case TEST_TRANSPARENT:
 			return false;
+
+		case UNIT:
+			return false;
+
 		default:
 			return true;
 		}

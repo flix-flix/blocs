@@ -230,15 +230,24 @@ public class Map implements Tickable {
 	// Units
 
 	public void addUnit(Unit unit) {
-		units.add(createUnit(unit));
+		Cube c = createUnit(unit);
+		units.add(c);
+		gridAdd(c);
 	}
 
 	public void removeUnit(Unit unit) {
 		for (Cube c : units)
 			if (c.unit == unit) {
 				units.remove(c);
+				gridRemove(c.coords());
 				return;
 			}
+	}
+
+	// =========================================================================================================================
+
+	public boolean isOnFloor(Coord c) {
+		return gridContains(c.x, c.y - 1, c.z);
 	}
 
 	// =========================================================================================================================
@@ -246,8 +255,9 @@ public class Map implements Tickable {
 
 	@Override
 	public void tick() {
+		// TODO Concurrent modification
 		for (Cube u : units) {
-			u.unit.doStep();
+			u.unit.doStep(this);
 		}
 	}
 

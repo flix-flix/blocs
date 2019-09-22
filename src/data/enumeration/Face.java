@@ -5,6 +5,7 @@ public enum Face {
 	UP, DOWN, NORTH, SOUTH, EAST, WEST;
 
 	public static Face[] faces = { UP, DOWN, NORTH, SOUTH, EAST, WEST };
+	public static Face[] facesReverse = { WEST, EAST, SOUTH, NORTH, DOWN, UP };
 
 	public int opposite() {
 		switch (this) {

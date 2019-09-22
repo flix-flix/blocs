@@ -31,28 +31,28 @@ public class Coord {
 
 	/** Returns the Coords of the cube of the other side of the given face */
 	public Coord face(Face face) {
-		Coord tuple = clone();
+		Coord coord = clone();
 		switch (face) {
 		case UP:
-			tuple.y++;
+			coord.y++;
 			break;
 		case DOWN:
-			tuple.y--;
+			coord.y--;
 			break;
 		case NORTH:
-			tuple.x++;
+			coord.x++;
 			break;
 		case SOUTH:
-			tuple.x--;
+			coord.x--;
 			break;
 		case EAST:
-			tuple.z++;
+			coord.z++;
 			break;
 		case WEST:
-			tuple.z--;
+			coord.z--;
 			break;
 		}
-		return tuple;
+		return coord;
 	}
 
 	// =========================================================================================================================
@@ -61,21 +61,21 @@ public class Coord {
 	 * Returns the Orientation connecting the two Coords (from this to the given
 	 * one)
 	 */
-	public Orientation getOrientation(Coord t) {
-		if (t.y != y)
+	public Orientation getOrientation(Coord coord) {
+		if (coord.y != y)
 			return null;
 
-		if (t.z == z) {
-			if (t.x == x + 1)
+		if (coord.z == z) {
+			if (coord.x == x + 1)
 				return Orientation.NORTH;
-			if (t.x == x - 1)
+			if (coord.x == x - 1)
 				return Orientation.SOUTH;
 		}
 
-		if (t.x == x) {
-			if (t.z == z + 1)
+		if (coord.x == x) {
+			if (coord.z == z + 1)
 				return Orientation.EAST;
-			if (t.z == z - 1)
+			if (coord.z == z - 1)
 				return Orientation.WEST;
 		}
 
@@ -85,25 +85,36 @@ public class Coord {
 	// =========================================================================================================================
 
 	/** Returns the index of the point connecting the two Coords */
-	public int getRotationPoint(Coord t) {
-		if (t.z == z - 1 && t.x == x - 1)
-			return 0;
-		if (t.z == z + 1 && t.x == x - 1)
-			return 1;
-		if (t.z == z + 1 && t.x == x + 1)
-			return 2;
-		if (t.z == z - 1 && t.x == x + 1)
-			return 3;
+	public int getRotationPointDiago(Coord coord) {
+		int rota = -1;
 
-		return -1;
+		if (Math.abs(coord.y - y) <= 1) {
+			if (coord.z == z - 1 && coord.x == x - 1)
+				rota = 0;
+			else if (coord.z == z + 1 && coord.x == x - 1)
+				rota = 1;
+			else if (coord.z == z + 1 && coord.x == x + 1)
+				rota = 2;
+			else if (coord.z == z - 1 && coord.x == x + 1)
+				rota = 3;
+		}
+
+		if (rota != -1 && y + 1 == coord.y)
+			rota += 4;
+
+		return rota;
 	}
 
 	// =========================================================================================================================
 
-	public boolean equals(Coord tuple) {
-		if (tuple == null)
+	public boolean equals(Coord coord) {
+		if (coord == null)
 			return false;
-		return x == tuple.x && y == tuple.y && z == tuple.z;
+		return x == coord.x && y == coord.y && z == coord.z;
+	}
+
+	public int getId() {
+		return 1_000_000 * x + 1_000 * y + z;
 	}
 
 	@Override

@@ -54,7 +54,7 @@ public class PanDevlop extends JPanel {
 				strFace += "None";
 			}
 
-			// ==================================================================================================================
+			// =========================================================================================================================
 
 			writeLeft(String.format("Camera: X = %.1f  Y = %.1f  Z = %.1f", session.camera.vue.x, session.camera.vue.y,
 					session.camera.vue.z));
@@ -66,7 +66,7 @@ public class PanDevlop extends JPanel {
 			writeLeft(strBloc);
 			writeLeft(strFace);
 
-			// ==================================================================================================================
+			// =========================================================================================================================
 
 			writeRight("Chunks: " + session.nbChunks + " Faces: " + session.nbFaces);
 			right++;

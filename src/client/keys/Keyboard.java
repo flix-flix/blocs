@@ -107,7 +107,10 @@ public class Keyboard {
 
 		if (session.gamemode == GameMode.CREATIVE) {
 			if (session.cubeTarget != null)
-				session.map.remove((ModelCube) session.cubeTarget);
+				if (session.cubeTarget.unit != null)
+					session.map.removeUnit(session.cubeTarget.unit);
+				else
+					session.map.remove((ModelCube) session.cubeTarget);
 
 		} else if (session.gamemode == GameMode.CLASSIC) {
 			if (session.action == Action.DESTROY) {
@@ -185,7 +188,7 @@ public class Keyboard {
 
 	public void mouseToCenter() {
 		mouseFreeze = true;
-		robot.mouseMove(session.fen.getWidth() / 2, session.fen.getHeight() / 2); 
+		robot.mouseMove(session.fen.getWidth() / 2, session.fen.getHeight() / 2);
 	}
 
 	// =========================================================================================================================

@@ -1,21 +1,14 @@
 package data.units;
 
 import java.util.LinkedList;
-import java.util.Queue;
 
 import data.enumeration.Face;
 import data.enumeration.Orientation;
 import data.enumeration.Rotation;
+import data.map.Map;
 import utils.Coord;
 
 public class Unit {
-
-	/** Path-finding : Value of the Start */
-	private static final int START = 0;
-	/** Path-finding : Value of an empty cube in the grid */
-	private static final int EMPTY = -99;
-	/** Path-finding : Value of a non-empty cube in the grid */
-	// private static final int FILL = -999;
 
 	/** Coords of the unit */
 	public Coord coord;
@@ -40,7 +33,10 @@ public class Unit {
 	/** For each axe : the current rotation of the unit */
 	public double ax = 0, ay = 0, az = 0;
 
-	/** This unit is currently moving to this coord (null if not moving) */
+	/**
+	 * This unit is currently moving to this coord (an adjacent bloc) (null if not
+	 * moving)
+	 */
 	private Coord movingTo;
 
 	/** Coord of the destination */
@@ -59,7 +55,7 @@ public class Unit {
 	/**
 	 * Increase the rotation by one step and re-calculate the corresponding angles
 	 */
-	public void doStep() {
+	public void doStep(Map map) {
 		if (movingTo == null)
 			return;
 
@@ -70,14 +66,14 @@ public class Unit {
 			ay = -(movingStep / (double) movingStepFinal) * movingAngleY;
 			az = (movingStep / (double) movingStepFinal) * movingAngleZ;
 		} else {
-			arrive();
+			arrive(map);
 		}
 	}
 
 	// =========================================================================================================================
 
 	/** Update cube position after the rotation */
-	public void arrive() {
+	public void arrive(Map map) {
 		rotation = nextRotation;
 		orientation = nextOrientation;
 
@@ -90,7 +86,9 @@ public class Unit {
 		movingAngleY = 0;
 		movingAngleZ = 0;
 
+		map.removeUnit(this);
 		coord = movingTo;
+		map.addUnit(this);
 		movingTo = null;
 
 		if (!path.isEmpty())
@@ -99,7 +97,7 @@ public class Unit {
 
 	// =========================================================================================================================
 
-	/** Initialize a rotation to an orthogonal position */
+	/** Initialize a rotation to an adjacent position */
 	public void setDirection(Orientation dir) {
 		movingTo = coord.face(dir.face);
 
@@ -191,8 +189,65 @@ public class Unit {
 		}
 	}
 
+	/** Initialize a rotation to the upper position */
+	public void setUp(Orientation dir) {
+		movingTo = coord.face(Face.UP);
+
+		nextRotation = orientation.next() == dir ? rotation.nextX() : rotation.previousX();
+
+		switch (dir) {
+		case NORTH:
+			rotationPoint = 6;
+			movingAngleZ = -90;
+			break;
+		case EAST:
+			rotationPoint = 5;
+			movingAngleX = 90;
+			break;
+		case SOUTH:
+			rotationPoint = 4;
+			movingAngleZ = 90;
+			break;
+		case WEST:
+			rotationPoint = 4;
+			movingAngleX = -90;
+			break;
+		default:
+			break;
+		}
+	}
+
+	/** Initialize a rotation to the upper position */
+	public void setDown(Orientation dir) {
+		movingTo = coord.face(Face.DOWN);
+
+		nextRotation = orientation.next() == dir ? rotation.nextX() : rotation.previousX();
+
+		switch (dir) {
+		case NORTH:
+			rotationPoint = 1;
+			movingAngleZ = -90;
+			break;
+		case EAST:
+			rotationPoint = 0;
+			movingAngleX = 90;
+			break;
+		case SOUTH:
+			rotationPoint = 3;
+			movingAngleZ = 90;
+			break;
+		case WEST:
+			rotationPoint = 1;
+			movingAngleX = -90;
+			break;
+		default:
+			break;
+		}
+	}
+
 	/** Initialize an on-place rotation to change the unit's rotation axe */
 	public void rotation() {
+		System.out.println("... Rota");
 		movingTo = coord.clone();
 		rotationPoint = 1;
 
@@ -211,141 +266,66 @@ public class Unit {
 
 	// =========================================================================================================================
 
-	public void goTo(int endX, int endZ) {
-		generatePathTo(endX, endZ);
+	public void goTo(Map map, int endX, int endY, int endZ) {
+		path = PathFinding.generatePathTo(map, coord, endX, endY, endZ);
+		System.out.println("fin");
+		System.out.println("steps: " + path.size());
+		System.out.println("first: " + path.peekFirst());
+		if (path == null)
+			return;
 
+		destination = new Coord(endX, endY, endZ);
 		doNextMove();
 	}
 
 	public void doNextMove() {
-		Orientation dir = coord.getOrientation(path.peekLast());
+		System.out.println("=================");
+		System.out.println("coord: " + coord);
 
-		// Test rotation
-		if (path.size() >= 2 && coord.getRotationPoint(path.get(path.size() - 2)) >= 0) {
-			path.removeLast();
-			setDiago(coord.getRotationPoint(path.removeLast()));
-		} else {
-			if (orientation.isSameAxe(dir))
+		// System.out.println("Going to: " + path.peekFirst() + " (next: " +
+		// path.get(1).toString() + ")");
+
+		Orientation dir = coord.getOrientation(path.peekFirst());
+
+		System.out.println("rota (first): " + coord.getRotationPointDiago(path.peekFirst()));
+
+		if (coord.y + 1 == path.peekFirst().y) {// Going up
+			System.out.println(">>> UP");
+			Orientation nextDir = path.get(0).getOrientation(path.get(1));
+
+			if (orientation.isSameAxe(nextDir))
 				rotation();
 			else {
-				path.removeLast();
-
-				setDirection(dir);
+				path.removeFirst();
+				setUp(nextDir);
 			}
-		}
-	}
+		} else if (dir == null && path.size() >= 2) {// Going down
+			System.out.println(">>> DOWN");
+			Orientation nextDir = path.get(0).getOrientation(path.get(1));
 
-	// =========================================================================================================================
-
-	/**
-	 * Path-finding algorithm
-	 * 
-	 * Generates a list of Coords linking current coords to the indicated location
-	 */
-	private boolean generatePathTo(int endX, int endZ) {
-		// [x][y]
-		int[][] map = new int[100][100];
-
-		for (int i = 0; i < map.length; i++)
-			for (int j = 0; j < map[0].length; j++)
-				map[i][j] = EMPTY;
-
-		map[coord.x][coord.z] = START;
-
-		Queue<Couple> queue = new LinkedList<>();
-		queue.add(new Couple(coord.x, coord.z));
-
-		// === Setting values on cubes ===
-		Couple p;
-		while ((p = queue.poll()) != null) {
-			if (p.x == endX && p.z == endZ)
-				break;
-
-			addValue(p.x - 1, p.z, map[p.x][p.z] + 1, map, queue);
-			addValue(p.x + 1, p.z, map[p.x][p.z] + 1, map, queue);
-			addValue(p.x, p.z - 1, map[p.x][p.z] + 1, map, queue);
-			addValue(p.x, p.z + 1, map[p.x][p.z] + 1, map, queue);
-		}
-
-		// End point not reached
-		if (map[endX][endZ] == EMPTY) {
-			return false;
-		}
-
-		destination = new Coord(endX, coord.y, endZ);
-
-		// === Finding path from values ===
-		path = new LinkedList<>();
-		path.add(new Coord(endX, this.coord.y, endZ));
-
-		while (map[endX][endZ] != START) {
-			// Generates diagonal path (instead of full north then full right)
-			if (path.size() % 2 == 0) {
-				if (isPrevious(endX - 1, endZ, map, map[endX][endZ]))
-					endX--;
-				else if (isPrevious(endX, endZ + 1, map, map[endX][endZ]))
-					endZ++;
-				else if (isPrevious(endX + 1, endZ, map, map[endX][endZ]))
-					endX++;
-				else if (isPrevious(endX, endZ - 1, map, map[endX][endZ]))
-					endZ--;
-			} else {
-				if (isPrevious(endX, endZ - 1, map, map[endX][endZ]))
-					endZ--;
-				else if (isPrevious(endX + 1, endZ, map, map[endX][endZ]))
-					endX++;
-				else if (isPrevious(endX, endZ + 1, map, map[endX][endZ]))
-					endZ++;
-				else if (isPrevious(endX - 1, endZ, map, map[endX][endZ]))
-					endX--;
+			if (orientation.isSameAxe(nextDir))
+				rotation();
+			else {
+				path.removeFirst();
+				setDown(nextDir);
 			}
-		}
-		path.removeLast(); // Remove the start
-		return true;
-	}
+		} else {
+			// Detect diagonal rotation
+			if (path.size() >= 2 && coord.getRotationPointDiago(path.get(1)) >= 0
+					&& coord.getRotationPointDiago(path.get(1)) < 4) {
+				System.out.println(">>> DIAGO (rota: " + coord.getRotationPointDiago(path.get(1)) + ")");
 
-	// =========================================================================================================================
+				path.removeFirst();
+				setDiago(coord.getRotationPointDiago(path.removeFirst()));
+			} else {// Do adjacent rotation
+				if (orientation.isSameAxe(dir))
+					rotation();
+				else {
+					path.removeFirst();
 
-	/**
-	 * Part of the path-finding algorithm
-	 * 
-	 * Put in a cube the number of rotations needed to reach it
-	 */
-	private void addValue(int x, int z, int value, int[][] map, Queue<Couple> q) {
-		if (x < 0 || x >= map.length || z < 0 || z >= map[0].length)
-			return;
-
-		if (map[x][z] != EMPTY)
-			return;
-
-		map[x][z] = value;
-		q.add(new Couple(x, z));
-	}
-
-	/**
-	 * Part of the path-finding algorithm
-	 * 
-	 * Returns true if the indicated cube is closer to the start than the actual
-	 */
-	private boolean isPrevious(int x, int z, int[][] map, int value) {
-		if (x < 0 || x >= map.length || z < 0 || z >= map[0].length)
-			return false;
-
-		if (map[x][z] >= value || map[x][z] == EMPTY)
-			return false;
-
-		path.add(new Coord(x, this.coord.y, z));
-
-		return true;
-	}
-
-	/** Store a couple of int */
-	private class Couple {
-		int x, z;
-
-		Couple(int x, int z) {
-			this.x = x;
-			this.z = z;
+					setDirection(dir);
+				}
+			}
 		}
 	}
 

@@ -55,7 +55,7 @@ public class WorldGeneration {
 		}
 
 		// Off-grid cube
-		map.add(new Cube(-1, ground, 0, 0,  45, 45, 1, 1, 1, ItemID.TEST));
+		map.add(new Cube(-1, ground, 0, 0, 45, 45, 1, 1, 1, ItemID.TEST));
 
 		// ========== Preview cubes ==========
 		map.add(new Cube(18, ground, 2, ItemID.GRASS));
@@ -95,15 +95,15 @@ public class WorldGeneration {
 		map.add(new E(10, ground, 20).getCube());
 
 		// Add off-grid cube
-		map.add(new Cube(19, ground, 19,  0, 0, 0, 3, 2, 2, ItemID.TEST_BIG));
+		map.add(new Cube(19, ground, 19, 0, 0, 0, 3, 2, 2, ItemID.TEST_BIG));
 
 		// Add multibloc of off-grids without border
 		Multibloc m = new Multibloc();
-		m.add(new Cube(0, 0, 0, 0, 0,  0, 3, 2, 2, ItemID.TEST_BIG));
-		m.add(new Cube(0, 0, 2, 0,  0, 0, 3, 2, 2, ItemID.TEST_BIG));
-		m.add(new Cube(0, 0, 4, 0,  0, 0, 3, 2, 2, ItemID.TEST_BIG));
-		m.add(new Cube(5, 0, 0, 0,  90, 0, 3, 2, 2, ItemID.TEST_BIG));
-		m.add(new Cube(5, 0, 3, 0,  90, 0, 3, 2, 2, ItemID.TEST_BIG));
+		m.add(new Cube(0, 0, 0, 0, 0, 0, 3, 2, 2, ItemID.TEST_BIG));
+		m.add(new Cube(0, 0, 2, 0, 0, 0, 3, 2, 2, ItemID.TEST_BIG));
+		m.add(new Cube(0, 0, 4, 0, 0, 0, 3, 2, 2, ItemID.TEST_BIG));
+		m.add(new Cube(5, 0, 0, 0, 90, 0, 3, 2, 2, ItemID.TEST_BIG));
+		m.add(new Cube(5, 0, 3, 0, 90, 0, 3, 2, 2, ItemID.TEST_BIG));
 
 		m.setCoords(5, ground, 25);
 
@@ -114,10 +114,16 @@ public class WorldGeneration {
 			dig(map, (int) (50 * Math.cos(i * FlixBlocksUtils.toRadian)), ground - 1,
 					(int) (50 * Math.sin(i * FlixBlocksUtils.toRadian)));
 
+		for (int i = 10; i < 20; i++)
+			for (int j = 5; j < 15; j++)
+				// map.add(new Cube(i, 10, j, ItemID.GLASS));
+				map.remove(i, 9, j);
+
 		// Add Unit
-		Unit u = new Unit(5, 15, 5);
+		Unit u = new Unit(5, 10, 5);
 		map.addUnit(u);
-		u.goTo(15, 10);
+		// u.goTo(map, 15, 11, 10);
+		u.goTo(map, 15, 9, 10);
 
 		// Add cube with UNIT texture
 		map.add(new Cube(0, 15, 0, ItemID.UNIT));

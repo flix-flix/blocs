@@ -21,6 +21,8 @@ public class ModelCube extends Cube implements Model {
 
 	/** center after map rotation */
 	public Point3D centerDecal;
+	/** The cube will be generate with vectors from this point */
+	public Point3D generationPoint;
 	/** The 3 adjacents points of centerDecal after the map and cube rotations */
 	public Point3D ppx, ppy, ppz;
 	/** Vectors of the cube for the 3 axes (centerDecal to ppx, ppy, ppz) */
@@ -60,7 +62,7 @@ public class ModelCube extends Cube implements Model {
 			double sizeZ, ItemID itemID) {
 		super(x, y, z, rotaX, rotaY, rotaZ, sizeX, sizeY, sizeZ, itemID);
 
-		this.centerDecal = new Point3D(x, y, z);
+		centerDecal = new Point3D(x, y, z);
 
 		this.resoX = texturePack.getFace(itemID.id, Face.EAST).width;
 		this.resoY = texturePack.getFace(itemID.id, Face.NORTH).height;
@@ -86,30 +88,31 @@ public class ModelCube extends Cube implements Model {
 	// =========================================================================================================================
 
 	public void initPoints() {
-		centerDecal = new Point3D(x + shiftX * sizeX, y + shiftY * sizeY, z + shiftZ * sizeZ);
+		generationPoint = new Point3D(x + shiftX * sizeX, y + shiftY * sizeY, z + shiftZ * sizeZ);
+		centerDecal = new Point3D(x, y, z);
 
-		this.ppx = new Point3D(centerDecal.x + Math.cos(rotaY * toRadian) * Math.cos(rotaZ * toRadian) * sizeX,
-				centerDecal.y + Math.sin(rotaZ * toRadian) * Math.cos(rotaX * toRadian) * sizeX,
-				centerDecal.z + (Math.sin(rotaY * toRadian) * Math.cos(rotaZ * toRadian)
+		this.ppx = new Point3D(generationPoint.x + Math.cos(rotaY * toRadian) * Math.cos(rotaZ * toRadian) * sizeX,
+				generationPoint.y + Math.sin(rotaZ * toRadian) * Math.cos(rotaX * toRadian) * sizeX,
+				generationPoint.z + (Math.sin(rotaY * toRadian) * Math.cos(rotaZ * toRadian)
 						+ Math.sin(rotaZ * toRadian) * Math.sin(rotaX * toRadian)) * sizeX);
 
 		this.ppy = new Point3D(
-				centerDecal.x - ((Math.sin(rotaZ * toRadian) * Math.cos(rotaY * toRadian))
+				generationPoint.x - ((Math.sin(rotaZ * toRadian) * Math.cos(rotaY * toRadian))
 						+ Math.sin(rotaX * toRadian) * Math.sin(rotaY * toRadian) * Math.cos(rotaZ * toRadian)) * sizeY,
-				centerDecal.y + Math.cos(rotaZ * toRadian) * Math.cos(rotaX * toRadian) * sizeY,
-				centerDecal.z + ((-Math.sin(rotaZ * toRadian) * Math.sin(rotaY * toRadian))
+				generationPoint.y + Math.cos(rotaZ * toRadian) * Math.cos(rotaX * toRadian) * sizeY,
+				generationPoint.z + ((-Math.sin(rotaZ * toRadian) * Math.sin(rotaY * toRadian))
 						+ Math.sin(rotaX * toRadian) * Math.cos(rotaY * toRadian) * Math.cos(rotaZ * toRadian))
 						* sizeY);
 
-		this.ppz = new Point3D(centerDecal.x + (-Math.sin(rotaY * toRadian) * Math.cos(rotaX * toRadian)) * sizeZ,
-				centerDecal.y - Math.sin(rotaX * toRadian) * sizeZ,
-				centerDecal.z + Math.cos(rotaY * toRadian) * Math.cos(rotaX * toRadian) * sizeZ);
+		this.ppz = new Point3D(generationPoint.x + (-Math.sin(rotaY * toRadian) * Math.cos(rotaX * toRadian)) * sizeZ,
+				generationPoint.y - Math.sin(rotaX * toRadian) * sizeZ,
+				generationPoint.z + Math.cos(rotaY * toRadian) * Math.cos(rotaX * toRadian) * sizeZ);
 	}
 
 	public void recalcul() {
-		vx = new Vector(centerDecal, ppx);
-		vy = new Vector(centerDecal, ppy);
-		vz = new Vector(centerDecal, ppz);
+		vx = new Vector(generationPoint, ppx);
+		vy = new Vector(generationPoint, ppy);
+		vz = new Vector(generationPoint, ppz);
 
 		points[0] = vx.multiply(vy.multiply(vz.multiply(-shiftZ), -shiftY), -shiftX);
 		points[1] = vz.multiply(points[0], 1);
@@ -177,13 +180,14 @@ public class ModelCube extends Cube implements Model {
 		rotation = unit.rotation;
 		orientation = unit.orientation;
 
+		shiftX = 0;
+		shiftY = 0;
+		shiftZ = 0;
+
 		switch (unit.rotationPoint) {
 		case 0:
-			shiftX = 0;
-			shiftZ = 0;
 			break;
 		case 1:
-			shiftX = 0;
 			shiftZ = 1;
 			break;
 		case 2:
@@ -192,7 +196,22 @@ public class ModelCube extends Cube implements Model {
 			break;
 		case 3:
 			shiftX = 1;
-			shiftZ = 0;
+			break;
+		case 4:
+			shiftY = 1;
+			break;
+		case 5:
+			shiftY = 1;
+			shiftZ = 1;
+			break;
+		case 6:
+			shiftX = 1;
+			shiftY = 1;
+			shiftZ = 1;
+			break;
+		case 7:
+			shiftX = 1;
+			shiftY = 1;
 			break;
 		}
 	}
@@ -274,12 +293,23 @@ public class ModelCube extends Cube implements Model {
 
 		draws.clear();
 
-		for (int j = 6; j >= 4; j--)
+		if (unit == null)// only draw the 3 visible faces of the cube
+			drawFaces(3, faces);
+		else// draw the 6 faces cause the unit cube is rolling
+			drawFaces(6, faces);
+
+	}
+
+	private void drawFaces(int nb, int[] faces) {
+		for (int j = 6; j > 6 - nb; j--)
+			// Draw the faces from the closest to the farthest
 			for (int i = 0; i < 6; i++)
-				if (faces[i] == j && !hideFace[i]) {
-					draws.add(new DrawCubeFace(this, Face.faces[i], centerDecal, index + 10 + 6 - j));
-					break;
-				}
+				if (faces[i] == j)
+					// Ignore the face hidden by a bloc (except for unit cause they can be rolling)
+					if (!hideFace[i] || unit != null) {
+						draws.add(new DrawCubeFace(this, Face.faces[i], centerDecal, index + 10 + 6 - j));
+						break;
+					}
 	}
 
 	@Override

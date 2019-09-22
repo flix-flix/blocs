@@ -36,7 +36,8 @@ public class ModelChunk extends Chunk implements Model {
 				for (int z = 0; z < Z; z++)
 					if (grid[x][y][z] != null)
 						if (((ModelCube) grid[x][y][z]).isVisible())
-							draws.addAll(((ModelCube) grid[x][y][z]).getDraws(camera));
+							if (((ModelCube) grid[x][y][z]).unit == null)// Ignore unit (added by map)
+								draws.addAll(((ModelCube) grid[x][y][z]).getDraws(camera));
 
 		for (Cube cube : cubes)
 			draws.addAll(((ModelCube) cube).getDraws(camera));
