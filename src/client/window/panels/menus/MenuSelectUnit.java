@@ -2,11 +2,8 @@ package client.window.panels.menus;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 
 import client.session.Action;
 import client.session.Session;
@@ -30,7 +27,6 @@ public class MenuSelectUnit extends Menu {
 	private MenuAction goTo;
 
 	private Font font = new Font("monospace", Font.PLAIN, 12);
-	private FontMetrics fm = getFontMetrics(font);
 
 	public MenuSelectUnit(Session session) {
 		super(session);
@@ -39,26 +35,6 @@ public class MenuSelectUnit extends Menu {
 
 		goTo.setBounds(15, 90, 75, 75);
 		add(goTo);
-
-		addComponentListener(new ComponentListener() {
-			@Override
-			public void componentShown(ComponentEvent e) {
-			}
-
-			@Override
-			public void componentResized(ComponentEvent e) {
-				if (engine != null)
-					img = engine.getImage(getWidth(), getHeight());
-			}
-
-			@Override
-			public void componentMoved(ComponentEvent e) {
-			}
-
-			@Override
-			public void componentHidden(ComponentEvent e) {
-			}
-		});
 	}
 
 	// =========================================================================================================================
@@ -66,7 +42,7 @@ public class MenuSelectUnit extends Menu {
 	@Override
 	protected void paintComponent(Graphics g) {
 		g.setColor(Color.GRAY);
-		g.fillRect(5, 5, getWidth() - 10, getHeight() - 10);
+		g.fillRect(0, 0, getWidth(), getHeight());
 
 		if (img != null)
 			g.drawImage(img, 15, 15, null);
@@ -74,6 +50,9 @@ public class MenuSelectUnit extends Menu {
 		g.setFont(font);
 		g.setColor(Color.WHITE);
 		g.drawString("Unit", img == null ? 15 : img.getWidth(null) + 15, 50);
+
+		if (unit != null)
+			g.drawString(unit.toString(), img == null ? 15 : img.getWidth(null) + 15, 70);
 	}
 
 	// =========================================================================================================================
@@ -92,6 +71,12 @@ public class MenuSelectUnit extends Menu {
 	}
 
 	// =========================================================================================================================
+
+	@Override
+	public void resize() {
+		if (engine != null)
+			img = engine.getImage(getWidth(), getHeight());
+	}
 
 	@Override
 	public void click() {

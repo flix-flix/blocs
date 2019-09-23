@@ -157,19 +157,6 @@ public class Session implements Serializable {
 
 	public void setAction(Action action) {
 		this.action = action;
-
-		fen.gui.hideMenu();
-
-		switch (action) {
-		case CUBES:
-			break;
-		case DESTROY:
-			break;
-		case MOUSE:
-			break;
-		case SELECT:
-			break;
-		}
 	}
 
 	public void setNextCube(Cube cube) {
@@ -250,7 +237,6 @@ public class Session implements Serializable {
 					map.setHighlight(previousPreview, true);
 				} else if (action == Action.DESTROY) {
 					map.setHighlight(cubeTarget, true);
-
 				} else if (action == Action.MOUSE) {
 					map.setHighlight(cubeTarget, true);
 				}

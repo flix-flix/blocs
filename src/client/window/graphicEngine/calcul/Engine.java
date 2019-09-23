@@ -66,6 +66,9 @@ public class Engine {
 	// =========================================================================================================================
 
 	public BufferedImage getImage(int w, int h) {
+		if (w <= 0 || h <= 0)
+			return null;
+
 		timeStart = System.currentTimeMillis();
 		init(w, h);
 

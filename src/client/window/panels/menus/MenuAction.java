@@ -3,8 +3,6 @@ package client.window.panels.menus;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 
 import client.session.Action;
 import client.session.Session;
@@ -21,6 +19,7 @@ public class MenuAction extends Menu {
 
 	public Action action;
 
+	Engine engine;
 	Image img;
 
 	public boolean selected;
@@ -31,30 +30,10 @@ public class MenuAction extends Menu {
 
 		img = FlixBlocksUtils.getImage("menu/" + action.name().toLowerCase());
 
-		selected = session.action == action;
-
 		if (action == Action.CUBES) {
-			Engine engine = new Engine(new Camera(new Point3D(-.4, 1.5, -1), 58, -35),
-					new ModelCube(new Cube(ItemID.GRASS)), session.texturePack);
+			engine = new Engine(new Camera(new Point3D(-.4, 1.5, -1), 58, -35), new ModelCube(new Cube(ItemID.GRASS)),
+					session.texturePack);
 			engine.drawSky = false;
-			addComponentListener(new ComponentListener() {
-				@Override
-				public void componentShown(ComponentEvent e) {
-				}
-
-				@Override
-				public void componentResized(ComponentEvent e) {
-					img = engine.getImage(getWidth(), getHeight());
-				}
-
-				@Override
-				public void componentMoved(ComponentEvent e) {
-				}
-
-				@Override
-				public void componentHidden(ComponentEvent e) {
-				}
-			});
 		}
 	}
 
@@ -68,15 +47,21 @@ public class MenuAction extends Menu {
 
 		if (selected) {
 			g.setColor(Color.GRAY);
-			g.drawRect(0, 0, getWidth(), getHeight());
-			g.drawRect(1, 1, getWidth() - 2, getHeight() - 2);
-			g.drawRect(2, 2, getWidth() - 4, getHeight() - 4);
+			g.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
+			g.drawRect(1, 1, getWidth() - 3, getHeight() - 3);
+			g.drawRect(2, 2, getWidth() - 5, getHeight() - 5);
 		}
 
 		g.drawImage(img, 0, 0, getWidth(), getHeight(), null);
 	}
 
 	// =========================================================================================================================
+
+	@Override
+	public void resize() {
+		if (engine != null)
+			img = engine.getImage(getWidth(), getHeight());
+	}
 
 	@Override
 	public void click() {

@@ -5,7 +5,6 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
@@ -17,11 +16,10 @@ import client.window.panels.menus.MenuAction;
 import client.window.panels.menus.MenuCol;
 import client.window.panels.menus.MenuCubeSelection;
 import client.window.panels.menus.MenuGrid;
+import client.window.panels.menus.MenuMap;
+import client.window.panels.menus.MenuRessources;
 import client.window.panels.menus.MenuSelects;
-import data.enumeration.ItemID;
 import data.map.Cube;
-import data.multiblocs.E;
-import data.multiblocs.Tree;
 import data.units.Unit;
 
 public class PanGUI extends JPanel {
@@ -64,14 +62,13 @@ public class PanGUI extends JPanel {
 
 	MenuCol menu = new MenuCol(session);
 
-	Action[] _actions = { Action.MOUSE, Action.SELECT, Action.CUBES, Action.DESTROY };
-	MenuAction[] actions = new MenuAction[4];
-
-	ArrayList<Cube> _items = new ArrayList<>();
-	ArrayList<MenuCubeSelection> cubes = new ArrayList<>();
+	Action[] _actions = { Action.MOUSE, Action.CUBES, Action.DESTROY };
+	MenuAction[] actions = new MenuAction[_actions.length];
 
 	MenuGrid gridActions;
-	MenuGrid gridCubes;
+
+	MenuMap map;
+	MenuRessources ress;
 
 	// ==== Select ====
 	MenuSelects select;
@@ -86,43 +83,18 @@ public class PanGUI extends JPanel {
 
 		// ========================================================================================
 
-		_items.add(new Cube(ItemID.BORDER));
-		_items.add(new Cube(ItemID.GRASS));
-		_items.add(new Cube(ItemID.DIRT));
-		_items.add(new Cube(ItemID.OAK_TRUNK));
-		_items.add(new Cube(ItemID.OAK_LEAVES));
-		_items.add(new Cube(ItemID.OAK_BOARD));
-		_items.add(new Cube(ItemID.STONE));
-		_items.add(new Cube(ItemID.GLASS));
-		_items.add(new Cube(ItemID.GLASS_GRAY));
-		_items.add(new Cube(ItemID.GLASS_RED));
-		_items.add(new Tree().getCube());
-		_items.add(new E().getCube());
-		_items.add(new Cube(ItemID.WATER));
-		_items.add(new Cube(ItemID.TEST_TRANSPARENT));
-
-		// ========================================================================================
-
 		menu.setBounds(0, 0, menuWidth, getHeight());
 		this.add(menu);
 
-		gridActions = new MenuGrid(session);
-		menu.addItem(gridActions, 100);
+		menu.addTop(gridActions = new MenuGrid(session), 100);
 
-		for (int i = 0; i < _actions.length; i++) {
-			actions[i] = new MenuAction(session, _actions[i]);
-			gridActions.addItem(actions[i]);
-		}
+		for (int i = 0; i < _actions.length; i++)
+			gridActions.addItem(actions[i] = new MenuAction(session, _actions[i]));
 
-		gridCubes = new MenuGrid(session);
-		menu.addItem(gridCubes, 400);
+		menu.addBottom(map = new MenuMap(session), MenuCol.WIDTH);
+		menu.addBottom(ress = new MenuRessources(session), 100);
 
-		for (int i = 0; i < _items.size(); i++) {
-			cubes.add(new MenuCubeSelection(session, _items.get(i)));
-			gridCubes.addItem(cubes.get(i));
-		}
-
-		menu.addItem(select = new MenuSelects(session), 400);
+		menu.addTop(select = new MenuSelects(session), MenuCol.REMAINING);
 
 		hideMenu();
 	}
@@ -142,7 +114,7 @@ public class PanGUI extends JPanel {
 		case GAME:
 			if (session.gamemode == GameMode.CREATIVE) {
 				// Middle indicator : cross
-				g.setColor(Color.black);
+				g.setColor(Color.WHITE);
 				g.drawLine(centerX - crossSize, centerY - 1, centerX + crossSize - 1, centerY - 1);
 				g.drawLine(centerX - crossSize, centerY, centerX + crossSize - 1, centerY);
 				g.drawLine(centerX - 1, centerY - crossSize, centerX - 1, centerY + crossSize - 1);
@@ -223,7 +195,7 @@ public class PanGUI extends JPanel {
 	// =========================================================================================================================
 
 	public void select(Cube cube) {
-		select.update(cube);
+		select.updateCube(cube);
 	}
 
 	// =========================================================================================================================
@@ -234,18 +206,20 @@ public class PanGUI extends JPanel {
 		for (MenuAction e : actions)
 			e.selected = session.action == e.action;
 
-		gridCubes.setVisible(session.action == Action.CUBES);
+		if (session.action == Action.CUBES)
+			select.showCubes();
 
-		select.setVisible(session.action == Action.MOUSE);
+		if (session.action == Action.MOUSE)
+			select.updateCube(null);
 	}
 
 	public void resetCubeSelection() {
-		for (MenuCubeSelection e : cubes)
+		for (MenuCubeSelection e : select.cubes)
 			e.selected = false;
 	}
 
 	public void updateTexturePack() {
-		for (MenuCubeSelection m : cubes)
+		for (MenuCubeSelection m : select.cubes)
 			m.engine.texturePack = session.texturePack;
 	}
 
