@@ -13,6 +13,7 @@ public abstract class Menu extends JPanel {
 	Session session;
 
 	public Menu() {
+		this.setLayout(null);
 		this.setOpaque(false);
 
 		this.addMouseListener(new MouseListener() {

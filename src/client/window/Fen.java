@@ -274,7 +274,7 @@ public class Fen extends JFrame {
 			public void mouseWheelMoved(MouseWheelEvent e) {
 				if (session.stateGUI == StateHUD.GAME)
 					if (session.gamemode == GameMode.CLASSIC)
-					session.keyboard.wheelRotation(e.getWheelRotation());
+						session.keyboard.wheelRotation(e.getWheelRotation());
 			}
 		});
 

@@ -34,10 +34,12 @@ public class Unit {
 	public double ax = 0, ay = 0, az = 0;
 
 	/**
-	 * This unit is currently moving to this coord (an adjacent bloc) (null if not
+	 * This unit is currently moving to this Coord (an adjacent bloc) (null if not
 	 * moving)
 	 */
 	private Coord movingTo;
+	/** This unit come from this Coord (an adjacent bloc) (null if just spawned) */
+	private Coord comingFrom;
 
 	/** Coord of the destination */
 	private Coord destination;
@@ -87,6 +89,7 @@ public class Unit {
 		movingAngleZ = 0;
 
 		map.removeUnit(this);
+		comingFrom = coord;
 		coord = movingTo;
 		map.addUnit(this);
 		movingTo = null;
@@ -217,7 +220,7 @@ public class Unit {
 		}
 	}
 
-	/** Initialize a rotation to the upper position */
+	/** Initialize a rotation to the position below */
 	public void setDown(Orientation dir) {
 		movingTo = coord.face(Face.DOWN);
 
@@ -247,18 +250,17 @@ public class Unit {
 
 	/** Initialize an on-place rotation to change the unit's rotation axe */
 	public void rotation() {
-		System.out.println("... Rota");
 		movingTo = coord.clone();
 		rotationPoint = 1;
 
 		if (orientation == Orientation.NORTH || orientation == Orientation.SOUTH) {
 			nextOrientation = orientation == Orientation.NORTH ? Orientation.WEST : Orientation.EAST;
-			nextRotation = rotation.nextX();
+			nextRotation = orientation == Orientation.NORTH ? rotation.nextX() : rotation.previousX();
 			movingAngleX = 90;
 			movingAngleY = 90;
 		} else {
 			nextOrientation = orientation == Orientation.WEST ? Orientation.NORTH : Orientation.SOUTH;
-			nextRotation = rotation.previousX();
+			nextRotation = orientation == Orientation.WEST ? rotation.previousX() : rotation.nextX();
 			movingAngleY = -90;
 			movingAngleZ = 90;
 		}
@@ -268,9 +270,6 @@ public class Unit {
 
 	public void goTo(Map map, int endX, int endY, int endZ) {
 		path = PathFinding.generatePathTo(map, coord, endX, endY, endZ);
-		System.out.println("fin");
-		System.out.println("steps: " + path.size());
-		System.out.println("first: " + path.peekFirst());
 		if (path == null)
 			return;
 
@@ -278,19 +277,14 @@ public class Unit {
 		doNextMove();
 	}
 
+	public void goTo(Map map, Coord coord) {
+		goTo(map, coord.x, coord.y, coord.z);
+	}
+
 	public void doNextMove() {
-		System.out.println("=================");
-		System.out.println("coord: " + coord);
-
-		// System.out.println("Going to: " + path.peekFirst() + " (next: " +
-		// path.get(1).toString() + ")");
-
 		Orientation dir = coord.getOrientation(path.peekFirst());
 
-		System.out.println("rota (first): " + coord.getRotationPointDiago(path.peekFirst()));
-
 		if (coord.y + 1 == path.peekFirst().y) {// Going up
-			System.out.println(">>> UP");
 			Orientation nextDir = path.get(0).getOrientation(path.get(1));
 
 			if (orientation.isSameAxe(nextDir))
@@ -299,21 +293,19 @@ public class Unit {
 				path.removeFirst();
 				setUp(nextDir);
 			}
-		} else if (dir == null && path.size() >= 2) {// Going down
-			System.out.println(">>> DOWN");
-			Orientation nextDir = path.get(0).getOrientation(path.get(1));
+		} else if (coord.y - 1 == path.peekFirst().y) {// Going down
+			Orientation prevDir = comingFrom.getOrientation(coord);
 
-			if (orientation.isSameAxe(nextDir))
+			if (orientation.isSameAxe(prevDir))
 				rotation();
 			else {
 				path.removeFirst();
-				setDown(nextDir);
+				setDown(prevDir);
 			}
 		} else {
 			// Detect diagonal rotation
 			if (path.size() >= 2 && coord.getRotationPointDiago(path.get(1)) >= 0
 					&& coord.getRotationPointDiago(path.get(1)) < 4) {
-				System.out.println(">>> DIAGO (rota: " + coord.getRotationPointDiago(path.get(1)) + ")");
 
 				path.removeFirst();
 				setDiago(coord.getRotationPointDiago(path.removeFirst()));

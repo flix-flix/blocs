@@ -35,8 +35,10 @@ public class MenuSelectInfos extends Menu {
 
 	// =========================================================================================================================
 
-	public void setCube(Cube cube) {
+	public void update(Cube cube) {
 		this.cube = cube;
+		setVisible(true);
+		repaint();
 	}
 
 	// =========================================================================================================================
@@ -44,5 +46,4 @@ public class MenuSelectInfos extends Menu {
 	@Override
 	public void click() {
 	}
-
 }

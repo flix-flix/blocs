@@ -35,12 +35,6 @@ public class TextureSquare {
 
 	// =========================================================================================================================
 
-	public TextureSquare miningFusion(TextureSquare texture) {
-		return this;
-	}
-
-	// =========================================================================================================================
-
 	public static TextureSquare generateSquare(String folder, String file) {
 		BufferedImage bimg = (BufferedImage) FlixBlocksUtils.getImage(folder + "/" + file);
 

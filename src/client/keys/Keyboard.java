@@ -113,17 +113,26 @@ public class Keyboard {
 					session.map.remove((ModelCube) session.cubeTarget);
 
 		} else if (session.gamemode == GameMode.CLASSIC) {
-			if (session.action == Action.DESTROY) {
+			switch (session.action) {
+			case DESTROY:
 				if (session.cubeTarget != null)
 					if (session.cubeTarget.unit != null)
 						session.map.removeUnit(session.cubeTarget.unit);
 					else
 						session.map.remove((ModelCube) session.cubeTarget);
+				break;
+			case SELECT:// Rectangular Selection
+				break;
+			case MOUSE:// Bloc Selection
+				session.fen.gui.select(session.cubeTarget);
+				break;
+			case GOTO:
+				session.fen.gui.unit.goTo(session.map, new Coord(session.cubeTarget).face(session.faceTarget));
+				break;
 
-			} else if (session.action == Action.DESTROY) {
-
-			} else if (session.action == Action.MOUSE) {
-				session.fen.gui.selectInfos.setCube(session.cubeTarget);
+			default:
+				System.err.println("Action " + session.action + " unimplemented");
+				break;
 			}
 		}
 	}

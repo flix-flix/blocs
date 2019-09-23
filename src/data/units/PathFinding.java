@@ -61,12 +61,10 @@ public class PathFinding {
 		path = new LinkedList<>();
 		path.add(end);
 
-		while (!(current = path.getFirst()).equals(start)) {
-			System.out.println("current: " + current.toString());
-
+		while (!(current = path.getFirst()).equals(start))
 			// %2 generate diagonal path
 			findPrevious(path.size() % 2 == 0 ? Face.faces : Face.facesReverse, current, travelled, path, map);
-		}
+
 		path.removeFirst(); // Remove the start
 		return path;
 	}

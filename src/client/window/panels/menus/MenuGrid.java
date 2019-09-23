@@ -41,7 +41,8 @@ public class MenuGrid extends Menu {
 
 		menus.add(menu);
 
-		menu.setBounds(margin + (size + padding) * col, margin + (size + padding) * row, size, size);
+		menu.setLocation(margin + (size + padding) * col, margin + (size + padding) * row);
+		menu.setSize(size, size);
 
 		add(menu);
 	}

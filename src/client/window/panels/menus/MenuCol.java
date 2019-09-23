@@ -44,7 +44,8 @@ public class MenuCol extends Menu {
 
 		menus.add(menu);
 
-		menu.setBounds(border, border + y, getWidth() - 2 * border, height);
+		menu.setLocation(border, border + y);
+		menu.setSize(getWidth() - 2 * border, height);
 		this.add(menu);
 	}
 

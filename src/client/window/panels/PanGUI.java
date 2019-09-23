@@ -17,11 +17,12 @@ import client.window.panels.menus.MenuAction;
 import client.window.panels.menus.MenuCol;
 import client.window.panels.menus.MenuCubeSelection;
 import client.window.panels.menus.MenuGrid;
-import client.window.panels.menus.MenuSelectInfos;
+import client.window.panels.menus.MenuSelects;
 import data.enumeration.ItemID;
 import data.map.Cube;
 import data.multiblocs.E;
 import data.multiblocs.Tree;
+import data.units.Unit;
 
 public class PanGUI extends JPanel {
 	private static final long serialVersionUID = 3929655843006244723L;
@@ -33,7 +34,7 @@ public class PanGUI extends JPanel {
 
 	// ======================= Graphics =========================
 
-	Graphics g;
+	private Graphics g;
 	public int w, h, centerX, centerY;
 
 	// Size of the central indicator (creative mode)
@@ -46,7 +47,7 @@ public class PanGUI extends JPanel {
 	// Number of messages to display
 	public int nbMsg = 0;
 	// Width of the dialog background
-	int msgBackWidth = 1000;
+	public int msgBackWidth = 1000;
 
 	// Current line
 	public String msgLine = new String();
@@ -54,9 +55,9 @@ public class PanGUI extends JPanel {
 	// Position of the cursor
 	public int cursorPos = 0;
 	// true : show the cursor (switch to make the cursor flashing)
-	boolean cursorState = true;
+	private boolean cursorState = true;
 	// Store time since last cursor state switch
-	int cursorStateTime = 0;
+	private int cursorStateTime = 0;
 
 	// ======================= Menu =========================
 	int menuWidth = 400;
@@ -72,7 +73,9 @@ public class PanGUI extends JPanel {
 	MenuGrid gridActions;
 	MenuGrid gridCubes;
 
-	public MenuSelectInfos selectInfos;
+	// ==== Select ====
+	MenuSelects select;
+	public Unit unit;
 
 	// =========================================================================================================================
 
@@ -119,7 +122,7 @@ public class PanGUI extends JPanel {
 			gridCubes.addItem(cubes.get(i));
 		}
 
-		menu.addItem(selectInfos = new MenuSelectInfos(session), 400);
+		menu.addItem(select = new MenuSelects(session), 400);
 
 		hideMenu();
 	}
@@ -149,20 +152,23 @@ public class PanGUI extends JPanel {
 			break;
 
 		case DIALOG:
-			int grayBackground = 100;
-			Color msgColor = Color.WHITE;
+			int grayBack = 120;
+			Color colorBack = new Color(grayBack, grayBack, grayBack, 200);
+			Color colorMsg = Color.WHITE;
+
+			int startW = 420;
 
 			// TODO [Improve] If messages text too long split in several lines
 
 			// =============== Message (Line) =================
 
 			// Background
-			g.setColor(new Color(grayBackground, grayBackground, grayBackground, 150));
-			g.fillRect(40, h - 100, msgBackWidth, 30);
+			g.setColor(colorBack);
+			g.fillRect(startW, h - 100, msgBackWidth, 30);
 
 			// Text
 			g.setFont(font);
-			g.setColor(msgColor);
+			g.setColor(colorMsg);
 
 			// Flash the text-cursor
 			cursorStateTime++;
@@ -172,20 +178,22 @@ public class PanGUI extends JPanel {
 			}
 
 			if (cursorState)
-				g.drawString(msgLine.substring(0, cursorPos) + "|" + msgLine.substring(cursorPos), 45, h - 100 + 20);
+				g.drawString(msgLine.substring(0, cursorPos) + "|" + msgLine.substring(cursorPos), startW + 5,
+						h - 100 + 20);
 			else
-				g.drawString(msgLine.substring(0, cursorPos) + " " + msgLine.substring(cursorPos), 45, h - 100 + 20);
+				g.drawString(msgLine.substring(0, cursorPos) + " " + msgLine.substring(cursorPos), startW + 5,
+						h - 100 + 20);
 
 			// =============== Messages (Previous) =================
 
 			// Background
-			g.setColor(new Color(grayBackground, grayBackground, grayBackground, 80));
-			g.fillRect(40, h - 100 - 10 - 30 * nbMsg, msgBackWidth, 30 * nbMsg);
+			g.setColor(colorBack);
+			g.fillRect(startW, h - 100 - 10 - 30 * nbMsg, msgBackWidth, 30 * nbMsg);
 
 			// Text
-			g.setColor(msgColor);
+			g.setColor(colorMsg);
 			for (int i = 0; i < nbMsg; i++)
-				g.drawString(messages[i].toMessage(), 45, h - 100 + 20 - 10 - (nbMsg - i) * 30);
+				g.drawString(messages[i].toMessage(), startW + 5, h - 100 + 20 - 10 - (nbMsg - i) * 30);
 
 			break;
 		default:
@@ -214,6 +222,12 @@ public class PanGUI extends JPanel {
 
 	// =========================================================================================================================
 
+	public void select(Cube cube) {
+		select.update(cube);
+	}
+
+	// =========================================================================================================================
+
 	public void hideMenu() {
 		menu.setVisible(session.gamemode == GameMode.CLASSIC);
 
@@ -221,7 +235,8 @@ public class PanGUI extends JPanel {
 			e.selected = session.action == e.action;
 
 		gridCubes.setVisible(session.action == Action.CUBES);
-		selectInfos.setVisible(true);
+
+		select.setVisible(session.action == Action.MOUSE);
 	}
 
 	public void resetCubeSelection() {
