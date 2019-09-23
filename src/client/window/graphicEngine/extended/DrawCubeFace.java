@@ -73,6 +73,9 @@ public class DrawCubeFace extends Draw {
 
 		Point[] points2D = generate2D(engine, texture.width, texture.height);
 
+		int sample = texture.getColor(0, 0);
+		boolean darker = (sample & 0xff) + (sample >> 8 & 0xff) + (sample >> 16 & 0xff) > 600;
+
 		for (int row = 0; row < texture.height; row++)
 			for (int col = 0; col < texture.width; col++) {
 				int color = texture.getColor(row, col);
@@ -86,18 +89,17 @@ public class DrawCubeFace extends Draw {
 					color = (forcedAlpha << 24) + (color & 0xffffff);
 
 				// If the cube is highlighted : its color will be lighter
-				if (cube.isHighlight()) {
-					if ((color & 0xff) + (color >> 8 & 0xff) + (color >> 16 & 0xff) > 600)
+				if (cube.isHighlight())
+					if (darker)
 						color = Engine.addHue(color, Engine.createColor(255, 0, 0, 0), .4);
 					else
 						color = Engine.addHue(color, Engine.createColor(255, 255, 255, 255), .4);
-				}
+
 				// If the cube is preview makes it transparent
 				if (cube.isPreview()) {
 					color = (127 << 24) + (color & 0xffffff);
 					// If the multibloc is invalid : its color will have a red hue
 					if (cube.multibloc != null && !cube.multibloc.valid)
-						// color = Engine.mixARGB(color, Engine.createColor(127, 255, 0, 0));
 						color = Engine.addHue(color, Engine.createColor(255, 255, 0, 0), .4);
 				}
 
