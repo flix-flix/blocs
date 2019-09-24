@@ -15,11 +15,9 @@ public class PathFinding {
 	 * 
 	 * Generates a list of Coords linking current coords to the indicated location
 	 */
-	public static LinkedList<Coord> generatePathTo(Map map, Coord start, int endX, int endY, int endZ) {
+	public static LinkedList<Coord> generatePathTo(Unit unit, Map map, Coord start, Coord end) {
 		// List of the coords to the destination
 		LinkedList<Coord> path;
-		// Coord of the destination
-		Coord end = new Coord(endX, endY, endZ);
 
 		// Test if the destination is walkable
 		if (!map.isOnFloor(end))
@@ -41,7 +39,7 @@ public class PathFinding {
 				next = current.face(f);
 
 				// Test if the bloc is empty and if it hasn't already be travelled
-				if (map.gridContains(next) || travelled.containsKey(next.getId()))
+				if ((map.gridContains(next) && map.gridGet(next).unit != unit) || travelled.containsKey(next.getId()))
 					continue;
 
 				// The unit can only do one step without touching the floor

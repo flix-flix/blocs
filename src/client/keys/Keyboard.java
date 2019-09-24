@@ -133,13 +133,10 @@ public class Keyboard {
 				session.fen.gui.unit.goTo(session.map, new Coord(session.cubeTarget).face(session.faceTarget));
 				break;
 			case MINE:
-				session.fen.gui.unit.mine(session.map, new Coord(session.cubeTarget), session.faceTarget);
-				break;
 			case BUILD:
-				session.fen.gui.unit.mine(session.map, new Coord(session.cubeTarget), session.faceTarget);
-				break;
 			case DESTROY:
-				session.fen.gui.unit.mine(session.map, new Coord(session.cubeTarget), session.faceTarget);
+				session.fen.gui.unit.doAction(session.action, session.map, new Coord(session.cubeTarget),
+						session.faceTarget);
 				break;
 
 			default:

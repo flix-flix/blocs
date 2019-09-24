@@ -3,13 +3,13 @@ package data.generation;
 import client.session.Player;
 import client.window.graphicEngine.extended.ModelMap;
 import data.enumeration.ItemID;
-import data.enumeration.Orientation;
 import data.map.Cube;
 import data.map.buildings.Building;
 import data.map.units.Unit;
 import data.multiblocs.E;
 import data.multiblocs.Multibloc;
 import data.multiblocs.Tree;
+import utils.Coord;
 import utils.FlixBlocksUtils;
 
 public class WorldGeneration {
@@ -62,7 +62,6 @@ public class WorldGeneration {
 
 		// Off-grid cube
 		Cube off = new Cube(-1, ground, 0, 0, 45, 45, 1, 1, 1, ItemID.TEST);
-		off.orientation = Orientation.SOUTH;
 		map.add(off);
 
 		// ========== Preview cubes ==========
@@ -134,12 +133,12 @@ public class WorldGeneration {
 		Unit u = new Unit(felix, 5, 10, 5);
 		map.addUnit(u);
 		// u.goTo(map, 15, 11, 10);
-		u.goTo(map, 15, 9, 10);
+		u.goTo(map, new Coord(15, 9, 10));
 
 		// Add Unit to IA
 		Unit unitIA = new Unit(ia, 3, 10, 3);
 		map.addUnit(unitIA);
-		unitIA.goTo(map, 10, 10, 2);
+		unitIA.goTo(map, new Coord(10, 10, 2));
 
 		// Add cube with UNIT texture
 		map.add(new Cube(0, 15, 0, ItemID.UNIT));

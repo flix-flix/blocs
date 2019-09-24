@@ -2,6 +2,7 @@ package data.map.units;
 
 import java.util.LinkedList;
 
+import client.session.Action;
 import client.session.Player;
 import data.enumeration.Face;
 import data.enumeration.Orientation;
@@ -11,9 +12,13 @@ import utils.Coord;
 
 public class Unit {
 
+	private static final LinkedList<Coord> NO_NEW_PATH = new LinkedList<>();
+
+	// ========== Data ==========
 	/** Player controlling this unit */
 	Player player;
 
+	// ========== Position ==========
 	/** Coords of the unit */
 	public Coord coord;
 	/** The unit orientation (the "north texture" looking to ...) */
@@ -21,15 +26,13 @@ public class Unit {
 	/** The unit rotation (only on Rotation.axeX) */
 	public Rotation rotation = Rotation.NONE;
 
+	// ========== Rotation (Step) ==========
 	/** The current step of the rotation */
 	private int movingStep;
 	/** The number of steps to achieve the rotation */
 	private final int movingStepFinal = 20;
-	/** Orientation at the end of the rotation */
-	private Orientation nextOrientation = orientation;
-	/** Rotation at the end of the rotation */
-	private Rotation nextRotation = rotation;
 
+	// ========== Rotation (Maths) ==========
 	/** Index of the cube's rotation point */
 	public int rotationPoint = 0;
 	/** For each axe : the rotation to perform to complete the rotation */
@@ -37,18 +40,27 @@ public class Unit {
 	/** For each axe : the current rotation of the unit */
 	public double ax = 0, ay = 0, az = 0;
 
-	/**
-	 * This unit is currently moving to this Coord (an adjacent bloc) (null if not
-	 * moving)
-	 */
+	// ========== Rotation (End) ==========
+	/** Currently moving to this Coord (an adjacent bloc) (null if not moving) */
 	private Coord movingTo;
+	/** Orientation at the end of the rotation */
+	private Orientation nextOrientation = orientation;
+	/** Rotation at the end of the rotation */
+	private Rotation nextRotation = rotation;
+
 	/** This unit come from this Coord (an adjacent bloc) (null if just spawned) */
 	private Coord comingFrom;
 
-	/** Coord of the destination */
+	// ========== Journey ==========
+	/** Coord of the destination (null if not traveling) */
 	private Coord destination;
 	/** List of the coords to the destination */
 	private LinkedList<Coord> path;
+	/** Action to do at the end of the deplacement */
+	private Action action = null;
+
+	/** New path (stored till the end of the current rotation then replace path) */
+	private LinkedList<Coord> newPath = NO_NEW_PATH;
 
 	// =========================================================================================================================
 
@@ -99,8 +111,17 @@ public class Unit {
 		map.addUnit(this);
 		movingTo = null;
 
+		if (newPath != NO_NEW_PATH) {
+			path = newPath;
+			newPath = NO_NEW_PATH;
+		}
+
 		if (!path.isEmpty())
 			doNextMove();
+		else {
+			destination = null;
+			// TODO Execute Action
+		}
 	}
 
 	// =========================================================================================================================
@@ -273,23 +294,51 @@ public class Unit {
 
 	// =========================================================================================================================
 
-	public void goTo(Map map, int endX, int endY, int endZ) {
-		path = PathFinding.generatePathTo(map, coord, endX, endY, endZ);
-		if (path == null)
-			return;
-
-		destination = new Coord(endX, endY, endZ);
-		doNextMove();
+	/**
+	 * The unit will roll to reach the coordinates
+	 * 
+	 * @return true if coords are reachable
+	 */
+	public boolean goTo(Map map, Coord end) {
+		return setPath(PathFinding.generatePathTo(this, map, destination == null ? coord : movingTo, end));
 	}
 
-	public void goTo(Map map, Coord coord) {
-		goTo(map, coord.x, coord.y, coord.z);
+	/** The unit will goto the closest bloc next to the target (not on top) */
+	public boolean goAround(Map map, Coord end) {
+		LinkedList<Coord> path = null, temp;
+
+		for (Face face : new Face[] { Face.DOWN, Face.NORTH, Face.EAST, Face.SOUTH, Face.WEST })
+			if ((temp = PathFinding.generatePathTo(this, map, destination == null ? coord : movingTo,
+					end.face(face))) != null)
+				if (path == null || temp.size() < path.size())
+					path = temp;
+
+		return setPath(path);
+	}
+
+	private boolean setPath(LinkedList<Coord> path) {
+		if (isActif())
+			newPath = path;
+		else {
+			this.path = path;
+			destination = (path == null || path.isEmpty()) ? null : path.getLast();
+			action = null;
+			if (!path.isEmpty())
+				doNextMove();
+		}
+
+		return path != null;
 	}
 
 	// =========================================================================================================================
 
-	public void mine(Map map, Coord coord, Face face) {
-		goTo(map, coord.face(face));
+	public boolean doAction(Action action, Map map, Coord coord, Face face) {
+		if (!goAround(map, coord.face(face)))
+			return false;
+
+		this.action = action;
+
+		return true;
 	}
 
 	// =========================================================================================================================
@@ -340,8 +389,16 @@ public class Unit {
 		return destination;
 	}
 
+	public boolean isTraveling() {
+		return destination != null;
+	}
+
 	public LinkedList<Coord> getPath() {
 		return path;
+	}
+
+	public boolean isActif() {
+		return destination != null || action != null;
 	}
 
 	// =========================================================================================================================
