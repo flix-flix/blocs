@@ -14,7 +14,7 @@ import client.window.graphicEngine.calcul.Point3D;
 import client.window.graphicEngine.extended.ModelCube;
 import data.map.Cube;
 
-public class MenuCubeSelection extends Menu {
+public class MenuButtonCube extends Menu {
 	private static final long serialVersionUID = -8393842761922506846L;
 
 	public Cube cube;
@@ -28,13 +28,12 @@ public class MenuCubeSelection extends Menu {
 
 	// =========================================================================================================================
 
-	public MenuCubeSelection(Session session, Cube cube) {
+	public MenuButtonCube(Session session, Cube cube) {
 		super(session);
 		this.cube = cube;
 
 		engine = new Engine(new Camera(new Point3D(-.4, 1.5, -1), 58, -35), new ModelCube(cube), session.texturePack);
 		engine.drawSky = false;
-
 	}
 
 	@Override

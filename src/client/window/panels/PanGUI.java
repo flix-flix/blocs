@@ -12,15 +12,16 @@ import client.messages.Message;
 import client.session.Action;
 import client.session.GameMode;
 import client.session.Session;
-import client.window.panels.menus.MenuAction;
+import client.window.panels.menus.MenuButtonAction;
+import client.window.panels.menus.MenuButtonCube;
 import client.window.panels.menus.MenuCol;
-import client.window.panels.menus.MenuCubeSelection;
 import client.window.panels.menus.MenuGrid;
 import client.window.panels.menus.MenuMap;
 import client.window.panels.menus.MenuRessources;
-import client.window.panels.menus.MenuSelects;
+import client.window.panels.menus.select.MenuInfos;
 import data.map.Cube;
-import data.units.Unit;
+import data.map.buildings.Building;
+import data.map.units.Unit;
 
 public class PanGUI extends JPanel {
 	private static final long serialVersionUID = 3929655843006244723L;
@@ -62,8 +63,8 @@ public class PanGUI extends JPanel {
 
 	MenuCol menu = new MenuCol(session);
 
-	Action[] _actions = { Action.MOUSE, Action.CUBES, Action.DESTROY };
-	MenuAction[] actions = new MenuAction[_actions.length];
+	Action[] _actions = { Action.MOUSE, Action.CREA_ADD, Action.CREA_DESTROY };
+	MenuButtonAction[] actions = new MenuButtonAction[_actions.length];
 
 	MenuGrid gridActions;
 
@@ -71,8 +72,9 @@ public class PanGUI extends JPanel {
 	MenuRessources ress;
 
 	// ==== Select ====
-	MenuSelects select;
+	MenuInfos select;
 	public Unit unit;
+	public Building build;
 
 	// =========================================================================================================================
 
@@ -89,12 +91,12 @@ public class PanGUI extends JPanel {
 		menu.addTop(gridActions = new MenuGrid(session), 100);
 
 		for (int i = 0; i < _actions.length; i++)
-			gridActions.addItem(actions[i] = new MenuAction(session, _actions[i]));
+			gridActions.addItem(actions[i] = new MenuButtonAction(session, _actions[i]));
 
 		menu.addBottom(map = new MenuMap(session), MenuCol.WIDTH);
-		menu.addBottom(ress = new MenuRessources(session), 100);
+		menu.addBottom(ress = new MenuRessources(session), 130);
 
-		menu.addTop(select = new MenuSelects(session), MenuCol.REMAINING);
+		menu.addTop(select = new MenuInfos(session), MenuCol.REMAINING);
 
 		hideMenu();
 	}
@@ -203,10 +205,10 @@ public class PanGUI extends JPanel {
 	public void hideMenu() {
 		menu.setVisible(session.gamemode == GameMode.CLASSIC);
 
-		for (MenuAction e : actions)
+		for (MenuButtonAction e : actions)
 			e.selected = session.action == e.action;
 
-		if (session.action == Action.CUBES)
+		if (session.action == Action.CREA_ADD)
 			select.showCubes();
 
 		if (session.action == Action.MOUSE)
@@ -214,12 +216,12 @@ public class PanGUI extends JPanel {
 	}
 
 	public void resetCubeSelection() {
-		for (MenuCubeSelection e : select.cubes)
+		for (MenuButtonCube e : select.cubes)
 			e.selected = false;
 	}
 
 	public void updateTexturePack() {
-		for (MenuCubeSelection m : select.cubes)
+		for (MenuButtonCube m : select.cubes)
 			m.engine.texturePack = session.texturePack;
 	}
 

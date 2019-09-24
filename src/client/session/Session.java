@@ -29,8 +29,9 @@ public class Session implements Serializable {
 	public transient TexturePack texturePack;
 
 	public GameMode gamemode = GameMode.CLASSIC;
+	public Player player = new Player("Félix");
 
-	public Action action = Action.CUBES;
+	public Action action = Action.CREA_ADD;
 
 	// ================================
 
@@ -213,7 +214,7 @@ public class Session implements Serializable {
 
 		if (gamemode == GameMode.CLASSIC)
 			if (cubeTarget != null)
-				if (action == Action.CUBES) {
+				if (action == Action.CREA_ADD) {
 					// If same target : No need to do something more than the previous iteration
 					if (sameTarget)
 						return;
@@ -235,7 +236,7 @@ public class Session implements Serializable {
 					map.setPreview(previousPreview, true);
 					map.setTargetable(previousPreview, false);
 					map.setHighlight(previousPreview, true);
-				} else if (action == Action.DESTROY) {
+				} else if (action == Action.CREA_DESTROY) {
 					map.setHighlight(cubeTarget, true);
 				} else if (action == Action.MOUSE) {
 					map.setHighlight(cubeTarget, true);

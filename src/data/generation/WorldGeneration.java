@@ -1,17 +1,23 @@
 package data.generation;
 
+import client.session.Player;
 import client.window.graphicEngine.extended.ModelMap;
 import data.enumeration.ItemID;
+import data.enumeration.Orientation;
 import data.map.Cube;
+import data.map.buildings.Building;
+import data.map.units.Unit;
 import data.multiblocs.E;
 import data.multiblocs.Multibloc;
 import data.multiblocs.Tree;
-import data.units.Unit;
 import utils.FlixBlocksUtils;
 
 public class WorldGeneration {
 
 	public static ModelMap generateMap(ModelMap map) {
+
+		Player felix = new Player("Félix");
+		Player ia = new Player("IA");
 
 		int ground = 10;
 
@@ -55,7 +61,9 @@ public class WorldGeneration {
 		}
 
 		// Off-grid cube
-		map.add(new Cube(-1, ground, 0, 0, 45, 45, 1, 1, 1, ItemID.TEST));
+		Cube off = new Cube(-1, ground, 0, 0, 45, 45, 1, 1, 1, ItemID.TEST);
+		off.orientation = Orientation.SOUTH;
+		map.add(off);
 
 		// ========== Preview cubes ==========
 		map.add(new Cube(18, ground, 2, ItemID.GRASS));
@@ -114,19 +122,32 @@ public class WorldGeneration {
 			dig(map, (int) (50 * Math.cos(i * FlixBlocksUtils.toRadian)), ground - 1,
 					(int) (50 * Math.sin(i * FlixBlocksUtils.toRadian)));
 
+		// =========================================================================================================================
+		// Units
+
 		for (int i = 10; i < 20; i++)
 			for (int j = 5; j < 15; j++)
 				// map.add(new Cube(i, 10, j, ItemID.GLASS));
 				map.remove(i, 9, j);
 
 		// Add Unit
-		Unit u = new Unit(5, 10, 5);
+		Unit u = new Unit(felix, 5, 10, 5);
 		map.addUnit(u);
 		// u.goTo(map, 15, 11, 10);
 		u.goTo(map, 15, 9, 10);
 
+		// Add Unit to IA
+		Unit unitIA = new Unit(ia, 3, 10, 3);
+		map.addUnit(unitIA);
+		unitIA.goTo(map, 10, 10, 2);
+
 		// Add cube with UNIT texture
 		map.add(new Cube(0, 15, 0, ItemID.UNIT));
+
+		// =========================================================================================================================
+		// Buildings
+
+		map.add(new Building(felix, 25, ground, 3, 3, 2, 2, ItemID.CASTLE));
 
 		return map;
 	}

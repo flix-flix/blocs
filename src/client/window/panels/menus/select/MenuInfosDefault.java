@@ -1,19 +1,20 @@
-package client.window.panels.menus;
+package client.window.panels.menus.select;
 
 import java.awt.Color;
 import java.awt.Graphics;
 
 import client.session.Session;
+import client.window.panels.menus.Menu;
 import data.map.Cube;
 
-public class MenuSelectInfos extends Menu {
+public class MenuInfosDefault extends Menu {
 	private static final long serialVersionUID = 8252009605405911305L;
 
 	private Cube cube;
 
 	// =========================================================================================================================
 
-	public MenuSelectInfos(Session session) {
+	public MenuInfosDefault(Session session) {
 		super(session);
 	}
 

@@ -79,7 +79,7 @@ public class Keyboard {
 
 			if (cube != null && face != null) {
 				// Add a cube to the map
-				if (session.action == Action.CUBES) {
+				if (session.action == Action.CREA_ADD) {
 					ModelCube model = session.map.gridGet(new Coord(cube).face(face));
 					if (model != null && model.isPreview()) {
 						// Check if multibloc can be added at this position
@@ -114,7 +114,7 @@ public class Keyboard {
 
 		} else if (session.gamemode == GameMode.CLASSIC) {
 			switch (session.action) {
-			case DESTROY:
+			case CREA_DESTROY:
 				if (session.cubeTarget != null)
 					if (session.cubeTarget.unit != null)
 						session.map.removeUnit(session.cubeTarget.unit);
@@ -126,12 +126,24 @@ public class Keyboard {
 			case MOUSE:// Bloc Selection
 				session.fen.gui.select(session.cubeTarget);
 				break;
+
+			// =========================================================================================================================
+			// Unit
 			case GOTO:
 				session.fen.gui.unit.goTo(session.map, new Coord(session.cubeTarget).face(session.faceTarget));
 				break;
+			case MINE:
+				session.fen.gui.unit.mine(session.map, new Coord(session.cubeTarget), session.faceTarget);
+				break;
+			case BUILD:
+				session.fen.gui.unit.mine(session.map, new Coord(session.cubeTarget), session.faceTarget);
+				break;
+			case DESTROY:
+				session.fen.gui.unit.mine(session.map, new Coord(session.cubeTarget), session.faceTarget);
+				break;
 
 			default:
-				System.err.println("Action " + session.action + " unimplemented");
+				FlixBlocksUtils.debug("Action " + session.action + " unimplemented");
 				break;
 			}
 		}

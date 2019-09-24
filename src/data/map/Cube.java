@@ -5,8 +5,9 @@ import client.window.graphicEngine.calcul.Point3D;
 import data.enumeration.ItemID;
 import data.enumeration.Orientation;
 import data.enumeration.Rotation;
+import data.map.buildings.Building;
+import data.map.units.Unit;
 import data.multiblocs.Multibloc;
-import data.units.Unit;
 import utils.Coord;
 import utils.FlixBlocksUtils;
 
@@ -34,6 +35,7 @@ public class Cube {
 
 	public Multibloc multibloc;
 	public Unit unit;
+	public Building build;
 
 	// =========================================================================================================================
 
@@ -128,6 +130,7 @@ public class Cube {
 	}
 
 	// =========================================================================================================================
+	// Actions
 
 	public boolean hasAction() {
 		return false;

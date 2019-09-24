@@ -12,9 +12,8 @@ import client.window.graphicEngine.calcul.Point3D;
 import client.window.graphicEngine.extended.ModelCube;
 import data.enumeration.ItemID;
 import data.map.Cube;
-import utils.FlixBlocksUtils;
 
-public class MenuAction extends Menu {
+public class MenuButtonAction extends Menu {
 	private static final long serialVersionUID = -2696383944798968722L;
 
 	public Action action;
@@ -24,13 +23,13 @@ public class MenuAction extends Menu {
 
 	public boolean selected;
 
-	public MenuAction(Session session, Action action) {
+	public MenuButtonAction(Session session, Action action) {
 		super(session);
 		this.action = action;
 
-		img = FlixBlocksUtils.getImage("menu/" + action.name().toLowerCase());
+		img = action.getImage();
 
-		if (action == Action.CUBES) {
+		if (action == Action.CREA_ADD) {
 			engine = new Engine(new Camera(new Point3D(-.4, 1.5, -1), 58, -35), new ModelCube(new Cube(ItemID.GRASS)),
 					session.texturePack);
 			engine.drawSky = false;

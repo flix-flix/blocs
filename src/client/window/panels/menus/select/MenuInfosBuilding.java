@@ -1,4 +1,4 @@
-package client.window.panels.menus;
+package client.window.panels.menus.select;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -11,30 +11,33 @@ import client.window.graphicEngine.calcul.Camera;
 import client.window.graphicEngine.calcul.Engine;
 import client.window.graphicEngine.calcul.Point3D;
 import client.window.graphicEngine.extended.ModelCube;
-import data.enumeration.ItemID;
-import data.enumeration.Orientation;
+import client.window.panels.menus.Menu;
+import client.window.panels.menus.MenuButtonAction;
 import data.map.Cube;
-import data.units.Unit;
+import data.map.buildings.Building;
 
-public class MenuSelectUnit extends Menu {
+public class MenuInfosBuilding extends Menu {
 	private static final long serialVersionUID = -5061597857247176796L;
 
 	private Engine engine;
 	private Image img;
 
-	private Unit unit;
+	private Building build;
 
-	private MenuAction goTo;
+	private MenuButtonAction spawn, upgrade;
 
 	private Font font = new Font("monospace", Font.PLAIN, 12);
 
-	public MenuSelectUnit(Session session) {
+	public MenuInfosBuilding(Session session) {
 		super(session);
 
-		goTo = new MenuAction(session, Action.GOTO);
+		spawn = new MenuButtonAction(session, Action.SPAWN);
+		spawn.setBounds(15, 90, 75, 75);
+		add(spawn);
 
-		goTo.setBounds(15, 90, 75, 75);
-		add(goTo);
+		upgrade = new MenuButtonAction(session, Action.UPGRADE);
+		upgrade.setBounds(105, 90, 75, 75);
+		add(upgrade);
 	}
 
 	// =========================================================================================================================
@@ -49,20 +52,21 @@ public class MenuSelectUnit extends Menu {
 
 		g.setFont(font);
 		g.setColor(Color.WHITE);
-		g.drawString("Unit", img == null ? 15 : img.getWidth(null) + 15, 50);
+		g.drawString("Building", img == null ? 15 : img.getWidth(null) + 15, 50);
 
-		if (unit != null)
-			g.drawString(unit.toString(), img == null ? 15 : img.getWidth(null) + 15, 70);
+		if (build != null)
+			g.drawString(build.toString(), img == null ? 15 : img.getWidth(null) + 15, 70);
 	}
 
 	// =========================================================================================================================
 
-	public void update(Unit unit) {
-		this.unit = unit;
-		session.fen.gui.unit = unit;
-		Cube cube = new Cube(ItemID.UNIT);
-		cube.orientation = Orientation.WEST;
-		engine = new Engine(new Camera(new Point3D(-.4, 1.5, -1), 58, -35), new ModelCube(cube), session.texturePack);
+	public void update(Building build) {
+		this.build = build;
+		session.fen.gui.build = build;
+
+		Cube cube = new Cube(0, 0, 0, 3, 2, 2, build.itemID);
+
+		engine = new Engine(new Camera(new Point3D(-1, 3, -2.5), 58, -35), new ModelCube(cube), session.texturePack);
 		engine.drawSky = false;
 		img = engine.getImage(75, 75);
 

@@ -1,4 +1,4 @@
-package data.units;
+package data.map.units;
 
 import java.util.HashMap;
 import java.util.LinkedList;

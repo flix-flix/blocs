@@ -1,12 +1,11 @@
 package data.map;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 
 import client.session.Tickable;
+import data.map.units.Unit;
 import data.multiblocs.Multibloc;
-import data.units.Unit;
 import utils.Coord;
 
 public class Map implements Tickable {
@@ -16,7 +15,7 @@ public class Map implements Tickable {
 	// Chunks of the map (see getNumero(x, z))
 	private HashMap<Integer, Chunk> chunks = new HashMap<>();
 
-	protected HashSet<Cube> units = new HashSet<>();
+	protected LinkedList<Cube> units = new LinkedList<>();
 
 	// =========================================================================================================================
 
@@ -255,10 +254,8 @@ public class Map implements Tickable {
 
 	@Override
 	public void tick() {
-		// TODO Concurrent modification
-		for (Cube u : units) {
-			u.unit.doStep(this);
-		}
+		for (int i = 0; i < units.size(); i++)
+			units.get(i).unit.doStep(this);
 	}
 
 	// =========================================================================================================================

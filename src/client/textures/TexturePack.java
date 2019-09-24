@@ -13,6 +13,9 @@ public class TexturePack {
 	/** ID of textures blocks to load */
 	public static final int[] texturesToLoad = new int[] { 0, 1, 2, 3, 20, 21, 50, 51, 52, 100, 200, 997, 998, 999 };
 
+	/** ID of textures multi-blocks to load */
+	public static final int[] texturesMultiToLoad = new int[] { 0 };
+
 	/** Map to store the textures of the cubes (access by id) */
 	HashMap<Integer, TextureCube> texturesCubes = new HashMap<>();
 	/** Array to store mining animations (intact to broken) */
@@ -29,6 +32,9 @@ public class TexturePack {
 
 		for (int i : texturesToLoad)
 			texturesCubes.put(i, new TextureCube(i));
+
+		for (int i : texturesMultiToLoad)
+			texturesCubes.put(300 + i, new TextureCube("multi", i + ""));
 
 		for (int i = 0; i < nbAnim; i++)
 			miningFrames[i] = TextureSquare.generateSquare("anim", "mining-" + i);

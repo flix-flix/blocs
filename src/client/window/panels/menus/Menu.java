@@ -12,7 +12,7 @@ import client.session.Session;
 public abstract class Menu extends JPanel {
 	private static final long serialVersionUID = -5458848328043427804L;
 
-	Session session;
+	protected Session session;
 
 	// =========================================================================================================================
 

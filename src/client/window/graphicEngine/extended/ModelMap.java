@@ -10,8 +10,8 @@ import data.ItemTable;
 import data.enumeration.Face;
 import data.map.Cube;
 import data.map.Map;
+import data.map.units.Unit;
 import data.multiblocs.Multibloc;
-import data.units.Unit;
 import utils.Coord;
 
 public class ModelMap extends Map implements Model {

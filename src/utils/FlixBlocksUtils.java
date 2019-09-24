@@ -21,14 +21,14 @@ public class FlixBlocksUtils {
 		URL url = PanGame.class.getResource("/" + path + ".png");
 
 		if (url == null) {
-			System.err.println("ERROR: can't read file: " + ("/" + path + ".png"));
+			debugBefore("ERROR: can't read file: " + ("/" + path + ".png"));
 			url = PanGame.class.getResource("/999.png");
 		}
 
 		try {
 			return ImageIO.read(url);
 		} catch (IOException e) {
-			System.err.println("ERROR: can't read error file: " + url);
+			debugBefore("ERROR: can't read error file: " + url);
 			e.printStackTrace();
 		}
 		return null;
@@ -64,5 +64,17 @@ public class FlixBlocksUtils {
 		int blue = (aB + bB) / 2;
 
 		return -16_777_216 + red * 256 * 256 + green * 256 + blue;
+	}
+
+	// =========================================================================================================================
+
+	public static void debugBefore(String str) {
+		System.err.print(str);
+		System.err.println(" (" + Thread.currentThread().getStackTrace()[3].getFileName() + ":"
+				+ Thread.currentThread().getStackTrace()[3].getLineNumber() + ")");
+	}
+
+	public static void debug(String str) {
+		debugBefore(str);
 	}
 }

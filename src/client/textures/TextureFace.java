@@ -23,13 +23,17 @@ public class TextureFace {
 		this(folder, file);
 	}
 
+	public TextureFace(String folder, String id, Face face) {
+		this(folder, getFileName(folder, id, face));
+	}
+
 	public TextureFace(String id, Face face) {
-		this(folder, getFileName(id, face));
+		this(folder, id, face);
 	}
 
 	// =========================================================================================================================
 
-	public static String getFileName(String id, Face face) {
+	public static String getFileName(String folder, String id, Face face) {
 		// Try to use <id>-<face>.png texture
 		if (FlixBlocksUtils.pngExist(folder + "/" + id + "-" + face.toString().toLowerCase()))
 			return id + "-" + face.toString().toLowerCase();
@@ -47,6 +51,10 @@ public class TextureFace {
 
 		// Use the default texture of the id
 		return id;
+	}
+
+	public static String getFileName(String id, Face face) {
+		return getFileName(folder, id, face);
 	}
 
 	// =========================================================================================================================

@@ -1,34 +1,38 @@
-package client.window.panels.menus;
+package client.window.panels.menus.select;
 
 import java.awt.Color;
 import java.util.ArrayList;
 
 import client.session.Session;
+import client.window.panels.menus.Menu;
+import client.window.panels.menus.MenuButtonCube;
+import client.window.panels.menus.MenuGrid;
 import data.enumeration.ItemID;
 import data.map.Cube;
 import data.multiblocs.E;
 import data.multiblocs.Tree;
 
-public class MenuSelects extends Menu {
+public class MenuInfos extends Menu {
 	private static final long serialVersionUID = -7621681231232278749L;
 
-	MenuSelectInfos infos;
-
-	MenuSelectUnit unit;
+	MenuInfosDefault infos;
+	MenuInfoUnit unit;
+	MenuInfosBuilding build;
 
 	public MenuGrid gridCubes;
 	private ArrayList<Cube> _cubes = new ArrayList<>();
-	public ArrayList<MenuCubeSelection> cubes = new ArrayList<>();
+	public ArrayList<MenuButtonCube> cubes = new ArrayList<>();
 
 	// =========================================================================================================================
 
-	public MenuSelects(Session session) {
+	public MenuInfos(Session session) {
 		super(session);
 
 		setBackground(Color.BLUE);
 
-		infos = new MenuSelectInfos(session);
-		unit = new MenuSelectUnit(session);
+		infos = new MenuInfosDefault(session);
+		unit = new MenuInfoUnit(session);
+		build = new MenuInfosBuilding(session);
 		gridCubes = new MenuGrid(session);
 
 		gridCubes.setSize(getSize());
@@ -51,7 +55,7 @@ public class MenuSelects extends Menu {
 		_cubes.add(new Cube(ItemID.TEST_TRANSPARENT));
 
 		for (int i = 0; i < _cubes.size(); i++) {
-			cubes.add(new MenuCubeSelection(session, _cubes.get(i)));
+			cubes.add(new MenuButtonCube(session, _cubes.get(i)));
 			gridCubes.addItem(cubes.get(i));
 		}
 
@@ -59,10 +63,12 @@ public class MenuSelects extends Menu {
 
 		add(infos);
 		add(unit);
+		add(build);
 		add(gridCubes);
 
 		infos.setVisible(false);
 		unit.setVisible(true);
+		build.setVisible(true);
 		gridCubes.setVisible(false);
 	}
 
@@ -72,6 +78,7 @@ public class MenuSelects extends Menu {
 	public void updateCube(Cube cube) {
 		infos.setVisible(false);
 		unit.setVisible(false);
+		build.setVisible(false);
 		gridCubes.setVisible(false);
 
 		if (cube == null)
@@ -79,6 +86,8 @@ public class MenuSelects extends Menu {
 
 		if (cube.unit != null)
 			unit.update(cube.unit);
+		else if (cube.build != null)
+			build.update(cube.build);
 		else
 			infos.update(cube);
 	}
@@ -86,6 +95,7 @@ public class MenuSelects extends Menu {
 	public void showCubes() {
 		infos.setVisible(false);
 		unit.setVisible(false);
+		build.setVisible(false);
 		gridCubes.setVisible(true);
 	}
 
@@ -96,6 +106,7 @@ public class MenuSelects extends Menu {
 		super.setSize(x, y);
 		infos.setSize(x, y);
 		unit.setSize(x, y);
+		build.setSize(x, y);
 		gridCubes.setSize(x, y);
 	}
 

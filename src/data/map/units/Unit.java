@@ -1,7 +1,8 @@
-package data.units;
+package data.map.units;
 
 import java.util.LinkedList;
 
+import client.session.Player;
 import data.enumeration.Face;
 import data.enumeration.Orientation;
 import data.enumeration.Rotation;
@@ -9,6 +10,9 @@ import data.map.Map;
 import utils.Coord;
 
 public class Unit {
+
+	/** Player controlling this unit */
+	Player player;
 
 	/** Coords of the unit */
 	public Coord coord;
@@ -48,7 +52,8 @@ public class Unit {
 
 	// =========================================================================================================================
 
-	public Unit(int x, int y, int z) {
+	public Unit(Player player, int x, int y, int z) {
+		this.player = player;
 		coord = new Coord(x, y, z);
 	}
 
@@ -281,6 +286,14 @@ public class Unit {
 		goTo(map, coord.x, coord.y, coord.z);
 	}
 
+	// =========================================================================================================================
+
+	public void mine(Map map, Coord coord, Face face) {
+		goTo(map, coord.face(face));
+	}
+
+	// =========================================================================================================================
+
 	public void doNextMove() {
 		Orientation dir = coord.getOrientation(path.peekFirst());
 
@@ -335,6 +348,6 @@ public class Unit {
 
 	@Override
 	public String toString() {
-		return "I'm an unit";
+		return "I'm an unit of " + player.getName();
 	}
 }

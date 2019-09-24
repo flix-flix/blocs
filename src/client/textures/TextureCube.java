@@ -13,6 +13,11 @@ public class TextureCube {
 
 	// =========================================================================================================================
 
+	public TextureCube(String folder, String id) {
+		for (Face face : Face.faces)
+			textures[face.ordinal()] = new TextureFace(folder, id, face);
+	}
+
 	public TextureCube(String id) {
 		for (Face face : Face.faces)
 			textures[face.ordinal()] = new TextureFace(id, face);

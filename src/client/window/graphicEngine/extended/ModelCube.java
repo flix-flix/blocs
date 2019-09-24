@@ -83,6 +83,7 @@ public class ModelCube extends Cube implements Model {
 		this.onGrid = c.onGrid;
 		this.multibloc = c.multibloc;
 		this.unit = c.unit;
+		this.build = c.build;
 	}
 
 	// =========================================================================================================================
