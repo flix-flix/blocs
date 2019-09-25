@@ -148,6 +148,8 @@ public class WorldGeneration {
 
 		map.add(new Building(felix, 25, ground, 3, 3, 2, 2, ItemID.CASTLE));
 
+		map.add(new Building(felix, 30, ground, 3, 3, 2, 2, ItemID.CASTLE, false));
+
 		return map;
 	}
 

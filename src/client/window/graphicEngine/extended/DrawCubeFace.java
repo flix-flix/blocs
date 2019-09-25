@@ -12,7 +12,7 @@ import client.window.graphicEngine.structures.Draw;
 import client.window.graphicEngine.structures.Quadri;
 import data.ItemTable;
 import data.enumeration.Face;
-import utils.FlixBlocksUtils;
+import data.map.Cube;
 
 public class DrawCubeFace extends Draw {
 
@@ -54,7 +54,7 @@ public class DrawCubeFace extends Draw {
 		}
 
 		// Draw the mining animation
-		if (cube.miningState != FlixBlocksUtils.NO_MINING)
+		if (cube.miningState != Cube.NO_MINING)
 			generateQuadri(engine.texturePack.getMiningFrame(cube.miningState), engine);
 
 		// Draw the cube

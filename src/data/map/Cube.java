@@ -1,7 +1,7 @@
 package data.map;
 
-import client.session.Session;
 import client.window.graphicEngine.calcul.Point3D;
+import data.ItemTable;
 import data.enumeration.ItemID;
 import data.enumeration.Orientation;
 import data.enumeration.Rotation;
@@ -9,9 +9,12 @@ import data.map.buildings.Building;
 import data.map.units.Unit;
 import data.multiblocs.Multibloc;
 import utils.Coord;
-import utils.FlixBlocksUtils;
 
 public class Cube {
+
+	public static final int NO_MINING = -1;
+
+	// =========================================================================================================================
 
 	public double x, y, z;
 	public Coord gridCoord;
@@ -23,6 +26,7 @@ public class Cube {
 	public boolean onGrid = false;
 
 	// =========================================================================================================================
+	// Properties
 
 	/** Size of the cube */
 	public double sizeX, sizeY, sizeZ;
@@ -31,19 +35,22 @@ public class Cube {
 	/** Rotation relative to the shifted center (degree) */
 	public double rotaX, rotaY, rotaZ;
 
+	public Orientation orientation = Orientation.NORTH;
+	public Rotation rotation = Rotation.NONE;
+
 	// =========================================================================================================================
+	// Data
 
 	public Multibloc multibloc;
 	public Unit unit;
 	public Building build;
 
 	// =========================================================================================================================
+	// Mining
 
-	public Orientation orientation = Orientation.NORTH;
-	public Rotation rotation = Rotation.NONE;
-
+	public int minedAlready = 0;
 	/** Step of the bloc's "mining state" */
-	public int miningState = FlixBlocksUtils.NO_MINING;
+	public int miningState = NO_MINING;
 
 	// =========================================================================================================================
 
@@ -132,12 +139,20 @@ public class Cube {
 	// =========================================================================================================================
 	// Actions
 
-	public boolean hasAction() {
-		return false;
-	}
+	/**
+	 * 
+	 * @param x
+	 *            - Number of mining steps to add
+	 * @return true if the bloc broke
+	 */
+	public boolean addMined(int x) {
+		if ((minedAlready += x) > ItemTable.getMiningTime(itemID))
+			minedAlready = ItemTable.getMiningTime(itemID);
 
-	public void doAction(Session session) {
-		System.out.println("Do Action");
+		miningState = (int) (minedAlready / (double) (ItemTable.getMiningTime(itemID))
+				* ItemTable.getNumberOfMiningSteps());
+
+		return minedAlready == ItemTable.getMiningTime(itemID);
 	}
 
 	// =========================================================================================================================

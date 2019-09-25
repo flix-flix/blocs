@@ -13,8 +13,6 @@ public class FlixBlocksUtils {
 	public static final double toRadian = Math.PI / 180;
 	public static final double toDegres = 180 / Math.PI;
 
-	public static final int NO_MINING = -1;
-
 	// =========================================================================================================================
 
 	public static Image getImage(String path) {

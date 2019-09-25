@@ -13,11 +13,17 @@ import client.window.graphicEngine.calcul.Point3D;
 import client.window.graphicEngine.extended.ModelCube;
 import client.window.panels.menus.Menu;
 import client.window.panels.menus.MenuButtonAction;
+import data.ItemTable;
 import data.map.Cube;
 import data.map.buildings.Building;
 
 public class MenuInfosBuilding extends Menu {
 	private static final long serialVersionUID = -5061597857247176796L;
+
+	private Font font = new Font("monospace", Font.PLAIN, 12);
+	private Font fontBold = new Font("monospace", Font.BOLD, 20);
+
+	private int imgSize = 75;
 
 	private Engine engine;
 	private Image img;
@@ -25,8 +31,6 @@ public class MenuInfosBuilding extends Menu {
 	private Building build;
 
 	private MenuButtonAction spawn, upgrade;
-
-	private Font font = new Font("monospace", Font.PLAIN, 12);
 
 	public MenuInfosBuilding(Session session) {
 		super(session);
@@ -47,15 +51,41 @@ public class MenuInfosBuilding extends Menu {
 		g.setColor(Color.GRAY);
 		g.fillRect(0, 0, getWidth(), getHeight());
 
-		if (img != null)
+		if (img == null) {
+			g.setColor(Color.DARK_GRAY);
+			g.fillRect(15, 15, imgSize, imgSize);
+		} else
 			g.drawImage(img, 15, 15, null);
 
 		g.setFont(font);
 		g.setColor(Color.WHITE);
-		g.drawString("Building", img == null ? 15 : img.getWidth(null) + 15, 50);
+		g.drawString("Building", 15 + imgSize, 50);
 
-		if (build != null)
-			g.drawString(build.toString(), img == null ? 15 : img.getWidth(null) + 15, 70);
+		if (build != null) {
+			g.drawString(build.toString(), 15 + imgSize, 70);
+
+			if (!build.isBuild()) {
+				g.setColor(Color.RED);
+				g.setFont(fontBold);
+				g.drawString("En construction", 50, 130);
+
+				int buildProgressX = 100;
+				int buildProgressY = 30;
+				int padding = 5;
+
+				g.setColor(Color.LIGHT_GRAY);
+				g.fillRect(getWidth() / 2 - buildProgressX / 2 - padding, 135, buildProgressX + 2 * padding,
+						buildProgressY + 2 * padding);
+
+				g.setColor(new Color(32, 143, 236));
+				g.fillRect(getWidth() / 2 - buildProgressX / 2, 135 + padding,
+						(int) (buildProgressX
+								* (build.getAlreadyBuild() / (double) ItemTable.getBuildingTime(build.itemID))),
+						buildProgressY);
+				return;
+			}
+
+		}
 	}
 
 	// =========================================================================================================================
@@ -68,7 +98,10 @@ public class MenuInfosBuilding extends Menu {
 
 		engine = new Engine(new Camera(new Point3D(-1, 3, -2.5), 58, -35), new ModelCube(cube), session.texturePack);
 		engine.drawSky = false;
-		img = engine.getImage(75, 75);
+		img = engine.getImage(imgSize, imgSize);
+
+		spawn.setVisible(build.isBuild());
+		upgrade.setVisible(build.isBuild());
 
 		setVisible(true);
 		repaint();
@@ -84,6 +117,5 @@ public class MenuInfosBuilding extends Menu {
 
 	@Override
 	public void click() {
-
 	}
 }

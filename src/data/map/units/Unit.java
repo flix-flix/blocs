@@ -9,6 +9,7 @@ import data.enumeration.Orientation;
 import data.enumeration.Rotation;
 import data.map.Map;
 import utils.Coord;
+import utils.FlixBlocksUtils;
 
 public class Unit {
 
@@ -56,11 +57,14 @@ public class Unit {
 	private Coord destination;
 	/** List of the coords to the destination */
 	private LinkedList<Coord> path;
-	/** Action to do at the end of the deplacement */
-	private Action action = null;
-
 	/** New path (stored till the end of the current rotation then replace path) */
 	private LinkedList<Coord> newPath = NO_NEW_PATH;
+
+	// ========== Action ==========
+	/** Action to do at the end of the deplacement */
+	private Action action = null;
+	/** Bloc targeted by the action */
+	private Coord actionCube;
 
 	// =========================================================================================================================
 
@@ -70,6 +74,13 @@ public class Unit {
 	}
 
 	// =========================================================================================================================
+
+	public void tick(Map map) {
+		if (isTraveling())
+			doStep(map);
+		else if (action != null)
+			doAction(map);
+	}
 
 	/**
 	 * Increase the rotation by one step and re-calculate the corresponding angles
@@ -86,6 +97,26 @@ public class Unit {
 			az = (movingStep / (double) movingStepFinal) * movingAngleZ;
 		} else {
 			arrive(map);
+		}
+	}
+
+	public void doAction(Map map) {
+		switch (action) {
+		case MINE:
+			if (map.gridGet(actionCube).addMined(1)) {// Cube break
+				map.remove(actionCube);
+				action = null;
+			}
+			break;
+		case BUILD:
+			if (map.gridGet(actionCube).build.addAlreadyBuild(1)) {// Building created
+				action = null;
+			}
+			break;
+		case DESTROY:
+			break;
+		default:
+			FlixBlocksUtils.debug("Action " + action + " unimplemented");
 		}
 	}
 
@@ -118,10 +149,8 @@ public class Unit {
 
 		if (!path.isEmpty())
 			doNextMove();
-		else {
+		else
 			destination = null;
-			// TODO Execute Action
-		}
 	}
 
 	// =========================================================================================================================
@@ -251,7 +280,7 @@ public class Unit {
 		movingTo = coord.face(Face.DOWN);
 
 		nextRotation = orientation.next() == dir ? rotation.nextX() : rotation.previousX();
-
+		// TODO Crash if diago before
 		switch (dir) {
 		case NORTH:
 			rotationPoint = 1;
@@ -317,7 +346,7 @@ public class Unit {
 	}
 
 	private boolean setPath(LinkedList<Coord> path) {
-		if (isActif())
+		if (isTraveling())
 			newPath = path;
 		else {
 			this.path = path;
@@ -333,10 +362,11 @@ public class Unit {
 	// =========================================================================================================================
 
 	public boolean doAction(Action action, Map map, Coord coord, Face face) {
-		if (!goAround(map, coord.face(face)))
+		if (!goAround(map, coord))
 			return false;
 
 		this.action = action;
+		this.actionCube = coord;
 
 		return true;
 	}

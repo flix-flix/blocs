@@ -255,7 +255,7 @@ public class Map implements Tickable {
 	@Override
 	public void tick() {
 		for (int i = 0; i < units.size(); i++)
-			units.get(i).unit.doStep(this);
+			units.get(i).unit.tick(this);
 	}
 
 	// =========================================================================================================================

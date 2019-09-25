@@ -95,6 +95,5 @@ public class MenuInfoUnit extends Menu {
 
 	@Override
 	public void click() {
-
 	}
 }
