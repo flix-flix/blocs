@@ -1,4 +1,4 @@
-package client.window.panels.menus.select;
+package client.window.panels.menus.infos;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -10,11 +10,11 @@ import client.session.Session;
 import client.window.graphicEngine.calcul.Camera;
 import client.window.graphicEngine.calcul.Engine;
 import client.window.graphicEngine.calcul.Point3D;
-import client.window.graphicEngine.extended.ModelCube;
+import client.window.graphicEngine.extended.ModelMap;
 import client.window.panels.menus.Menu;
 import client.window.panels.menus.MenuButtonAction;
 import data.ItemTable;
-import data.map.Cube;
+import data.enumeration.ItemID;
 import data.map.buildings.Building;
 
 public class MenuInfosBuilding extends Menu {
@@ -23,7 +23,7 @@ public class MenuInfosBuilding extends Menu {
 	private Font font = new Font("monospace", Font.PLAIN, 12);
 	private Font fontBold = new Font("monospace", Font.BOLD, 20);
 
-	private int imgSize = 75;
+	private int imgSize = 125;
 
 	private Engine engine;
 	private Image img;
@@ -36,11 +36,11 @@ public class MenuInfosBuilding extends Menu {
 		super(session);
 
 		spawn = new MenuButtonAction(session, Action.SPAWN);
-		spawn.setBounds(15, 90, 75, 75);
+		spawn.setBounds(15, imgSize + 20, 75, 75);
 		add(spawn);
 
 		upgrade = new MenuButtonAction(session, Action.UPGRADE);
-		upgrade.setBounds(105, 90, 75, 75);
+		upgrade.setBounds(105, imgSize + 20, 75, 75);
 		add(upgrade);
 	}
 
@@ -51,18 +51,18 @@ public class MenuInfosBuilding extends Menu {
 		g.setColor(Color.GRAY);
 		g.fillRect(0, 0, getWidth(), getHeight());
 
-		if (img == null) {
-			g.setColor(Color.DARK_GRAY);
-			g.fillRect(15, 15, imgSize, imgSize);
-		} else
+		g.setColor(Color.LIGHT_GRAY);
+		g.fillRect(15, 15, imgSize, imgSize);
+
+		if (img != null)
 			g.drawImage(img, 15, 15, null);
 
 		g.setFont(font);
 		g.setColor(Color.WHITE);
-		g.drawString("Building", 15 + imgSize, 50);
+		g.drawString("Building", 20 + imgSize, 50);
 
 		if (build != null) {
-			g.drawString(build.toString(), 15 + imgSize, 70);
+			g.drawString(build.toString(), 20 + imgSize, 70);
 
 			if (!build.isBuild()) {
 				g.setColor(Color.RED);
@@ -80,7 +80,7 @@ public class MenuInfosBuilding extends Menu {
 				g.setColor(new Color(32, 143, 236));
 				g.fillRect(getWidth() / 2 - buildProgressX / 2, 135 + padding,
 						(int) (buildProgressX
-								* (build.getAlreadyBuild() / (double) ItemTable.getBuildingTime(build.itemID))),
+								* (build.getAlreadyBuild() / (double) ItemTable.getBuildingTime(build.getItemID()))),
 						buildProgressY);
 				return;
 			}
@@ -94,9 +94,10 @@ public class MenuInfosBuilding extends Menu {
 		this.build = build;
 		session.fen.gui.build = build;
 
-		Cube cube = new Cube(0, 0, 0, 3, 2, 2, build.itemID);
+		ModelMap map = new ModelMap();
+		map.add(new Building(null, ItemID.CASTLE, 0, 0, 0, true).getCube());
 
-		engine = new Engine(new Camera(new Point3D(-1, 3, -2.5), 58, -35), new ModelCube(cube), session.texturePack);
+		engine = new Engine(new Camera(new Point3D(3.7, 3, 4.2), 236, -30), map, session.texturePack);
 		engine.drawSky = false;
 		img = engine.getImage(imgSize, imgSize);
 

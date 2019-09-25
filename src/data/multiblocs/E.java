@@ -4,7 +4,7 @@ import client.window.graphicEngine.calcul.Engine;
 import data.enumeration.ItemID;
 import data.map.Cube;
 
-public class E extends Multibloc {
+public class E extends MultiBloc {
 
 	public E(int x, int y, int z) {
 		super(0, 0, 0);
@@ -36,7 +36,7 @@ public class E extends Multibloc {
 	// =========================================================================================================================
 
 	@Override
-	public Multibloc clone() {
+	public MultiBloc clone() {
 		return new E(x, y, z);
 	}
 

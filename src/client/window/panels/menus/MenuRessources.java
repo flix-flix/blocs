@@ -23,7 +23,7 @@ public class MenuRessources extends Menu {
 
 	static {
 		wood = FlixBlocksUtils.getImage("menu/wood");
-		rocks = FlixBlocksUtils.getImage("menu/rocks");
+		rocks = FlixBlocksUtils.getImage("menu/stone");
 		water = FlixBlocksUtils.getImage("menu/water");
 
 		water = FlixBlocksUtils.getImage("menu/water");

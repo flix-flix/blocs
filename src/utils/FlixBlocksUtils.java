@@ -1,8 +1,14 @@
 package utils;
 
 import java.awt.Image;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 
 import javax.imageio.ImageIO;
 
@@ -74,5 +80,40 @@ public class FlixBlocksUtils {
 
 	public static void debug(String str) {
 		debugBefore(str);
+	}
+
+	// =========================================================================================================================
+
+	public static String read(String name) {
+		String str = new String();
+		FileChannel fc;
+		FileInputStream fis;
+
+		try {
+			fis = new FileInputStream(new File(name));
+			fc = fis.getChannel();
+			int size = (int) fc.size();
+			ByteBuffer bBuff = ByteBuffer.allocate(size);
+			fc.read(bBuff);
+			bBuff.flip();
+			byte[] tab = bBuff.array();
+			str = new String(tab);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return str;
+	}
+
+	public static void write(String content, String name) {
+		FileWriter fw;
+		try {
+			fw = new FileWriter(new File(name));
+			fw.write(content);
+			fw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

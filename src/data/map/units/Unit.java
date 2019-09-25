@@ -7,8 +7,8 @@ import client.session.Player;
 import data.enumeration.Face;
 import data.enumeration.Orientation;
 import data.enumeration.Rotation;
+import data.map.Coord;
 import data.map.Map;
-import utils.Coord;
 import utils.FlixBlocksUtils;
 
 public class Unit {

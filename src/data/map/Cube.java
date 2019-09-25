@@ -7,12 +7,9 @@ import data.enumeration.Orientation;
 import data.enumeration.Rotation;
 import data.map.buildings.Building;
 import data.map.units.Unit;
-import data.multiblocs.Multibloc;
-import utils.Coord;
+import data.multiblocs.MultiBloc;
 
 public class Cube {
-
-	public static final int NO_MINING = -1;
 
 	// =========================================================================================================================
 
@@ -41,13 +38,16 @@ public class Cube {
 	// =========================================================================================================================
 	// Data
 
-	public Multibloc multibloc;
+	public MultiBloc multibloc;
+	/** Coords of the bloc in the multiblocs struct */
+	public int multiblocX, multiblocY, multiblocZ;
 	public Unit unit;
 	public Building build;
 
 	// =========================================================================================================================
 	// Mining
 
+	public static final int NO_MINING = -1;
 	public int minedAlready = 0;
 	/** Step of the bloc's "mining state" */
 	public int miningState = NO_MINING;

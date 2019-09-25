@@ -18,7 +18,7 @@ import client.window.panels.menus.MenuCol;
 import client.window.panels.menus.MenuGrid;
 import client.window.panels.menus.MenuMap;
 import client.window.panels.menus.MenuRessources;
-import client.window.panels.menus.select.MenuInfos;
+import client.window.panels.menus.infos.MenuInfos;
 import data.map.Cube;
 import data.map.buildings.Building;
 import data.map.units.Unit;

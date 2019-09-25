@@ -84,6 +84,10 @@ public class ModelCube extends Cube implements Model {
 		this.multibloc = c.multibloc;
 		this.unit = c.unit;
 		this.build = c.build;
+		
+		this.multiblocX = c.multiblocX;
+		this.multiblocY = c.multiblocY;
+		this.multiblocZ = c.multiblocZ;
 	}
 
 	// =========================================================================================================================

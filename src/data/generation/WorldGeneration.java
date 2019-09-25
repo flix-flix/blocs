@@ -3,13 +3,13 @@ package data.generation;
 import client.session.Player;
 import client.window.graphicEngine.extended.ModelMap;
 import data.enumeration.ItemID;
+import data.map.Coord;
 import data.map.Cube;
 import data.map.buildings.Building;
 import data.map.units.Unit;
 import data.multiblocs.E;
-import data.multiblocs.Multibloc;
+import data.multiblocs.MultiBloc;
 import data.multiblocs.Tree;
-import utils.Coord;
 import utils.FlixBlocksUtils;
 
 public class WorldGeneration {
@@ -105,7 +105,7 @@ public class WorldGeneration {
 		map.add(new Cube(19, ground, 19, 0, 0, 0, 3, 2, 2, ItemID.TEST_BIG));
 
 		// Add multibloc of off-grids without border
-		Multibloc m = new Multibloc();
+		MultiBloc m = new MultiBloc();
 		m.add(new Cube(0, 0, 0, 0, 0, 0, 3, 2, 2, ItemID.TEST_BIG));
 		m.add(new Cube(0, 0, 2, 0, 0, 0, 3, 2, 2, ItemID.TEST_BIG));
 		m.add(new Cube(0, 0, 4, 0, 0, 0, 3, 2, 2, ItemID.TEST_BIG));
@@ -146,9 +146,17 @@ public class WorldGeneration {
 		// =========================================================================================================================
 		// Buildings
 
-		map.add(new Building(felix, 25, ground, 3, 3, 2, 2, ItemID.CASTLE));
+		// map.add(new Building(felix, 25, ground, 3, 3, 2, 2, ItemID.CASTLE));
 
-		map.add(new Building(felix, 30, ground, 3, 3, 2, 2, ItemID.CASTLE, false));
+		// map.add(new Building(felix, 30, ground, 3, 3, 2, 2, ItemID.CASTLE, false));
+
+		// MultiBloc build = ItemTable.createBuilding(ItemID.CASTLE);
+		// build.setCoords(25, ground, 3);
+		// map.add(build.getCube());
+
+		map.add(new Building(felix, ItemID.CASTLE, 25, ground, 3, true).getCube());
+		// map.add(new Building(felix, ItemID.CASTLE, 30, ground, 3, false));
+		// map.add(new Building(ia, ItemID.CASTLE, 30, ground, 9, false));
 
 		return map;
 	}

@@ -29,6 +29,11 @@ public class TextureCube {
 
 	// =========================================================================================================================
 
+	public TextureCube() {
+		for (int i = 0; i < 6; i++)
+			this.textures[i] = null;
+	}
+
 	public TextureCube(TextureFace[] textures) {
 		for (int i = 0; i < 6; i++)
 			this.textures[i] = textures[i];
@@ -48,7 +53,8 @@ public class TextureCube {
 
 	public TextureSquare getTexture(Face face, Rotation rota, Orientation ori) {
 		for (int i = 0; i < 6; i++) {
-			textures[i].rotation = 0;
+			if (textures[i] != null)
+				textures[i].rotation = 0;
 			preview[i] = textures[i];
 		}
 
@@ -87,6 +93,9 @@ public class TextureCube {
 			return null;
 		}
 
+		if(preview[face.ordinal()] == null)
+			return TextureSquare.defaultFace;
+		
 		return preview[face.ordinal()].getRotated();
 	}
 
@@ -134,5 +143,13 @@ public class TextureCube {
 		preview[5] = preview[3];
 		preview[3] = preview[4];
 		preview[4] = t;
+	}
+
+	// =========================================================================================================================
+
+	public void setFace(Face face, TextureSquare t) {
+		TextureFace tf = new TextureFace();
+		tf.setNormal(t);
+		textures[face.ordinal()] = tf;
 	}
 }

@@ -4,10 +4,13 @@ import client.session.Player;
 import data.ItemTable;
 import data.enumeration.ItemID;
 import data.map.Cube;
+import data.multiblocs.MultiBloc;
 
-public class Building extends Cube {
+public class Building {
 
 	private Player player;
+	private ItemID itemID;
+	private MultiBloc multi;
 
 	/** false : the building isn't ready to be used */
 	private boolean isBuild;
@@ -16,25 +19,24 @@ public class Building extends Cube {
 
 	// =========================================================================================================================
 
-	public Building(Player player, double x, double y, double z, double sizeX, double sizeY, double sizeZ,
-			ItemID itemID, boolean isBuild) {
-		super(x, y, z, sizeX, sizeY, sizeZ, itemID);
-		build = this;
-
+	public Building(Player player, ItemID itemID, int x, int y, int z, boolean isBuild) {
 		this.player = player;
+		this.itemID = itemID;
 		this.isBuild = isBuild;
-	}
 
-	public Building(Player player, double x, double y, double z, double sizeX, double sizeY, double sizeZ,
-			ItemID itemID) {
-		this(player, x, y, z, sizeX, sizeY, sizeZ, itemID, true);
-	}
-
-	public Building(Player player, double x, double y, double z, ItemID itemID) {
-		this(player, x, y, z, 1, 1, 1, itemID);
+		multi = ItemTable.createBuilding(this);
+		multi.setCoords(x, y, z);
 	}
 
 	// =========================================================================================================================
+
+	public ItemID getItemID() {
+		return itemID;
+	}
+
+	public Cube getCube() {
+		return multi.getCube();
+	}
 
 	public Player getPlayer() {
 		return player;

@@ -11,9 +11,18 @@ public class TextureSquare {
 	// row * width + col
 	private int color[];
 
+	public static TextureSquare defaultFace;
+
+	static {
+		defaultFace = new TextureSquare(10, 10);
+		for (int i = 0; i < 10; i++)
+			for (int j = 0; j < 10; j++)
+				defaultFace.setColor(i, j, 0);
+	}
+
 	// =========================================================================================================================
 
-	public TextureSquare(int height, int width) {
+	public TextureSquare(int width, int height) {
 		this(new int[height * width], width);
 	}
 
@@ -45,5 +54,17 @@ public class TextureSquare {
 				color[(bimg.getHeight() - 1 - i) * bimg.getWidth() + j] = bimg.getRGB(j, i);
 
 		return new TextureSquare(color, bimg.getWidth());
+	}
+
+	// =========================================================================================================================
+
+	public TextureSquare getRect(int x, int y, int width, int height) {
+		TextureSquare text = new TextureSquare(width, height);
+
+		for (int i = 0; i < width; i++)
+			for (int j = 0; j < height; j++)
+				text.setColor(j, i, getColor(y + j, x + i));
+
+		return text;
 	}
 }

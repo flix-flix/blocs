@@ -1,9 +1,8 @@
-package utils;
+package data.map;
 
 import client.window.graphicEngine.calcul.Point3D;
 import data.enumeration.Face;
 import data.enumeration.Orientation;
-import data.map.Cube;
 
 public class Coord {
 

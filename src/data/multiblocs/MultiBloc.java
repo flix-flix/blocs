@@ -4,7 +4,7 @@ import java.util.LinkedList;
 
 import data.map.Cube;
 
-public class Multibloc {
+public class MultiBloc {
 
 	public LinkedList<Cube> list = new LinkedList<>();
 
@@ -12,13 +12,13 @@ public class Multibloc {
 
 	public boolean valid = true;
 
-	public Multibloc(int x, int y, int z) {
+	public MultiBloc(int x, int y, int z) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
 	}
 
-	public Multibloc() {
+	public MultiBloc() {
 		this(0, 0, 0);
 	}
 
@@ -30,6 +30,13 @@ public class Multibloc {
 
 	public void add(Cube cube) {
 		cube.multibloc = this;
+
+		if (cube.onGrid) {
+			cube.multiblocX = cube.gridCoord.x;
+			cube.multiblocY = cube.gridCoord.y;
+			cube.multiblocZ = cube.gridCoord.z;
+		}
+
 		list.add(cube);
 	}
 
@@ -42,7 +49,7 @@ public class Multibloc {
 		this.z = z;
 	}
 
-	public Multibloc clone() {
-		return new Multibloc(x, y, z);
+	public MultiBloc clone() {
+		return new MultiBloc(x, y, z);
 	}
 }

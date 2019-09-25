@@ -10,8 +10,8 @@ import client.window.graphicEngine.extended.ModelCube;
 import client.window.panels.StateHUD;
 import data.enumeration.Face;
 import data.enumeration.Orientation;
+import data.map.Coord;
 import data.map.Cube;
-import utils.Coord;
 import utils.FlixBlocksUtils;
 
 public class Keyboard {

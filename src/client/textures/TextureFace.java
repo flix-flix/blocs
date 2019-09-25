@@ -14,6 +14,9 @@ public class TextureFace {
 
 	// =========================================================================================================================
 
+	public TextureFace() {
+	}
+
 	public TextureFace(String folder, String file) {
 		normal = TextureSquare.generateSquare(folder, file);
 		generateRotatedTexture();
@@ -59,6 +62,11 @@ public class TextureFace {
 
 	// =========================================================================================================================
 
+	public void setNormal(TextureSquare text) {
+		normal = text;
+		generateRotatedTexture();
+	}
+
 	public void generateRotatedTexture() {
 		int rows = normal.height;
 		int cols = normal.width;
@@ -66,21 +74,16 @@ public class TextureFace {
 		if (cols != rows)
 			return;
 
-		reverse = new TextureSquare(rows, cols);
-		right = new TextureSquare(rows, cols);
-		left = new TextureSquare(rows, cols);
+		reverse = new TextureSquare(cols, rows);
+		right = new TextureSquare(cols, rows);
+		left = new TextureSquare(cols, rows);
 
 		for (int row = 0; row < rows; row++)
-			for (int col = 0; col < cols; col++)
+			for (int col = 0; col < cols; col++) {
 				reverse.setColor(rows - 1 - row, cols - 1 - col, normal.getColor(row, col));
-
-		for (int row = 0; row < rows; row++)
-			for (int col = 0; col < cols; col++)
 				right.setColor(cols - 1 - col, row, normal.getColor(row, col));
-
-		for (int row = 0; row < rows; row++)
-			for (int col = 0; col < cols; col++)
 				left.setColor(col, rows - 1 - row, normal.getColor(row, col));
+			}
 	}
 
 	// =========================================================================================================================

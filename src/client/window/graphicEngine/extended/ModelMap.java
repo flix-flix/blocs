@@ -8,11 +8,11 @@ import client.window.graphicEngine.structures.Draw;
 import client.window.graphicEngine.structures.Model;
 import data.ItemTable;
 import data.enumeration.Face;
+import data.map.Coord;
 import data.map.Cube;
 import data.map.Map;
 import data.map.units.Unit;
-import data.multiblocs.Multibloc;
-import utils.Coord;
+import data.multiblocs.MultiBloc;
 
 public class ModelMap extends Map implements Model {
 
@@ -83,12 +83,12 @@ public class ModelMap extends Map implements Model {
 	// Intercept invalid multibloc position. Force to display it with a red hue
 
 	@Override
-	protected void addMultiError(Multibloc multi) {
+	protected void addMultiError(MultiBloc multi) {
 		multi.valid = false;
 	}
 
 	@Override
-	protected boolean addMulti(Multibloc multi, boolean full) {
+	protected boolean addMulti(MultiBloc multi, boolean full) {
 		super.addMulti(multi, full);
 		update(multi.getCube().coords());
 		// Cubes are always displayed (in red if errors)

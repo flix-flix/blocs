@@ -3,7 +3,7 @@ package data.multiblocs;
 import data.enumeration.ItemID;
 import data.map.Cube;
 
-public class Tree extends Multibloc {
+public class Tree extends MultiBloc {
 
 	public Tree(int x, int y, int z) {
 		super(x, y, z);
@@ -35,7 +35,7 @@ public class Tree extends Multibloc {
 	// =========================================================================================================================
 
 	@Override
-	public Multibloc clone() {
+	public MultiBloc clone() {
 		return new Tree(x, y, z);
 	}
 

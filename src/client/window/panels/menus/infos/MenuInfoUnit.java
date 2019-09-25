@@ -1,4 +1,4 @@
-package client.window.panels.menus.select;
+package client.window.panels.menus.infos;
 
 import java.awt.Color;
 import java.awt.Font;

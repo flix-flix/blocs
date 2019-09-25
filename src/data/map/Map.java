@@ -5,8 +5,7 @@ import java.util.LinkedList;
 
 import client.session.Tickable;
 import data.map.units.Unit;
-import data.multiblocs.Multibloc;
-import utils.Coord;
+import data.multiblocs.MultiBloc;
 
 public class Map implements Tickable {
 
@@ -93,7 +92,7 @@ public class Map implements Tickable {
 
 	public void remove(Cube cube) {
 		if (containsChunkAtCoord(cube)) {
-			Multibloc m = cube.multibloc;
+			MultiBloc m = cube.multibloc;
 			if (m == null)
 				removeCube(cube);
 			else
@@ -130,7 +129,7 @@ public class Map implements Tickable {
 	 *            grid is empty
 	 * @return true if the multibloc have been added
 	 */
-	protected boolean addMulti(Multibloc multi, boolean full) {
+	protected boolean addMulti(MultiBloc multi, boolean full) {
 		// All blocs have been added
 		boolean all = true;
 		LinkedList<Cube> added = new LinkedList<>();
@@ -151,11 +150,11 @@ public class Map implements Tickable {
 		return all;
 	}
 
-	protected void addMultiError(Multibloc multi) {
+	protected void addMultiError(MultiBloc multi) {
 		removeMulti(multi);
 	}
 
-	protected void removeMulti(Multibloc multi) {
+	protected void removeMulti(MultiBloc multi) {
 		for (Cube c : multi.list)
 			removeCube(c);
 	}

@@ -2,7 +2,10 @@ package client.textures;
 
 import java.util.HashMap;
 
+import client.window.graphicEngine.extended.ModelCube;
+import data.ItemTable;
 import data.enumeration.Face;
+import data.enumeration.ItemID;
 import data.enumeration.Orientation;
 import data.enumeration.Rotation;
 
@@ -14,10 +17,13 @@ public class TexturePack {
 	public static final int[] texturesToLoad = new int[] { 0, 1, 2, 3, 20, 21, 50, 51, 52, 100, 200, 997, 998, 999 };
 
 	/** ID of textures multi-blocks to load */
-	public static final int[] texturesMultiToLoad = new int[] { 0 };
+	public static final ItemID[] texturesMultiToLoad = new ItemID[] { ItemID.CASTLE };
 
 	/** Map to store the textures of the cubes (access by id) */
 	HashMap<Integer, TextureCube> texturesCubes = new HashMap<>();
+	/** Map to store the textures of the cubes (access by id) */
+	HashMap<Integer, TextureMulti> texturesMulti = new HashMap<>();
+
 	/** Array to store mining animations (intact to broken) */
 	TextureSquare[] miningFrames = new TextureSquare[nbAnim];
 
@@ -33,14 +39,21 @@ public class TexturePack {
 		for (int i : texturesToLoad)
 			texturesCubes.put(i, new TextureCube(i));
 
-		for (int i : texturesMultiToLoad)
-			texturesCubes.put(300 + i, new TextureCube("multi", i + ""));
+		for (ItemID id : texturesMultiToLoad)
+			texturesMulti.put(id.id, new TextureMulti(id));
 
 		for (int i = 0; i < nbAnim; i++)
 			miningFrames[i] = TextureSquare.generateSquare("anim", "mining-" + i);
 	}
 
 	// =========================================================================================================================
+
+	public TextureSquare getFace(ModelCube cube, Face face) {
+		if (ItemTable.isMultiBloc(cube.itemID))
+			return texturesMulti.get(cube.itemID.id).getFace(cube, face);
+		else
+			return getFace(cube.itemID.id, face, cube.rotation, cube.orientation);
+	}
 
 	public TextureSquare getFace(int id, Face face) {
 		return getFace(id, face, Rotation.NONE, Orientation.NORTH);

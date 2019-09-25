@@ -18,8 +18,8 @@ import client.window.graphicEngine.extended.ModelMap;
 import client.window.panels.StateHUD;
 import data.enumeration.Face;
 import data.enumeration.Orientation;
+import data.map.Coord;
 import data.map.Cube;
-import utils.Coord;
 
 public class Session implements Serializable {
 	private static final long serialVersionUID = 8569378400890835470L;

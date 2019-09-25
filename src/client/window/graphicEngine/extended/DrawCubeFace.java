@@ -58,7 +58,7 @@ public class DrawCubeFace extends Draw {
 			generateQuadri(engine.texturePack.getMiningFrame(cube.miningState), engine);
 
 		// Draw the cube
-		generateQuadri(engine.texturePack.getFace(cube.itemID.id, face, cube.rotation, cube.orientation), engine);
+		generateQuadri(engine.texturePack.getFace(cube, face), engine);
 
 		return quadri;
 	}
