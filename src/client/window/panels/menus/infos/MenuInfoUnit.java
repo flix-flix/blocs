@@ -81,6 +81,11 @@ public class MenuInfoUnit extends Menu {
 		engine.drawSky = false;
 		img = engine.getImage(75, 75);
 
+		goTo.setVisible(unit.getPlayer().equals(session.player));
+		mine.setVisible(unit.getPlayer().equals(session.player));
+		build.setVisible(unit.getPlayer().equals(session.player));
+		destroy.setVisible(unit.getPlayer().equals(session.player));
+
 		setVisible(true);
 		repaint();
 	}

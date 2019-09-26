@@ -106,8 +106,8 @@ public class MenuInfosBuilding extends Menu implements BuildObserver {
 		engine.drawSky = false;
 		img = engine.getImage(imgSize, imgSize);
 
-		spawn.setVisible(build.isBuild());
-		upgrade.setVisible(build.isBuild());
+		spawn.setVisible(build.isBuild() && build.getPlayer().equals(session.player));
+		upgrade.setVisible(build.isBuild() && build.getPlayer().equals(session.player));
 
 		setVisible(true);
 		repaint();

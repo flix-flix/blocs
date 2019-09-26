@@ -431,6 +431,10 @@ public class Unit {
 		return destination != null || action != null;
 	}
 
+	public Player getPlayer() {
+		return player;
+	}
+
 	// =========================================================================================================================
 
 	@Override

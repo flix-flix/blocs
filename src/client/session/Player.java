@@ -55,4 +55,10 @@ public class Player {
 	public String getName() {
 		return name;
 	}
+
+	// =========================================================================================================================
+
+	public boolean equals(Player p) {
+		return name.equals(p.name);
+	}
 }

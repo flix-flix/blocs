@@ -126,22 +126,22 @@ public class WorldGeneration {
 
 		for (int i = 10; i < 20; i++)
 			for (int j = 5; j < 15; j++)
-				// map.add(new Cube(i, 10, j, ItemID.GLASS));
 				map.remove(i, 9, j);
 
 		// Add Unit
-		Unit u = new Unit(felix, 5, 10, 5);
-		map.addUnit(u);
-		// u.goTo(map, 15, 11, 10);
-		u.goTo(map, new Coord(15, 9, 10));
+		Unit u1 = new Unit(felix, 5, ground, 5);
+		map.addUnit(u1);
+		u1.goTo(map, new Coord(15, 9, ground));
+
+		Unit u2 = new Unit(felix, 6, ground, 2);
+		map.addUnit(u2);
+		u2.goTo(map, new Coord(10, ground, 2));
+
+		map.addUnit(new Unit(felix, 4, ground, 2));
+		map.addUnit(new Unit(felix, 5, ground, 2));
 
 		// Add Unit to IA
-		Unit unitIA = new Unit(ia, 3, 10, 3);
-		map.addUnit(unitIA);
-		unitIA.goTo(map, new Coord(10, 10, 2));
-
-		// Add cube with UNIT texture
-		map.add(new Cube(0, 15, 0, ItemID.UNIT));
+		map.addUnit(new Unit(ia, 7, ground, 4));
 
 		// =========================================================================================================================
 		// Buildings
