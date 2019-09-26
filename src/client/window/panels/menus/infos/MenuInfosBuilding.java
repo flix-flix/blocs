@@ -2,6 +2,7 @@ package client.window.panels.menus.infos;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Image;
 
@@ -16,12 +17,14 @@ import client.window.panels.menus.MenuButtonAction;
 import data.ItemTable;
 import data.enumeration.ItemID;
 import data.map.buildings.Building;
+import data.map.buildings.Building.BuildObserver;
 
-public class MenuInfosBuilding extends Menu {
+public class MenuInfosBuilding extends Menu implements BuildObserver {
 	private static final long serialVersionUID = -5061597857247176796L;
 
 	private Font font = new Font("monospace", Font.PLAIN, 12);
 	private Font fontBold = new Font("monospace", Font.BOLD, 20);
+	private FontMetrics fmBold = getFontMetrics(fontBold);
 
 	private int imgSize = 125;
 
@@ -67,24 +70,25 @@ public class MenuInfosBuilding extends Menu {
 			if (!build.isBuild()) {
 				g.setColor(Color.RED);
 				g.setFont(fontBold);
-				g.drawString("En construction", 50, 130);
+				g.drawString("En construction", getWidth() / 2 - fmBold.stringWidth("En construction") / 2,
+						imgSize + 40);
 
-				int buildProgressX = 100;
-				int buildProgressY = 30;
+				int progressWidth = getWidth() / 2;
+				int progressHeight = 30;
+				int progressY = imgSize + 40 + 10;
 				int padding = 5;
 
 				g.setColor(Color.LIGHT_GRAY);
-				g.fillRect(getWidth() / 2 - buildProgressX / 2 - padding, 135, buildProgressX + 2 * padding,
-						buildProgressY + 2 * padding);
+				g.fillRoundRect(getWidth() / 2 - progressWidth / 2 - padding, progressY, progressWidth + 2 * padding,
+						progressHeight + 2 * padding, 20, 20);
 
 				g.setColor(new Color(32, 143, 236));
-				g.fillRect(getWidth() / 2 - buildProgressX / 2, 135 + padding,
-						(int) (buildProgressX
+				g.fillRoundRect(getWidth() / 2 - progressWidth / 2, progressY + padding,
+						(int) (progressWidth
 								* (build.getAlreadyBuild() / (double) ItemTable.getBuildingTime(build.getItemID()))),
-						buildProgressY);
+						progressHeight, 20, 20);
 				return;
 			}
-
 		}
 	}
 
@@ -92,6 +96,7 @@ public class MenuInfosBuilding extends Menu {
 
 	public void update(Building build) {
 		this.build = build;
+		build.addObserver(this);
 		session.fen.gui.build = build;
 
 		ModelMap map = new ModelMap();
@@ -109,6 +114,7 @@ public class MenuInfosBuilding extends Menu {
 	}
 
 	// =========================================================================================================================
+	// Menu
 
 	@Override
 	public void resize() {
@@ -118,5 +124,25 @@ public class MenuInfosBuilding extends Menu {
 
 	@Override
 	public void click() {
+	}
+
+	// =========================================================================================================================
+	// Observer
+
+	@Override
+	public void update() {
+		update(build);
+	}
+
+	// =========================================================================================================================
+
+	@Override
+	public void setVisible(boolean b) {
+		super.setVisible(b);
+		if (!b) {
+			if (build != null)
+				build.removeObserver(this);
+			build = null;
+		}
 	}
 }

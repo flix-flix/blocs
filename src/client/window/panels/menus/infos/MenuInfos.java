@@ -7,8 +7,10 @@ import client.session.Session;
 import client.window.panels.menus.Menu;
 import client.window.panels.menus.MenuButtonCube;
 import client.window.panels.menus.MenuGrid;
+import data.ItemTable;
 import data.enumeration.ItemID;
 import data.map.Cube;
+import data.map.buildings.Building;
 import data.multiblocs.E;
 import data.multiblocs.Tree;
 
@@ -53,6 +55,7 @@ public class MenuInfos extends Menu {
 		_cubes.add(new E().getCube());
 		_cubes.add(new Cube(ItemID.WATER));
 		_cubes.add(new Cube(ItemID.TEST_TRANSPARENT));
+		_cubes.add(ItemTable.createBuilding(new Building(null, ItemID.CASTLE, 0, 0, 0, false)).getCube());
 
 		for (int i = 0; i < _cubes.size(); i++) {
 			cubes.add(new MenuButtonCube(session, _cubes.get(i)));

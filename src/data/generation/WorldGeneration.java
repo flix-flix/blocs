@@ -146,17 +146,10 @@ public class WorldGeneration {
 		// =========================================================================================================================
 		// Buildings
 
-		// map.add(new Building(felix, 25, ground, 3, 3, 2, 2, ItemID.CASTLE));
-
-		// map.add(new Building(felix, 30, ground, 3, 3, 2, 2, ItemID.CASTLE, false));
-
-		// MultiBloc build = ItemTable.createBuilding(ItemID.CASTLE);
-		// build.setCoords(25, ground, 3);
-		// map.add(build.getCube());
-
 		map.add(new Building(felix, ItemID.CASTLE, 25, ground, 3, true).getCube());
-		// map.add(new Building(felix, ItemID.CASTLE, 30, ground, 3, false));
-		// map.add(new Building(ia, ItemID.CASTLE, 30, ground, 9, false));
+		map.add(new Building(felix, ItemID.CASTLE, 30, ground, 3, false).getCube());
+		map.add(new Building(ia, ItemID.CASTLE, 26, ground, 9, true).getCube());
+		map.add(new Building(ia, ItemID.CASTLE, 30, ground, 9, false).getCube());
 
 		return map;
 	}

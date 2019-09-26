@@ -38,7 +38,7 @@ public class ItemTable {
 		case WATER:
 		case CASTLE:
 			return false;
-			
+
 		default:
 			return true;
 		}

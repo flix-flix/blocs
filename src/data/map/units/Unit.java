@@ -352,7 +352,7 @@ public class Unit {
 			this.path = path;
 			destination = (path == null || path.isEmpty()) ? null : path.getLast();
 			action = null;
-			if (!path.isEmpty())
+			if (path != null && !path.isEmpty())
 				doNextMove();
 		}
 

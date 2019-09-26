@@ -36,7 +36,6 @@ public class MultiBloc {
 			cube.multiblocY = cube.gridCoord.y;
 			cube.multiblocZ = cube.gridCoord.z;
 		}
-
 		list.add(cube);
 	}
 
@@ -50,6 +49,8 @@ public class MultiBloc {
 	}
 
 	public MultiBloc clone() {
-		return new MultiBloc(x, y, z);
+		MultiBloc m = new MultiBloc(x, y, z);
+		m.list.addAll(list);
+		return m;
 	}
 }

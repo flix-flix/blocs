@@ -65,7 +65,9 @@ public class MenuGrid extends Menu {
 			menu.setSize(size, size);
 		}
 
-		super.setSize(width, (list.size() / cols) * size + (list.size() / cols - 1) * padding);
+		int rows = list.size() / cols + (list.size() % cols == 0 ? 0 : 1);
+
+		super.setSize(width, rows * size + (rows - 1) * padding);
 	}
 
 	@Override

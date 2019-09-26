@@ -16,6 +16,7 @@ import client.window.graphicEngine.calcul.Point3D;
 import client.window.graphicEngine.extended.ModelCube;
 import client.window.graphicEngine.extended.ModelMap;
 import client.window.panels.StateHUD;
+import data.ItemTable;
 import data.enumeration.Face;
 import data.enumeration.Orientation;
 import data.map.Coord;
@@ -165,8 +166,11 @@ public class Session implements Serializable {
 	}
 
 	public Cube getNextCube() {
-		if (nextCube != null && nextCube.multibloc != null)
+		if (nextCube != null && nextCube.multibloc != null) {
+			if (nextCube.build != null)
+				return ItemTable.createBuilding(nextCube.build).getCube();
 			return nextCube.multibloc.clone().getCube();
+		}
 		return nextCube;
 	}
 
