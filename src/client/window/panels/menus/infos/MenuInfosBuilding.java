@@ -17,9 +17,8 @@ import client.window.panels.menus.MenuButtonAction;
 import data.ItemTable;
 import data.enumeration.ItemID;
 import data.map.buildings.Building;
-import utils.Observer;
 
-public class MenuInfosBuilding extends Menu implements Observer {
+public class MenuInfosBuilding extends Menu {
 	private static final long serialVersionUID = -5061597857247176796L;
 
 	private Font font = new Font("monospace", Font.PLAIN, 12);
@@ -27,6 +26,8 @@ public class MenuInfosBuilding extends Menu implements Observer {
 	private FontMetrics fmBold = getFontMetrics(fontBold);
 
 	private int imgSize = 125;
+
+	private Thread update;
 
 	private Engine engine;
 	private Image img;
@@ -45,6 +46,9 @@ public class MenuInfosBuilding extends Menu implements Observer {
 		upgrade = new MenuButtonAction(session, Action.UPGRADE);
 		upgrade.setBounds(105, imgSize + 20, 75, 75);
 		add(upgrade);
+
+		update = new Thread(new Update());
+		update.start();
 	}
 
 	// =========================================================================================================================
@@ -96,7 +100,10 @@ public class MenuInfosBuilding extends Menu implements Observer {
 
 	public void update(Building build) {
 		this.build = build;
-		build.addObserver(this);
+		if (update.isInterrupted())
+			synchronized (update) {
+				update.notify();
+			}
 		session.fen.gui.build = build;
 
 		ModelMap map = new ModelMap();
@@ -113,6 +120,10 @@ public class MenuInfosBuilding extends Menu implements Observer {
 		repaint();
 	}
 
+	public void clear() {
+		build = null;
+	}
+
 	// =========================================================================================================================
 	// Menu
 
@@ -127,22 +138,37 @@ public class MenuInfosBuilding extends Menu implements Observer {
 	}
 
 	// =========================================================================================================================
-	// Observer
-
-	@Override
-	public void update() {
-		update(build);
-	}
-
-	// =========================================================================================================================
 
 	@Override
 	public void setVisible(boolean b) {
 		super.setVisible(b);
-		if (!b) {
-			if (build != null)
-				build.removeObserver(this);
+		if (!b)
 			build = null;
+	}
+
+	// =========================================================================================================================
+
+	private class Update implements Runnable {
+		@Override
+		public void run() {
+			while (true) {
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+
+				if (build == null)
+					try {
+						synchronized (update) {
+							update.wait();
+						}
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+
+				update(build);
+			}
 		}
 	}
 }

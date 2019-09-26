@@ -156,4 +156,17 @@ public class ItemTable {
 			return null;
 		}
 	}
+
+	public static ResourceType getResourceType(ItemID itemID) {
+		switch (itemID) {
+		case OAK_TRUNK:
+			return ResourceType.WOOD;
+		case STONE:
+			return ResourceType.STONE;
+		case WATER:
+			return ResourceType.WATER;
+		default:
+			return null;
+		}
+	}
 }

@@ -1,17 +1,12 @@
 package data.map.buildings;
 
-import java.util.ArrayList;
-
 import client.session.Player;
 import data.ItemTable;
 import data.enumeration.ItemID;
 import data.map.Cube;
 import data.multiblocs.MultiBloc;
-import utils.Observer;
 
 public class Building {
-
-	private ArrayList<Observer> observers = new ArrayList<>();
 
 	private Player player;
 	private ItemID itemID;
@@ -36,12 +31,7 @@ public class Building {
 	// =========================================================================================================================
 
 	public boolean addAlreadyBuild(int x) {
-		alreadyBuild += x;
-
-		if (isBuild = alreadyBuild >= ItemTable.getBuildingTime(itemID))
-			updateObserver();
-
-		return isBuild;
+		return isBuild = (alreadyBuild += x) >= ItemTable.getBuildingTime(itemID);
 	}
 
 	// =========================================================================================================================
@@ -65,23 +55,6 @@ public class Building {
 
 	public int getAlreadyBuild() {
 		return alreadyBuild;
-	}
-
-	// =========================================================================================================================
-	// Observer
-
-	public void addObserver(Observer obs) {
-		if (!observers.contains(obs))
-			observers.add(obs);
-	}
-
-	public void removeObserver(Observer obs) {
-		observers.remove(obs);
-	}
-
-	public void updateObserver() {
-		for (int i = 0; i < observers.size(); i++)
-			observers.get(i).update();
 	}
 
 	// =========================================================================================================================

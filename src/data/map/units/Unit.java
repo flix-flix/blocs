@@ -9,6 +9,8 @@ import data.enumeration.Orientation;
 import data.enumeration.Rotation;
 import data.map.Coord;
 import data.map.Map;
+import data.map.resources.Resource;
+import data.map.resources.ResourceType;
 import utils.FlixBlocksUtils;
 
 public class Unit {
@@ -66,6 +68,14 @@ public class Unit {
 	/** Bloc targeted by the action */
 	private Coord actionCube;
 
+	// ========== Harvesting ==========
+	private ResourceType resourceType;
+	private int quantity = 0;
+	private int maxCapacity = 5;
+
+	private int neededWork = 5;
+	private int alreadyWorked = 0;
+
 	// =========================================================================================================================
 
 	public Unit(Player player, int x, int y, int z) {
@@ -113,15 +123,28 @@ public class Unit {
 				action = null;
 			break;
 		case HARVEST:
-			map.gridGet(actionCube).resourceTake(1);
+			alreadyWorked++;
+
+			if (alreadyWorked < neededWork)
+				break;// Keep working
+
+			alreadyWorked = 0;
+			quantity += map.gridGet(actionCube).resourceTake(1);
+			resourceType = map.gridGet(actionCube).getResource().getType();
+
 			if (map.gridGet(actionCube).resourceIsEmpty()) { // Cube break
 				map.remove(actionCube);
 				action = null;
 			}
+
+			if (quantity >= maxCapacity)
+				action = null;// TODO go back
+
 			break;
 		default:
 			FlixBlocksUtils.debug("Action " + action + " unimplemented");
 		}
+
 	}
 
 	// =========================================================================================================================
@@ -437,6 +460,10 @@ public class Unit {
 
 	public Player getPlayer() {
 		return player;
+	}
+
+	public Resource getRessource() {
+		return new Resource(quantity, resourceType);
 	}
 
 	// =========================================================================================================================

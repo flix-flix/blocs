@@ -2,6 +2,7 @@ package client.window;
 
 import java.awt.AWTException;
 import java.awt.Cursor;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ComponentEvent;
@@ -18,6 +19,7 @@ import java.awt.image.BufferedImage;
 import javax.swing.JFrame;
 
 import client.keys.Key;
+import client.session.Action;
 import client.session.GameMode;
 import client.session.Session;
 import client.window.panels.PanDevlop;
@@ -25,6 +27,8 @@ import client.window.panels.PanGUI;
 import client.window.panels.PanGame;
 import client.window.panels.PanPause;
 import client.window.panels.StateHUD;
+import data.ItemTable;
+import utils.FlixBlocksUtils;
 
 public class Fen extends JFrame {
 	private static final long serialVersionUID = 5348701813574947310L;
@@ -32,9 +36,15 @@ public class Fen extends JFrame {
 	Session session;
 
 	// ============= Cursor ===================
-	private static BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
-	private static Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(cursorImg, new Point(0, 0),
-			"blank cursor");
+	private static BufferedImage imgCursorInvisible = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+	private static Cursor cursorInvisible = Toolkit.getDefaultToolkit().createCustomCursor(imgCursorInvisible,
+			new Point(0, 0), "blank cursor");
+	private static Cursor cursorGoto = createCursor("cursorGoto");
+	private static Cursor cursorBuild = createCursor("cursorBuild");
+
+	private static Cursor cursorAxe = createCursor("cursorAxe");
+	private static Cursor cursorPickaxe = createCursor("cursorPickaxe");
+	private static Cursor cursorBucket = createCursor("cursorBucket");
 
 	public int mouseX, mouseY;
 
@@ -88,9 +98,12 @@ public class Fen extends JFrame {
 		game.add(devlop, -1);
 		game.add(gui, -1);
 
-		threadActu = new Thread(new Actu());
+		// =========================================================================================================================
 
+		threadActu = new Thread(new Actu());
 		threadImage = new Thread(new GetImg());
+
+		updateCursor();
 
 		// =========================================================================================================================
 
@@ -337,11 +350,50 @@ public class Fen extends JFrame {
 
 	// =========================================================================================================================
 
+	public void updateCursor() {
+		Cursor cursor = Cursor.getDefaultCursor();
+
+		session.unitAction = null;
+
+		if (session.cubeTarget != null && session.fen.gui.unit != null
+				&& session.fen.gui.unit.getPlayer().equals(session.player))
+			if (ItemTable.isResource(session.cubeTarget.itemID))
+				switch (ItemTable.getResourceType(session.cubeTarget.itemID)) {
+				case WOOD:
+					cursor = cursorAxe;
+					session.unitAction = Action.HARVEST;
+					break;
+				case STONE:
+					cursor = cursorPickaxe;
+					session.unitAction = Action.HARVEST;
+					break;
+				case WATER:
+					cursor = cursorBucket;
+					session.unitAction = Action.HARVEST;
+					break;
+				}
+			else if (session.cubeTarget.build != null && !session.cubeTarget.build.isBuild()
+					&& session.cubeTarget.build.getPlayer().equals(session.player)) {
+				cursor = cursorBuild;
+				session.unitAction = Action.BUILD;
+			} else {
+				cursor = cursorGoto;
+				session.unitAction = Action.GOTO;
+			}
+
+		setCursor(cursor);
+	}
+
 	public void cursorVisible(boolean visible) {
 		if (visible)
-			game.setCursor(Cursor.getDefaultCursor());
+			updateCursor();
 		else
-			game.setCursor(blankCursor);
+			setCursor(cursorInvisible);
+	}
+
+	public static Cursor createCursor(String file) {
+		Image img = FlixBlocksUtils.getImage("cursor/" + file);
+		return Toolkit.getDefaultToolkit().createCustomCursor(img, new Point(0, 0), file);
 	}
 
 	// =========================================================================================================================

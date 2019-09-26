@@ -12,6 +12,7 @@ import client.messages.Message;
 import client.session.Action;
 import client.session.GameMode;
 import client.session.Session;
+import client.window.graphicEngine.extended.ModelMap;
 import client.window.panels.menus.MenuButtonAction;
 import client.window.panels.menus.MenuButtonCube;
 import client.window.panels.menus.MenuCol;
@@ -19,6 +20,7 @@ import client.window.panels.menus.MenuGrid;
 import client.window.panels.menus.MenuMap;
 import client.window.panels.menus.MenuRessources;
 import client.window.panels.menus.infos.MenuInfos;
+import data.map.Coord;
 import data.map.Cube;
 import data.map.buildings.Building;
 import data.map.units.Unit;
@@ -72,7 +74,7 @@ public class PanGUI extends JPanel {
 	MenuRessources ress;
 
 	// ==== Select ====
-	MenuInfos select;
+	MenuInfos infos;
 	public Unit unit;
 	public Building build;
 
@@ -96,7 +98,7 @@ public class PanGUI extends JPanel {
 		menu.addBottom(map = new MenuMap(session), MenuCol.WIDTH);
 		menu.addBottom(ress = new MenuRessources(session), 130);
 
-		menu.addTop(select = new MenuInfos(session), MenuCol.REMAINING);
+		menu.addTop(infos = new MenuInfos(session), MenuCol.REMAINING);
 
 		hideMenu();
 	}
@@ -197,7 +199,18 @@ public class PanGUI extends JPanel {
 	// =========================================================================================================================
 
 	public void select(Cube cube) {
-		select.updateCube(cube);
+		unit = null;
+		build = null;
+		infos.resource.clear();
+		infos.build.clear();
+		infos.updateCube(cube);
+	}
+
+	public void goTo(ModelMap map, Coord coord) {
+		if (unit != null)
+			unit.goTo(map, coord);
+		else if (build != null)
+			;// TODO Building spawn point
 	}
 
 	// =========================================================================================================================
@@ -206,22 +219,22 @@ public class PanGUI extends JPanel {
 		menu.setVisible(session.gamemode == GameMode.CLASSIC);
 
 		for (MenuButtonAction e : actions)
-			e.selected = session.action == e.action;
+			e.selected = session.getAction() == e.action;
 
-		if (session.action == Action.CREA_ADD)
-			select.showCubes();
+		if (session.getAction() == Action.CREA_ADD)
+			infos.showCubes();
 
-		if (session.action == Action.MOUSE)
-			select.updateCube(null);
+		if (session.getAction() == Action.MOUSE)
+			infos.updateCube(null);
 	}
 
 	public void resetCubeSelection() {
-		for (MenuButtonCube e : select.cubes)
+		for (MenuButtonCube e : infos.cubes)
 			e.selected = false;
 	}
 
 	public void updateTexturePack() {
-		for (MenuButtonCube m : select.cubes)
+		for (MenuButtonCube m : infos.cubes)
 			m.engine.texturePack = session.texturePack;
 	}
 

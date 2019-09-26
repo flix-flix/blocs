@@ -49,9 +49,10 @@ public class MenuInfosResource extends Menu {
 	public void update(Cube cube) {
 		this.cube = cube;
 
-		synchronized (update) {
-			update.notify();
-		}
+		if (update.isInterrupted())
+			synchronized (update) {
+				update.notify();
+			}
 		resource = cube.getResource();
 
 		setVisible(!resource.isEmpty());
@@ -60,6 +61,10 @@ public class MenuInfosResource extends Menu {
 			cube = null;
 		else
 			repaint();
+	}
+
+	public void clear() {
+		cube = null;
 	}
 
 	// =========================================================================================================================

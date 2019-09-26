@@ -26,28 +26,16 @@ public class MenuInfoUnit extends Menu {
 
 	private Unit unit;
 
-	private MenuButtonAction goTo, mine, build, destroy;
+	private MenuButtonAction drop;
 
 	private Font font = new Font("monospace", Font.PLAIN, 12);
 
 	public MenuInfoUnit(Session session) {
 		super(session);
 
-		goTo = new MenuButtonAction(session, Action.GOTO);
-		goTo.setBounds(15, 90, 75, 75);
-		add(goTo);
-
-		mine = new MenuButtonAction(session, Action.HARVEST);
-		mine.setBounds(105, 90, 75, 75);
-		add(mine);
-
-		build = new MenuButtonAction(session, Action.BUILD);
-		build.setBounds(195, 90, 75, 75);
-		add(build);
-
-		destroy = new MenuButtonAction(session, Action.DESTROY);
-		destroy.setBounds(280, 90, 75, 75);
-		add(destroy);
+		drop = new MenuButtonAction(session, Action.DESTROY);
+		drop.setBounds(280, 90, 75, 75);
+		add(drop);
 	}
 
 	// =========================================================================================================================
@@ -81,10 +69,7 @@ public class MenuInfoUnit extends Menu {
 		engine.drawSky = false;
 		img = engine.getImage(75, 75);
 
-		goTo.setVisible(unit.getPlayer().equals(session.player));
-		mine.setVisible(unit.getPlayer().equals(session.player));
-		build.setVisible(unit.getPlayer().equals(session.player));
-		destroy.setVisible(unit.getPlayer().equals(session.player));
+		drop.setVisible(unit.getPlayer().equals(session.player));
 
 		setVisible(true);
 		repaint();

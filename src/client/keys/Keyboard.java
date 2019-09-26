@@ -8,7 +8,6 @@ import client.session.GameMode;
 import client.session.Session;
 import client.window.graphicEngine.extended.ModelCube;
 import client.window.panels.StateHUD;
-import data.enumeration.Face;
 import data.enumeration.Orientation;
 import data.map.Coord;
 import data.map.Cube;
@@ -62,14 +61,10 @@ public class Keyboard {
 		if (session.stateGUI != StateHUD.GAME)
 			return;
 
-		Cube cube = session.cubeTarget;
-		Face face = session.faceTarget;
-
-		if (session.gamemode == GameMode.CREATIVE) {
-			// Add a cube to the map
+		if (session.gamemode == GameMode.CREATIVE) {// Add a cube to the map
 			Cube cubeToAdd = session.getNextCube();
-			if (cube != null && face != null && cubeToAdd != null) {
-				cubeToAdd.setCoords(new Coord(cube).face(face));
+			if (session.cubeTarget != null && session.faceTarget != null && cubeToAdd != null) {
+				cubeToAdd.setCoords(new Coord(session.cubeTarget).face(session.faceTarget));
 
 				session.map.add(cubeToAdd);
 			}
@@ -77,10 +72,10 @@ public class Keyboard {
 		} else if (session.gamemode == GameMode.CLASSIC) {
 			pressR = true;
 
-			if (cube != null && face != null) {
-				// Add a cube to the map
-				if (session.action == Action.CREA_ADD) {
-					ModelCube model = session.map.gridGet(new Coord(cube).face(face));
+			if (session.cubeTarget != null && session.faceTarget != null) {
+
+				if (session.getAction() == Action.CREA_ADD) {// Add a cube to the map
+					ModelCube model = session.map.gridGet(new Coord(session.cubeTarget).face(session.faceTarget));
 					if (model != null && model.isPreview()) {
 						// Check if multibloc can be added at this position
 						if (model.multibloc != null && !model.multibloc.valid)
@@ -90,12 +85,13 @@ public class Keyboard {
 						session.map.setPreview(model, false);
 						session.map.setTargetable(model, true);
 					}
-				}
+				} else if (session.fen.gui.unit != null)
+					if (session.unitAction == Action.GOTO)// Set the destination
+						session.fen.gui.goTo(session.map, new Coord(session.cubeTarget).face(session.faceTarget));
+					else if (session.unitAction != null)// Do action
+						session.fen.gui.unit.doAction(session.unitAction, session.map, new Coord(session.cubeTarget),
+								session.faceTarget);
 			}
-
-			// If the cube is right-clickable do the action
-			// if (cube != null && !session.keyboard.sneakKeyEnabled && cube.hasAction())
-			// cube.doAction(session);
 
 			return;
 		}
@@ -113,36 +109,16 @@ public class Keyboard {
 					session.map.remove((ModelCube) session.cubeTarget);
 
 		} else if (session.gamemode == GameMode.CLASSIC) {
-			switch (session.action) {
-			case CREA_DESTROY:
+
+			if (session.getAction() == Action.CREA_DESTROY) {
 				if (session.cubeTarget != null)
 					if (session.cubeTarget.unit != null)
 						session.map.removeUnit(session.cubeTarget.unit);
 					else
 						session.map.remove((ModelCube) session.cubeTarget);
-				break;
-			case SELECT:// Rectangular Selection
-				break;
-			case MOUSE:// Bloc Selection
+			} else
 				session.fen.gui.select(session.cubeTarget);
-				break;
 
-			// =========================================================================================================================
-			// Unit
-			case GOTO:
-				session.fen.gui.unit.goTo(session.map, new Coord(session.cubeTarget).face(session.faceTarget));
-				break;
-			case HARVEST:
-			case BUILD:
-			case DESTROY:
-				session.fen.gui.unit.doAction(session.action, session.map, new Coord(session.cubeTarget),
-						session.faceTarget);
-				break;
-
-			default:
-				FlixBlocksUtils.debug("Action " + session.action + " unimplemented");
-				break;
-			}
 		}
 	}
 

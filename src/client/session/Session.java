@@ -32,7 +32,8 @@ public class Session implements Serializable {
 	public GameMode gamemode = GameMode.CLASSIC;
 	public Player player = new Player("Félix");
 
-	public Action action = Action.CREA_ADD;
+	private Action action;
+	public Action unitAction;
 
 	// ================================
 
@@ -103,6 +104,8 @@ public class Session implements Serializable {
 			engine = new Engine(camera, map, texturePack);
 			ModelCube.texturePack = texturePack;
 		}
+
+		setAction(Action.MOUSE);
 	}
 
 	// =========================================================================================================================
@@ -159,6 +162,12 @@ public class Session implements Serializable {
 
 	public void setAction(Action action) {
 		this.action = action;
+		if (fen != null)
+			fen.updateCursor();
+	}
+
+	public Action getAction() {
+		return action;
 	}
 
 	public void setNextCube(Cube cube) {
@@ -215,6 +224,7 @@ public class Session implements Serializable {
 		// Refresh target
 		cubeTarget = Engine.cubeTarget;
 		faceTarget = Engine.faceTarget;
+		fen.updateCursor();
 
 		if (gamemode == GameMode.CLASSIC)
 			if (cubeTarget != null)

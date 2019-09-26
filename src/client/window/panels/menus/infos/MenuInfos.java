@@ -17,9 +17,9 @@ import data.multiblocs.Tree;
 public class MenuInfos extends Menu {
 	private static final long serialVersionUID = -7621681231232278749L;
 
-	MenuInfosResource resource;
-	MenuInfoUnit unit;
-	MenuInfosBuilding build;
+	public MenuInfosResource resource;
+	public MenuInfoUnit unit;
+	public MenuInfosBuilding build;
 
 	public MenuGrid gridCubes;
 	private ArrayList<Cube> _cubes = new ArrayList<>();
