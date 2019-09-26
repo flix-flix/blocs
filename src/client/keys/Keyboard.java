@@ -132,7 +132,7 @@ public class Keyboard {
 			case GOTO:
 				session.fen.gui.unit.goTo(session.map, new Coord(session.cubeTarget).face(session.faceTarget));
 				break;
-			case MINE:
+			case HARVEST:
 			case BUILD:
 			case DESTROY:
 				session.fen.gui.unit.doAction(session.action, session.map, new Coord(session.cubeTarget),

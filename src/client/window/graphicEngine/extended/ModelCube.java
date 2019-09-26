@@ -81,10 +81,12 @@ public class ModelCube extends Cube implements Model {
 
 		this.miningState = c.miningState;
 		this.onGrid = c.onGrid;
+
 		this.multibloc = c.multibloc;
 		this.unit = c.unit;
 		this.build = c.build;
-		
+		this.resource = c.resource;
+
 		this.multiblocX = c.multiblocX;
 		this.multiblocY = c.multiblocY;
 		this.multiblocZ = c.multiblocZ;

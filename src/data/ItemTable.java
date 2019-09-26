@@ -4,6 +4,8 @@ import client.textures.TexturePack;
 import data.enumeration.ItemID;
 import data.map.Cube;
 import data.map.buildings.Building;
+import data.map.resources.Resource;
+import data.map.resources.ResourceType;
 import data.multiblocs.MultiBloc;
 import utils.FlixBlocksUtils;
 
@@ -132,6 +134,26 @@ public class ItemTable {
 			return 200;
 		default:
 			return -1;
+		}
+	}
+
+	// =========================================================================================================================
+	// Resource
+
+	public static boolean isResource(ItemID itemID) {
+		return getResource(itemID) != null;
+	}
+
+	public static Resource getResource(ItemID itemID) {
+		switch (itemID) {
+		case OAK_TRUNK:
+			return new Resource(10, ResourceType.WOOD);
+		case STONE:
+			return new Resource(10, ResourceType.STONE);
+		case WATER:
+			return new Resource(10, ResourceType.WATER);
+		default:
+			return null;
 		}
 	}
 }

@@ -102,18 +102,22 @@ public class Unit {
 
 	public void doAction(Map map) {
 		switch (action) {
-		case MINE:
+		case DESTROY:
 			if (map.gridGet(actionCube).addMined(1)) {// Cube break
 				map.remove(actionCube);
 				action = null;
 			}
 			break;
 		case BUILD:
-			if (map.gridGet(actionCube).build.addAlreadyBuild(1)) {// Building created
+			if (map.gridGet(actionCube).build.addAlreadyBuild(1)) // Building created
+				action = null;
+			break;
+		case HARVEST:
+			map.gridGet(actionCube).resourceTake(1);
+			if (map.gridGet(actionCube).resourceIsEmpty()) { // Cube break
+				map.remove(actionCube);
 				action = null;
 			}
-			break;
-		case DESTROY:
 			break;
 		default:
 			FlixBlocksUtils.debug("Action " + action + " unimplemented");

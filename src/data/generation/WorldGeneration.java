@@ -39,16 +39,23 @@ public class WorldGeneration {
 				if (x / 2 + z < 15 || x + z / 2 < 15)
 					map.set(new Cube(x, ground - 1, z, ItemID.DIRT));
 
-		addTree(map, 4, ground, 3);
-		addTree(map, 5, ground, 6);
-		addTree(map, 8, ground, 8);
-		addTree(map, 3, ground, 8);
-		addTree(map, 10, ground, 5);
+		// Add multibloc
+		map.add(new Tree(20, ground, 10).getCube());
 
-		addTree(map, 15, ground, 5);
-		addTree(map, 5, ground, 15);
-		addTree(map, 2, ground, 17);
-		addTree(map, 13, ground, 5);
+		// Add shifted multibloc
+		Tree t = new Tree();
+		t.setCoords(25, ground, 10);
+		map.add(t.getCube());
+
+		map.add(new Tree(2, ground, 4).getCube());
+		map.add(new Tree(2, ground, 17).getCube());
+		map.add(new Tree(3, ground, 11).getCube());
+		map.add(new Tree(5, ground, 6).getCube());
+		map.add(new Tree(5, ground, 15).getCube());
+		map.add(new Tree(8, ground, 8).getCube());
+		map.add(new Tree(10, ground, 5).getCube());
+		map.add(new Tree(14, ground, 5).getCube());
+		map.add(new Tree(18, ground, 4).getCube());
 
 		// ========== Mountain ==========
 		for (int i = 5; i < 45; i++) {
@@ -90,14 +97,6 @@ public class WorldGeneration {
 		map.add(new Cube(15, ground, 15, ItemID.GLASS_GRAY));
 		map.add(new Cube(14, ground, 16, ItemID.GLASS_RED));
 
-		// Add multibloc
-		map.add(new Tree(20, ground, 10).getCube());
-
-		// Add shifted multibloc
-		Tree t = new Tree();
-		t.setCoords(25, ground, 10);
-		map.add(t.getCube());
-
 		// Add multibloc (mixed on-grid/off-grid cubes)
 		map.add(new E(10, ground, 20).getCube());
 
@@ -125,7 +124,7 @@ public class WorldGeneration {
 		// Units
 
 		for (int i = 10; i < 20; i++)
-			for (int j = 5; j < 15; j++)
+			for (int j = 6; j < 15; j++)
 				map.remove(i, 9, j);
 
 		// Add Unit

@@ -17,7 +17,7 @@ import data.multiblocs.Tree;
 public class MenuInfos extends Menu {
 	private static final long serialVersionUID = -7621681231232278749L;
 
-	MenuInfosDefault infos;
+	MenuInfosResource resource;
 	MenuInfoUnit unit;
 	MenuInfosBuilding build;
 
@@ -32,7 +32,7 @@ public class MenuInfos extends Menu {
 
 		setBackground(Color.BLUE);
 
-		infos = new MenuInfosDefault(session);
+		resource = new MenuInfosResource(session);
 		unit = new MenuInfoUnit(session);
 		build = new MenuInfosBuilding(session);
 		gridCubes = new MenuGrid(session);
@@ -64,12 +64,12 @@ public class MenuInfos extends Menu {
 
 		// =========================================================================================================================
 
-		add(infos);
+		add(resource);
 		add(unit);
 		add(build);
 		add(gridCubes);
 
-		infos.setVisible(false);
+		resource.setVisible(false);
 		unit.setVisible(true);
 		build.setVisible(true);
 		gridCubes.setVisible(false);
@@ -79,7 +79,7 @@ public class MenuInfos extends Menu {
 
 	/** Show and update the corresponding panel */
 	public void updateCube(Cube cube) {
-		infos.setVisible(false);
+		resource.setVisible(false);
 		unit.setVisible(false);
 		build.setVisible(false);
 		gridCubes.setVisible(false);
@@ -91,12 +91,12 @@ public class MenuInfos extends Menu {
 			unit.update(cube.unit);
 		else if (cube.build != null)
 			build.update(cube.build);
-		else
-			infos.update(cube);
+		else if (cube.hasResource())
+			resource.update(cube);
 	}
 
 	public void showCubes() {
-		infos.setVisible(false);
+		resource.setVisible(false);
 		unit.setVisible(false);
 		build.setVisible(false);
 		gridCubes.setVisible(true);
@@ -107,7 +107,7 @@ public class MenuInfos extends Menu {
 	@Override
 	public void setSize(int x, int y) {
 		super.setSize(x, y);
-		infos.setSize(x, y);
+		resource.setSize(x, y);
 		unit.setSize(x, y);
 		build.setSize(x, y);
 		gridCubes.setSize(x, y);

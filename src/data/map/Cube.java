@@ -6,6 +6,7 @@ import data.enumeration.ItemID;
 import data.enumeration.Orientation;
 import data.enumeration.Rotation;
 import data.map.buildings.Building;
+import data.map.resources.Resource;
 import data.map.units.Unit;
 import data.multiblocs.MultiBloc;
 
@@ -43,6 +44,7 @@ public class Cube {
 	public int multiblocX, multiblocY, multiblocZ;
 	public Unit unit;
 	public Building build;
+	public Resource resource;
 
 	// =========================================================================================================================
 	// Mining
@@ -73,6 +75,9 @@ public class Cube {
 		this.sizeX = sizeX;
 		this.sizeY = sizeY;
 		this.sizeZ = sizeZ;
+
+		if (ItemTable.isResource(itemID))
+			resource = ItemTable.getResource(itemID);
 	}
 
 	public Cube(double x, double y, double z, double sizeX, double sizeY, double sizeZ, ItemID itemID) {
@@ -153,6 +158,48 @@ public class Cube {
 				* ItemTable.getNumberOfMiningSteps());
 
 		return minedAlready == ItemTable.getMiningTime(itemID);
+	}
+
+	// =========================================================================================================================
+	// Resource
+
+	public boolean hasResource() {
+		if (resource != null)
+			return true;
+		if (multibloc != null)
+			for (Cube c : multibloc.list)
+				if (c.resource != null)
+					return true;
+		return false;
+	}
+
+	public Resource getResource() {
+		Resource res;
+
+		if (multibloc != null) {
+			res = new Resource(0, null);
+			for (Cube c : multibloc.list)
+				if (c.resource != null)
+					res.add(c.resource);
+		} else
+			res = resource;
+
+		return res;
+	}
+
+	public boolean resourceIsEmpty() {
+		return getResource().getQuantity() == 0;
+	}
+
+	public int resourceTake(int x) {
+		if (multibloc != null)
+			for (Cube c : multibloc.list)
+				if (c.resource != null && !c.resource.isEmpty())
+					return c.resource.take(x);
+
+		if (resource != null)
+			return resource.take(x);
+		return -1;
 	}
 
 	// =========================================================================================================================

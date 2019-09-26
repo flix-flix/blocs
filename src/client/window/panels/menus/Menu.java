@@ -70,7 +70,8 @@ public abstract class Menu extends JPanel {
 
 	// =========================================================================================================================
 
-	public abstract void click();
+	public void click() {
+	}
 
 	public void resize() {
 	}

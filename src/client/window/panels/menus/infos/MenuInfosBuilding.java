@@ -17,9 +17,9 @@ import client.window.panels.menus.MenuButtonAction;
 import data.ItemTable;
 import data.enumeration.ItemID;
 import data.map.buildings.Building;
-import data.map.buildings.Building.BuildObserver;
+import utils.Observer;
 
-public class MenuInfosBuilding extends Menu implements BuildObserver {
+public class MenuInfosBuilding extends Menu implements Observer {
 	private static final long serialVersionUID = -5061597857247176796L;
 
 	private Font font = new Font("monospace", Font.PLAIN, 12);

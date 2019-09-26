@@ -1,0 +1,90 @@
+package client.window.panels.menus.infos;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+
+import client.session.Session;
+import client.window.panels.menus.Menu;
+import data.map.Cube;
+import data.map.resources.Resource;
+
+public class MenuInfosResource extends Menu {
+	private static final long serialVersionUID = 8252009605405911305L;
+
+	private Font font = new Font("monospace", Font.BOLD, 15);
+
+	Thread update;
+
+	private Cube cube;
+	private Resource resource;
+
+	// =========================================================================================================================
+
+	public MenuInfosResource(Session session) {
+		super(session);
+
+		update = new Thread(new Update());
+		update.start();
+	}
+
+	// =========================================================================================================================
+
+	@Override
+	public void paintComponent(Graphics g) {
+		g.setColor(Color.GRAY);
+		g.fillRect(0, 0, getWidth(), getHeight());
+
+		if (resource != null) {
+			g.drawImage(resource.getType().getImage(), 15, 15, null);
+
+			g.setColor(Color.WHITE);
+			g.setFont(font);
+			g.drawString(": " + resource.getQuantity(), 75, 40);
+		}
+	}
+
+	// =========================================================================================================================
+
+	public void update(Cube cube) {
+		this.cube = cube;
+
+		synchronized (update) {
+			update.notify();
+		}
+		resource = cube.getResource();
+
+		setVisible(!resource.isEmpty());
+
+		if (resource.isEmpty())
+			cube = null;
+		else
+			repaint();
+	}
+
+	// =========================================================================================================================
+
+	private class Update implements Runnable {
+		@Override
+		public void run() {
+			while (true) {
+				if (cube == null)
+					try {
+						synchronized (update) {
+							update.wait();
+						}
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+
+				update(cube);
+
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+}

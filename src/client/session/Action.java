@@ -9,7 +9,7 @@ public enum Action {
 	MOUSE, SELECT, CREA_ADD, CREA_DESTROY,
 
 	// Unit
-	GOTO, MINE, BUILD, DESTROY,
+	GOTO, HARVEST, BUILD, DESTROY,
 
 	// Building
 	SPAWN("goto"), UPGRADE;

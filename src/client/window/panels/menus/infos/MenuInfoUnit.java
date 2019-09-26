@@ -37,7 +37,7 @@ public class MenuInfoUnit extends Menu {
 		goTo.setBounds(15, 90, 75, 75);
 		add(goTo);
 
-		mine = new MenuButtonAction(session, Action.MINE);
+		mine = new MenuButtonAction(session, Action.HARVEST);
 		mine.setBounds(105, 90, 75, 75);
 		add(mine);
 

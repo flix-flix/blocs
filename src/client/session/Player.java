@@ -9,7 +9,7 @@ public class Player {
 	private String name;
 
 	private int wood = 0;
-	private int rocks = 0;
+	private int stone = 0;
 	private int water = 0;
 
 	private LinkedList<Unit> units = new LinkedList<>();
@@ -30,12 +30,12 @@ public class Player {
 		this.wood += wood;
 	}
 
-	public int getRocks() {
-		return rocks;
+	public int getStone() {
+		return stone;
 	}
 
 	public void addRocks(int rocks) {
-		this.rocks += rocks;
+		this.stone += rocks;
 	}
 
 	public int getWater() {

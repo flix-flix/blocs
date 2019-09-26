@@ -13,22 +13,14 @@ import client.window.graphicEngine.extended.ModelCube;
 import data.enumeration.ItemID;
 import data.enumeration.Orientation;
 import data.map.Cube;
-import utils.FlixBlocksUtils;
+import data.map.resources.ResourceType;
 
 public class MenuRessources extends Menu {
 	private static final long serialVersionUID = 7179773919376958365L;
 
 	private Graphics g;
-	private static Image wood, rocks, water, units;
 
-	static {
-		wood = FlixBlocksUtils.getImage("menu/wood");
-		rocks = FlixBlocksUtils.getImage("menu/stone");
-		water = FlixBlocksUtils.getImage("menu/water");
-
-		water = FlixBlocksUtils.getImage("menu/water");
-	}
-
+	Image units;
 	Font font = new Font("monospace", Font.BOLD, 15);
 
 	private int border = 5;
@@ -66,12 +58,12 @@ public class MenuRessources extends Menu {
 		g.setColor(Color.WHITE);
 		g.setFont(font);
 
-		paintRess(0, 0, wood, session.player.getWood());
-		paintRess(1, 0, rocks, session.player.getRocks());
-		paintRess(2, 0, water, session.player.getWater());
+		paintRess(0, 0, ResourceType.WOOD.getImage(), session.player.getWood());
+		paintRess(1, 0, ResourceType.STONE.getImage(), session.player.getStone());
+		paintRess(2, 0, ResourceType.WATER.getImage(), session.player.getWater());
 
 		paintRess(0, 1, units, session.player.getWood());
-		paintRess(1, 1, rocks, session.player.getRocks());
+		paintRess(1, 1, units, session.player.getStone());
 		paintRess(2, 1, units, session.player.getNbUnits());
 	}
 

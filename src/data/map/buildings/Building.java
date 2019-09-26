@@ -7,10 +7,11 @@ import data.ItemTable;
 import data.enumeration.ItemID;
 import data.map.Cube;
 import data.multiblocs.MultiBloc;
+import utils.Observer;
 
 public class Building {
 
-	private ArrayList<BuildObserver> observers = new ArrayList<>();
+	private ArrayList<Observer> observers = new ArrayList<>();
 
 	private Player player;
 	private ItemID itemID;
@@ -69,12 +70,12 @@ public class Building {
 	// =========================================================================================================================
 	// Observer
 
-	public void addObserver(BuildObserver obs) {
+	public void addObserver(Observer obs) {
 		if (!observers.contains(obs))
 			observers.add(obs);
 	}
 
-	public void removeObserver(BuildObserver obs) {
+	public void removeObserver(Observer obs) {
 		observers.remove(obs);
 	}
 
@@ -88,11 +89,5 @@ public class Building {
 	@Override
 	public String toString() {
 		return "I'm a building of " + (player == null ? "[null]" : player.getName());
-	}
-
-	// =========================================================================================================================
-
-	public interface BuildObserver {
-		public abstract void update();
 	}
 }
