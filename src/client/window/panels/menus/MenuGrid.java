@@ -9,8 +9,13 @@ import client.session.Session;
 public class MenuGrid extends Menu {
 	private static final long serialVersionUID = 1941339088614372748L;
 
+	private static final int SQUARE = -1;
+
 	/** Number of columns in the grid */
 	int cols = 4;
+
+	/** Height of the rows in the grid */
+	int rowHeight = SQUARE;
 
 	/** Number of pixels between the items of the grid */
 	int padding = 2;
@@ -43,11 +48,30 @@ public class MenuGrid extends Menu {
 		list.add(menu);
 
 		menu.setLocation((size + padding) * col, (size + padding) * row);
-		menu.setSize(size, size);
+		menu.setSize(size + (col == cols - 1 ? getWidth() - cols * size : 0), rowHeight == SQUARE ? size : rowHeight);
 
 		add(menu);
 
 		super.setSize(getWidth(), (row + 1) * size + row * padding);
+	}
+
+	// =========================================================================================================================
+
+	public void setCols(int x) {
+		cols = x;
+	}
+
+	public void setRowHeight(int rowHeight) {
+		this.rowHeight = rowHeight;
+	}
+
+	public void clear() {
+		list.clear();
+
+		int size = (getWidth() - (cols - 1) * padding) / cols;
+		int rows = list.size() / cols + (list.size() % cols == 0 ? 0 : 1);
+
+		super.setSize(getWidth(), rows * (rowHeight == SQUARE ? size : rowHeight) + (rows - 1) * padding);
 	}
 
 	// =========================================================================================================================
@@ -61,13 +85,15 @@ public class MenuGrid extends Menu {
 			int row = i / cols;
 			int col = i % cols;
 
-			menu.setLocation((size + padding) * col, (size + padding) * row);
-			menu.setSize(size, size);
+			menu.setLocation((size + padding) * col, ((rowHeight == SQUARE ? size : rowHeight) + padding) * row);
+			menu.setSize(size+(col == cols - 1 ? getWidth() - cols * size : 0), rowHeight == SQUARE ? size : rowHeight);
 		}
 
 		int rows = list.size() / cols + (list.size() % cols == 0 ? 0 : 1);
+		if (rows == 0)
+			rows = 1;
 
-		super.setSize(width, rows * size + (rows - 1) * padding);
+		super.setSize(width, rows * (rowHeight == SQUARE ? size : rowHeight) + (rows - 1) * padding);
 	}
 
 	@Override

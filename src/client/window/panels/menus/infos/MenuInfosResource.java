@@ -3,6 +3,7 @@ package client.window.panels.menus.infos;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.lang.Thread.State;
 
 import client.session.Session;
 import client.window.panels.menus.Menu;
@@ -48,13 +49,17 @@ public class MenuInfosResource extends Menu {
 
 	public void update(Cube cube) {
 		this.cube = cube;
+		resource = cube.getResource();
 
-		if (update.isInterrupted())
+		if (update.getState() == State.WAITING)
 			synchronized (update) {
 				update.notify();
 			}
-		resource = cube.getResource();
 
+		_update();
+	}
+
+	private void _update() {
 		setVisible(!resource.isEmpty());
 
 		if (resource.isEmpty())
@@ -65,6 +70,15 @@ public class MenuInfosResource extends Menu {
 
 	public void clear() {
 		cube = null;
+	}
+
+	// =========================================================================================================================
+
+	@Override
+	public void setVisible(boolean b) {
+		super.setVisible(b);
+		if (!b)
+			cube = null;
 	}
 
 	// =========================================================================================================================

@@ -147,11 +147,11 @@ public class ItemTable {
 	public static Resource getResource(ItemID itemID) {
 		switch (itemID) {
 		case OAK_TRUNK:
-			return new Resource(10, ResourceType.WOOD);
+			return new Resource(ResourceType.WOOD, 10);
 		case STONE:
-			return new Resource(10, ResourceType.STONE);
+			return new Resource(ResourceType.STONE, 10);
 		case WATER:
-			return new Resource(10, ResourceType.WATER);
+			return new Resource(ResourceType.WATER, 10);
 		default:
 			return null;
 		}

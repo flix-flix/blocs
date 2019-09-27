@@ -202,7 +202,7 @@ public class Keyboard {
 	public void pause() {
 		session.stateGUI = StateHUD.PAUSE;
 
-		session.fen.cursorVisible(true);
+		session.fen.setCursorVisible(true);
 
 		session.fen.pause.setVisible(true);
 	}
@@ -211,7 +211,7 @@ public class Keyboard {
 		session.stateGUI = StateHUD.GAME;
 
 		if (session.gamemode == GameMode.CREATIVE) {
-			session.fen.cursorVisible(false);
+			session.fen.setCursorVisible(false);
 			mouseToCenter();
 		}
 

@@ -146,12 +146,15 @@ public class Session implements Serializable {
 			fen.mouseX = MouseInfo.getPointerInfo().getLocation().x;
 			fen.mouseY = MouseInfo.getPointerInfo().getLocation().y;
 
-			fen.cursorVisible(true);
+			// Deselect
+			fen.gui.select(null);
+
+			fen.setCursorVisible(true);
 			break;
 		case CREATIVE:
 			keyboard.mouseToCenter();
 
-			fen.cursorVisible(false);
+			fen.setCursorVisible(false);
 			break;
 		case SPECTATOR:
 			break;

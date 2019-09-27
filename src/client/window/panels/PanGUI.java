@@ -203,6 +203,7 @@ public class PanGUI extends JPanel {
 		build = null;
 		infos.resource.clear();
 		infos.build.clear();
+		infos.unit.clear();
 		infos.updateCube(cube);
 	}
 

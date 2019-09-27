@@ -39,12 +39,21 @@ public class Fen extends JFrame {
 	private static BufferedImage imgCursorInvisible = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
 	private static Cursor cursorInvisible = Toolkit.getDefaultToolkit().createCustomCursor(imgCursorInvisible,
 			new Point(0, 0), "blank cursor");
+
 	private static Cursor cursorGoto = createCursor("cursorGoto");
 	private static Cursor cursorBuild = createCursor("cursorBuild");
+	private static Cursor cursorAttack = createCursor("cursorAttack");
+
+	private static Cursor cursorDrop = createCursor("cursorDrop");
+	private static Cursor cursorDropWood = createCursor("cursorDropWood");
+	private static Cursor cursorDropStone = createCursor("cursorDropStone");
+	private static Cursor cursorDropWater = createCursor("cursorDropWater");
 
 	private static Cursor cursorAxe = createCursor("cursorAxe");
 	private static Cursor cursorPickaxe = createCursor("cursorPickaxe");
 	private static Cursor cursorBucket = createCursor("cursorBucket");
+
+	private boolean cursorVisible = true;
 
 	public int mouseX, mouseY;
 
@@ -355,9 +364,11 @@ public class Fen extends JFrame {
 
 		session.unitAction = null;
 
-		if (session.cubeTarget != null && session.fen.gui.unit != null
+		if (!cursorVisible)
+			cursor = cursorInvisible;
+		else if (session.cubeTarget != null && session.fen.gui.unit != null
 				&& session.fen.gui.unit.getPlayer().equals(session.player))
-			if (ItemTable.isResource(session.cubeTarget.itemID))
+			if (ItemTable.isResource(session.cubeTarget.itemID))// Harvestable
 				switch (ItemTable.getResourceType(session.cubeTarget.itemID)) {
 				case WOOD:
 					cursor = cursorAxe;
@@ -372,10 +383,39 @@ public class Fen extends JFrame {
 					session.unitAction = Action.HARVEST;
 					break;
 				}
-			else if (session.cubeTarget.build != null && !session.cubeTarget.build.isBuild()
-					&& session.cubeTarget.build.getPlayer().equals(session.player)) {
-				cursor = cursorBuild;
-				session.unitAction = Action.BUILD;
+			else if (session.cubeTarget.build != null) {// Building
+				if (session.cubeTarget.build.getPlayer().equals(session.player)) {
+					if (!session.cubeTarget.build.isBuild()) {
+						cursor = cursorBuild;
+						session.unitAction = Action.BUILD;
+					} else if (session.fen.gui.unit.hasResource()
+							&& session.cubeTarget.build.canStock(session.fen.gui.unit.getResource())) {// Stock
+						cursor = cursorDrop;
+						session.unitAction = Action.DROP;
+
+						switch (session.fen.gui.unit.getResource().getType()) {
+						case WOOD:
+							cursor = cursorDropWood;
+							break;
+						case STONE:
+							cursor = cursorDropStone;
+							break;
+						case WATER:
+							cursor = cursorDropWater;
+							break;
+						}
+					}
+				}else {// Opponent
+					cursor = cursorAttack;
+					session.unitAction = Action.ATTACK;
+				}
+			} else if (session.cubeTarget.unit != null) {// Unit
+				if (session.cubeTarget.unit.getPlayer().equals(session.player)) {// Own
+
+				} else {// Opponent
+					cursor = cursorAttack;
+					session.unitAction = Action.ATTACK;
+				}
 			} else {
 				cursor = cursorGoto;
 				session.unitAction = Action.GOTO;
@@ -384,11 +424,9 @@ public class Fen extends JFrame {
 		setCursor(cursor);
 	}
 
-	public void cursorVisible(boolean visible) {
-		if (visible)
-			updateCursor();
-		else
-			setCursor(cursorInvisible);
+	public void setCursorVisible(boolean visible) {
+		cursorVisible = visible;
+		updateCursor();
 	}
 
 	public static Cursor createCursor(String file) {

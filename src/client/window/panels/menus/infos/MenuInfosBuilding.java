@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.lang.Thread.State;
 
 import client.session.Action;
 import client.session.Session;
@@ -14,9 +15,12 @@ import client.window.graphicEngine.calcul.Point3D;
 import client.window.graphicEngine.extended.ModelMap;
 import client.window.panels.menus.Menu;
 import client.window.panels.menus.MenuButtonAction;
+import client.window.panels.menus.MenuGrid;
+import client.window.panels.menus.MenuResource;
 import data.ItemTable;
 import data.enumeration.ItemID;
 import data.map.buildings.Building;
+import data.map.resources.ResourceType;
 
 public class MenuInfosBuilding extends Menu {
 	private static final long serialVersionUID = -5061597857247176796L;
@@ -32,12 +36,26 @@ public class MenuInfosBuilding extends Menu {
 	private Engine engine;
 	private Image img;
 
-	private Building build;
+	// =========================================================================================================================
 
 	private MenuButtonAction spawn, upgrade;
+	private MenuGrid stocks;
+
+	// =========================================================================================================================
+
+	private Building build;
+
+	// =========================================================================================================================
 
 	public MenuInfosBuilding(Session session) {
 		super(session);
+
+		stocks = new MenuGrid(session);
+		stocks.setCols(3);
+		stocks.setRowHeight(50);
+		stocks.setSize(getWidth(), 50);
+		stocks.setLocation(0, getHeight() - stocks.getHeight());
+		add(stocks);
 
 		spawn = new MenuButtonAction(session, Action.SPAWN);
 		spawn.setBounds(15, imgSize + 20, 75, 75);
@@ -100,11 +118,12 @@ public class MenuInfosBuilding extends Menu {
 
 	public void update(Building build) {
 		this.build = build;
-		if (update.isInterrupted())
+		session.fen.gui.build = build;
+
+		if (update.getState() == State.WAITING)
 			synchronized (update) {
 				update.notify();
 			}
-		session.fen.gui.build = build;
 
 		ModelMap map = new ModelMap();
 		map.add(new Building(null, ItemID.CASTLE, 0, 0, 0, true).getCube());
@@ -113,6 +132,19 @@ public class MenuInfosBuilding extends Menu {
 		engine.drawSky = false;
 		img = engine.getImage(imgSize, imgSize);
 
+		stocks.clear();
+
+		for (ResourceType type : ResourceType.values())
+			if (build.hasStock(type)) {
+				MenuResource r = new MenuResource();
+				r.update(build.getStocks(type));
+				stocks.addItem(r);
+			}
+
+		_update();
+	}
+
+	private void _update() {
 		spawn.setVisible(build.isBuild() && build.getPlayer().equals(session.player));
 		upgrade.setVisible(build.isBuild() && build.getPlayer().equals(session.player));
 
@@ -131,10 +163,9 @@ public class MenuInfosBuilding extends Menu {
 	public void resize() {
 		if (engine != null)
 			img = engine.getImage(getWidth(), getHeight());
-	}
 
-	@Override
-	public void click() {
+		stocks.setSize(getWidth(), 50);
+		stocks.setLocation(0, getHeight() - stocks.getHeight());
 	}
 
 	// =========================================================================================================================
@@ -146,18 +177,18 @@ public class MenuInfosBuilding extends Menu {
 			build = null;
 	}
 
+	@Override
+	public void setSize(int width, int height) {
+		super.setSize(width, height);
+		resize();
+	}
+
 	// =========================================================================================================================
 
 	private class Update implements Runnable {
 		@Override
 		public void run() {
 			while (true) {
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-
 				if (build == null)
 					try {
 						synchronized (update) {
@@ -167,7 +198,13 @@ public class MenuInfosBuilding extends Menu {
 						e.printStackTrace();
 					}
 
-				update(build);
+				_update();
+
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}

@@ -10,7 +10,6 @@ import data.enumeration.Rotation;
 import data.map.Coord;
 import data.map.Map;
 import data.map.resources.Resource;
-import data.map.resources.ResourceType;
 import utils.FlixBlocksUtils;
 
 public class Unit {
@@ -69,12 +68,14 @@ public class Unit {
 	private Coord actionCube;
 
 	// ========== Harvesting ==========
-	private ResourceType resourceType;
-	private int quantity = 0;
+	private Resource resource;
 	private int maxCapacity = 5;
 
-	private int neededWork = 5;
-	private int alreadyWorked = 0;
+	private int timeHarvest = 5;
+	private int alreadyHarvest = 0;
+
+	private int timeDrop = 2;
+	private int alreadyDrop = 0;
 
 	// =========================================================================================================================
 
@@ -123,28 +124,48 @@ public class Unit {
 				action = null;
 			break;
 		case HARVEST:
-			alreadyWorked++;
+			alreadyHarvest++;
 
-			if (alreadyWorked < neededWork)
+			if (alreadyHarvest < timeHarvest)
 				break;// Keep working
 
-			alreadyWorked = 0;
-			quantity += map.gridGet(actionCube).resourceTake(1);
-			resourceType = map.gridGet(actionCube).getResource().getType();
+			alreadyHarvest = 0;
+
+			if (resource == null || resource.getType() != map.gridGet(actionCube).getResource().getType())
+				resource = new Resource(map.gridGet(actionCube).getResource().getType(), 0, maxCapacity);
+
+			resource.add(map.gridGet(actionCube).resourceTake(1));
 
 			if (map.gridGet(actionCube).resourceIsEmpty()) { // Cube break
 				map.remove(actionCube);
 				action = null;
 			}
 
-			if (quantity >= maxCapacity)
-				action = null;// TODO go back
+			if (resource.isFull())
+				action = null;// TODO Go Drop
 
+			break;
+		case DROP:
+			alreadyDrop++;
+
+			if (alreadyDrop < timeDrop)
+				break;// Keep working
+
+			alreadyDrop = 0;
+
+			if (map.gridGet(actionCube).build.addToStock(resource, 1))// Stock full
+				action = null;// TODO Except if there is another empty stock around
+			else if (resource.isEmpty()) {// TODO Go Harvest
+				removeResource();
+				action = null;
+			}
+
+			break;
+		case ATTACK:
 			break;
 		default:
 			FlixBlocksUtils.debug("Action " + action + " unimplemented");
 		}
-
 	}
 
 	// =========================================================================================================================
@@ -174,7 +195,7 @@ public class Unit {
 			newPath = NO_NEW_PATH;
 		}
 
-		if (!path.isEmpty())
+		if (path != null && !path.isEmpty())
 			doNextMove();
 		else
 			destination = null;
@@ -462,8 +483,16 @@ public class Unit {
 		return player;
 	}
 
-	public Resource getRessource() {
-		return new Resource(quantity, resourceType);
+	public Resource getResource() {
+		return resource;
+	}
+
+	public boolean hasResource() {
+		return resource != null;
+	}
+
+	public void removeResource() {
+		resource = null;
 	}
 
 	// =========================================================================================================================

@@ -177,10 +177,10 @@ public class Cube {
 		Resource res;
 
 		if (multibloc != null) {
-			res = new Resource(0, null);
+			res = new Resource();
 			for (Cube c : multibloc.list)
 				if (c.resource != null)
-					res.add(c.resource);
+					res.regroup(c.resource);
 		} else
 			res = resource;
 
@@ -195,10 +195,10 @@ public class Cube {
 		if (multibloc != null)
 			for (Cube c : multibloc.list)
 				if (c.resource != null && !c.resource.isEmpty())
-					return c.resource.take(x);
+					return c.resource.remove(x);
 
 		if (resource != null)
-			return resource.take(x);
+			return resource.remove(x);
 		return -1;
 	}
 
