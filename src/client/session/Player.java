@@ -1,10 +1,11 @@
 package client.session;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 
 import data.map.units.Unit;
 
-public class Player {
+public class Player implements Serializable {
 
 	private String name;
 

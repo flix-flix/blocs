@@ -152,29 +152,21 @@ public class MessageManager {
 	// =========================================================================================================================
 
 	public void send() {
-		if (msg.length() != 0) {
-			saveLine();
-			if (msg.charAt(0) == '!')
-				session.exec(msg);
-			else
-				addPlayerMsg("felix", msg);
-			clearLine();
+		if (msg.isEmpty())
+			return;
 
-			// Update history
-			lineHistory = history.size();
-			savedLine = "";
+		saveLine();
+		session.send(new Message(msg, session.player));
+		clearLine();
+	}
 
-			firstMsg = Math.max(0, messagesPrinted.size() - nbMsgMax);
-
-			updateMessages();
-		}
+	public void receive(Message msg) {
+		messagesPrinted.add(msg);
+		firstMsg = Math.max(0, messagesPrinted.size() - nbMsgMax);
+		updateMessages();
 	}
 
 	// =========================================================================================================================
-
-	public void addPlayerMsg(String author, String text) {
-		messagesPrinted.add(new Message(text, author));
-	}
 
 	public void addConsoleMsg(String text) {
 		messagesPrinted.add(new Message(text, TypeMessage.CONSOLE));
@@ -193,6 +185,7 @@ public class MessageManager {
 	public void saveLine() {
 		if (history.isEmpty() || !msg.equals(history.get(history.size() - 1)))
 			history.add(msg);
+
 	}
 
 	public void clearLine() {
@@ -200,6 +193,9 @@ public class MessageManager {
 		updateLine();
 		cursorPos = 0;
 		updateCursor();
+
+		lineHistory = history.size();
+		savedLine = "";
 	}
 
 	// =========================================================================================================================

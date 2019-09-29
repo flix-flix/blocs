@@ -5,6 +5,7 @@ import java.awt.MouseInfo;
 import java.awt.image.BufferedImage;
 import java.io.Serializable;
 
+import client.Client;
 import client.keys.Keyboard;
 import client.messages.CommandExecutor;
 import client.messages.MessageManager;
@@ -25,12 +26,14 @@ import data.map.Cube;
 public class Session implements Serializable {
 	private static final long serialVersionUID = 8569378400890835470L;
 
+	private Client client;
+
 	public ModelMap map;
 
 	public transient TexturePack texturePack;
 
 	public GameMode gamemode = GameMode.CLASSIC;
-	public Player player = new Player("Félix");
+	public Player player = new Player("Felix");
 
 	private Action action;
 	public Action unitAction;
@@ -88,6 +91,7 @@ public class Session implements Serializable {
 	// =========================================================================================================================
 
 	public Session(ModelMap m, boolean with3DEngine) throws AWTException {
+		client = new Client(this);
 		map = m;
 
 		clock = new TickClock(this);
@@ -265,5 +269,11 @@ public class Session implements Serializable {
 	public void exec(String line) {
 		// TODO [Improve] Detect the player executing the command
 		commands.exec("Félix", line);
+	}
+
+	public void send(Object obj) {
+		System.out.println("Sending");
+		client.send(player);
+		client.send(obj);
 	}
 }

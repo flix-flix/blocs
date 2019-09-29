@@ -16,7 +16,7 @@ public class WorldGeneration {
 
 	public static ModelMap generateMap(ModelMap map) {
 
-		Player felix = new Player("Félix");
+		Player felix = new Player("Felix");
 		Player ia = new Player("IA");
 
 		int ground = 10;
