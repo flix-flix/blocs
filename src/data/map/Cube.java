@@ -1,5 +1,7 @@
 package data.map;
 
+import java.io.Serializable;
+
 import client.window.graphicEngine.calcul.Point3D;
 import data.ItemTable;
 import data.enumeration.ItemID;
@@ -10,8 +12,8 @@ import data.map.resources.Resource;
 import data.map.units.Unit;
 import data.multiblocs.MultiBloc;
 
-public class Cube {
-
+public class Cube implements Serializable {
+	private static final long serialVersionUID = 8529273004787197367L;
 	// =========================================================================================================================
 
 	public double x, y, z;
@@ -203,6 +205,46 @@ public class Cube {
 	}
 
 	// =========================================================================================================================
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof Cube))
+			return false;
+		Cube other = (Cube) obj;
+		if (itemID != other.itemID)
+			return false;
+		if (onGrid != other.onGrid)
+			return false;
+		if (Double.doubleToLongBits(rotaX) != Double.doubleToLongBits(other.rotaX))
+			return false;
+		if (Double.doubleToLongBits(rotaY) != Double.doubleToLongBits(other.rotaY))
+			return false;
+		if (Double.doubleToLongBits(rotaZ) != Double.doubleToLongBits(other.rotaZ))
+			return false;
+		if (Double.doubleToLongBits(shiftX) != Double.doubleToLongBits(other.shiftX))
+			return false;
+		if (Double.doubleToLongBits(shiftY) != Double.doubleToLongBits(other.shiftY))
+			return false;
+		if (Double.doubleToLongBits(shiftZ) != Double.doubleToLongBits(other.shiftZ))
+			return false;
+		if (Double.doubleToLongBits(sizeX) != Double.doubleToLongBits(other.sizeX))
+			return false;
+		if (Double.doubleToLongBits(sizeY) != Double.doubleToLongBits(other.sizeY))
+			return false;
+		if (Double.doubleToLongBits(sizeZ) != Double.doubleToLongBits(other.sizeZ))
+			return false;
+		if (Double.doubleToLongBits(x) != Double.doubleToLongBits(other.x))
+			return false;
+		if (Double.doubleToLongBits(y) != Double.doubleToLongBits(other.y))
+			return false;
+		if (Double.doubleToLongBits(z) != Double.doubleToLongBits(other.z))
+			return false;
+		return true;
+	}
 
 	@Override
 	public String toString() {

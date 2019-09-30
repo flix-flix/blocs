@@ -1,10 +1,12 @@
 package data.multiblocs;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 
 import data.map.Cube;
 
-public class MultiBloc {
+public class MultiBloc implements Serializable {
+	private static final long serialVersionUID = 6445228941735562941L;
 
 	public LinkedList<Cube> list = new LinkedList<>();
 

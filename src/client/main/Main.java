@@ -3,21 +3,16 @@ package client.main;
 import java.awt.AWTException;
 
 import client.session.Session;
-import client.window.Fen;
-import client.window.graphicEngine.extended.ModelMap;
-import data.generation.WorldGeneration;
 
 public class Main {
 
-	public static void main(String[] args) throws AWTException {
-		ModelMap map = new ModelMap();
+	public static void main(String[] args) {
+		server.main.Main.main(args);
 
-		Session session = new Session(map, true);
-
-		WorldGeneration.generateMap(map);
-
-		new Fen(session);
-
-		session.start();
+		try {
+			new Session();
+		} catch (AWTException e) {
+			e.printStackTrace();
+		}
 	}
 }

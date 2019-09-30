@@ -1,5 +1,6 @@
 package data.map.units;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 
 import client.session.Action;
@@ -12,7 +13,8 @@ import data.map.Map;
 import data.map.resources.Resource;
 import utils.FlixBlocksUtils;
 
-public class Unit {
+public class Unit implements Serializable {
+	private static final long serialVersionUID = -3095427303288055442L;
 
 	private static final LinkedList<Coord> NO_NEW_PATH = new LinkedList<>();
 

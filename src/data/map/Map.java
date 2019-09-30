@@ -1,20 +1,25 @@
 package data.map;
 
+import java.io.Serializable;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 
 import client.session.Tickable;
 import data.map.units.Unit;
 import data.multiblocs.MultiBloc;
 
-public class Map implements Tickable {
+public class Map implements Tickable, Serializable {
+	private static final long serialVersionUID = 6432334760443087967L;
 
-	String nom = "Default Map Name";
+	protected String name = "Default Map Name";
 
-	// Chunks of the map (see getNumero(x, z))
-	private HashMap<Integer, Chunk> chunks = new HashMap<>();
+	/** Chunks of the map (see {@link Map#getNumero(int, int)}) */
+	protected HashMap<Integer, Chunk> chunks = new HashMap<>();
 
 	protected LinkedList<Cube> units = new LinkedList<>();
+
+	public HashSet<MultiBloc> multis = new HashSet<>();
 
 	// =========================================================================================================================
 
@@ -25,7 +30,7 @@ public class Map implements Tickable {
 
 	// =========================================================================================================================
 
-	protected Chunk createChunk(int x, int z) {
+	public Chunk createChunk(int x, int z) {
 		return new Chunk(x, z);
 	}
 
@@ -105,6 +110,17 @@ public class Map implements Tickable {
 		add(cube);
 	}
 
+	public Cube get(Cube c) {
+		if (c.onGrid)
+			return gridGet(c.gridCoord);
+		else
+			for (Cube cc : getChunkAtCoord(c).cubes)
+				if (c.equals(cc))
+					return cc;
+
+		return null;
+	}
+
 	// =========================================================================================================================
 	// Allow coords
 
@@ -143,9 +159,10 @@ public class Map implements Tickable {
 
 		multi.list = added;
 
-		if (full && !all) {
+		if (full && !all)
 			addMultiError(multi);
-		}
+		else
+			multis.add(multi);
 
 		return all;
 	}
@@ -155,6 +172,7 @@ public class Map implements Tickable {
 	}
 
 	protected void removeMulti(MultiBloc multi) {
+		multis.remove(multi);
 		for (Cube c : multi.list)
 			removeCube(c);
 	}
@@ -246,6 +264,20 @@ public class Map implements Tickable {
 
 	public boolean isOnFloor(Coord c) {
 		return gridContains(c.x, c.y - 1, c.z);
+	}
+
+	// =========================================================================================================================
+
+	public String getName() {
+		return name;
+	}
+
+	public HashMap<Integer, Chunk> getChunks() {
+		return chunks;
+	}
+
+	public LinkedList<Cube> getUnits() {
+		return units;
 	}
 
 	// =========================================================================================================================

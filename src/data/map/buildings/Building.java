@@ -1,5 +1,6 @@
 package data.map.buildings;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 import client.session.Player;
@@ -10,7 +11,8 @@ import data.map.resources.Resource;
 import data.map.resources.ResourceType;
 import data.multiblocs.MultiBloc;
 
-public class Building {
+public class Building implements Serializable {
+	private static final long serialVersionUID = -1662130293196731466L;
 
 	private Player player;
 	private ItemID itemID;

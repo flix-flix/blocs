@@ -3,13 +3,15 @@ package client.session;
 import java.awt.AWTException;
 import java.awt.MouseInfo;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.io.Serializable;
 
-import client.Client;
 import client.keys.Keyboard;
 import client.messages.CommandExecutor;
+import client.messages.Message;
 import client.messages.MessageManager;
 import client.textures.TexturePack;
+import client.window.Client;
 import client.window.Fen;
 import client.window.graphicEngine.calcul.Camera;
 import client.window.graphicEngine.calcul.Engine;
@@ -22,12 +24,15 @@ import data.enumeration.Face;
 import data.enumeration.Orientation;
 import data.map.Coord;
 import data.map.Cube;
+import data.map.Map;
 
 public class Session implements Serializable {
 	private static final long serialVersionUID = 8569378400890835470L;
 
-	private Client client;
+	// ============= Emitter ===================
+	Client client;
 
+	// ============= ===================
 	public ModelMap map;
 
 	public transient TexturePack texturePack;
@@ -40,12 +45,12 @@ public class Session implements Serializable {
 
 	// ================================
 
+	private boolean with3DEngine = true;
 	private Engine engine;
 
 	public Camera camera;
 	public Keyboard keyboard;
 	public Fen fen;
-	public TickClock clock;
 
 	// ============= Target ===================
 
@@ -90,12 +95,13 @@ public class Session implements Serializable {
 
 	// =========================================================================================================================
 
-	public Session(ModelMap m, boolean with3DEngine) throws AWTException {
-		client = new Client(this);
-		map = m;
+	public Session() throws AWTException {
+		texturePack = new TexturePack();
+		ModelCube.texturePack = texturePack;
 
-		clock = new TickClock(this);
-		clock.add(map);
+		new Fen(this);
+
+		client = new Client(this);
 
 		keyboard = new Keyboard(this);
 
@@ -103,13 +109,31 @@ public class Session implements Serializable {
 		camera.setVx(90);
 		camera.setVy(-65);
 
-		if (with3DEngine) {
-			texturePack = new TexturePack();
-			engine = new Engine(camera, map, texturePack);
-			ModelCube.texturePack = texturePack;
-		}
-
 		setAction(Action.MOUSE);
+
+		send(player);
+	}
+
+	// =========================================================================================================================
+
+	public void send(Object obj) {
+		try {
+			client.out.writeObject(obj);
+			client.out.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void receive(Object obj) {
+		System.out.println("Received : " + obj.toString());
+
+		if (obj instanceof Message)
+			messages.receive((Message) obj);
+		else if (obj instanceof Map)
+			setMap(new ModelMap((Map) obj));
+		else
+			System.out.println("Unknown object");
 	}
 
 	// =========================================================================================================================
@@ -120,7 +144,21 @@ public class Session implements Serializable {
 
 		fen.start();
 		keyboard.start();
-		new Thread(clock).start();
+	}
+
+	// =========================================================================================================================
+
+	public void setMap(ModelMap map) {
+		this.map = map;
+
+		if (with3DEngine)
+			engine = new Engine(camera, this.map, texturePack);
+
+		try {
+			start();
+		} catch (AWTException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void setTexturePack(TexturePack texturePack) {
@@ -269,11 +307,5 @@ public class Session implements Serializable {
 	public void exec(String line) {
 		// TODO [Improve] Detect the player executing the command
 		commands.exec("Félix", line);
-	}
-
-	public void send(Object obj) {
-		System.out.println("Sending");
-		client.send(player);
-		client.send(obj);
 	}
 }

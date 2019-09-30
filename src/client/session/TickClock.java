@@ -2,31 +2,19 @@ package client.session;
 
 import java.util.ArrayList;
 
-import client.window.panels.StateHUD;
-
 public class TickClock implements Runnable {
 
-	private Session session;
 	public int ticks;
 
 	private long lastTime;
 
 	ArrayList<Tickable> tickables = new ArrayList<>();
 
-	// =========================================================================================================================
-
-	TickClock(Session session) {
-		this.session = session;
-	}
+	private boolean paused = false;
 
 	// =========================================================================================================================
 
-	public void add(Tickable t) {
-		tickables.add(t);
-	}
-
-	public void remove(Tickable t) {
-		tickables.remove(t);
+	public TickClock() {
 	}
 
 	// =========================================================================================================================
@@ -45,7 +33,7 @@ public class TickClock implements Runnable {
 			} else
 				lastTime = System.currentTimeMillis();
 
-			if (session.stateGUI != StateHUD.GAME)
+			if (paused)
 				continue;
 
 			ticks++;
@@ -54,5 +42,21 @@ public class TickClock implements Runnable {
 				t.tick();
 			}
 		}
+	}
+
+	// =========================================================================================================================
+
+	public void add(Tickable t) {
+		tickables.add(t);
+	}
+
+	public void remove(Tickable t) {
+		tickables.remove(t);
+	}
+
+	// =========================================================================================================================
+
+	public void setPaused(boolean b) {
+		paused = b;
 	}
 }

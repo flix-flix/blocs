@@ -1,8 +1,10 @@
 package data.map;
 
+import java.io.Serializable;
 import java.util.HashSet;
 
-public class Chunk {
+public class Chunk implements Serializable {
+	private static final long serialVersionUID = -8763834020086820609L;
 
 	// Size of a chunk
 	public static final int X = 10, Y = 50, Z = 10;
@@ -11,7 +13,7 @@ public class Chunk {
 	public int x, z;
 
 	// Array [X][Y][Z] to store the blocs
-	protected Cube[][][] grid = new Cube[X][Y][Z];
+	public Cube[][][] grid = new Cube[X][Y][Z];
 
 	// Set to store the off-grid cubes
 	public HashSet<Cube> cubes = new HashSet<>();
@@ -24,7 +26,7 @@ public class Chunk {
 	}
 
 	// =========================================================================================================================
-	// grid access without X, Y, Z verification
+	// Grid access without X, Y, Z verification
 
 	protected Cube _gridGet(int x, int y, int z) {
 		return grid[x][y][z];

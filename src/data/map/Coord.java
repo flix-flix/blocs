@@ -1,11 +1,13 @@
 package data.map;
 
+import java.io.Serializable;
+
 import client.window.graphicEngine.calcul.Point3D;
 import data.enumeration.Face;
 import data.enumeration.Orientation;
 
-public class Coord {
-
+public class Coord implements Serializable {
+	private static final long serialVersionUID = 5676550708765407937L;
 	public int x, y, z;
 
 	public Coord(double x, double y, double z) {

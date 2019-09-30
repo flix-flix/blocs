@@ -1,10 +1,10 @@
 package data.generation;
 
 import client.session.Player;
-import client.window.graphicEngine.extended.ModelMap;
 import data.enumeration.ItemID;
 import data.map.Coord;
 import data.map.Cube;
+import data.map.Map;
 import data.map.buildings.Building;
 import data.map.units.Unit;
 import data.multiblocs.E;
@@ -14,7 +14,8 @@ import utils.FlixBlocksUtils;
 
 public class WorldGeneration {
 
-	public static ModelMap generateMap(ModelMap map) {
+	public static Map generateMap() {
+		Map map = new Map();
 
 		Player felix = new Player("Felix");
 		Player ia = new Player("IA");
@@ -73,10 +74,10 @@ public class WorldGeneration {
 
 		// ========== Preview cubes ==========
 		map.add(new Cube(18, ground, 2, ItemID.GRASS));
-		map.setPreview(map.gridGet(18, ground, 2), true);
+		// map.setPreview(map.gridGet(18, ground, 2), true);
 
 		map.add(new Cube(13, ground, 13, ItemID.DIRT));
-		map.setPreview(map.gridGet(13, ground, 13), true);
+		// map.setPreview(map.gridGet(13, ground, 13), true);
 
 		// Cubes (texture 16x16) with the differents step of the mining animation
 		for (int x = 0; x < 5; x++) {
@@ -155,27 +156,7 @@ public class WorldGeneration {
 
 	// =========================================================================================================================
 
-	public static void addTree(ModelMap map, int x, int y, int z) {
-		map.add(new Cube(x, y, z, ItemID.OAK_TRUNK));
-		map.add(new Cube(x, y + 1, z, ItemID.OAK_TRUNK));
-		addLeaves(map, x, y + 2, z);
-		addLeaves(map, x, y + 3, z);
-
-		map.add(new Cube(x, y + 4, z, ItemID.OAK_LEAVES));
-	}
-
-	public static void addLeaves(ModelMap map, int x, int y, int z) {
-		map.add(new Cube(x, y, z, ItemID.OAK_TRUNK));
-
-		map.add(new Cube(x - 1, y, z, ItemID.OAK_LEAVES));
-		map.add(new Cube(x + 1, y, z, ItemID.OAK_LEAVES));
-		map.add(new Cube(x, y, z + 1, ItemID.OAK_LEAVES));
-		map.add(new Cube(x, y, z - 1, ItemID.OAK_LEAVES));
-	}
-
-	// =========================================================================================================================
-
-	public static void addMountain(ModelMap map, int x, int y, int z) {
+	private static void addMountain(Map map, int x, int y, int z) {
 		for (int i = 0; i < 7; i++) {
 			int a = (7 - i) / 2;
 			for (int j = -a; j <= a; j++)
@@ -188,7 +169,7 @@ public class WorldGeneration {
 		}
 	}
 
-	public static void dig(ModelMap map, int x, int y, int z) {
+	private static void dig(Map map, int x, int y, int z) {
 		for (int _y = 0; _y < 7; _y++) {
 			int a = (7 - _y) / 2;
 			for (int _x = -a; _x <= a; _x++)

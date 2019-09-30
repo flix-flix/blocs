@@ -4,8 +4,6 @@ import server.Server;
 
 public class Main {
 
-	public final static int port = 1212;
-
 	public static void main(String[] args) {
 		System.out.println("======== SERVER ==========");
 

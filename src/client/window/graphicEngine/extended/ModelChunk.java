@@ -11,6 +11,7 @@ import data.map.Chunk;
 import data.map.Cube;
 
 public class ModelChunk extends Chunk implements Model {
+	private static final long serialVersionUID = 7534416367996448344L;
 
 	public Engine moteur;
 
@@ -23,6 +24,17 @@ public class ModelChunk extends Chunk implements Model {
 	public ModelChunk(int x, int z) {
 		super(x, z);
 		grid = new ModelCube[X][Y][Z];
+	}
+
+	public ModelChunk(Chunk chunk) {
+		this(chunk.x, chunk.z);
+		for (int x = 0; x < X; x++)
+			for (int y = 0; y < Y; y++)
+				for (int z = 0; z < Z; z++)
+					grid[x][y][z] = chunk.grid[x][y][z] == null ? null : new ModelCube(chunk.grid[x][y][z]);
+
+		for (Cube c : chunk.cubes)
+			cubes.add(new ModelCube(c));
 	}
 
 	// =========================================================================================================================

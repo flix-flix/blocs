@@ -1,6 +1,7 @@
 package client.window.graphicEngine.extended;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import client.window.graphicEngine.calcul.Camera;
 import client.window.graphicEngine.calcul.Matrix;
@@ -8,6 +9,7 @@ import client.window.graphicEngine.structures.Draw;
 import client.window.graphicEngine.structures.Model;
 import data.ItemTable;
 import data.enumeration.Face;
+import data.map.Chunk;
 import data.map.Coord;
 import data.map.Cube;
 import data.map.Map;
@@ -15,6 +17,7 @@ import data.map.units.Unit;
 import data.multiblocs.MultiBloc;
 
 public class ModelMap extends Map implements Model {
+	private static final long serialVersionUID = 1111592162081077768L;
 
 	// ===== Model =====
 	public boolean visible = true;
@@ -26,6 +29,44 @@ public class ModelMap extends Map implements Model {
 
 	// ===== Infos =====
 	public int nbFaces, nbChunks;
+
+	// =========================================================================================================================
+
+	public ModelMap() {
+	}
+
+	public ModelMap(Map map) {
+		name = map.getName();
+		for (int index : map.getChunks().keySet()) {
+			chunks.put(index, new ModelChunk(map.getChunks().get(index)));
+			updateChunk(chunks.get(index).x, chunks.get(index).z);
+		}
+
+		for (Cube u : map.getUnits())
+			units.add(new ModelCube(u));
+
+		multis = map.multis;
+
+		for (MultiBloc multi : multis) {
+			LinkedList<Cube> list = new LinkedList<>();
+
+			for (Cube c : multi.list) {
+				if (!(get(c) instanceof ModelCube))
+					System.out.println(c.toString());
+				list.add(get(c));
+			}
+
+			multi.list = list;
+		}
+
+	}
+
+	private void updateChunk(int xx, int zz) {
+		for (int x = xx * 10; x < xx * 10 + 10; x++)
+			for (int y = 0; y < Chunk.Y; y++)
+				for (int z = zz * 10; z < zz * 10 + 10; z++)
+					update(x, y, z);
+	}
 
 	// =========================================================================================================================
 	// Create displayable-data

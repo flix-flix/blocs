@@ -1,6 +1,5 @@
 package client.window;
 
-import java.awt.AWTException;
 import java.awt.Cursor;
 import java.awt.Image;
 import java.awt.Point;
@@ -74,7 +73,7 @@ public class Fen extends JFrame {
 
 	// =========================================================================================================================
 
-	public Fen(Session session) throws AWTException {
+	public Fen(Session session) {
 		this.session = session;
 		session.fen = this;
 
@@ -405,7 +404,7 @@ public class Fen extends JFrame {
 							break;
 						}
 					}
-				}else {// Opponent
+				} else {// Opponent
 					cursor = cursorAttack;
 					session.unitAction = Action.ATTACK;
 				}
@@ -459,9 +458,9 @@ public class Fen extends JFrame {
 					fps = 0;
 
 					session.ticksKeyBoard = session.keyboard.ticks;
-					session.ticksPhys = session.clock.ticks;
-
-					session.clock.ticks = 0;
+					// session.ticksPhys = session.clock.ticks;
+					// TODO get ticks from server
+					// session.clock.ticks = 0;
 					session.keyboard.ticks = 0;
 				}
 

@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import data.map.units.Unit;
 
 public class Player implements Serializable {
+	private static final long serialVersionUID = -3099767464576186554L;
 
 	private String name;
 

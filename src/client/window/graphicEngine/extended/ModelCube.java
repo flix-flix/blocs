@@ -14,6 +14,7 @@ import data.enumeration.ItemID;
 import data.map.Cube;
 
 public class ModelCube extends Cube implements Model {
+	private static final long serialVersionUID = -780214253477663150L;
 
 	private static final double toRadian = Math.PI / 180;
 
@@ -151,10 +152,11 @@ public class ModelCube extends Cube implements Model {
 
 	public void setHighlight(boolean b) {
 		highlight = b;
-		if (multibloc != null)
+		if (multibloc != null) {
 			for (Cube c : multibloc.list) {
 				((ModelCube) c).highlight = b;
 			}
+		}
 	}
 
 	// =========================================================================================================================

@@ -1,63 +1,107 @@
 package server;
 
-import java.net.DatagramPacket;
-import java.net.InetAddress;
-import java.util.HashMap;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
 
-import client.Client;
 import client.messages.Message;
 import client.session.Player;
+import data.generation.WorldGeneration;
+import data.map.Map;
 
-public class Server extends Emitter {
+public class Server implements Runnable {
 
 	public static final int port = 1212;
 
-	HashMap<Player, InetAddress> clients = new HashMap<>();
+	Thread thread;
+
+	ServerSocket server;
+	boolean running = true;
+
+	Socket client;
+	ObjectInputStream in;
+	ObjectOutputStream out;
+
+	// =========================================================================================================================
+
+	Map map;
 
 	// =========================================================================================================================
 
 	public Server() {
-		super(port);
+		try {
+			server = new ServerSocket(port);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		thread = new Thread(this);
+		thread.start();
+
+		map = WorldGeneration.generateMap();
 	}
 
 	// =========================================================================================================================
 
 	@Override
-	public void receive(DatagramPacket packet) {
-		Object obj = deserialize(packet.getData());
+	public void run() {
+		try {
+			while (running) {
+				// New client
+				client = server.accept();
 
-		System.out.print("From: " + packet.getAddress() + ":" + packet.getPort() + " : ");
+				if (!running)
+					break;
 
+				in = new ObjectInputStream(client.getInputStream());
+				out = new ObjectOutputStream(client.getOutputStream());
+
+				try {
+					while (true) {
+						receive(in.readObject());
+					}
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void stop() {
+		running = false;
+
+		try {
+			server.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	// =========================================================================================================================
+
+	public void send(Object obj) {
+		try {
+			out.writeObject(obj);
+			out.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	// =========================================================================================================================
+
+	public void receive(Object obj) {
 		if (obj instanceof Player) {
-			Player p = (Player) obj;
-			for (Player client : clients.keySet())
-				if (client.equals(p))
-					return;
-			
-			System.out.println("New Player : " + p.getName());
-			clients.put(p, packet.getAddress());
-		} else if (obj instanceof String)
-			System.out.println(((String) obj));
-		else if (obj instanceof Message)
-			receiveMessage(((Message) obj));
+			System.out.println("New player: " + ((Player) obj).getName());
+			send(map);
+		} else if (obj instanceof Message)
+			System.out.println("New message: " + ((Message) obj).getText());
 		else
-			System.out.println("[Unknow object]");
+			System.out.println("UNKNOWN OBJECT");
 	}
 
-	// =========================================================================================================================
-
-	public void sendAll(Object obj) {
-		for (InetAddress client : clients.values())
-			send(client, Client.port, serialize(obj));
-	}
-
-	// =========================================================================================================================
-
-	public void receiveMessage(Message msg) {
-		System.out.println(msg);
-		if (msg.getText().charAt(0) == '!')
-			sendAll("COMMAND");
-		else
-			sendAll(msg);
-	}
 }
