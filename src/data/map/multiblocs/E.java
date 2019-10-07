@@ -1,7 +1,7 @@
-package data.multiblocs;
+package data.map.multiblocs;
 
 import client.window.graphicEngine.calcul.Engine;
-import data.enumeration.ItemID;
+import data.id.ItemID;
 import data.map.Cube;
 
 public class E extends MultiBloc {

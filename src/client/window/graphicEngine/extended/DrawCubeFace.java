@@ -10,9 +10,9 @@ import client.window.graphicEngine.calcul.Point3D;
 import client.window.graphicEngine.calcul.Vector;
 import client.window.graphicEngine.structures.Draw;
 import client.window.graphicEngine.structures.Quadri;
-import data.ItemTable;
-import data.enumeration.Face;
+import data.id.ItemTable;
 import data.map.Cube;
+import data.map.enumerations.Face;
 
 public class DrawCubeFace extends Draw {
 

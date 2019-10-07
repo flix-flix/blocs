@@ -6,7 +6,6 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.lang.Thread.State;
 
-import client.session.Action;
 import client.session.Session;
 import client.window.graphicEngine.calcul.Camera;
 import client.window.graphicEngine.calcul.Engine;
@@ -15,9 +14,10 @@ import client.window.graphicEngine.extended.ModelCube;
 import client.window.panels.menus.Menu;
 import client.window.panels.menus.MenuButtonAction;
 import client.window.panels.menus.MenuResource;
-import data.enumeration.ItemID;
-import data.enumeration.Orientation;
+import data.dynamic.Action;
+import data.id.ItemID;
 import data.map.Cube;
+import data.map.enumerations.Orientation;
 import data.map.units.Unit;
 
 public class MenuInfoUnit extends Menu {
@@ -110,9 +110,6 @@ public class MenuInfoUnit extends Menu {
 
 	@Override
 	public void resize() {
-		if (engine != null)
-			img = engine.getImage(getWidth(), getHeight());
-
 		res.setLocation(getWidth() / 2 - res.getWidth() / 2, 180);
 	}
 

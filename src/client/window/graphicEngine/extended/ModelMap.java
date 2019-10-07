@@ -7,14 +7,14 @@ import client.window.graphicEngine.calcul.Camera;
 import client.window.graphicEngine.calcul.Matrix;
 import client.window.graphicEngine.structures.Draw;
 import client.window.graphicEngine.structures.Model;
-import data.ItemTable;
-import data.enumeration.Face;
+import data.id.ItemTable;
 import data.map.Chunk;
 import data.map.Coord;
 import data.map.Cube;
 import data.map.Map;
+import data.map.enumerations.Face;
+import data.map.multiblocs.MultiBloc;
 import data.map.units.Unit;
-import data.multiblocs.MultiBloc;
 
 public class ModelMap extends Map implements Model {
 	private static final long serialVersionUID = 1111592162081077768L;

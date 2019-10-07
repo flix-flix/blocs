@@ -7,7 +7,6 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.lang.Thread.State;
 
-import client.session.Action;
 import client.session.Session;
 import client.window.graphicEngine.calcul.Camera;
 import client.window.graphicEngine.calcul.Engine;
@@ -17,8 +16,9 @@ import client.window.panels.menus.Menu;
 import client.window.panels.menus.MenuButtonAction;
 import client.window.panels.menus.MenuGrid;
 import client.window.panels.menus.MenuResource;
-import data.ItemTable;
-import data.enumeration.ItemID;
+import data.dynamic.Action;
+import data.id.ItemID;
+import data.id.ItemTable;
 import data.map.buildings.Building;
 import data.map.resources.ResourceType;
 

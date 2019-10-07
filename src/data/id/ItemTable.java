@@ -1,12 +1,11 @@
-package data;
+package data.id;
 
 import client.textures.TexturePack;
-import data.enumeration.ItemID;
 import data.map.Cube;
 import data.map.buildings.Building;
+import data.map.multiblocs.MultiBloc;
 import data.map.resources.Resource;
 import data.map.resources.ResourceType;
-import data.multiblocs.MultiBloc;
 import utils.FlixBlocksUtils;
 
 public class ItemTable {

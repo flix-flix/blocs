@@ -1,17 +1,13 @@
 package client.session;
 
-import java.awt.AWTException;
 import java.awt.MouseInfo;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.Serializable;
 
+import client.Client;
 import client.keys.Keyboard;
-import client.messages.CommandExecutor;
-import client.messages.Message;
-import client.messages.MessageManager;
 import client.textures.TexturePack;
-import client.window.Client;
 import client.window.Fen;
 import client.window.graphicEngine.calcul.Camera;
 import client.window.graphicEngine.calcul.Engine;
@@ -19,12 +15,17 @@ import client.window.graphicEngine.calcul.Point3D;
 import client.window.graphicEngine.extended.ModelCube;
 import client.window.graphicEngine.extended.ModelMap;
 import client.window.panels.StateHUD;
-import data.ItemTable;
-import data.enumeration.Face;
-import data.enumeration.Orientation;
+import data.dynamic.Action;
+import data.dynamic.TickClock;
+import data.id.ItemTable;
 import data.map.Coord;
 import data.map.Cube;
 import data.map.Map;
+import data.map.enumerations.Face;
+import data.map.enumerations.Orientation;
+import server.game.GameMode;
+import server.game.Player;
+import server.game.messages.Message;
 
 public class Session implements Serializable {
 	private static final long serialVersionUID = 8569378400890835470L;
@@ -40,7 +41,7 @@ public class Session implements Serializable {
 	public GameMode gamemode = GameMode.CLASSIC;
 	public Player player = new Player("Felix");
 
-	private Action action;
+	private UserAction action;
 	public Action unitAction;
 
 	// ================================
@@ -51,6 +52,7 @@ public class Session implements Serializable {
 	public Camera camera;
 	public Keyboard keyboard;
 	public Fen fen;
+	public TickClock clock;
 
 	// ============= Target ===================
 
@@ -91,11 +93,10 @@ public class Session implements Serializable {
 
 	// =============== Dialog =================
 	public MessageManager messages;
-	public CommandExecutor commands;
 
 	// =========================================================================================================================
 
-	public Session() throws AWTException {
+	public Session() {
 		texturePack = new TexturePack();
 		ModelCube.texturePack = texturePack;
 
@@ -109,7 +110,7 @@ public class Session implements Serializable {
 		camera.setVx(90);
 		camera.setVy(-65);
 
-		setAction(Action.MOUSE);
+		setAction(UserAction.MOUSE);
 
 		send(player);
 	}
@@ -128,22 +129,22 @@ public class Session implements Serializable {
 	public void receive(Object obj) {
 		System.out.println("Received : " + obj.toString());
 
-		if (obj instanceof Message)
-			messages.receive((Message) obj);
-		else if (obj instanceof Map)
+		if (obj instanceof Map)
 			setMap(new ModelMap((Map) obj));
+		else if (obj instanceof Message)
+			messages.receive((Message) obj);
 		else
 			System.out.println("Unknown object");
 	}
 
 	// =========================================================================================================================
 
-	public void start() throws AWTException {
+	public void start() {
 		messages = new MessageManager(this, fen.gui);
-		commands = new CommandExecutor(this, messages);
 
 		fen.start();
 		keyboard.start();
+		new Thread(clock).start();
 	}
 
 	// =========================================================================================================================
@@ -154,11 +155,10 @@ public class Session implements Serializable {
 		if (with3DEngine)
 			engine = new Engine(camera, this.map, texturePack);
 
-		try {
-			start();
-		} catch (AWTException e) {
-			e.printStackTrace();
-		}
+		clock = new TickClock();
+		clock.add(map);
+
+		start();
 	}
 
 	public void setTexturePack(TexturePack texturePack) {
@@ -205,13 +205,13 @@ public class Session implements Serializable {
 
 	// =========================================================================================================================
 
-	public void setAction(Action action) {
+	public void setAction(UserAction action) {
 		this.action = action;
 		if (fen != null)
 			fen.updateCursor();
 	}
 
-	public Action getAction() {
+	public UserAction getAction() {
 		return action;
 	}
 
@@ -273,7 +273,7 @@ public class Session implements Serializable {
 
 		if (gamemode == GameMode.CLASSIC)
 			if (cubeTarget != null)
-				if (action == Action.CREA_ADD) {
+				if (action == UserAction.CREA_ADD) {
 					// If same target : No need to do something more than the previous iteration
 					if (sameTarget)
 						return;
@@ -295,17 +295,10 @@ public class Session implements Serializable {
 					map.setPreview(previousPreview, true);
 					map.setTargetable(previousPreview, false);
 					map.setHighlight(previousPreview, true);
-				} else if (action == Action.CREA_DESTROY) {
+				} else if (action == UserAction.CREA_DESTROY) {
 					map.setHighlight(cubeTarget, true);
-				} else if (action == Action.MOUSE) {
+				} else if (action == UserAction.MOUSE) {
 					map.setHighlight(cubeTarget, true);
 				}
-	}
-
-	// =========================================================================================================================
-
-	public void exec(String line) {
-		// TODO [Improve] Detect the player executing the command
-		commands.exec("Félix", line);
 	}
 }

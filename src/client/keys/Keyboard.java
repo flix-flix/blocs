@@ -3,14 +3,15 @@ package client.keys;
 import java.awt.AWTException;
 import java.awt.Robot;
 
-import client.session.Action;
-import client.session.GameMode;
 import client.session.Session;
+import client.session.UserAction;
 import client.window.graphicEngine.extended.ModelCube;
 import client.window.panels.StateHUD;
-import data.enumeration.Orientation;
+import data.dynamic.Action;
 import data.map.Coord;
 import data.map.Cube;
+import data.map.enumerations.Orientation;
+import server.game.GameMode;
 import utils.FlixBlocksUtils;
 
 public class Keyboard {
@@ -19,7 +20,7 @@ public class Keyboard {
 
 	// ================== Mouse ===========================
 	/** Keep the mouse cursor in the center of the component */
-	private Robot robot = new Robot();
+	private Robot robot;
 	/**
 	 * true : freeze the camera rotation until the cursor automatically reach the
 	 * middle of the screen
@@ -44,8 +45,14 @@ public class Keyboard {
 
 	// =========================================================================================================================
 
-	public Keyboard(Session session) throws AWTException {
+	public Keyboard(Session session) {
 		this.session = session;
+
+		try {
+			robot = new Robot();
+		} catch (AWTException e) {
+			e.printStackTrace();
+		}
 	}
 
 	// =========================================================================================================================
@@ -74,7 +81,7 @@ public class Keyboard {
 
 			if (session.cubeTarget != null && session.faceTarget != null) {
 
-				if (session.getAction() == Action.CREA_ADD) {// Add a cube to the map
+				if (session.getAction() == UserAction.CREA_ADD) {// Add a cube to the map
 					ModelCube model = session.map.gridGet(new Coord(session.cubeTarget).face(session.faceTarget));
 					if (model != null && model.isPreview()) {
 						// Check if multibloc can be added at this position
@@ -110,7 +117,7 @@ public class Keyboard {
 
 		} else if (session.gamemode == GameMode.CLASSIC) {
 
-			if (session.getAction() == Action.CREA_DESTROY) {
+			if (session.getAction() == UserAction.CREA_DESTROY) {
 				if (session.cubeTarget != null)
 					if (session.cubeTarget.unit != null)
 						session.map.removeUnit(session.cubeTarget.unit);

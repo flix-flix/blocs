@@ -1,8 +1,8 @@
 package client.textures;
 
-import data.enumeration.Face;
-import data.enumeration.Orientation;
-import data.enumeration.Rotation;
+import data.map.enumerations.Face;
+import data.map.enumerations.Orientation;
+import data.map.enumerations.Rotation;
 
 public class TextureCube {
 

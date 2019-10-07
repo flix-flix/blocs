@@ -1,15 +1,15 @@
 package data.generation;
 
-import client.session.Player;
-import data.enumeration.ItemID;
+import data.id.ItemID;
 import data.map.Coord;
 import data.map.Cube;
 import data.map.Map;
 import data.map.buildings.Building;
+import data.map.multiblocs.E;
+import data.map.multiblocs.MultiBloc;
+import data.map.multiblocs.Tree;
 import data.map.units.Unit;
-import data.multiblocs.E;
-import data.multiblocs.MultiBloc;
-import data.multiblocs.Tree;
+import server.game.Player;
 import utils.FlixBlocksUtils;
 
 public class WorldGeneration {
@@ -131,7 +131,7 @@ public class WorldGeneration {
 		// Add Unit
 		Unit u1 = new Unit(felix, 5, ground, 5);
 		map.addUnit(u1);
-		u1.goTo(map, new Coord(15, 9, ground));
+		u1.goTo(map, new Coord(15, ground - 1, 9));
 
 		Unit u2 = new Unit(felix, 6, ground, 2);
 		map.addUnit(u2);

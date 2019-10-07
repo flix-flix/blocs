@@ -1,4 +1,4 @@
-package data.enumeration;
+package data.map.enumerations;
 
 public enum Rotation {
 	NONE(0), RIGHT(1), UPSIDE_DOWN_X(2), LEFT(3), FRONT(1), UPSIDE_DOWN_Z(2), BACK(3);

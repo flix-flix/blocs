@@ -5,9 +5,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 
-import client.session.Tickable;
+import data.dynamic.Tickable;
+import data.map.multiblocs.MultiBloc;
 import data.map.units.Unit;
-import data.multiblocs.MultiBloc;
 
 public class Map implements Tickable, Serializable {
 	private static final long serialVersionUID = 6432334760443087967L;

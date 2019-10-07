@@ -1,6 +1,6 @@
 package client.textures;
 
-import data.enumeration.Face;
+import data.map.enumerations.Face;
 import utils.FlixBlocksUtils;
 
 public class TextureFace {

@@ -18,15 +18,15 @@ import java.awt.image.BufferedImage;
 import javax.swing.JFrame;
 
 import client.keys.Key;
-import client.session.Action;
-import client.session.GameMode;
 import client.session.Session;
 import client.window.panels.PanDevlop;
 import client.window.panels.PanGUI;
 import client.window.panels.PanGame;
 import client.window.panels.PanPause;
 import client.window.panels.StateHUD;
-import data.ItemTable;
+import data.dynamic.Action;
+import data.id.ItemTable;
+import server.game.GameMode;
 import utils.FlixBlocksUtils;
 
 public class Fen extends JFrame {

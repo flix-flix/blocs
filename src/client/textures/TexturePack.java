@@ -3,11 +3,11 @@ package client.textures;
 import java.util.HashMap;
 
 import client.window.graphicEngine.extended.ModelCube;
-import data.ItemTable;
-import data.enumeration.Face;
-import data.enumeration.ItemID;
-import data.enumeration.Orientation;
-import data.enumeration.Rotation;
+import data.id.ItemID;
+import data.id.ItemTable;
+import data.map.enumerations.Face;
+import data.map.enumerations.Orientation;
+import data.map.enumerations.Rotation;
 
 public class TexturePack {
 

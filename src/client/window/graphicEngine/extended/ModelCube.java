@@ -9,9 +9,9 @@ import client.window.graphicEngine.calcul.Point3D;
 import client.window.graphicEngine.calcul.Vector;
 import client.window.graphicEngine.structures.Draw;
 import client.window.graphicEngine.structures.Model;
-import data.enumeration.Face;
-import data.enumeration.ItemID;
+import data.id.ItemID;
 import data.map.Cube;
+import data.map.enumerations.Face;
 
 public class ModelCube extends Cube implements Model {
 	private static final long serialVersionUID = -780214253477663150L;

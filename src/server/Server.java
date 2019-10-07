@@ -6,10 +6,12 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import client.messages.Message;
-import client.session.Player;
+import data.dynamic.TickClock;
 import data.generation.WorldGeneration;
 import data.map.Map;
+import server.game.Player;
+import server.game.messages.Message;
+import server.game.messages.TypeMessage;
 
 public class Server implements Runnable {
 
@@ -41,6 +43,9 @@ public class Server implements Runnable {
 		thread.start();
 
 		map = WorldGeneration.generateMap();
+
+		TickClock clock = new TickClock();
+		clock.add(map);
 	}
 
 	// =========================================================================================================================
@@ -95,13 +100,24 @@ public class Server implements Runnable {
 	// =========================================================================================================================
 
 	public void receive(Object obj) {
-		if (obj instanceof Player) {
-			System.out.println("New player: " + ((Player) obj).getName());
-			send(map);
-		} else if (obj instanceof Message)
-			System.out.println("New message: " + ((Message) obj).getText());
+		if (obj instanceof Player)
+			receivePlayer((Player) obj);
+		else if (obj instanceof Message)
+			receiveMessage((Message) obj);
 		else
 			System.out.println("UNKNOWN OBJECT");
 	}
 
+	// =========================================================================================================================
+
+	public void receivePlayer(Player player) {
+		send(map);
+	}
+
+	public void receiveMessage(Message msg) {
+		if (!msg.getText().isEmpty() && msg.getText().charAt(0) == '!')
+			send(new Message("COMMAND", TypeMessage.CONSOLE));
+		else
+			send(msg);
+	}
 }

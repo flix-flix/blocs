@@ -1,8 +1,8 @@
-package client.messages;
+package server.game.messages;
 
 import java.io.Serializable;
 
-import client.session.Player;
+import server.game.Player;
 
 public class Message implements Serializable {
 	private static final long serialVersionUID = -7696844549236456406L;

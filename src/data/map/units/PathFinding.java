@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import data.enumeration.Face;
 import data.map.Coord;
 import data.map.Map;
+import data.map.enumerations.Face;
 
 public class PathFinding {
 

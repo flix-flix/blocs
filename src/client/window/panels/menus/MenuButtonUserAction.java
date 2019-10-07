@@ -5,24 +5,35 @@ import java.awt.Graphics;
 import java.awt.Image;
 
 import client.session.Session;
+import client.session.UserAction;
+import client.window.graphicEngine.calcul.Camera;
 import client.window.graphicEngine.calcul.Engine;
-import data.dynamic.Action;
+import client.window.graphicEngine.calcul.Point3D;
+import client.window.graphicEngine.extended.ModelCube;
+import data.id.ItemID;
+import data.map.Cube;
 
-public class MenuButtonAction extends Menu {
+public class MenuButtonUserAction extends Menu {
 	private static final long serialVersionUID = -2696383944798968722L;
 
-	public Action action;
+	public UserAction action;
 
 	Engine engine;
 	Image img;
 
 	public boolean selected;
 
-	public MenuButtonAction(Session session, Action action) {
+	public MenuButtonUserAction(Session session, UserAction action) {
 		super(session);
 		this.action = action;
 
 		img = action.getImage();
+
+		if (action == UserAction.CREA_ADD) {
+			engine = new Engine(new Camera(new Point3D(-.4, 1.5, -1), 58, -35), new ModelCube(new Cube(ItemID.GRASS)),
+					session.texturePack);
+			engine.drawSky = false;
+		}
 	}
 
 	// =========================================================================================================================
@@ -53,6 +64,7 @@ public class MenuButtonAction extends Menu {
 
 	@Override
 	public void click() {
+		session.setAction(action);
 		session.fen.gui.hideMenu();
 		selected = true;
 	}

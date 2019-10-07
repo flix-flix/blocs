@@ -1,6 +1,6 @@
-package data.multiblocs;
+package data.map.multiblocs;
 
-import data.enumeration.ItemID;
+import data.id.ItemID;
 import data.map.Cube;
 
 public class Tree extends MultiBloc {

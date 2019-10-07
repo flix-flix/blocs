@@ -7,12 +7,12 @@ import client.session.Session;
 import client.window.panels.menus.Menu;
 import client.window.panels.menus.MenuButtonCube;
 import client.window.panels.menus.MenuGrid;
-import data.ItemTable;
-import data.enumeration.ItemID;
+import data.id.ItemID;
+import data.id.ItemTable;
 import data.map.Cube;
 import data.map.buildings.Building;
-import data.multiblocs.E;
-import data.multiblocs.Tree;
+import data.map.multiblocs.E;
+import data.map.multiblocs.Tree;
 
 public class MenuInfos extends Menu {
 	private static final long serialVersionUID = -7621681231232278749L;

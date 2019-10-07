@@ -3,13 +3,13 @@ package data.map.buildings;
 import java.io.Serializable;
 import java.util.HashMap;
 
-import client.session.Player;
-import data.ItemTable;
-import data.enumeration.ItemID;
+import data.id.ItemID;
+import data.id.ItemTable;
 import data.map.Cube;
+import data.map.multiblocs.MultiBloc;
 import data.map.resources.Resource;
 import data.map.resources.ResourceType;
-import data.multiblocs.MultiBloc;
+import server.game.Player;
 
 public class Building implements Serializable {
 	private static final long serialVersionUID = -1662130293196731466L;

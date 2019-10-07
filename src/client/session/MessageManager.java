@@ -1,9 +1,10 @@
-package client.messages;
+package client.session;
 
 import java.util.ArrayList;
 
-import client.session.Session;
 import client.window.panels.PanGUI;
+import server.game.messages.Message;
+import server.game.messages.TypeMessage;
 
 public class MessageManager {
 

@@ -1,4 +1,4 @@
-package client.session;
+package server.game;
 
 public enum GameMode {
 

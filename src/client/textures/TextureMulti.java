@@ -1,9 +1,9 @@
 package client.textures;
 
-import data.ItemTable;
-import data.enumeration.Face;
-import data.enumeration.ItemID;
+import data.id.ItemID;
+import data.id.ItemTable;
 import data.map.Cube;
+import data.map.enumerations.Face;
 
 public class TextureMulti {
 

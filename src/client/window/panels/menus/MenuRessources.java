@@ -10,9 +10,9 @@ import client.window.graphicEngine.calcul.Camera;
 import client.window.graphicEngine.calcul.Engine;
 import client.window.graphicEngine.calcul.Point3D;
 import client.window.graphicEngine.extended.ModelCube;
-import data.enumeration.ItemID;
-import data.enumeration.Orientation;
+import data.id.ItemID;
 import data.map.Cube;
+import data.map.enumerations.Orientation;
 import data.map.resources.ResourceType;
 
 public class MenuRessources extends Menu {

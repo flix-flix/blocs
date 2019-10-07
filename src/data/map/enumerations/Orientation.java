@@ -1,4 +1,4 @@
-package data.enumeration;
+package data.map.enumerations;
 
 public enum Orientation {
 	NORTH(Face.NORTH), EAST(Face.EAST), SOUTH(Face.SOUTH), WEST(Face.WEST);

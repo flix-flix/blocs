@@ -1,4 +1,4 @@
-package data.enumeration;
+package data.map.enumerations;
 
 public enum Face {
 

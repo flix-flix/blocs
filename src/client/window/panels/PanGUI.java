@@ -8,13 +8,11 @@ import java.awt.event.ComponentListener;
 
 import javax.swing.JPanel;
 
-import client.messages.Message;
-import client.session.Action;
-import client.session.GameMode;
 import client.session.Session;
+import client.session.UserAction;
 import client.window.graphicEngine.extended.ModelMap;
-import client.window.panels.menus.MenuButtonAction;
 import client.window.panels.menus.MenuButtonCube;
+import client.window.panels.menus.MenuButtonUserAction;
 import client.window.panels.menus.MenuCol;
 import client.window.panels.menus.MenuGrid;
 import client.window.panels.menus.MenuMap;
@@ -24,6 +22,8 @@ import data.map.Coord;
 import data.map.Cube;
 import data.map.buildings.Building;
 import data.map.units.Unit;
+import server.game.GameMode;
+import server.game.messages.Message;
 
 public class PanGUI extends JPanel {
 	private static final long serialVersionUID = 3929655843006244723L;
@@ -65,8 +65,8 @@ public class PanGUI extends JPanel {
 
 	MenuCol menu = new MenuCol(session);
 
-	Action[] _actions = { Action.MOUSE, Action.CREA_ADD, Action.CREA_DESTROY };
-	MenuButtonAction[] actions = new MenuButtonAction[_actions.length];
+	UserAction[] _userActions = { UserAction.MOUSE, UserAction.CREA_ADD, UserAction.CREA_DESTROY };
+	MenuButtonUserAction[] userActions = new MenuButtonUserAction[_userActions.length];
 
 	MenuGrid gridActions;
 
@@ -92,8 +92,8 @@ public class PanGUI extends JPanel {
 
 		menu.addTop(gridActions = new MenuGrid(session), 100);
 
-		for (int i = 0; i < _actions.length; i++)
-			gridActions.addItem(actions[i] = new MenuButtonAction(session, _actions[i]));
+		for (int i = 0; i < _userActions.length; i++)
+			gridActions.addItem(userActions[i] = new MenuButtonUserAction(session, _userActions[i]));
 
 		menu.addBottom(map = new MenuMap(session), MenuCol.WIDTH);
 		menu.addBottom(ress = new MenuRessources(session), 130);
@@ -219,13 +219,13 @@ public class PanGUI extends JPanel {
 	public void hideMenu() {
 		menu.setVisible(session.gamemode == GameMode.CLASSIC);
 
-		for (MenuButtonAction e : actions)
+		for (MenuButtonUserAction e : userActions)
 			e.selected = session.getAction() == e.action;
 
-		if (session.getAction() == Action.CREA_ADD)
+		if (session.getAction() == UserAction.CREA_ADD)
 			infos.showCubes();
 
-		if (session.getAction() == Action.MOUSE)
+		if (session.getAction() == UserAction.MOUSE)
 			infos.updateCube(null);
 	}
 

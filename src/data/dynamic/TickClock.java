@@ -1,4 +1,4 @@
-package client.session;
+package data.dynamic;
 
 import java.util.ArrayList;
 

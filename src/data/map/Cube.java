@@ -3,14 +3,14 @@ package data.map;
 import java.io.Serializable;
 
 import client.window.graphicEngine.calcul.Point3D;
-import data.ItemTable;
-import data.enumeration.ItemID;
-import data.enumeration.Orientation;
-import data.enumeration.Rotation;
+import data.id.ItemID;
+import data.id.ItemTable;
 import data.map.buildings.Building;
+import data.map.enumerations.Orientation;
+import data.map.enumerations.Rotation;
+import data.map.multiblocs.MultiBloc;
 import data.map.resources.Resource;
 import data.map.units.Unit;
-import data.multiblocs.MultiBloc;
 
 public class Cube implements Serializable {
 	private static final long serialVersionUID = 8529273004787197367L;

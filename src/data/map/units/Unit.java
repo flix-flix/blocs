@@ -3,14 +3,14 @@ package data.map.units;
 import java.io.Serializable;
 import java.util.LinkedList;
 
-import client.session.Action;
-import client.session.Player;
-import data.enumeration.Face;
-import data.enumeration.Orientation;
-import data.enumeration.Rotation;
+import data.dynamic.Action;
 import data.map.Coord;
 import data.map.Map;
+import data.map.enumerations.Face;
+import data.map.enumerations.Orientation;
+import data.map.enumerations.Rotation;
 import data.map.resources.Resource;
+import server.game.Player;
 import utils.FlixBlocksUtils;
 
 public class Unit implements Serializable {

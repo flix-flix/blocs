@@ -1,13 +1,10 @@
-package client.session;
+package data.dynamic;
 
 import java.awt.Image;
 
 import utils.FlixBlocksUtils;
 
 public enum Action {
-	// Menu
-	MOUSE, SELECT, CREA_ADD, CREA_DESTROY,
-
 	// Unit
 	GOTO, HARVEST, BUILD, DESTROY, DROP, ATTACK,
 

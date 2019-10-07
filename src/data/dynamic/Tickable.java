@@ -1,4 +1,4 @@
-package client.session;
+package data.dynamic;
 
 public interface Tickable {
 

@@ -1,4 +1,4 @@
-package client.session;
+package server.game;
 
 import java.io.Serializable;
 import java.util.LinkedList;

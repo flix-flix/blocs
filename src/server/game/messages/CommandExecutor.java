@@ -1,7 +1,8 @@
-package client.messages;
+package server.game.messages;
 
-import client.session.GameMode;
+import client.session.MessageManager;
 import client.session.Session;
+import server.game.GameMode;
 
 public class CommandExecutor {
 

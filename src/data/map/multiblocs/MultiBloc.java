@@ -1,4 +1,4 @@
-package data.multiblocs;
+package data.map.multiblocs;
 
 import java.io.Serializable;
 import java.util.LinkedList;

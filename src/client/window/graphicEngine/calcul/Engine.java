@@ -12,7 +12,7 @@ import client.window.graphicEngine.extended.ModelCube;
 import client.window.graphicEngine.structures.Draw;
 import client.window.graphicEngine.structures.Model;
 import client.window.graphicEngine.structures.Quadri;
-import data.enumeration.Face;
+import data.map.enumerations.Face;
 
 public class Engine {
 
