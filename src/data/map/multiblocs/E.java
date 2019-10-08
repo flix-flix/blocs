@@ -5,6 +5,7 @@ import data.id.ItemID;
 import data.map.Cube;
 
 public class E extends MultiBloc {
+	private static final long serialVersionUID = -4312589735027448825L;
 
 	public E(int x, int y, int z) {
 		super(0, 0, 0);

@@ -1,8 +1,8 @@
 package client.window.graphicEngine.extended;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 
+import client.extended.UnitClient;
 import client.window.graphicEngine.calcul.Camera;
 import client.window.graphicEngine.calcul.Matrix;
 import client.window.graphicEngine.structures.Draw;
@@ -36,29 +36,10 @@ public class ModelMap extends Map implements Model {
 	}
 
 	public ModelMap(Map map) {
-		name = map.getName();
-		for (int index : map.getChunks().keySet()) {
-			chunks.put(index, new ModelChunk(map.getChunks().get(index)));
+		super(map);
+
+		for (int index : map.getChunks().keySet())
 			updateChunk(chunks.get(index).x, chunks.get(index).z);
-		}
-
-		for (Cube u : map.getUnits())
-			units.add(new ModelCube(u));
-
-		multis = map.multis;
-
-		for (MultiBloc multi : multis) {
-			LinkedList<Cube> list = new LinkedList<>();
-
-			for (Cube c : multi.list) {
-				if (!(get(c) instanceof ModelCube))
-					System.out.println(c.toString());
-				list.add(get(c));
-			}
-
-			multi.list = list;
-		}
-
 	}
 
 	private void updateChunk(int xx, int zz) {
@@ -77,17 +58,24 @@ public class ModelMap extends Map implements Model {
 	}
 
 	@Override
+	public Chunk createChunk(Chunk chunk) {
+		return new ModelChunk(chunk);
+	}
+
+	@Override
 	protected ModelCube createCube(Cube c) {
 		return new ModelCube(c);
 	}
 
 	@Override
 	protected ModelCube createUnit(Unit unit) {
-		return new ModelCube(super.createUnit(unit));
+		if (unit instanceof UnitClient)
+			return new ModelCube(new Cube(unit));
+		return new ModelCube(new Cube(new UnitClient(unit)));
 	}
 
 	// =========================================================================================================================
-	// Getters : cast Cube to ModelCube
+	// Cast Getters
 
 	@Override
 	public ModelCube gridGet(Coord t) {
@@ -102,6 +90,11 @@ public class ModelMap extends Map implements Model {
 	@Override
 	public ModelChunk _getChunk(int x, int z) {
 		return (ModelChunk) super._getChunk(x, z);
+	}
+
+	@Override
+	public UnitClient getUnit(int unitID) {
+		return (UnitClient) super.getUnit(unitID);
 	}
 
 	// =========================================================================================================================
@@ -240,6 +233,7 @@ public class ModelMap extends Map implements Model {
 	}
 
 	// =========================================================================================================================
+	// Model
 
 	@Override
 	public ArrayList<Draw> getDraws(Camera camera) {
@@ -255,8 +249,8 @@ public class ModelMap extends Map implements Model {
 					nbChunks++;
 				}
 
-		for (Cube u : units)
-			draws.addAll(((ModelCube) u).getDraws(camera));
+		for (Cube c : units.values())
+			draws.addAll(((ModelCube) c).getDraws(camera));
 		nbFaces = draws.size();
 
 		return draws;
@@ -272,11 +266,12 @@ public class ModelMap extends Map implements Model {
 				if (_containsChunk(camChunkX + x, camChunkZ + z))
 					_getChunk(camChunkX + x, camChunkZ + z).init(camera, matrice);
 
-		for (Cube u : units)
-			((ModelCube) u).init(camera, matrice);
+		for (Cube c : units.values())
+			((ModelCube) c).init(camera, matrice);
 	}
 
 	// =========================================================================================================================
+	// Modele
 
 	@Override
 	public boolean isVisible() {

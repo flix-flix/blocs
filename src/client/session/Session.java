@@ -26,6 +26,9 @@ import data.map.enumerations.Orientation;
 import server.game.GameMode;
 import server.game.Player;
 import server.game.messages.Message;
+import server.send.SendAction;
+import server.send.SendServerAction;
+import utils.FlixBlocksUtils;
 
 public class Session implements Serializable {
 	private static final long serialVersionUID = 8569378400890835470L;
@@ -127,14 +130,16 @@ public class Session implements Serializable {
 	}
 
 	public void receive(Object obj) {
-		System.out.println("Received : " + obj.toString());
-
 		if (obj instanceof Map)
 			setMap(new ModelMap((Map) obj));
 		else if (obj instanceof Message)
 			messages.receive((Message) obj);
+		else if (obj instanceof SendAction)
+			receiveSend((SendAction) obj);
+		else if (obj instanceof SendServerAction)
+			receiveSendServer((SendServerAction) obj);
 		else
-			System.out.println("Unknown object");
+			System.err.println("Unknown object");
 	}
 
 	// =========================================================================================================================
@@ -301,4 +306,58 @@ public class Session implements Serializable {
 					map.setHighlight(cubeTarget, true);
 				}
 	}
+
+	// =========================================================================================================================
+	// Receive
+
+	public void receiveSend(SendAction send) {
+		switch (send.action) {
+		case GOTO:
+			map.getUnit(send.unitID).goTo(map, send.coord);
+			break;
+		case BUILD:
+			map.getUnit(send.unitID).doAction(send.action, map, send.coord);
+			break;
+		default:
+			FlixBlocksUtils.debug("[Client] missing receiveSend(): " + send.action);
+			break;
+		}
+	}
+
+	public void receiveSendServer(SendServerAction send) {
+		switch (send.action) {
+		case ADD:
+			// map.add(send.cube);
+			break;
+		case REMOVE:
+			// map.remove(send.coord);
+			break;
+		case ARRIVE:
+			map.getUnit(send.id).arrive(map);
+			break;
+		default:
+			FlixBlocksUtils.debug("[Client] missing receiveSend(): " + send.action);
+			break;
+		}
+	}
+
+	// =========================================================================================================================
+	// Send
+
+	public void unitDoAction() {
+		switch (unitAction) {
+		case GOTO:
+			send(new SendAction(unitAction, fen.gui.unit, cubeTarget.coords().face(faceTarget)));
+			break;
+		case BUILD:
+		case HARVEST:
+		case DROP:
+			send(new SendAction(unitAction, fen.gui.unit, cubeTarget.coords()));
+			break;
+		default:
+			FlixBlocksUtils.debug("[Client] Missing unitDoAction(): " + unitAction);
+			break;
+		}
+	}
+
 }

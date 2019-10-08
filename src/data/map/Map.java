@@ -2,7 +2,6 @@ package data.map;
 
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 
 import data.dynamic.Tickable;
@@ -17,9 +16,34 @@ public class Map implements Tickable, Serializable {
 	/** Chunks of the map (see {@link Map#getNumero(int, int)}) */
 	protected HashMap<Integer, Chunk> chunks = new HashMap<>();
 
-	protected LinkedList<Cube> units = new LinkedList<>();
+	protected HashMap<Integer, Cube> units = new HashMap<>();
+	protected HashMap<Integer, MultiBloc> multis = new HashMap<>();
 
-	public HashSet<MultiBloc> multis = new HashSet<>();
+	// =========================================================================================================================
+
+	public Map() {
+	}
+
+	public Map(Map map) {
+		name = map.getName();
+
+		for (int index : map.getChunks().keySet())
+			chunks.put(index, createChunk(map.getChunks().get(index)));
+
+		for (Cube c : map.getUnits().values())
+			units.put(c.unit.getId(), createUnit(c.unit));
+
+		multis = map.multis;
+
+		for (MultiBloc multi : multis.values()) {
+			LinkedList<Cube> list = new LinkedList<>();
+
+			for (Cube c : multi.list)
+				list.add(get(c));
+
+			multi.list = list;
+		}
+	}
 
 	// =========================================================================================================================
 
@@ -32,6 +56,10 @@ public class Map implements Tickable, Serializable {
 
 	public Chunk createChunk(int x, int z) {
 		return new Chunk(x, z);
+	}
+
+	public Chunk createChunk(Chunk chunk) {
+		return new Chunk(chunk);
 	}
 
 	protected Cube createCube(Cube cube) {
@@ -141,8 +169,8 @@ public class Map implements Tickable, Serializable {
 	 * @param multi
 	 *            - multibloc to add
 	 * @param full
-	 *            true : add blocs only if all can be added. false : add blocs where
-	 *            grid is empty
+	 *            - true : add blocs only if all can be added. false : add blocs
+	 *            where grid is empty.
 	 * @return true if the multibloc have been added
 	 */
 	protected boolean addMulti(MultiBloc multi, boolean full) {
@@ -162,7 +190,7 @@ public class Map implements Tickable, Serializable {
 		if (full && !all)
 			addMultiError(multi);
 		else
-			multis.add(multi);
+			multis.put(multi.getId(), multi);
 
 		return all;
 	}
@@ -172,7 +200,7 @@ public class Map implements Tickable, Serializable {
 	}
 
 	protected void removeMulti(MultiBloc multi) {
-		multis.remove(multi);
+		multis.remove(multi.getId());
 		for (Cube c : multi.list)
 			removeCube(c);
 	}
@@ -247,17 +275,21 @@ public class Map implements Tickable, Serializable {
 
 	public void addUnit(Unit unit) {
 		Cube c = createUnit(unit);
-		units.add(c);
+		units.put(unit.getId(), c);
 		gridAdd(c);
 	}
 
 	public void removeUnit(Unit unit) {
-		for (Cube c : units)
-			if (c.unit == unit) {
-				units.remove(c);
-				gridRemove(c.coords());
-				return;
-			}
+		if (units.containsKey(unit.getId()))
+			gridRemove(units.remove(unit.getId()).coords());
+	}
+
+	public Unit getUnit(int unitID) {
+		return units.get(unitID).unit;
+	}
+
+	public Unit getUnit(Unit unit) {
+		return getUnit(unit.getId());
 	}
 
 	// =========================================================================================================================
@@ -276,7 +308,7 @@ public class Map implements Tickable, Serializable {
 		return chunks;
 	}
 
-	public LinkedList<Cube> getUnits() {
+	public HashMap<Integer, Cube> getUnits() {
 		return units;
 	}
 

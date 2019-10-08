@@ -8,13 +8,17 @@ import data.map.Cube;
 public class MultiBloc implements Serializable {
 	private static final long serialVersionUID = 6445228941735562941L;
 
+	private static int nextID = 0;
+
 	public LinkedList<Cube> list = new LinkedList<>();
 
+	protected int id;
 	protected int x, y, z;
 
 	public boolean valid = true;
 
 	public MultiBloc(int x, int y, int z) {
+		id = nextID++;
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -54,5 +58,11 @@ public class MultiBloc implements Serializable {
 		MultiBloc m = new MultiBloc(x, y, z);
 		m.list.addAll(list);
 		return m;
+	}
+
+	// =========================================================================================================================
+
+	public int getId() {
+		return id;
 	}
 }

@@ -2,6 +2,7 @@ package client.window.graphicEngine.extended;
 
 import java.util.ArrayList;
 
+import client.extended.UnitClient;
 import client.textures.TexturePack;
 import client.window.graphicEngine.calcul.Camera;
 import client.window.graphicEngine.calcul.Matrix;
@@ -84,7 +85,7 @@ public class ModelCube extends Cube implements Model {
 		this.onGrid = c.onGrid;
 
 		this.multibloc = c.multibloc;
-		this.unit = c.unit;
+		this.unit = c.unit == null ? null : (c.unit instanceof UnitClient ? c.unit : new UnitClient(c.unit));
 		this.build = c.build;
 		this.resource = c.resource;
 
@@ -176,9 +177,9 @@ public class ModelCube extends Cube implements Model {
 	// =========================================================================================================================
 
 	public void updateFromUnit() {
-		rotaX = unit.ax;
-		rotaY = unit.ay;
-		rotaZ = unit.az;
+		rotaX = ((UnitClient) unit).ax;
+		rotaY = ((UnitClient) unit).ay;
+		rotaZ = ((UnitClient) unit).az;
 
 		x = unit.coord.x;
 		y = unit.coord.y;

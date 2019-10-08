@@ -10,7 +10,6 @@ import javax.swing.JPanel;
 
 import client.session.Session;
 import client.session.UserAction;
-import client.window.graphicEngine.extended.ModelMap;
 import client.window.panels.menus.MenuButtonCube;
 import client.window.panels.menus.MenuButtonUserAction;
 import client.window.panels.menus.MenuCol;
@@ -18,7 +17,6 @@ import client.window.panels.menus.MenuGrid;
 import client.window.panels.menus.MenuMap;
 import client.window.panels.menus.MenuRessources;
 import client.window.panels.menus.infos.MenuInfos;
-import data.map.Coord;
 import data.map.Cube;
 import data.map.buildings.Building;
 import data.map.units.Unit;
@@ -205,13 +203,6 @@ public class PanGUI extends JPanel {
 		infos.build.clear();
 		infos.unit.clear();
 		infos.updateCube(cube);
-	}
-
-	public void goTo(ModelMap map, Coord coord) {
-		if (unit != null)
-			unit.goTo(map, coord);
-		else if (build != null)
-			;// TODO Building spawn point
 	}
 
 	// =========================================================================================================================

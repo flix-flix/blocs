@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import data.dynamic.Action;
 import data.map.Coord;
 import data.map.Map;
+import data.map.buildings.Building;
 import data.map.enumerations.Face;
 import data.map.enumerations.Orientation;
 import data.map.enumerations.Rotation;
@@ -16,11 +17,13 @@ import utils.FlixBlocksUtils;
 public class Unit implements Serializable {
 	private static final long serialVersionUID = -3095427303288055442L;
 
-	private static final LinkedList<Coord> NO_NEW_PATH = new LinkedList<>();
+	private static int nextID = 0;
 
 	// ========== Data ==========
+	/** ID of the unit (allow server/client to communicate) */
+	protected int id;
 	/** Player controlling this unit */
-	Player player;
+	protected Player player;
 
 	// ========== Position ==========
 	/** Coords of the unit */
@@ -32,58 +35,90 @@ public class Unit implements Serializable {
 
 	// ========== Rotation (Step) ==========
 	/** The current step of the rotation */
-	private int movingStep;
+	protected int movingStep;
 	/** The number of steps to achieve the rotation */
-	private final int movingStepFinal = 20;
+	protected final int movingStepFinal = 20;
 
 	// ========== Rotation (Maths) ==========
 	/** Index of the cube's rotation point */
 	public int rotationPoint = 0;
-	/** For each axe : the rotation to perform to complete the rotation */
-	private int movingAngleX = 0, movingAngleY = 0, movingAngleZ = 0;
-	/** For each axe : the current rotation of the unit */
-	public double ax = 0, ay = 0, az = 0;
 
 	// ========== Rotation (End) ==========
 	/** Currently moving to this Coord (an adjacent bloc) (null if not moving) */
-	private Coord movingTo;
+	protected Coord movingTo;
 	/** Orientation at the end of the rotation */
-	private Orientation nextOrientation = orientation;
+	protected Orientation nextOrientation = orientation;
 	/** Rotation at the end of the rotation */
-	private Rotation nextRotation = rotation;
+	protected Rotation nextRotation = rotation;
 
 	/** This unit come from this Coord (an adjacent bloc) (null if just spawned) */
-	private Coord comingFrom;
+	protected Coord comingFrom;
 
 	// ========== Journey ==========
 	/** Coord of the destination (null if not traveling) */
-	private Coord destination;
+	protected Coord destination;
 	/** List of the coords to the destination */
-	private LinkedList<Coord> path;
+	protected LinkedList<Coord> path;
 	/** New path (stored till the end of the current rotation then replace path) */
-	private LinkedList<Coord> newPath = NO_NEW_PATH;
+	protected LinkedList<Coord> newPath;
+	/** true : path should be replaced by newPath */
+	protected boolean hasNewPath = false;
 
 	// ========== Action ==========
 	/** Action to do at the end of the deplacement */
-	private Action action = null;
+	protected Action action = null;
 	/** Bloc targeted by the action */
-	private Coord actionCube;
+	protected Coord actionCube;
 
 	// ========== Harvesting ==========
-	private Resource resource;
-	private int maxCapacity = 5;
+	protected Resource resource;
+	protected int maxCapacity = 5;
 
-	private int timeHarvest = 5;
-	private int alreadyHarvest = 0;
+	protected int timeHarvest = 5;
+	protected int alreadyHarvest = 0;
 
-	private int timeDrop = 2;
-	private int alreadyDrop = 0;
+	protected int timeDrop = 2;
+	protected int alreadyDrop = 0;
 
 	// =========================================================================================================================
 
 	public Unit(Player player, int x, int y, int z) {
+		id = nextID++;
 		this.player = player;
 		coord = new Coord(x, y, z);
+	}
+
+	protected Unit(Unit u) {
+		id = u.id;
+		player = u.player;
+		coord = u.coord;
+
+		orientation = u.orientation;
+		rotation = u.rotation;
+
+		movingStep = u.movingStep;
+		rotationPoint = u.rotationPoint;
+
+		movingTo = u.movingTo;
+		nextOrientation = u.nextOrientation;
+		nextRotation = u.nextRotation;
+		comingFrom = u.comingFrom;
+
+		destination = u.destination;
+		path = u.path;
+		newPath = u.newPath;
+
+		action = u.action;
+		actionCube = u.actionCube;
+
+		resource = u.resource;
+		maxCapacity = u.maxCapacity;
+
+		timeHarvest = u.timeHarvest;
+		alreadyHarvest = u.alreadyHarvest;
+		timeDrop = u.timeDrop;
+		alreadyDrop = u.alreadyDrop;
+
 	}
 
 	// =========================================================================================================================
@@ -95,106 +130,77 @@ public class Unit implements Serializable {
 			doAction(map);
 	}
 
-	/**
-	 * Increase the rotation by one step and re-calculate the corresponding angles
-	 */
-	public void doStep(Map map) {
+	/** Increase the rotation step by one */
+	public boolean doStep(Map map) {
 		if (movingTo == null)
-			return;
+			return false;
 
-		movingStep++;
-
-		if (movingStep < movingStepFinal) {
-			ax = (movingStep / (double) movingStepFinal) * movingAngleX;
-			ay = -(movingStep / (double) movingStepFinal) * movingAngleY;
-			az = (movingStep / (double) movingStepFinal) * movingAngleZ;
-		} else {
-			arrive(map);
-		}
+		return ++movingStep < movingStepFinal;
 	}
 
+	/** Increase the action step by one */
 	public void doAction(Map map) {
 		switch (action) {
-		case DESTROY:
-			if (map.gridGet(actionCube).addMined(1)) {// Cube break
-				map.remove(actionCube);
-				action = null;
-			}
+		case GOTO:
+			action = null;
 			break;
 		case BUILD:
-			if (map.gridGet(actionCube).build.addAlreadyBuild(1)) // Building created
-				action = null;
+			if (map.gridGet(actionCube) != null & map.gridGet(actionCube).build != null)
+				doBuild(map, map.gridGet(actionCube).build);
 			break;
 		case HARVEST:
-			alreadyHarvest++;
-
-			if (alreadyHarvest < timeHarvest)
+			if (++alreadyHarvest < timeHarvest)
 				break;// Keep working
 
 			alreadyHarvest = 0;
 
+			// TODO Avoid destruction of current Resource
 			if (resource == null || resource.getType() != map.gridGet(actionCube).getResource().getType())
 				resource = new Resource(map.gridGet(actionCube).getResource().getType(), 0, maxCapacity);
 
-			resource.add(map.gridGet(actionCube).resourceTake(1));
-
-			if (map.gridGet(actionCube).resourceIsEmpty()) { // Cube break
-				map.remove(actionCube);
-				action = null;
-			}
-
-			if (resource.isFull())
-				action = null;// TODO Go Drop
-
+			doHarvest(map);
 			break;
 		case DROP:
-			alreadyDrop++;
-
-			if (alreadyDrop < timeDrop)
+			if (++alreadyDrop < timeDrop)
 				break;// Keep working
 
 			alreadyDrop = 0;
 
-			if (map.gridGet(actionCube).build.addToStock(resource, 1))// Stock full
-				action = null;// TODO Except if there is another empty stock around
-			else if (resource.isEmpty()) {// TODO Go Harvest
-				removeResource();
-				action = null;
-			}
-
+			if (map.gridGet(actionCube) != null & map.gridGet(actionCube).build != null)
+				doDrop(map, map.gridGet(actionCube).build);
 			break;
 		case ATTACK:
 			break;
 		default:
-			FlixBlocksUtils.debug("Action " + action + " unimplemented");
+			FlixBlocksUtils.debugBefore("Action " + action + " unimplemented");
 		}
+	}
+
+	public void doBuild(Map map, Building build) {
+	}
+
+	public void doHarvest(Map map) {
+	}
+
+	public void doDrop(Map map, Building build) {
 	}
 
 	// =========================================================================================================================
 
 	/** Update cube position after the rotation */
-	public void arrive(Map map) {
+	protected void arrive() {
 		rotation = nextRotation;
 		orientation = nextOrientation;
 
 		movingStep = 0;
-		ax = 0;
-		ay = 0;
-		az = 0;
 
-		movingAngleX = 0;
-		movingAngleY = 0;
-		movingAngleZ = 0;
-
-		map.removeUnit(this);
 		comingFrom = coord;
 		coord = movingTo;
-		map.addUnit(this);
 		movingTo = null;
 
-		if (newPath != NO_NEW_PATH) {
+		if (hasNewPath) {
 			path = newPath;
-			newPath = NO_NEW_PATH;
+			hasNewPath = false;
 		}
 
 		if (path != null && !path.isEmpty())
@@ -206,7 +212,7 @@ public class Unit implements Serializable {
 	// =========================================================================================================================
 
 	/** Initialize a rotation to an adjacent position */
-	public void setDirection(Orientation dir) {
+	protected void setDirection(Orientation dir) {
 		movingTo = coord.face(dir.face);
 
 		nextRotation = orientation.next() == dir ? rotation.nextX() : rotation.previousX();
@@ -214,21 +220,15 @@ public class Unit implements Serializable {
 		switch (dir) {
 		case NORTH:
 			rotationPoint = 2;
-			movingAngleZ = -90;
 			break;
 		case EAST:
 			rotationPoint = 1;
-			movingAngleX = 90;
 			break;
 		case SOUTH:
 			rotationPoint = 0;
-			movingAngleZ = 90;
 			break;
 		case WEST:
 			rotationPoint = 0;
-			movingAngleX = -90;
-			break;
-		default:
 			break;
 		}
 	}
@@ -240,13 +240,9 @@ public class Unit implements Serializable {
 		switch (x) {
 		case 0:
 			if (orientation == Orientation.NORTH || orientation == Orientation.SOUTH) {
-				movingAngleX = -90;
-				movingAngleY = 90;
 				nextOrientation = orientation == Orientation.NORTH ? Orientation.WEST : Orientation.EAST;
 				nextRotation = orientation == Orientation.NORTH ? rotation.previousX() : rotation.nextX();
 			} else {
-				movingAngleY = -90;
-				movingAngleZ = 90;
 				nextOrientation = orientation == Orientation.WEST ? Orientation.NORTH : Orientation.SOUTH;
 				nextRotation = orientation == Orientation.WEST ? rotation.previousX() : rotation.nextX();
 			}
@@ -254,13 +250,9 @@ public class Unit implements Serializable {
 			break;
 		case 1:
 			if (orientation == Orientation.NORTH || orientation == Orientation.SOUTH) {
-				movingAngleX = 90;
-				movingAngleY = -90;
 				nextOrientation = orientation == Orientation.NORTH ? Orientation.EAST : Orientation.WEST;
 				nextRotation = orientation == Orientation.NORTH ? rotation.nextX() : rotation.previousX();
 			} else {
-				movingAngleY = 90;
-				movingAngleZ = 90;
 				nextOrientation = orientation == Orientation.WEST ? Orientation.SOUTH : Orientation.NORTH;
 				nextRotation = orientation == Orientation.WEST ? rotation.previousX() : rotation.nextX();
 			}
@@ -268,13 +260,9 @@ public class Unit implements Serializable {
 			break;
 		case 2:
 			if (orientation == Orientation.NORTH || orientation == Orientation.SOUTH) {
-				movingAngleX = 90;
-				movingAngleY = 90;
 				nextOrientation = orientation == Orientation.NORTH ? Orientation.WEST : Orientation.EAST;
 				nextRotation = orientation == Orientation.NORTH ? rotation.nextX() : rotation.previousX();
 			} else {
-				movingAngleY = -90;
-				movingAngleZ = -90;
 				nextOrientation = orientation == Orientation.WEST ? Orientation.NORTH : Orientation.SOUTH;
 				nextRotation = orientation == Orientation.WEST ? rotation.nextX() : rotation.previousX();
 			}
@@ -282,13 +270,9 @@ public class Unit implements Serializable {
 			break;
 		case 3:
 			if (orientation == Orientation.NORTH || orientation == Orientation.SOUTH) {
-				movingAngleX = -90;
-				movingAngleY = -90;
 				nextOrientation = orientation == Orientation.NORTH ? Orientation.EAST : Orientation.WEST;
 				nextRotation = orientation == Orientation.NORTH ? rotation.previousX() : rotation.nextX();
 			} else {
-				movingAngleY = 90;
-				movingAngleZ = -90;
 				nextOrientation = orientation == Orientation.WEST ? Orientation.SOUTH : Orientation.NORTH;
 				nextRotation = orientation == Orientation.WEST ? rotation.nextX() : rotation.previousX();
 			}
@@ -306,21 +290,15 @@ public class Unit implements Serializable {
 		switch (dir) {
 		case NORTH:
 			rotationPoint = 6;
-			movingAngleZ = -90;
 			break;
 		case EAST:
 			rotationPoint = 5;
-			movingAngleX = 90;
 			break;
 		case SOUTH:
 			rotationPoint = 4;
-			movingAngleZ = 90;
 			break;
 		case WEST:
 			rotationPoint = 4;
-			movingAngleX = -90;
-			break;
-		default:
 			break;
 		}
 	}
@@ -334,21 +312,15 @@ public class Unit implements Serializable {
 		switch (dir) {
 		case NORTH:
 			rotationPoint = 1;
-			movingAngleZ = -90;
 			break;
 		case EAST:
 			rotationPoint = 0;
-			movingAngleX = 90;
 			break;
 		case SOUTH:
 			rotationPoint = 3;
-			movingAngleZ = 90;
 			break;
 		case WEST:
 			rotationPoint = 1;
-			movingAngleX = -90;
-			break;
-		default:
 			break;
 		}
 	}
@@ -361,13 +333,9 @@ public class Unit implements Serializable {
 		if (orientation == Orientation.NORTH || orientation == Orientation.SOUTH) {
 			nextOrientation = orientation == Orientation.NORTH ? Orientation.WEST : Orientation.EAST;
 			nextRotation = orientation == Orientation.NORTH ? rotation.nextX() : rotation.previousX();
-			movingAngleX = 90;
-			movingAngleY = 90;
 		} else {
 			nextOrientation = orientation == Orientation.WEST ? Orientation.NORTH : Orientation.SOUTH;
 			nextRotation = orientation == Orientation.WEST ? rotation.previousX() : rotation.nextX();
-			movingAngleY = -90;
-			movingAngleZ = 90;
 		}
 	}
 
@@ -396,9 +364,10 @@ public class Unit implements Serializable {
 	}
 
 	private boolean setPath(LinkedList<Coord> path) {
-		if (isTraveling())
+		if (isTraveling()) {
 			newPath = path;
-		else {
+			hasNewPath = true;
+		} else {
 			this.path = path;
 			destination = (path == null || path.isEmpty()) ? null : path.getLast();
 			action = null;
@@ -411,7 +380,7 @@ public class Unit implements Serializable {
 
 	// =========================================================================================================================
 
-	public boolean doAction(Action action, Map map, Coord coord, Face face) {
+	public boolean doAction(Action action, Map map, Coord coord) {
 		if (!goAround(map, coord))
 			return false;
 
@@ -426,7 +395,7 @@ public class Unit implements Serializable {
 	public void doNextMove() {
 		Orientation dir = coord.getOrientation(path.peekFirst());
 
-		if (coord.y + 1 == path.peekFirst().y) {// Going up
+		if (path.size() >= 2 && coord.y + 1 == path.peekFirst().y) {// Going up
 			Orientation nextDir = path.get(0).getOrientation(path.get(1));
 
 			if (orientation.isSameAxe(nextDir))
@@ -495,6 +464,10 @@ public class Unit implements Serializable {
 
 	public void removeResource() {
 		resource = null;
+	}
+
+	public int getId() {
+		return id;
 	}
 
 	// =========================================================================================================================

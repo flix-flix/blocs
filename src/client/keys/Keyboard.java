@@ -94,10 +94,9 @@ public class Keyboard {
 					}
 				} else if (session.fen.gui.unit != null)
 					if (session.unitAction == Action.GOTO)// Set the destination
-						session.fen.gui.goTo(session.map, new Coord(session.cubeTarget).face(session.faceTarget));
+						session.unitDoAction();
 					else if (session.unitAction != null)// Do action
-						session.fen.gui.unit.doAction(session.unitAction, session.map, new Coord(session.cubeTarget),
-								session.faceTarget);
+						session.unitDoAction();
 			}
 
 			return;

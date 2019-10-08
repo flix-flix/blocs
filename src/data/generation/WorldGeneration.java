@@ -1,7 +1,6 @@
 package data.generation;
 
 import data.id.ItemID;
-import data.map.Coord;
 import data.map.Cube;
 import data.map.Map;
 import data.map.buildings.Building;
@@ -131,11 +130,11 @@ public class WorldGeneration {
 		// Add Unit
 		Unit u1 = new Unit(felix, 5, ground, 5);
 		map.addUnit(u1);
-		u1.goTo(map, new Coord(15, ground - 1, 9));
+		// u1.goTo(map, new Coord(15, ground - 1, 9));
 
 		Unit u2 = new Unit(felix, 6, ground, 2);
 		map.addUnit(u2);
-		u2.goTo(map, new Coord(10, ground, 2));
+		// u2.goTo(map, new Coord(10, ground, 2));
 
 		map.addUnit(new Unit(felix, 4, ground, 2));
 		map.addUnit(new Unit(felix, 5, ground, 2));

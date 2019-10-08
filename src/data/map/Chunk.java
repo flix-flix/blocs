@@ -25,6 +25,13 @@ public class Chunk implements Serializable {
 		this.z = z;
 	}
 
+	public Chunk(Chunk chunk) {
+		this(chunk.x, chunk.z);
+
+		grid = chunk.grid;
+		cubes = chunk.cubes;
+	}
+
 	// =========================================================================================================================
 	// Grid access without X, Y, Z verification
 

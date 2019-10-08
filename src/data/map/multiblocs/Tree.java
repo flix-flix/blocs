@@ -4,6 +4,7 @@ import data.id.ItemID;
 import data.map.Cube;
 
 public class Tree extends MultiBloc {
+	private static final long serialVersionUID = -29779535748503307L;
 
 	public Tree(int x, int y, int z) {
 		super(x, y, z);
