@@ -2,23 +2,73 @@ package server.send;
 
 import java.io.Serializable;
 
-import data.dynamic.Action;
 import data.map.Coord;
+import data.map.Cube;
+import data.map.buildings.Building;
 import data.map.units.Unit;
 
 public class SendAction implements Serializable {
 	private static final long serialVersionUID = -1472528237085430687L;
 
 	public Action action;
+	public Cube cube;
 	public Coord coord;
-	public int unitID = -1;
-	public int buildID = -1;
+	public int id1 = -1, id2 = -1;
 
 	// =========================================================================================================================
 
-	public SendAction(Action action, Unit unit, Coord coord) {
+	private SendAction(Action action, Cube cube) {
 		this.action = action;
-		this.unitID = unit.getId();
+		this.cube = cube;
+	}
+
+	private SendAction(Action action, Coord coord) {
+		this.action = action;
 		this.coord = coord;
 	}
+
+	private SendAction(Action action, int id) {
+		this.action = action;
+		this.id1 = id;
+	}
+
+	private SendAction(Action action, int id, Coord coord) {
+		this.action = action;
+		this.id1 = id;
+		this.coord = coord;
+	}
+
+	private SendAction(Action action, int id1, int id2) {
+		this.action = action;
+		this.id1 = id1;
+		this.id2 = id2;
+	}
+
+	// =========================================================================================================================
+
+	public static SendAction add(Cube c) {
+		return new SendAction(Action.ADD, c);
+	}
+
+	public static SendAction remove(Coord coord) {
+		return new SendAction(Action.REMOVE, coord);
+	}
+
+	// =========================================================================================================================
+
+	public static SendAction goTo(Unit unit, Coord coord) {
+		return new SendAction(Action.UNIT_GOTO, unit.getId(), coord);
+	}
+
+	public static SendAction arrive(Unit unit) {
+		return new SendAction(Action.UNIT_ARRIVE, unit.getId());
+	}
+
+	// =========================================================================================================================
+
+	public static SendAction build(Unit unit, Building build) {
+		return new SendAction(Action.UNIT_BUILD, unit.getId(), build.getId());
+	}
+
+	// =========================================================================================================================
 }

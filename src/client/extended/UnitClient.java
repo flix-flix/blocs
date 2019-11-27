@@ -1,11 +1,11 @@
 package client.extended;
 
-import data.dynamic.Action;
 import data.map.Coord;
 import data.map.Map;
 import data.map.buildings.Building;
 import data.map.enumerations.Orientation;
 import data.map.units.Unit;
+import server.send.Action;
 
 public class UnitClient extends Unit {
 	private static final long serialVersionUID = -5512638098833522685L;
@@ -78,7 +78,7 @@ public class UnitClient extends Unit {
 
 	/** Update cube position after the rotation */
 	public void arrive(Map map) {
-		map.removeUnit(this);
+		map.remove(coord);
 
 		ax = 0;
 		ay = 0;
@@ -89,7 +89,7 @@ public class UnitClient extends Unit {
 		movingAngleZ = 0;
 
 		super.arrive();
-		map.addUnit(this);
+		map.gridAdd(this);
 	}
 
 	@Override

@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import data.id.ItemID;
 import data.id.ItemTable;
+import data.map.Coord;
 import data.map.Cube;
 import data.map.multiblocs.MultiBloc;
 import data.map.resources.Resource;
@@ -14,6 +15,10 @@ import server.game.Player;
 public class Building implements Serializable {
 	private static final long serialVersionUID = -1662130293196731466L;
 
+	private static int nextID = 0;
+
+	private int id;
+	public Coord coord;
 	private Player player;
 	private ItemID itemID;
 	private MultiBloc multi;
@@ -28,6 +33,8 @@ public class Building implements Serializable {
 	// =========================================================================================================================
 
 	public Building(Player player, ItemID itemID, int x, int y, int z, boolean isBuild) {
+		id = nextID++;
+		coord = new Coord(x, y, z);
 		this.player = player;
 		this.itemID = itemID;
 		this.isBuild = isBuild;
@@ -108,6 +115,10 @@ public class Building implements Serializable {
 
 	public int getAlreadyBuild() {
 		return alreadyBuild;
+	}
+
+	public int getId() {
+		return id;
 	}
 
 	// =========================================================================================================================

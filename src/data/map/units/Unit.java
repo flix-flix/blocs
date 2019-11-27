@@ -3,7 +3,6 @@ package data.map.units;
 import java.io.Serializable;
 import java.util.LinkedList;
 
-import data.dynamic.Action;
 import data.map.Coord;
 import data.map.Map;
 import data.map.buildings.Building;
@@ -12,6 +11,7 @@ import data.map.enumerations.Orientation;
 import data.map.enumerations.Rotation;
 import data.map.resources.Resource;
 import server.game.Player;
+import server.send.Action;
 import utils.FlixBlocksUtils;
 
 public class Unit implements Serializable {
@@ -141,14 +141,14 @@ public class Unit implements Serializable {
 	/** Increase the action step by one */
 	public void doAction(Map map) {
 		switch (action) {
-		case GOTO:
+		case UNIT_GOTO:
 			action = null;
 			break;
-		case BUILD:
+		case UNIT_BUILD:
 			if (map.gridGet(actionCube) != null & map.gridGet(actionCube).build != null)
 				doBuild(map, map.gridGet(actionCube).build);
 			break;
-		case HARVEST:
+		case UNIT_HARVEST:
 			if (++alreadyHarvest < timeHarvest)
 				break;// Keep working
 
@@ -160,7 +160,7 @@ public class Unit implements Serializable {
 
 			doHarvest(map);
 			break;
-		case DROP:
+		case UNIT_STORE:
 			if (++alreadyDrop < timeDrop)
 				break;// Keep working
 
@@ -382,6 +382,16 @@ public class Unit implements Serializable {
 
 	public boolean doAction(Action action, Map map, Coord coord) {
 		if (!goAround(map, coord))
+			return false;
+
+		this.action = action;
+		this.actionCube = coord;
+
+		return true;
+	}
+
+	public boolean building(Action action, Map map, Building build) {
+		if (!goAround(map, build.getCube().coords()))
 			return false;
 
 		this.action = action;

@@ -16,7 +16,6 @@ import server.game.Player;
 import server.game.messages.Message;
 import server.game.messages.TypeMessage;
 import server.send.SendAction;
-import server.send.SendServerAction;
 
 public class Server implements Runnable {
 
@@ -121,12 +120,12 @@ public class Server implements Runnable {
 
 	public void receiveSend(SendAction send) {
 		switch (send.action) {
-		case GOTO:
-			map.getUnit(send.unitID).goTo(map, send.coord);
+		case UNIT_GOTO:
+			map.getUnit(send.id1).goTo(map, send.coord);
 			send(send);
 			break;
-		case BUILD:
-			map.getUnit(send.unitID).doAction(send.action, map, send.coord);
+		case UNIT_BUILD:
+			map.getUnit(send.id1).building(send.action, map, map.getBuilding(send.id2));
 			break;
 		default:
 			break;
@@ -150,18 +149,18 @@ public class Server implements Runnable {
 
 	public void addCube(Cube c) {
 		System.out.println("[SERVER] Add : " + c.toString());
-		send(SendServerAction.add(c));
+		send(SendAction.add(c));
 	}
 
 	public void removeCube(int x, int y, int z) {
 		System.out.println("[SERVER] Remove : " + new Coord(x, y, z).toString());
 		new Coord(x, y, z);
-		send(SendServerAction.remove(new Coord(x, y, z)));
+		send(SendAction.remove(new Coord(x, y, z)));
 	}
 
 	// =========================================================================================================================
 
 	public void unitArrive(Unit unit) {
-		send(SendServerAction.arrive(unit));
+		send(SendAction.arrive(unit));
 	}
 }

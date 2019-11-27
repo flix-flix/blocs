@@ -7,6 +7,9 @@ public class Resource implements Serializable {
 
 	public final int EVERYTHING = -1;
 
+	private static int nextID = 0;
+
+	private int id;
 	private ResourceType type;
 	private int max;
 	private int quantity;
@@ -14,6 +17,7 @@ public class Resource implements Serializable {
 	// =========================================================================================================================
 
 	public Resource(ResourceType type, int quantity, int max) {
+		id = nextID++;
 		this.type = type;
 		this.quantity = quantity;
 		this.max = max;
@@ -106,6 +110,10 @@ public class Resource implements Serializable {
 
 	public int getMax() {
 		return max;
+	}
+
+	public int getId() {
+		return id;
 	}
 
 	// =========================================================================================================================

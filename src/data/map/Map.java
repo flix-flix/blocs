@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 import data.dynamic.Tickable;
+import data.map.buildings.Building;
 import data.map.multiblocs.MultiBloc;
 import data.map.units.Unit;
 
@@ -16,8 +17,11 @@ public class Map implements Tickable, Serializable {
 	/** Chunks of the map (see {@link Map#getNumero(int, int)}) */
 	protected HashMap<Integer, Chunk> chunks = new HashMap<>();
 
-	protected HashMap<Integer, Cube> units = new HashMap<>();
+	/** Used to update references on cast */
 	protected HashMap<Integer, MultiBloc> multis = new HashMap<>();
+
+	protected HashMap<Integer, Cube> units = new HashMap<>();
+	protected HashMap<Integer, Cube> builds = new HashMap<>();
 
 	// =========================================================================================================================
 
@@ -68,6 +72,10 @@ public class Map implements Tickable, Serializable {
 
 	protected Cube createUnit(Unit unit) {
 		return new Cube(unit);
+	}
+
+	protected Cube createBuilding(Building build) {
+		return build.getCube();
 	}
 
 	// =========================================================================================================================
@@ -273,6 +281,10 @@ public class Map implements Tickable, Serializable {
 	// =========================================================================================================================
 	// Units
 
+	public Cube gridAdd(Unit unit) {
+		return gridAdd(createUnit(unit));
+	}
+
 	public void addUnit(Unit unit) {
 		Cube c = createUnit(unit);
 		units.put(unit.getId(), c);
@@ -284,12 +296,26 @@ public class Map implements Tickable, Serializable {
 			gridRemove(units.remove(unit.getId()).coords());
 	}
 
-	public Unit getUnit(int unitID) {
-		return units.get(unitID).unit;
+	public Unit getUnit(int id) {
+		return units.get(id).unit;
 	}
 
-	public Unit getUnit(Unit unit) {
-		return getUnit(unit.getId());
+	// =========================================================================================================================
+	// Buildings
+
+	public void addBuilding(Building build) {
+		Cube c = createBuilding(build);
+		builds.put(build.getId(), c);
+		add(c);
+	}
+
+	public void removeBuilding(Building build) {
+		if (builds.containsKey(build.getId()))
+			remove(builds.remove(build.getId()).coords());
+	}
+
+	public Building getBuilding(int id) {
+		return builds.get(id).build;
 	}
 
 	// =========================================================================================================================

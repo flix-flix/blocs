@@ -1,12 +1,12 @@
 package server.game;
 
-import data.dynamic.Action;
 import data.map.Coord;
 import data.map.Map;
 import data.map.buildings.Building;
 import data.map.enumerations.Orientation;
 import data.map.units.Unit;
 import server.Server;
+import server.send.Action;
 
 public class UnitServer extends Unit {
 	private static final long serialVersionUID = -296462819753986938L;
@@ -66,9 +66,9 @@ public class UnitServer extends Unit {
 
 	/** Update cube position after the rotation */
 	public void arrive(MapServer map) {
-		map.removeUnit(this);
+		map._gridRemove(this.coord);
 		super.arrive();
-		map.addUnit(this);
+		map._gridAdd(this);
 		server.unitArrive(this);
 	}
 

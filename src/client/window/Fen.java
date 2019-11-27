@@ -24,9 +24,9 @@ import client.window.panels.PanGUI;
 import client.window.panels.PanGame;
 import client.window.panels.PanPause;
 import client.window.panels.StateHUD;
-import data.dynamic.Action;
 import data.id.ItemTable;
 import server.game.GameMode;
+import server.send.Action;
 import utils.FlixBlocksUtils;
 
 public class Fen extends JFrame {
@@ -371,26 +371,26 @@ public class Fen extends JFrame {
 				switch (ItemTable.getResourceType(session.cubeTarget.itemID)) {
 				case WOOD:
 					cursor = cursorAxe;
-					session.unitAction = Action.HARVEST;
+					session.unitAction = Action.UNIT_HARVEST;
 					break;
 				case STONE:
 					cursor = cursorPickaxe;
-					session.unitAction = Action.HARVEST;
+					session.unitAction = Action.UNIT_HARVEST;
 					break;
 				case WATER:
 					cursor = cursorBucket;
-					session.unitAction = Action.HARVEST;
+					session.unitAction = Action.UNIT_HARVEST;
 					break;
 				}
 			else if (session.cubeTarget.build != null) {// Building
 				if (session.cubeTarget.build.getPlayer().equals(session.player)) {
 					if (!session.cubeTarget.build.isBuild()) {
 						cursor = cursorBuild;
-						session.unitAction = Action.BUILD;
+						session.unitAction = Action.UNIT_BUILD;
 					} else if (session.fen.gui.unit.hasResource()
 							&& session.cubeTarget.build.canStock(session.fen.gui.unit.getResource())) {// Stock
 						cursor = cursorDrop;
-						session.unitAction = Action.DROP;
+						session.unitAction = Action.UNIT_STORE;
 
 						switch (session.fen.gui.unit.getResource().getType()) {
 						case WOOD:
@@ -417,7 +417,7 @@ public class Fen extends JFrame {
 				}
 			} else {
 				cursor = cursorGoto;
-				session.unitAction = Action.GOTO;
+				session.unitAction = Action.UNIT_GOTO;
 			}
 
 		setCursor(cursor);

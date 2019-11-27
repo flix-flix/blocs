@@ -1,5 +1,6 @@
 package server.game;
 
+import data.map.Coord;
 import data.map.Cube;
 import data.map.Map;
 import data.map.multiblocs.MultiBloc;
@@ -32,21 +33,41 @@ public class MapServer extends Map {
 	}
 
 	// =========================================================================================================================
-	// Intercept grid modifications for update
+	// Intercept grid modifications for clients update
 
 	@Override
 	protected Cube gridAdd(Cube cube) {
 		Cube c = super.gridAdd(cube);
-		// if (c.unit != null)
-		// server.addCube(c);
+		server.addCube(c);
 		return c;
 	}
-
+	
 	@Override
 	protected void gridRemove(int x, int y, int z) {
 		super.gridRemove(x, y, z);
-		// server.removeCube(x, y, z);
+		server.removeCube(x, y, z);
 	}
+
+	// =========================================================================================================================
+	// Grid modification avoiding clients update
+
+	protected Cube _gridAdd(Cube cube) {
+		return super.gridAdd(cube);
+	}
+	
+	protected Cube _gridAdd(Unit unit) {
+		return super.gridAdd(createUnit(unit));
+	}
+
+	protected void _gridRemove(int x, int y, int z) {
+		super.gridRemove(x, y, z);
+	}
+
+	protected void _gridRemove(Coord coord) {
+		super.gridRemove(coord.x, coord.y, coord.z);
+	}
+
+	// =========================================================================================================================
 
 	@Override
 	protected boolean addMulti(MultiBloc multi, boolean full) {

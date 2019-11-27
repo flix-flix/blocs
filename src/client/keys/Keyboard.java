@@ -7,7 +7,6 @@ import client.session.Session;
 import client.session.UserAction;
 import client.window.graphicEngine.extended.ModelCube;
 import client.window.panels.StateHUD;
-import data.dynamic.Action;
 import data.map.Coord;
 import data.map.Cube;
 import data.map.enumerations.Orientation;
@@ -93,10 +92,7 @@ public class Keyboard {
 						session.map.setTargetable(model, true);
 					}
 				} else if (session.fen.gui.unit != null)
-					if (session.unitAction == Action.GOTO)// Set the destination
-						session.unitDoAction();
-					else if (session.unitAction != null)// Do action
-						session.unitDoAction();
+					session.unitDoAction();
 			}
 
 			return;

@@ -14,11 +14,11 @@ import client.window.graphicEngine.extended.ModelCube;
 import client.window.panels.menus.Menu;
 import client.window.panels.menus.MenuButtonAction;
 import client.window.panels.menus.MenuResource;
-import data.dynamic.Action;
 import data.id.ItemID;
 import data.map.Cube;
 import data.map.enumerations.Orientation;
 import data.map.units.Unit;
+import server.send.Action;
 
 public class MenuInfoUnit extends Menu {
 	private static final long serialVersionUID = -5061597857247176796L;

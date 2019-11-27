@@ -16,11 +16,11 @@ import client.window.panels.menus.Menu;
 import client.window.panels.menus.MenuButtonAction;
 import client.window.panels.menus.MenuGrid;
 import client.window.panels.menus.MenuResource;
-import data.dynamic.Action;
 import data.id.ItemID;
 import data.id.ItemTable;
 import data.map.buildings.Building;
 import data.map.resources.ResourceType;
+import server.send.Action;
 
 public class MenuInfosBuilding extends Menu {
 	private static final long serialVersionUID = -5061597857247176796L;
@@ -57,11 +57,11 @@ public class MenuInfosBuilding extends Menu {
 		stocks.setLocation(0, getHeight() - stocks.getHeight());
 		add(stocks);
 
-		spawn = new MenuButtonAction(session, Action.SPAWN);
+		spawn = new MenuButtonAction(session, Action.BUILDING_SPAWN);
 		spawn.setBounds(15, imgSize + 20, 75, 75);
 		add(spawn);
 
-		upgrade = new MenuButtonAction(session, Action.UPGRADE);
+		upgrade = new MenuButtonAction(session, Action.BUILDING_RESEARCH);
 		upgrade.setBounds(105, imgSize + 20, 75, 75);
 		add(upgrade);
 

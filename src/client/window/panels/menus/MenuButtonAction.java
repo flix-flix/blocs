@@ -6,7 +6,8 @@ import java.awt.Image;
 
 import client.session.Session;
 import client.window.graphicEngine.calcul.Engine;
-import data.dynamic.Action;
+import server.send.Action;
+import utils.FlixBlocksUtils;
 
 public class MenuButtonAction extends Menu {
 	private static final long serialVersionUID = -2696383944798968722L;
@@ -22,7 +23,7 @@ public class MenuButtonAction extends Menu {
 		super(session);
 		this.action = action;
 
-		img = action.getImage();
+		img = FlixBlocksUtils.getImage("menu/" + action.name().toLowerCase());
 	}
 
 	// =========================================================================================================================

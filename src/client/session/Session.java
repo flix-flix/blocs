@@ -15,7 +15,6 @@ import client.window.graphicEngine.calcul.Point3D;
 import client.window.graphicEngine.extended.ModelCube;
 import client.window.graphicEngine.extended.ModelMap;
 import client.window.panels.StateHUD;
-import data.dynamic.Action;
 import data.dynamic.TickClock;
 import data.id.ItemTable;
 import data.map.Coord;
@@ -26,8 +25,8 @@ import data.map.enumerations.Orientation;
 import server.game.GameMode;
 import server.game.Player;
 import server.game.messages.Message;
+import server.send.Action;
 import server.send.SendAction;
-import server.send.SendServerAction;
 import utils.FlixBlocksUtils;
 
 public class Session implements Serializable {
@@ -136,8 +135,6 @@ public class Session implements Serializable {
 			messages.receive((Message) obj);
 		else if (obj instanceof SendAction)
 			receiveSend((SendAction) obj);
-		else if (obj instanceof SendServerAction)
-			receiveSendServer((SendServerAction) obj);
 		else
 			System.err.println("Unknown object");
 	}
@@ -312,28 +309,22 @@ public class Session implements Serializable {
 
 	public void receiveSend(SendAction send) {
 		switch (send.action) {
-		case GOTO:
-			map.getUnit(send.unitID).goTo(map, send.coord);
-			break;
-		case BUILD:
-			map.getUnit(send.unitID).doAction(send.action, map, send.coord);
-			break;
-		default:
-			FlixBlocksUtils.debug("[Client] missing receiveSend(): " + send.action);
-			break;
-		}
-	}
-
-	public void receiveSendServer(SendServerAction send) {
-		switch (send.action) {
 		case ADD:
 			// map.add(send.cube);
 			break;
 		case REMOVE:
 			// map.remove(send.coord);
 			break;
-		case ARRIVE:
-			map.getUnit(send.id).arrive(map);
+
+		case UNIT_GOTO:
+			map.getUnit(send.id1).goTo(map, send.coord);
+			break;
+		case UNIT_ARRIVE:
+			map.getUnit(send.id1).arrive(map);
+			break;
+
+		case UNIT_BUILD:
+			map.getUnit(send.id1).doAction(send.action, map, send.coord);
 			break;
 		default:
 			FlixBlocksUtils.debug("[Client] missing receiveSend(): " + send.action);
@@ -346,13 +337,15 @@ public class Session implements Serializable {
 
 	public void unitDoAction() {
 		switch (unitAction) {
-		case GOTO:
-			send(new SendAction(unitAction, fen.gui.unit, cubeTarget.coords().face(faceTarget)));
+		case UNIT_GOTO:
+			send(SendAction.goTo(fen.gui.unit, cubeTarget.coords().face(faceTarget)));
 			break;
-		case BUILD:
-		case HARVEST:
-		case DROP:
-			send(new SendAction(unitAction, fen.gui.unit, cubeTarget.coords()));
+		case UNIT_BUILD:
+			send(SendAction.goTo(fen.gui.unit, cubeTarget.coords().face(faceTarget)));
+			break;
+		case UNIT_HARVEST:
+			break;
+		case UNIT_STORE:
 			break;
 		default:
 			FlixBlocksUtils.debug("[Client] Missing unitDoAction(): " + unitAction);
