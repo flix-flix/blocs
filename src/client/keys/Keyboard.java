@@ -58,6 +58,7 @@ public class Keyboard {
 
 	public void start() {
 		Thread cameraMovements = new Thread(new ThreadCameraMovements());
+		cameraMovements.setName("Camera Movements");
 		cameraMovements.start();
 	}
 

@@ -39,6 +39,7 @@ public class MenuInfoUnit extends Menu {
 		super(session);
 
 		update = new Thread(new Update());
+		update.setName("Update Unit infos");
 		update.start();
 
 		res = new MenuResource();

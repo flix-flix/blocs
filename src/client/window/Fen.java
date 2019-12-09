@@ -111,6 +111,9 @@ public class Fen extends JFrame {
 		threadActu = new Thread(new Actu());
 		threadImage = new Thread(new GetImg());
 
+		threadActu.setName("Max fps counter");
+		threadImage.setName("Image generator");
+
 		updateCursor();
 
 		// =========================================================================================================================
@@ -442,6 +445,9 @@ public class Fen extends JFrame {
 
 	// =========================================================================================================================
 
+	/**
+	 * Set "repaint" to true when it need a new image
+	 */
 	class Actu implements Runnable {
 		public void run() {
 			// Count the number of frames displayed since the last "second timer" restart
@@ -451,7 +457,7 @@ public class Fen extends JFrame {
 			// Store the time which the last second starts
 			long time = System.currentTimeMillis();
 			while (true) {
-				if (System.currentTimeMillis() - time >= 1000) {
+				if (System.currentTimeMillis() - time >= 1000) {// Update FPS infos
 					time = System.currentTimeMillis();
 
 					session.fps = fps;
@@ -482,6 +488,9 @@ public class Fen extends JFrame {
 		}
 	}
 
+	/**
+	 * Generates a new image if needed
+	 */
 	class GetImg implements Runnable {
 		public void run() {
 			while (true) {

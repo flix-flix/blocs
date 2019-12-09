@@ -26,6 +26,7 @@ public class MenuInfosResource extends Menu {
 		super(session);
 
 		update = new Thread(new Update());
+		update.setName("Update Ressource infos");
 		update.start();
 	}
 

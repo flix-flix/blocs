@@ -39,7 +39,9 @@ public class Client implements Runnable {
 			e.printStackTrace();
 		}
 
-		new Thread(this).start();
+		Thread t = new Thread(this);
+		t.setName("Client");
+		t.start();
 	}
 
 	@Override

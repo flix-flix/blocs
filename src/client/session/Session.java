@@ -146,7 +146,9 @@ public class Session implements Serializable {
 
 		fen.start();
 		keyboard.start();
-		new Thread(clock).start();
+		Thread tClock = new Thread(clock);
+		tClock.setName("Client clock");
+		tClock.start();
 	}
 
 	// =========================================================================================================================
@@ -336,6 +338,11 @@ public class Session implements Serializable {
 	// Send
 
 	public void unitDoAction() {
+		if (unitAction == null) {
+			System.out.println("Action NULL");
+			return;
+		}
+		
 		switch (unitAction) {
 		case UNIT_GOTO:
 			send(SendAction.goTo(fen.gui.unit, cubeTarget.coords().face(faceTarget)));

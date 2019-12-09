@@ -21,8 +21,6 @@ public class Server implements Runnable {
 
 	public static final int port = 1212;
 
-	Thread thread;
-
 	ServerSocket server;
 	boolean running = true;
 
@@ -43,15 +41,14 @@ public class Server implements Runnable {
 			e.printStackTrace();
 		}
 
-		thread = new Thread(this);
-		thread.start();
-
 		map = new MapServer(WorldGeneration.generateMap(), this);
 
 		TickClock clock = new TickClock();
 		clock.add(map);
 
-		new Thread(clock).start();
+		Thread t = new Thread(clock);
+		t.setName("Server Clock");
+		t.start();
 	}
 
 	// =========================================================================================================================

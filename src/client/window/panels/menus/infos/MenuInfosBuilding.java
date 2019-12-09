@@ -66,6 +66,7 @@ public class MenuInfosBuilding extends Menu {
 		add(upgrade);
 
 		update = new Thread(new Update());
+		update.setName("Update Building infos");
 		update.start();
 	}
 
