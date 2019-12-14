@@ -15,6 +15,8 @@ public class SendAction implements Serializable {
 	public Coord coord;
 	public int id1 = -1, id2 = -1;
 
+	public boolean done = false;
+
 	// =========================================================================================================================
 
 	private SendAction(Action action, Cube cube) {
@@ -46,6 +48,13 @@ public class SendAction implements Serializable {
 
 	// =========================================================================================================================
 
+	public SendAction finished() {
+		done = true;
+		return this;
+	}
+
+	// =========================================================================================================================
+
 	public static SendAction add(Cube c) {
 		return new SendAction(Action.ADD, c);
 	}
@@ -70,5 +79,13 @@ public class SendAction implements Serializable {
 		return new SendAction(Action.UNIT_BUILD, unit.getId(), build.getId());
 	}
 
+	public static SendAction store(Unit unit, Building build) {
+		return new SendAction(Action.UNIT_STORE, unit.getId(), build.getId());
+	}
+
 	// =========================================================================================================================
+
+	public static SendAction harvest(Unit unit, Coord coord) {
+		return new SendAction(Action.UNIT_HARVEST, unit.getId(), coord);
+	}
 }

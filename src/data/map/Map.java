@@ -37,6 +37,9 @@ public class Map implements Tickable, Serializable {
 		for (Cube c : map.getUnits().values())
 			units.put(c.unit.getId(), createUnit(c.unit));
 
+		for (Cube c : map.getBuilds().values())
+			builds.put(c.build.getId(), createBuilding(c.build));
+
 		multis = map.multis;
 
 		for (MultiBloc multi : multis.values()) {
@@ -268,7 +271,7 @@ public class Map implements Tickable, Serializable {
 		return gridGet(tuple.x, tuple.y, tuple.z);
 	}
 
-	protected void gridRemove(Coord tuple) {
+	public void gridRemove(Coord tuple) {
 		gridRemove(tuple.x, tuple.y, tuple.z);
 	}
 
@@ -318,6 +321,13 @@ public class Map implements Tickable, Serializable {
 		return builds.get(id).build;
 	}
 
+	public Building getBuilding(Coord coord) {
+		for (Cube cube : builds.values())
+			if (cube.multibloc.contains(coord))
+				return cube.build;
+		return null;
+	}
+
 	// =========================================================================================================================
 
 	public boolean isOnFloor(Coord c) {
@@ -336,6 +346,10 @@ public class Map implements Tickable, Serializable {
 
 	public HashMap<Integer, Cube> getUnits() {
 		return units;
+	}
+
+	public HashMap<Integer, Cube> getBuilds() {
+		return builds;
 	}
 
 	// =========================================================================================================================

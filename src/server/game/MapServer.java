@@ -3,6 +3,7 @@ package server.game;
 import data.map.Coord;
 import data.map.Cube;
 import data.map.Map;
+import data.map.buildings.Building;
 import data.map.multiblocs.MultiBloc;
 import data.map.units.Unit;
 import server.Server;
@@ -41,11 +42,22 @@ public class MapServer extends Map {
 		server.addCube(c);
 		return c;
 	}
-	
+
 	@Override
 	protected void gridRemove(int x, int y, int z) {
 		super.gridRemove(x, y, z);
 		server.removeCube(x, y, z);
+	}
+
+	// =========================================================================================================================
+
+	public void harvest(Unit unit, Coord coord) {
+		server.unitHarvest(unit, coord);
+		remove(coord);
+	}
+
+	public void store(Unit unit, Building build) {
+		server.unitStore(unit, build);
 	}
 
 	// =========================================================================================================================
@@ -54,7 +66,7 @@ public class MapServer extends Map {
 	protected Cube _gridAdd(Cube cube) {
 		return super.gridAdd(cube);
 	}
-	
+
 	protected Cube _gridAdd(Unit unit) {
 		return super.gridAdd(createUnit(unit));
 	}

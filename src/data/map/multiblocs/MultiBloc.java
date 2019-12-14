@@ -3,6 +3,7 @@ package data.map.multiblocs;
 import java.io.Serializable;
 import java.util.LinkedList;
 
+import data.map.Coord;
 import data.map.Cube;
 
 public class MultiBloc implements Serializable {
@@ -45,6 +46,15 @@ public class MultiBloc implements Serializable {
 		list.add(cube);
 	}
 
+	public boolean contains(Coord coord) {
+		for (Cube c : list)
+			if (c.coords().equals(coord))
+				return true;
+		return false;
+	}
+
+	// =========================================================================================================================
+
 	public void setCoords(int x, int y, int z) {
 		for (Cube c : list)
 			c.shiftCoords(x - this.x, y - this.y, z - this.z);
@@ -65,4 +75,5 @@ public class MultiBloc implements Serializable {
 	public int getId() {
 		return id;
 	}
+
 }

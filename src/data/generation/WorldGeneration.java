@@ -145,10 +145,10 @@ public class WorldGeneration {
 		// =========================================================================================================================
 		// Buildings
 
-		map.add(new Building(felix, ItemID.CASTLE, 25, ground, 3, true).getCube());
-		map.add(new Building(felix, ItemID.CASTLE, 13, ground, 3, false).getCube());
-		map.add(new Building(ia, ItemID.CASTLE, 26, ground, 9, true).getCube());
-		map.add(new Building(ia, ItemID.CASTLE, 30, ground, 9, false).getCube());
+		map.addBuilding(new Building(felix, ItemID.CASTLE, 25, ground, 3, true));
+		map.addBuilding(new Building(felix, ItemID.CASTLE, 13, ground, 3, false));
+		map.addBuilding(new Building(ia, ItemID.CASTLE, 26, ground, 9, true));
+		map.addBuilding(new Building(ia, ItemID.CASTLE, 30, ground, 9, false));
 
 		return map;
 	}

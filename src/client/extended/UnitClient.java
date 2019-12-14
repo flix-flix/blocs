@@ -4,6 +4,7 @@ import data.map.Coord;
 import data.map.Map;
 import data.map.buildings.Building;
 import data.map.enumerations.Orientation;
+import data.map.resources.Resource;
 import data.map.units.Unit;
 import server.send.Action;
 
@@ -47,28 +48,29 @@ public class UnitClient extends Unit {
 			action = null;
 	}
 
-	@Override
-	public void doHarvest(Map map) {
+	public void _doHarvest(Map map) {
 		super.doHarvest(map);
 
-		resource.add(map.gridGet(actionCube).resourceTake(1));
-
-		if (map.gridGet(actionCube).resourceIsEmpty()) { // Cube break
-			map.remove(actionCube);
-			action = null;
-		}
+		if (resource == null)
+			resource = new Resource(map.gridGet(actionCube).getResource().getType(), 0, maxCapacity);
 
 		if (resource.isFull())
 			action = null;// TODO Go Drop
+		else {
+			resource.add(1);
+
+			// Cube break
+			map.remove(actionCube);
+			action = null;// TODO Go store
+		}
 	}
 
-	@Override
-	public void doDrop(Map map, Building build) {
-		super.doDrop(map, build);
+	public void _doStore(Map map, Building build) {
+		super.doStore(map, build);
 
 		if (build.addToStock(resource, 1))// Stock full
 			action = null;// TODO Except if there is another empty stock around
-		else if (resource.isEmpty()) {// TODO Go Harvest
+		else if (resource == null || resource.isEmpty()) {// TODO Go Harvest
 			removeResource();
 			action = null;
 		}
@@ -78,7 +80,7 @@ public class UnitClient extends Unit {
 
 	/** Update cube position after the rotation */
 	public void arrive(Map map) {
-		map.remove(coord);
+		map.gridRemove(coord);
 
 		ax = 0;
 		ay = 0;

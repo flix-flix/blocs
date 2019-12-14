@@ -74,10 +74,10 @@ public class Unit implements Serializable {
 	protected Resource resource;
 	protected int maxCapacity = 5;
 
-	protected int timeHarvest = 5;
+	protected int timeHarvest = 50;
 	protected int alreadyHarvest = 0;
 
-	protected int timeDrop = 2;
+	protected int timeDrop = 20;
 	protected int alreadyDrop = 0;
 
 	// =========================================================================================================================
@@ -118,7 +118,6 @@ public class Unit implements Serializable {
 		alreadyHarvest = u.alreadyHarvest;
 		timeDrop = u.timeDrop;
 		alreadyDrop = u.alreadyDrop;
-
 	}
 
 	// =========================================================================================================================
@@ -144,10 +143,12 @@ public class Unit implements Serializable {
 		case UNIT_GOTO:
 			action = null;
 			break;
+
 		case UNIT_BUILD:
 			if (map.gridGet(actionCube) != null & map.gridGet(actionCube).build != null)
 				doBuild(map, map.gridGet(actionCube).build);
 			break;
+
 		case UNIT_HARVEST:
 			if (++alreadyHarvest < timeHarvest)
 				break;// Keep working
@@ -160,6 +161,7 @@ public class Unit implements Serializable {
 
 			doHarvest(map);
 			break;
+
 		case UNIT_STORE:
 			if (++alreadyDrop < timeDrop)
 				break;// Keep working
@@ -167,10 +169,12 @@ public class Unit implements Serializable {
 			alreadyDrop = 0;
 
 			if (map.gridGet(actionCube) != null & map.gridGet(actionCube).build != null)
-				doDrop(map, map.gridGet(actionCube).build);
+				doStore(map, map.gridGet(actionCube).build);
 			break;
+
 		case ATTACK:
 			break;
+
 		default:
 			FlixBlocksUtils.debugBefore("Action " + action + " unimplemented");
 		}
@@ -182,7 +186,7 @@ public class Unit implements Serializable {
 	public void doHarvest(Map map) {
 	}
 
-	public void doDrop(Map map, Building build) {
+	public void doStore(Map map, Building build) {
 	}
 
 	// =========================================================================================================================
@@ -195,7 +199,10 @@ public class Unit implements Serializable {
 		movingStep = 0;
 
 		comingFrom = coord;
-		coord = movingTo;
+		if (movingTo == null)
+			System.err.println("ERROR movingTo = null " + Thread.currentThread().getName());
+		else
+			coord = movingTo;
 		movingTo = null;
 
 		if (hasNewPath) {
@@ -352,6 +359,7 @@ public class Unit implements Serializable {
 
 	/** The unit will goto the closest bloc next to the target (not on top) */
 	public boolean goAround(Map map, Coord end) {
+		System.out.println("end: " + end.toString());
 		LinkedList<Coord> path = null, temp;
 
 		for (Face face : new Face[] { Face.DOWN, Face.NORTH, Face.EAST, Face.SOUTH, Face.WEST })
@@ -359,7 +367,8 @@ public class Unit implements Serializable {
 					end.face(face))) != null)
 				if (path == null || temp.size() < path.size())
 					path = temp;
-
+		for (Coord c : path)
+			System.out.println(c);
 		return setPath(path);
 	}
 
@@ -390,12 +399,32 @@ public class Unit implements Serializable {
 		return true;
 	}
 
-	public boolean building(Action action, Map map, Building build) {
+	public boolean building(Map map, Building build) {
 		if (!goAround(map, build.getCube().coords()))
 			return false;
 
-		this.action = action;
+		this.action = Action.UNIT_BUILD;
+		this.actionCube = build.getCube().coords();
+
+		return true;
+	}
+
+	public boolean harvest(Map map, Coord coord) {
+		if (!goAround(map, coord))
+			return false;
+
+		this.action = Action.UNIT_HARVEST;
 		this.actionCube = coord;
+
+		return true;
+	}
+
+	public boolean store(Map map, Building build) {
+		if (!goAround(map, build.getCube().coords()))
+			return false;
+
+		this.action = Action.UNIT_STORE;
+		this.actionCube = build.getCube().coords();
 
 		return true;
 	}
@@ -484,6 +513,6 @@ public class Unit implements Serializable {
 
 	@Override
 	public String toString() {
-		return "I'm an unit of " + player.getName();
+		return "Player: " + player.getName() + " | Coords: " + (coord == null ? null : coord.toString());
 	}
 }

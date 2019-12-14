@@ -22,6 +22,7 @@ import data.map.Cube;
 import data.map.Map;
 import data.map.enumerations.Face;
 import data.map.enumerations.Orientation;
+import data.map.units.Unit;
 import server.game.GameMode;
 import server.game.Player;
 import server.game.messages.Message;
@@ -310,12 +311,13 @@ public class Session implements Serializable {
 	// Receive
 
 	public void receiveSend(SendAction send) {
+		System.out.println("[Client RECEIVE] " + send.action + " done: " + send.done);
 		switch (send.action) {
 		case ADD:
 			// map.add(send.cube);
 			break;
 		case REMOVE:
-			// map.remove(send.coord);
+			map.remove(send.coord);
 			break;
 
 		case UNIT_GOTO:
@@ -326,7 +328,21 @@ public class Session implements Serializable {
 			break;
 
 		case UNIT_BUILD:
-			map.getUnit(send.id1).doAction(send.action, map, send.coord);
+			map.getUnit(send.id1).building(map, map.getBuilding(send.id2));
+			break;
+
+		case UNIT_HARVEST:
+			if (send.done)
+				map.getUnit(send.id1)._doHarvest(map);
+			else
+				map.getUnit(send.id1).harvest(map, send.coord);
+			break;
+
+		case UNIT_STORE:
+			if (send.done)
+				map.getUnit(send.id1)._doStore(map, map.getBuilding(send.id2));
+			else
+				map.getUnit(send.id1).store(map, map.getBuilding(send.id2));
 			break;
 		default:
 			FlixBlocksUtils.debug("[Client] missing receiveSend(): " + send.action);
@@ -342,17 +358,23 @@ public class Session implements Serializable {
 			System.out.println("Action NULL");
 			return;
 		}
-		
+
+		Unit unit = fen.gui.unit;
+		Coord cube = cubeTarget.coords();// Pointed cube
+		Coord cubeAir = cubeTarget.coords().face(faceTarget);// Cube adjacent to the pointed face (in the air)
+
 		switch (unitAction) {
 		case UNIT_GOTO:
-			send(SendAction.goTo(fen.gui.unit, cubeTarget.coords().face(faceTarget)));
+			send(SendAction.goTo(unit, cubeAir));
 			break;
 		case UNIT_BUILD:
-			send(SendAction.goTo(fen.gui.unit, cubeTarget.coords().face(faceTarget)));
+			send(SendAction.build(unit, map.getBuilding(cube)));
 			break;
 		case UNIT_HARVEST:
+			send(SendAction.harvest(unit, cube));
 			break;
 		case UNIT_STORE:
+			send(SendAction.store(unit, map.getBuilding(cube)));
 			break;
 		default:
 			FlixBlocksUtils.debug("[Client] Missing unitDoAction(): " + unitAction);

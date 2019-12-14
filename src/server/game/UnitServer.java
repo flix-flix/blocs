@@ -39,24 +39,26 @@ public class UnitServer extends Unit {
 	public void doHarvest(Map map) {
 		super.doHarvest(map);
 
-		resource.add(map.gridGet(actionCube).resourceTake(1));
+		if (resource.isFull())
+			action = null;// TODO Go store
+		else {
+			resource.add(1);
 
-		if (map.gridGet(actionCube).resourceIsEmpty()) { // Cube break
-			map.remove(actionCube);
+			((MapServer) map).harvest(this, actionCube);// Cube break
 			action = null;
 		}
-
-		if (resource.isFull())
-			action = null;// TODO Go Drop
 	}
 
 	@Override
-	public void doDrop(Map map, Building build) {
-		super.doDrop(map, build);
+	public void doStore(Map map, Building build) {
+		super.doStore(map, build);
 
 		if (build.addToStock(resource, 1))// Stock full
 			action = null;// TODO Except if there is another empty stock around
-		else if (resource.isEmpty()) {// TODO Go Harvest
+
+		((MapServer) map).store(this, build);
+
+		if (resource == null || resource.isEmpty()) {// TODO Go Harvest
 			removeResource();
 			action = null;
 		}
