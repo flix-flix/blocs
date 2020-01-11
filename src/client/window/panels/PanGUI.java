@@ -2,6 +2,7 @@ package client.window.panels;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -31,6 +32,11 @@ public class PanGUI extends JPanel implements ButtonContainer {
 
 	// Dialog font
 	Font font = new Font("monospace", Font.BOLD, 18);
+
+	// Work In Progress
+	String wip = "WORK IN PROGRESS";
+	Font fontWIP = new Font("monospace", Font.BOLD, 30);
+	FontMetrics fm = getFontMetrics(fontWIP);
 
 	// ======================= Graphics =========================
 
@@ -124,6 +130,9 @@ public class PanGUI extends JPanel implements ButtonContainer {
 				g.drawLine(centerX, centerY - crossSize, centerX, centerY + crossSize - 1);
 			}
 
+			g.setColor(Color.WHITE);
+			g.setFont(fontWIP);
+			g.drawString(wip, getWidth() - fm.stringWidth(wip) - 10, getHeight() - 10);
 			break;
 
 		case DIALOG:
