@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 import data.dynamic.Tickable;
+import data.id.ItemID;
 import data.map.buildings.Building;
 import data.map.multiblocs.MultiBloc;
 import data.map.units.Unit;
@@ -334,6 +335,11 @@ public class Map implements Tickable, Serializable {
 		return gridContains(c.x, c.y - 1, c.z);
 	}
 
+	// =========================================================================================================================
+
+	public ItemID getPixelMapRepresentation(int x, int z) {
+		return getChunkAtCoord(x, z).getHighestCube(x, z);
+	}
 	// =========================================================================================================================
 
 	public String getName() {

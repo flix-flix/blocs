@@ -3,6 +3,8 @@ package data.map;
 import java.io.Serializable;
 import java.util.HashSet;
 
+import data.id.ItemID;
+
 public class Chunk implements Serializable {
 	private static final long serialVersionUID = -8763834020086820609L;
 
@@ -82,6 +84,17 @@ public class Chunk implements Serializable {
 		if (wrongY(y))
 			return false;
 		return _gridContains(toInChunkCoord(x), y, toInChunkCoord(z));
+	}
+
+	// =========================================================================================================================
+
+	public ItemID getHighestCube(int _x, int _z) {
+		int x = toInChunkCoord(_x), z = toInChunkCoord(_z);
+
+		for (int y = Y - 1; y >= 0; y--)
+			if (grid[x][y][z] != null)
+				return grid[x][y][z].itemID;
+		return null;
 	}
 
 	// =========================================================================================================================
