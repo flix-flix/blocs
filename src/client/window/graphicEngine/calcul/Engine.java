@@ -245,6 +245,9 @@ public class Engine {
 	 * @return mixed color {@link BufferedImage#TYPE_INT_ARGB}
 	 */
 	public static int mixARGB(int a, int b) {
+		if (a == b)
+			return a;
+
 		int aA = (a >> 24) & 0xff;
 		int aR = (a >> 16) & 0xff;
 		int aG = (a >> 8) & 0xff;
