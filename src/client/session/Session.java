@@ -103,7 +103,7 @@ public class Session implements Serializable {
 		texturePack = new TexturePack();
 		ModelCube.texturePack = texturePack;
 
-		new Fen(this);
+		fen = new Fen(this);
 
 		client = new Client(this);
 
@@ -179,7 +179,7 @@ public class Session implements Serializable {
 	public void setGameMode(GameMode gameMode) {
 		this.gamemode = gameMode;
 
-		fen.gui.hideMenu();
+		fen.gui.refreshGUI();
 
 		switch (gameMode) {
 		case CLASSIC:

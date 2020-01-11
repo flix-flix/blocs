@@ -5,7 +5,7 @@ import java.awt.Image;
 import utils.FlixBlocksUtils;
 
 public enum UserAction {
-	MOUSE, CREA_ADD, CREA_DESTROY;
+	MOUSE, CREA_ADD, CREA_DESTROY, EDITOR;
 
 	// =========================================================================================================================
 

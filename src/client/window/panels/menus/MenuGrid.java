@@ -86,7 +86,8 @@ public class MenuGrid extends Menu {
 			int col = i % cols;
 
 			menu.setLocation((size + padding) * col, ((rowHeight == SQUARE ? size : rowHeight) + padding) * row);
-			menu.setSize(size+(col == cols - 1 ? getWidth() - cols * size : 0), rowHeight == SQUARE ? size : rowHeight);
+			menu.setSize(size + (col == cols - 1 ? getWidth() - cols * size : 0),
+					rowHeight == SQUARE ? size : rowHeight);
 		}
 
 		int rows = list.size() / cols + (list.size() % cols == 0 ? 0 : 1);

@@ -19,9 +19,14 @@ public class MenuButtonAction extends Menu {
 
 	public boolean selected;
 
-	public MenuButtonAction(Session session, Action action) {
+	private ButtonContainer container;
+
+	// =========================================================================================================================
+
+	public MenuButtonAction(Session session, Action action, ButtonContainer container) {
 		super(session);
 		this.action = action;
+		this.container = container;
 
 		img = FlixBlocksUtils.getImage("menu/" + action.name().toLowerCase());
 	}
@@ -54,7 +59,7 @@ public class MenuButtonAction extends Menu {
 
 	@Override
 	public void click() {
-		session.fen.gui.hideMenu();
+		container.releaseButtons();
 		selected = true;
 	}
 }

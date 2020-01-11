@@ -71,15 +71,7 @@ public class MenuInfosResource extends Menu {
 
 	public void clear() {
 		cube = null;
-	}
-
-	// =========================================================================================================================
-
-	@Override
-	public void setVisible(boolean b) {
-		super.setVisible(b);
-		if (!b)
-			cube = null;
+		setVisible(false);
 	}
 
 	// =========================================================================================================================

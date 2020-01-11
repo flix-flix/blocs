@@ -12,6 +12,7 @@ import client.window.graphicEngine.calcul.Camera;
 import client.window.graphicEngine.calcul.Engine;
 import client.window.graphicEngine.calcul.Point3D;
 import client.window.graphicEngine.extended.ModelMap;
+import client.window.panels.menus.ButtonContainer;
 import client.window.panels.menus.Menu;
 import client.window.panels.menus.MenuButtonAction;
 import client.window.panels.menus.MenuGrid;
@@ -22,7 +23,7 @@ import data.map.buildings.Building;
 import data.map.resources.ResourceType;
 import server.send.Action;
 
-public class MenuInfosBuilding extends Menu {
+public class MenuInfosBuilding extends Menu implements ButtonContainer {
 	private static final long serialVersionUID = -5061597857247176796L;
 
 	private Font font = new Font("monospace", Font.PLAIN, 12);
@@ -39,6 +40,7 @@ public class MenuInfosBuilding extends Menu {
 	// =========================================================================================================================
 
 	private MenuButtonAction spawn, upgrade;
+	private MenuButtonAction[] buttons;
 	private MenuGrid stocks;
 
 	// =========================================================================================================================
@@ -57,13 +59,15 @@ public class MenuInfosBuilding extends Menu {
 		stocks.setLocation(0, getHeight() - stocks.getHeight());
 		add(stocks);
 
-		spawn = new MenuButtonAction(session, Action.BUILDING_SPAWN);
+		spawn = new MenuButtonAction(session, Action.BUILDING_SPAWN, this);
 		spawn.setBounds(15, imgSize + 20, 75, 75);
 		add(spawn);
 
-		upgrade = new MenuButtonAction(session, Action.BUILDING_RESEARCH);
+		upgrade = new MenuButtonAction(session, Action.BUILDING_RESEARCH, this);
 		upgrade.setBounds(105, imgSize + 20, 75, 75);
 		add(upgrade);
+
+		buttons = new MenuButtonAction[] { spawn, upgrade };
 
 		update = new Thread(new Update());
 		update.setName("Update Building infos");
@@ -155,6 +159,8 @@ public class MenuInfosBuilding extends Menu {
 
 	public void clear() {
 		build = null;
+		setVisible(false);
+		releaseButtons();
 	}
 
 	// =========================================================================================================================
@@ -170,13 +176,6 @@ public class MenuInfosBuilding extends Menu {
 	}
 
 	// =========================================================================================================================
-
-	@Override
-	public void setVisible(boolean b) {
-		super.setVisible(b);
-		if (!b)
-			build = null;
-	}
 
 	@Override
 	public void setSize(int width, int height) {
@@ -208,5 +207,13 @@ public class MenuInfosBuilding extends Menu {
 				}
 			}
 		}
+	}
+
+	// =========================================================================================================================
+
+	@Override
+	public void releaseButtons() {
+		for (MenuButtonAction b : buttons)
+			b.selected = false;
 	}
 }

@@ -19,6 +19,7 @@ import javax.swing.JFrame;
 
 import client.keys.Key;
 import client.session.Session;
+import client.session.UserAction;
 import client.window.panels.PanDevlop;
 import client.window.panels.PanGUI;
 import client.window.panels.PanGame;
@@ -75,7 +76,6 @@ public class Fen extends JFrame {
 
 	public Fen(Session session) {
 		this.session = session;
-		session.fen = this;
 
 		// ======================================
 
@@ -368,60 +368,61 @@ public class Fen extends JFrame {
 
 		if (!cursorVisible)
 			cursor = cursorInvisible;
-		else if (session.cubeTarget != null && session.fen.gui.unit != null
-				&& session.fen.gui.unit.getPlayer().equals(session.player))
-			if (ItemTable.isResource(session.cubeTarget.itemID))// Harvestable
-				switch (ItemTable.getResourceType(session.cubeTarget.itemID)) {
-				case WOOD:
-					cursor = cursorAxe;
-					session.unitAction = Action.UNIT_HARVEST;
-					break;
-				case STONE:
-					cursor = cursorPickaxe;
-					session.unitAction = Action.UNIT_HARVEST;
-					break;
-				case WATER:
-					cursor = cursorBucket;
-					session.unitAction = Action.UNIT_HARVEST;
-					break;
-				}
-			else if (session.cubeTarget.build != null) {// Building
-				if (session.cubeTarget.build.getPlayer().equals(session.player)) {
-					if (!session.cubeTarget.build.isBuild()) {
-						cursor = cursorBuild;
-						session.unitAction = Action.UNIT_BUILD;
-					} else if (session.fen.gui.unit.hasResource()
-							&& session.cubeTarget.build.canStock(session.fen.gui.unit.getResource())) {// Stock
-						cursor = cursorDrop;
-						session.unitAction = Action.UNIT_STORE;
-
-						switch (session.fen.gui.unit.getResource().getType()) {
-						case WOOD:
-							cursor = cursorDropWood;
-							break;
-						case STONE:
-							cursor = cursorDropStone;
-							break;
-						case WATER:
-							cursor = cursorDropWater;
-							break;
-						}
+		else if (session.getAction() == UserAction.MOUSE)
+			if (session.cubeTarget != null && session.fen.gui.unit != null
+					&& session.fen.gui.unit.getPlayer().equals(session.player))
+				if (ItemTable.isResource(session.cubeTarget.itemID))// Harvestable
+					switch (ItemTable.getResourceType(session.cubeTarget.itemID)) {
+					case WOOD:
+						cursor = cursorAxe;
+						session.unitAction = Action.UNIT_HARVEST;
+						break;
+					case STONE:
+						cursor = cursorPickaxe;
+						session.unitAction = Action.UNIT_HARVEST;
+						break;
+					case WATER:
+						cursor = cursorBucket;
+						session.unitAction = Action.UNIT_HARVEST;
+						break;
 					}
-				} else {// Opponent
-					cursor = cursorAttack;
-					session.unitAction = Action.ATTACK;
-				}
-			} else if (session.cubeTarget.unit != null) {// Unit
-				if (session.cubeTarget.unit.getPlayer().equals(session.player)) {// Own
+				else if (session.cubeTarget.build != null) {// Building
+					if (session.cubeTarget.build.getPlayer().equals(session.player)) {
+						if (!session.cubeTarget.build.isBuild()) {
+							cursor = cursorBuild;
+							session.unitAction = Action.UNIT_BUILD;
+						} else if (session.fen.gui.unit.hasResource()
+								&& session.cubeTarget.build.canStock(session.fen.gui.unit.getResource())) {// Stock
+							cursor = cursorDrop;
+							session.unitAction = Action.UNIT_STORE;
 
-				} else {// Opponent
-					cursor = cursorAttack;
-					session.unitAction = Action.ATTACK;
+							switch (session.fen.gui.unit.getResource().getType()) {
+							case WOOD:
+								cursor = cursorDropWood;
+								break;
+							case STONE:
+								cursor = cursorDropStone;
+								break;
+							case WATER:
+								cursor = cursorDropWater;
+								break;
+							}
+						}
+					} else {// Opponent
+						cursor = cursorAttack;
+						session.unitAction = Action.ATTACK;
+					}
+				} else if (session.cubeTarget.unit != null) {// Unit
+					if (session.cubeTarget.unit.getPlayer().equals(session.player)) {// Own
+
+					} else {// Opponent
+						cursor = cursorAttack;
+						session.unitAction = Action.ATTACK;
+					}
+				} else {
+					cursor = cursorGoto;
+					session.unitAction = Action.UNIT_GOTO;
 				}
-			} else {
-				cursor = cursorGoto;
-				session.unitAction = Action.UNIT_GOTO;
-			}
 
 		setCursor(cursor);
 	}

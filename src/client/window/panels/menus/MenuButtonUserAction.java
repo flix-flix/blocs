@@ -65,7 +65,6 @@ public class MenuButtonUserAction extends Menu {
 	@Override
 	public void click() {
 		session.setAction(action);
-		session.fen.gui.hideMenu();
-		selected = true;
+		session.fen.gui.releaseButtons();
 	}
 }

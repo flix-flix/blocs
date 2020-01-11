@@ -11,6 +11,7 @@ import client.window.graphicEngine.calcul.Camera;
 import client.window.graphicEngine.calcul.Engine;
 import client.window.graphicEngine.calcul.Point3D;
 import client.window.graphicEngine.extended.ModelCube;
+import client.window.panels.menus.ButtonContainer;
 import client.window.panels.menus.Menu;
 import client.window.panels.menus.MenuButtonAction;
 import client.window.panels.menus.MenuResource;
@@ -20,7 +21,7 @@ import data.map.enumerations.Orientation;
 import data.map.units.Unit;
 import server.send.Action;
 
-public class MenuInfoUnit extends Menu {
+public class MenuInfoUnit extends Menu implements ButtonContainer {
 	private static final long serialVersionUID = -5061597857247176796L;
 
 	private Thread update;
@@ -31,9 +32,12 @@ public class MenuInfoUnit extends Menu {
 	private Unit unit;
 
 	private MenuResource res;
-	private MenuButtonAction drop;
+	private MenuButtonAction destroy;
+	private MenuButtonAction[] buttons;
 
 	private Font font = new Font("monospace", Font.PLAIN, 12);
+
+	// =========================================================================================================================
 
 	public MenuInfoUnit(Session session) {
 		super(session);
@@ -47,9 +51,10 @@ public class MenuInfoUnit extends Menu {
 		res.setLocation(getWidth() / 2 - res.getWidth() / 2, 180);
 		add(res);
 
-		drop = new MenuButtonAction(session, Action.DESTROY);
-		drop.setBounds(280, 90, 75, 75);
-		add(drop);
+		destroy = new MenuButtonAction(session, Action.DESTROY, this);
+		destroy.setBounds(280, 90, 75, 75);
+		add(destroy);
+		buttons = new MenuButtonAction[] { destroy };
 	}
 
 	// =========================================================================================================================
@@ -94,10 +99,10 @@ public class MenuInfoUnit extends Menu {
 	}
 
 	private void _update() {
-		if (unit != null && unit.hasResource())
+		if (unit != null)
 			res.update(unit.getResource());
 
-		drop.setVisible(unit.getPlayer().equals(session.player));
+		destroy.setVisible(unit.getPlayer().equals(session.player));
 
 		setVisible(true);
 		repaint();
@@ -105,6 +110,8 @@ public class MenuInfoUnit extends Menu {
 
 	public void clear() {
 		unit = null;
+		setVisible(false);
+		releaseButtons();
 	}
 
 	// =========================================================================================================================
@@ -116,15 +123,6 @@ public class MenuInfoUnit extends Menu {
 
 	@Override
 	public void click() {
-	}
-
-	// =========================================================================================================================
-
-	@Override
-	public void setVisible(boolean b) {
-		super.setVisible(b);
-		if (!b)
-			unit = null;
 	}
 
 	// =========================================================================================================================
@@ -151,5 +149,13 @@ public class MenuInfoUnit extends Menu {
 				}
 			}
 		}
+	}
+
+	// =========================================================================================================================
+
+	@Override
+	public void releaseButtons() {
+		for (MenuButtonAction b : buttons)
+			b.selected = false;
 	}
 }

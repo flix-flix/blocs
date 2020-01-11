@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 
 import client.session.Session;
 import client.session.UserAction;
+import client.window.panels.menus.ButtonContainer;
 import client.window.panels.menus.MenuButtonCube;
 import client.window.panels.menus.MenuButtonUserAction;
 import client.window.panels.menus.MenuCol;
@@ -23,7 +24,7 @@ import data.map.units.Unit;
 import server.game.GameMode;
 import server.game.messages.Message;
 
-public class PanGUI extends JPanel {
+public class PanGUI extends JPanel implements ButtonContainer {
 	private static final long serialVersionUID = 3929655843006244723L;
 
 	Session session;
@@ -63,7 +64,7 @@ public class PanGUI extends JPanel {
 
 	MenuCol menu = new MenuCol(session);
 
-	UserAction[] _userActions = { UserAction.MOUSE, UserAction.CREA_ADD, UserAction.CREA_DESTROY };
+	UserAction[] _userActions = { UserAction.MOUSE, UserAction.CREA_ADD, UserAction.CREA_DESTROY, UserAction.EDITOR };
 	MenuButtonUserAction[] userActions = new MenuButtonUserAction[_userActions.length];
 
 	MenuGrid gridActions;
@@ -98,7 +99,7 @@ public class PanGUI extends JPanel {
 
 		menu.addTop(infos = new MenuInfos(session), MenuCol.REMAINING);
 
-		hideMenu();
+		refreshGUI();
 	}
 
 	// =========================================================================================================================
@@ -199,16 +200,15 @@ public class PanGUI extends JPanel {
 	public void select(Cube cube) {
 		unit = null;
 		build = null;
-		infos.resource.clear();
-		infos.build.clear();
-		infos.unit.clear();
-		infos.updateCube(cube);
+		infos.refresh(cube);
 	}
 
 	// =========================================================================================================================
 
-	public void hideMenu() {
+	public void refreshGUI() {
 		menu.setVisible(session.gamemode == GameMode.CLASSIC);
+
+		infos.clear();
 
 		for (MenuButtonUserAction e : userActions)
 			e.selected = session.getAction() == e.action;
@@ -216,8 +216,8 @@ public class PanGUI extends JPanel {
 		if (session.getAction() == UserAction.CREA_ADD)
 			infos.showCubes();
 
-		if (session.getAction() == UserAction.MOUSE)
-			infos.updateCube(null);
+		map.updateMap();
+		map.repaint();
 	}
 
 	public void resetCubeSelection() {
@@ -236,5 +236,13 @@ public class PanGUI extends JPanel {
 	public void setBounds(int x, int y, int width, int height) {
 		super.setBounds(x, y, width, height);
 		menu.setBounds(x, y, menuWidth, height);
+	}
+
+	// =========================================================================================================================
+	// ButtonContainer
+
+	@Override
+	public void releaseButtons() {
+		refreshGUI();
 	}
 }

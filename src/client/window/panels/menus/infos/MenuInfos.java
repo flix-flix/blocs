@@ -69,19 +69,16 @@ public class MenuInfos extends Menu {
 		add(build);
 		add(gridCubes);
 
-		resource.setVisible(false);
-		unit.setVisible(true);
-		build.setVisible(true);
-		gridCubes.setVisible(false);
+		clear();
 	}
 
 	// =========================================================================================================================
 
 	/** Show and update the corresponding panel */
-	public void updateCube(Cube cube) {
-		resource.setVisible(false);
-		unit.setVisible(false);
-		build.setVisible(false);
+	public void refresh(Cube cube) {
+		resource.clear();
+		build.clear();
+		unit.clear();
 		gridCubes.setVisible(false);
 
 		if (cube == null)
@@ -95,10 +92,12 @@ public class MenuInfos extends Menu {
 			resource.update(cube);
 	}
 
+	/** Hide the panel */
+	public void clear() {
+		refresh(null);
+	}
+
 	public void showCubes() {
-		resource.setVisible(false);
-		unit.setVisible(false);
-		build.setVisible(false);
 		gridCubes.setVisible(true);
 	}
 

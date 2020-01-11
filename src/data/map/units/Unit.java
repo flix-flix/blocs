@@ -123,9 +123,11 @@ public class Unit implements Serializable {
 	// =========================================================================================================================
 
 	public void tick(Map map) {
-		if (isTraveling())
+		if (isTraveling()) {
 			doStep(map);
-		else if (action != null)
+			alreadyDrop = 0;
+			alreadyHarvest = 0;
+		} else if (action != null)
 			doAction(map);
 	}
 
