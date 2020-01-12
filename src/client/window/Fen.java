@@ -26,6 +26,7 @@ import client.window.panels.PanGame;
 import client.window.panels.PanPause;
 import client.window.panels.StateHUD;
 import data.id.ItemTable;
+import data.map.Cube;
 import server.game.GameMode;
 import server.send.Action;
 import utils.FlixBlocksUtils;
@@ -88,8 +89,8 @@ public class Fen extends JFrame {
 
 		this.setTitle("Blocs");
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-		this.setSize(1200, 800);
-		this.setLocation(10, 200);
+		this.setSize(1200, 1040);
+		this.setLocation(0, 0);
 		this.setExtendedState(MAXIMIZED_BOTH);
 
 		// ======================================
@@ -363,16 +364,16 @@ public class Fen extends JFrame {
 
 	public void updateCursor() {
 		Cursor cursor = Cursor.getDefaultCursor();
+		Cube cube = session.cubeTarget;
 
 		session.unitAction = null;
 
 		if (!cursorVisible)
 			cursor = cursorInvisible;
 		else if (session.getAction() == UserAction.MOUSE)
-			if (session.cubeTarget != null && session.fen.gui.unit != null
-					&& session.fen.gui.unit.getPlayer().equals(session.player))
-				if (ItemTable.isResource(session.cubeTarget.itemID))// Harvestable
-					switch (ItemTable.getResourceType(session.cubeTarget.itemID)) {
+			if (cube != null && session.fen.gui.unit != null && session.fen.gui.unit.getPlayer().equals(session.player))
+				if (ItemTable.isResource(cube.itemID))// Harvestable
+					switch (ItemTable.getResourceType(cube.itemID)) {
 					case WOOD:
 						cursor = cursorAxe;
 						session.unitAction = Action.UNIT_HARVEST;
@@ -386,13 +387,13 @@ public class Fen extends JFrame {
 						session.unitAction = Action.UNIT_HARVEST;
 						break;
 					}
-				else if (session.cubeTarget.build != null) {// Building
-					if (session.cubeTarget.build.getPlayer().equals(session.player)) {
-						if (!session.cubeTarget.build.isBuild()) {
+				else if (cube.build != null) {// Building
+					if (cube.build.getPlayer().equals(session.player)) {
+						if (!cube.build.isBuild()) {
 							cursor = cursorBuild;
 							session.unitAction = Action.UNIT_BUILD;
 						} else if (session.fen.gui.unit.hasResource()
-								&& session.cubeTarget.build.canStock(session.fen.gui.unit.getResource())) {// Stock
+								&& cube.build.canStock(session.fen.gui.unit.getResource())) {// Stock
 							cursor = cursorDrop;
 							session.unitAction = Action.UNIT_STORE;
 
@@ -410,14 +411,14 @@ public class Fen extends JFrame {
 						}
 					} else {// Opponent
 						cursor = cursorAttack;
-						session.unitAction = Action.ATTACK;
+						session.unitAction = Action.UNIT_ATTACK;
 					}
-				} else if (session.cubeTarget.unit != null) {// Unit
-					if (session.cubeTarget.unit.getPlayer().equals(session.player)) {// Own
+				} else if (cube.unit != null) {// Unit
+					if (cube.unit.getPlayer().equals(session.player)) {// Own
 
 					} else {// Opponent
 						cursor = cursorAttack;
-						session.unitAction = Action.ATTACK;
+						session.unitAction = Action.UNIT_ATTACK;
 					}
 				} else {
 					cursor = cursorGoto;

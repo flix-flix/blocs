@@ -32,7 +32,7 @@ public class MenuInfoUnit extends Menu implements ButtonContainer {
 	private Unit unit;
 
 	private MenuResource res;
-	private MenuButtonAction destroy;
+	private MenuButtonAction destroy, harvest;
 	private MenuButtonAction[] buttons;
 
 	private Font font = new Font("monospace", Font.PLAIN, 12);
@@ -51,10 +51,15 @@ public class MenuInfoUnit extends Menu implements ButtonContainer {
 		res.setLocation(getWidth() / 2 - res.getWidth() / 2, 180);
 		add(res);
 
-		destroy = new MenuButtonAction(session, Action.DESTROY, this);
+		destroy = new MenuButtonAction(session, Action.UNIT_DESTROY, this);
 		destroy.setBounds(280, 90, 75, 75);
 		add(destroy);
-		buttons = new MenuButtonAction[] { destroy };
+
+		harvest = new MenuButtonAction(session, Action.UNIT_HARVEST, this);
+		harvest.setBounds(190, 90, 75, 75);
+		add(harvest);
+
+		buttons = new MenuButtonAction[] { destroy, harvest };
 	}
 
 	// =========================================================================================================================
@@ -73,7 +78,6 @@ public class MenuInfoUnit extends Menu implements ButtonContainer {
 
 		if (unit != null) {
 			g.drawString(unit.toString(), img == null ? 15 : img.getWidth(null) + 15, 70);
-
 		}
 	}
 

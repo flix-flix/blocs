@@ -174,7 +174,7 @@ public class Unit implements Serializable {
 				doStore(map, map.gridGet(actionCube).build);
 			break;
 
-		case ATTACK:
+		case UNIT_ATTACK:
 			break;
 
 		default:

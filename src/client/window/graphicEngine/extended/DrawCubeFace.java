@@ -95,8 +95,8 @@ public class DrawCubeFace extends Draw {
 					else
 						color = Engine.addHue(color, Engine.createColor(255, 255, 255, 255), .4);
 
-				// If the cube is preview makes it transparent
-				if (cube.isPreview()) {
+				// If the cube is preview (or building in construction) makes it transparent
+				if (cube.isPreview() || (cube.build != null && !cube.build.isBuild())) {
 					color = (127 << 24) + (color & 0xffffff);
 					// If the multibloc is invalid : its color will have a red hue
 					if (cube.multibloc != null && !cube.multibloc.valid)
