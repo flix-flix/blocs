@@ -3,6 +3,7 @@ package client.window.panels.menus;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.event.MouseEvent;
 
 import client.session.Session;
 import client.session.UserAction;
@@ -63,8 +64,7 @@ public class MenuButtonUserAction extends Menu {
 	}
 
 	@Override
-	public void click() {
-		session.setAction(action);
-		session.fen.gui.releaseButtons();
+	public void click(MouseEvent e) {
+		session.fen.setAction(action);
 	}
 }

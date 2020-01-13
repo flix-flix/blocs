@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.event.MouseEvent;
 import java.lang.Thread.State;
 
 import client.session.Session;
@@ -126,7 +127,7 @@ public class MenuInfoUnit extends Menu implements ButtonContainer {
 	}
 
 	@Override
-	public void click() {
+	public void click(MouseEvent e) {
 	}
 
 	// =========================================================================================================================

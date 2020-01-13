@@ -1,6 +1,7 @@
 package client.window.panels.menus.infos;
 
 import java.awt.Color;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import client.session.Session;
@@ -35,7 +36,7 @@ public class MenuInfos extends Menu {
 		resource = new MenuInfosResource(session);
 		unit = new MenuInfoUnit(session);
 		build = new MenuInfosBuilding(session);
-		gridCubes = new MenuGrid(session);
+		gridCubes = new MenuGrid();
 
 		gridCubes.setSize(getSize());
 
@@ -113,6 +114,6 @@ public class MenuInfos extends Menu {
 	}
 
 	@Override
-	public void click() {
+	public void click(MouseEvent e) {
 	}
 }

@@ -12,9 +12,16 @@ public class TickClock implements Runnable {
 
 	private boolean paused = false;
 
+	private String threadName;
+
 	// =========================================================================================================================
 
 	public TickClock() {
+		this("TickClock default name");
+	}
+
+	public TickClock(String threadName) {
+		this.threadName = threadName;
 	}
 
 	// =========================================================================================================================
@@ -42,6 +49,14 @@ public class TickClock implements Runnable {
 				t.tick();
 			}
 		}
+	}
+
+	// =========================================================================================================================
+
+	public void start() {
+		Thread t = new Thread(this);
+		t.setName(threadName);
+		t.start();
 	}
 
 	// =========================================================================================================================

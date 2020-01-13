@@ -27,7 +27,7 @@ public abstract class Menu extends JPanel {
 
 			@Override
 			public void mousePressed(MouseEvent e) {
-				click();
+				click(e);
 			}
 
 			@Override
@@ -70,7 +70,7 @@ public abstract class Menu extends JPanel {
 
 	// =========================================================================================================================
 
-	public void click() {
+	public void click(MouseEvent e) {
 	}
 
 	public void resize() {

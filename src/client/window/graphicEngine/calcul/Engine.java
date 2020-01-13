@@ -25,6 +25,9 @@ public class Engine {
 	/** The point of view and inclinations */
 	private Camera camera;
 
+	private Model newModel = null;
+	private Camera newCamera = null;
+
 	/** View angles */
 	private double vx = Math.tan(60 * toRadian);
 	private double vy = Math.tan(45 * toRadian);
@@ -65,9 +68,19 @@ public class Engine {
 
 	// =========================================================================================================================
 
+	public void setModelCamera(Model model, Camera camera) {
+		newModel = model;
+		newCamera = camera;
+	}
+
 	public BufferedImage getImage(int w, int h) {
 		if (w <= 0 || h <= 0)
 			return null;
+
+		if (newModel != null)
+			model = newModel;
+		if (newCamera != null)
+			camera = newCamera;
 
 		timeStart = System.currentTimeMillis();
 		init(w, h);

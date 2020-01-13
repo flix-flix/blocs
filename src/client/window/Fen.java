@@ -25,6 +25,7 @@ import client.window.panels.PanGUI;
 import client.window.panels.PanGame;
 import client.window.panels.PanPause;
 import client.window.panels.StateHUD;
+import client.window.panels.editor.PanEditor;
 import data.id.ItemTable;
 import data.map.Cube;
 import server.game.GameMode;
@@ -64,6 +65,9 @@ public class Fen extends JFrame {
 	public PanDevlop devlop;
 	public PanGUI gui;
 
+	// ============= Editor ===================
+	public PanEditor editor;
+
 	// ============= Thread ===================
 	/** Refresh the image */
 	private Thread threadActu;
@@ -84,6 +88,7 @@ public class Fen extends JFrame {
 		pause = new PanPause(session);
 		devlop = new PanDevlop(session);
 		gui = new PanGUI(session);
+		editor = new PanEditor(session);
 
 		// ======================================
 
@@ -101,11 +106,15 @@ public class Fen extends JFrame {
 		gui.setSize(getContentPane().getSize());
 		devlop.setSize(getContentPane().getSize());
 		pause.setSize(getContentPane().getSize());
+		editor.setSize(getContentPane().getSize());
+
+		editor.setVisible(false);
 
 		this.setContentPane(game);
 		game.add(pause, -1);
 		game.add(devlop, -1);
 		game.add(gui, -1);
+		game.add(editor, -1);
 
 		// =========================================================================================================================
 
@@ -125,18 +134,18 @@ public class Fen extends JFrame {
 
 			public void keyPressed(KeyEvent k) {
 				if (k.getKeyCode() == Key.PAUSE.code) {
-					if (session.stateGUI != StateHUD.GAME)
+					if (session.stateHUD != StateHUD.GAME)
 						session.keyboard.resume();
 					else
 						session.keyboard.pause();
 				}
 
-				else if (session.stateGUI == StateHUD.DIALOG) {
+				else if (session.stateHUD == StateHUD.DIALOG) {
 
 					if (k.getKeyCode() == Key.KEY_ENTER.code) {
 						session.messages.send();
 						session.keyboard.mouseToCenter();
-						session.stateGUI = StateHUD.GAME;
+						session.stateHUD = StateHUD.GAME;
 					} else if (k.getKeyCode() == Key.KEY_DEL.code)
 						session.messages.deletePrevious();
 					else if (k.getKeyCode() == Key.KEY_SUPPR.code)
@@ -170,7 +179,7 @@ public class Fen extends JFrame {
 					}
 				}
 
-				else if (session.stateGUI == StateHUD.GAME) {
+				else if (session.stateHUD == StateHUD.GAME || session.stateHUD == StateHUD.EDITOR) {
 					if (Key.get(k.getKeyCode()) != null)
 						switch (Key.get(k.getKeyCode())) {
 
@@ -287,17 +296,13 @@ public class Fen extends JFrame {
 			}
 
 			public void mouseDragged(MouseEvent e) {
-				if (session.gamemode == GameMode.CLASSIC) {
-					mouseX = e.getX();
-					mouseY = e.getY();
-				} else if (session.gamemode == GameMode.CREATIVE)
-					session.keyboard.mouse(getLocationOnScreen().x, getLocationOnScreen().y, e.getX(), e.getY());
+				mouseMoved(e);
 			}
 		});
 
 		this.addMouseWheelListener(new MouseWheelListener() {
 			public void mouseWheelMoved(MouseWheelEvent e) {
-				if (session.stateGUI == StateHUD.GAME)
+				if (session.stateHUD == StateHUD.GAME)
 					if (session.gamemode == GameMode.CLASSIC)
 						session.keyboard.wheelRotation(e.getWheelRotation());
 			}
@@ -305,7 +310,7 @@ public class Fen extends JFrame {
 
 		this.addMouseListener(new MouseListener() {
 			public void mouseReleased(MouseEvent e) {
-				if (session.stateGUI != StateHUD.PAUSE && session.stateGUI != StateHUD.DIALOG)
+				if (session.stateHUD != StateHUD.PAUSE && session.stateHUD != StateHUD.DIALOG)
 					if (e.getButton() == 1)
 						session.keyboard.leftClickEnd();
 					else if (e.getButton() == 3)
@@ -313,7 +318,7 @@ public class Fen extends JFrame {
 			}
 
 			public void mousePressed(MouseEvent e) {
-				if (session.stateGUI != StateHUD.PAUSE && session.stateGUI != StateHUD.DIALOG)
+				if (session.stateHUD != StateHUD.PAUSE && session.stateHUD != StateHUD.DIALOG)
 					if (e.getButton() == 1)
 						session.keyboard.leftClick();
 					else if (e.getButton() == 3)
@@ -346,6 +351,7 @@ public class Fen extends JFrame {
 				gui.setSize(getContentPane().getSize());
 				devlop.setSize(getContentPane().getSize());
 				pause.setSize(getContentPane().getSize());
+				editor.setSize(getContentPane().getSize());
 			}
 
 			@Override
@@ -361,6 +367,7 @@ public class Fen extends JFrame {
 	}
 
 	// =========================================================================================================================
+	// Cursor
 
 	public void updateCursor() {
 		Cursor cursor = Cursor.getDefaultCursor();
@@ -443,6 +450,39 @@ public class Fen extends JFrame {
 	public void start() {
 		threadActu.start();
 		threadImage.start();
+
+		gui.refreshGUI();
+	}
+
+	// =========================================================================================================================
+
+	public void setAction(UserAction action) {
+		if (action == UserAction.EDITOR) {
+			if (session.stateHUD == StateHUD.EDITOR) {// Close Editor
+				session.setAction(null);
+				session.setModelCamera(session.map, session.camera);
+
+				editor.setVisible(false);
+				gui.setVisible(true);
+
+				session.stateHUD = StateHUD.GAME;
+				setAction(UserAction.MOUSE);
+			} else {// Open Editor
+				session.stateHUD = StateHUD.EDITOR;
+
+				session.setAction(action);
+				session.setModelCamera(editor.map, editor.camera);
+
+				gui.setVisible(false);
+				editor.setVisible(true);
+			}
+		} else {
+
+			session.setAction(action);
+
+			updateCursor();
+			gui.refreshGUI();
+		}
 	}
 
 	// =========================================================================================================================
@@ -479,7 +519,7 @@ public class Fen extends JFrame {
 					e.printStackTrace();
 				}
 
-				if (session.stateGUI != StateHUD.PAUSE && !session.processing && wait < 0) {
+				if (session.stateHUD != StateHUD.PAUSE && !session.processing && wait < 0) {
 					session.processing = true;
 					wait = 1000 / session.FPSmax;
 
@@ -502,7 +542,7 @@ public class Fen extends JFrame {
 					if (session.gamemode == GameMode.CLASSIC)
 						session.setTarget(mouseX - 8, mouseY - 32);
 					else if (session.gamemode == GameMode.CREATIVE)
-						session.setTarget(gui.centerX, gui.centerY);
+						session.setTarget(game.centerX, game.centerY);
 
 					if (game.getWidth() != 0 && game.getHeight() != 0)
 						game.img = session.getImage(game.getWidth(), game.getHeight());

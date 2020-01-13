@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
 
 import client.session.Session;
@@ -74,7 +75,7 @@ public class MenuButtonCube extends Menu {
 	}
 
 	@Override
-	public void click() {
+	public void click(MouseEvent e) {
 		session.setNextCube(cube);
 		session.fen.gui.resetCubeSelection();
 		selected = true;

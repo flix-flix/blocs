@@ -38,14 +38,6 @@ public class PanGUI extends JPanel implements ButtonContainer {
 	Font fontWIP = new Font("monospace", Font.BOLD, 30);
 	FontMetrics fm = getFontMetrics(fontWIP);
 
-	// ======================= Graphics =========================
-
-	private Graphics g;
-	public int w, h, centerX, centerY;
-
-	// Size of the central indicator (creative mode)
-	int crossSize = 7;
-
 	// ========================= Dialog =========================
 
 	// Previous messages to display
@@ -68,7 +60,7 @@ public class PanGUI extends JPanel implements ButtonContainer {
 	// ======================= Menu =========================
 	int menuWidth = 400;
 
-	MenuCol menu = new MenuCol(session);
+	MenuCol menu = new MenuCol();
 
 	UserAction[] _userActions = { UserAction.MOUSE, UserAction.CREA_ADD, UserAction.CREA_DESTROY, UserAction.EDITOR };
 	MenuButtonUserAction[] userActions = new MenuButtonUserAction[_userActions.length];
@@ -95,7 +87,7 @@ public class PanGUI extends JPanel implements ButtonContainer {
 		menu.setBounds(0, 0, menuWidth, getHeight());
 		this.add(menu);
 
-		menu.addTop(gridActions = new MenuGrid(session), 100);
+		menu.addTop(gridActions = new MenuGrid(), 100);
 
 		for (int i = 0; i < _userActions.length; i++)
 			gridActions.addItem(userActions[i] = new MenuButtonUserAction(session, _userActions[i]));
@@ -110,32 +102,14 @@ public class PanGUI extends JPanel implements ButtonContainer {
 
 	// =========================================================================================================================
 
-	public void paintComponent(Graphics gg) {
-		this.setBounds(getParent().getBounds());
-		w = this.getWidth();
-		h = this.getHeight();
-		centerX = w / 2;
-		centerY = h / 2;
+	public void paintComponent(Graphics g) {
+		int h = this.getHeight();
 
-		g = gg;
+		g.setColor(Color.WHITE);
+		g.setFont(fontWIP);
+		g.drawString(wip, getWidth() - fm.stringWidth(wip) - 10, getHeight() - 10);
 
-		switch (session.stateGUI) {
-		case GAME:
-			if (session.gamemode == GameMode.CREATIVE) {
-				// Middle indicator : cross
-				g.setColor(Color.WHITE);
-				g.drawLine(centerX - crossSize, centerY - 1, centerX + crossSize - 1, centerY - 1);
-				g.drawLine(centerX - crossSize, centerY, centerX + crossSize - 1, centerY);
-				g.drawLine(centerX - 1, centerY - crossSize, centerX - 1, centerY + crossSize - 1);
-				g.drawLine(centerX, centerY - crossSize, centerX, centerY + crossSize - 1);
-			}
-
-			g.setColor(Color.WHITE);
-			g.setFont(fontWIP);
-			g.drawString(wip, getWidth() - fm.stringWidth(wip) - 10, getHeight() - 10);
-			break;
-
-		case DIALOG:
+		if (session.stateHUD == StateHUD.DIALOG) {
 			int grayBack = 120;
 			Color colorBack = new Color(grayBack, grayBack, grayBack, 200);
 			Color colorMsg = Color.WHITE;
@@ -178,10 +152,6 @@ public class PanGUI extends JPanel implements ButtonContainer {
 			g.setColor(colorMsg);
 			for (int i = 0; i < nbMsg; i++)
 				g.drawString(messages[i].toMessage(), startW + 5, h - 100 + 20 - 10 - (nbMsg - i) * 30);
-
-			break;
-		default:
-			break;
 		}
 
 		addComponentListener(new ComponentListener() {
@@ -212,12 +182,16 @@ public class PanGUI extends JPanel implements ButtonContainer {
 		infos.refresh(cube);
 	}
 
+	public void clear() {
+		select(null);
+	}
+
 	// =========================================================================================================================
 
 	public void refreshGUI() {
 		menu.setVisible(session.gamemode == GameMode.CLASSIC);
 
-		infos.clear();
+		clear();
 
 		for (MenuButtonUserAction e : userActions)
 			e.selected = session.getAction() == e.action;

@@ -10,6 +10,7 @@ import java.awt.image.BufferedImage;
 import javax.swing.JPanel;
 
 import client.session.Session;
+import server.game.GameMode;
 
 public class PanGame extends JPanel {
 
@@ -21,6 +22,14 @@ public class PanGame extends JPanel {
 	private Font font = new Font("arial", Font.BOLD, 100);
 	private AffineTransform affinetransform = new AffineTransform();
 	private FontRenderContext frc = new FontRenderContext(affinetransform, true, true);
+
+	// =========================================================================================================================
+
+	public int centerX, centerY;
+	// Size of the central indicator (creative mode)
+	public int crossSize = 7;
+
+	// =========================================================================================================================
 
 	public PanGame(Session session) {
 		this.session = session;
@@ -45,8 +54,20 @@ public class PanGame extends JPanel {
 			g.drawString("(If too long it probably crashed ;p)", this.getWidth() / 2 - 200 / 2 + 10,
 					this.getHeight() / 2 + textheight / 2);
 		} else {
+			centerX = getWidth() / 2;
+			centerY = getHeight() / 2;
+
 			g.drawImage(img, 0, 0, null);
 			session.processing = false;
+
+			if (session.gamemode == GameMode.CREATIVE) {
+				// Middle indicator : cross
+				g.setColor(Color.WHITE);
+				g.drawLine(centerX - crossSize, centerY - 1, centerX + crossSize - 1, centerY - 1);
+				g.drawLine(centerX - crossSize, centerY, centerX + crossSize - 1, centerY);
+				g.drawLine(centerX - 1, centerY - crossSize, centerX - 1, centerY + crossSize - 1);
+				g.drawLine(centerX, centerY - crossSize, centerX, centerY + crossSize - 1);
+			}
 		}
 	}
 }

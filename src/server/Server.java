@@ -44,12 +44,10 @@ public class Server implements Runnable {
 
 		map = new MapServer(WorldGeneration.generateMap(), this);
 
-		TickClock clock = new TickClock();
+		TickClock clock = new TickClock("Server Clock");
 		clock.add(map);
 
-		Thread t = new Thread(clock);
-		t.setName("Server Clock");
-		t.start();
+		clock.start();
 	}
 
 	// =========================================================================================================================

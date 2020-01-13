@@ -91,8 +91,8 @@ public class Cube implements Serializable {
 		onGrid = true;
 	}
 
-	public Cube(Coord tuple, ItemID itemID) {
-		this(tuple.x, tuple.y, tuple.z, itemID);
+	public Cube(Coord cube, ItemID itemID) {
+		this(cube.x, cube.y, cube.z, itemID);
 	}
 
 	public Cube(ItemID itemID) {

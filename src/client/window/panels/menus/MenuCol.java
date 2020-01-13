@@ -2,9 +2,8 @@ package client.window.panels.menus;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-
-import client.session.Session;
 
 public class MenuCol extends Menu {
 	private static final long serialVersionUID = 7065545494775980118L;
@@ -28,12 +27,6 @@ public class MenuCol extends Menu {
 	 * Panel adapting his size to the remaining place in the center of the column
 	 */
 	Menu remaining;
-
-	// =========================================================================================================================
-
-	public MenuCol(Session session) {
-		super(session);
-	}
 
 	// =========================================================================================================================
 
@@ -114,6 +107,6 @@ public class MenuCol extends Menu {
 	}
 
 	@Override
-	public void click() {
+	public void click(MouseEvent e) {
 	}
 }

@@ -5,7 +5,9 @@ import java.awt.Robot;
 
 import client.session.Session;
 import client.session.UserAction;
+import client.window.graphicEngine.calcul.Camera;
 import client.window.graphicEngine.extended.ModelCube;
+import client.window.graphicEngine.extended.ModelMap;
 import client.window.panels.StateHUD;
 import data.map.Coord;
 import data.map.Cube;
@@ -65,7 +67,12 @@ public class Keyboard {
 	// =========================================================================================================================
 
 	public void rightClick() {
-		if (session.stateGUI != StateHUD.GAME)
+		ModelMap map;
+		if (session.stateHUD == StateHUD.GAME)
+			map = session.map;
+		else if (session.stateHUD == StateHUD.EDITOR)
+			map = session.fen.editor.map;
+		else
 			return;
 
 		if (session.gamemode == GameMode.CREATIVE) {// Add a cube to the map
@@ -73,7 +80,7 @@ public class Keyboard {
 			if (session.cubeTarget != null && session.faceTarget != null && cubeToAdd != null) {
 				cubeToAdd.setCoords(new Coord(session.cubeTarget).face(session.faceTarget));
 
-				session.map.add(cubeToAdd);
+				map.add(cubeToAdd);
 			}
 
 		} else if (session.gamemode == GameMode.CLASSIC) {
@@ -82,46 +89,49 @@ public class Keyboard {
 			if (session.cubeTarget != null && session.faceTarget != null) {
 
 				if (session.getAction() == UserAction.CREA_ADD) {// Add a cube to the map
-					ModelCube model = session.map.gridGet(new Coord(session.cubeTarget).face(session.faceTarget));
+					ModelCube model = map.gridGet(new Coord(session.cubeTarget).face(session.faceTarget));
 					if (model != null && model.isPreview()) {
 						// Check if multibloc can be added at this position
 						if (model.multibloc != null && !model.multibloc.valid)
 							return;
 
-						session.map.setHighlight(model, false);
-						session.map.setPreview(model, false);
-						session.map.setTargetable(model, true);
+						map.setHighlight(model, false);
+						map.setPreview(model, false);
+						map.setTargetable(model, true);
 					}
 				} else if (session.fen.gui.unit != null)
 					session.unitDoAction();
 			}
-
 			return;
 		}
 	}
 
 	public void leftClick() {
-		if (session.stateGUI != StateHUD.GAME)
+		ModelMap map;
+		if (session.stateHUD == StateHUD.GAME)
+			map = session.map;
+		else if (session.stateHUD == StateHUD.EDITOR)
+			map = session.fen.editor.map;
+		else
 			return;
 
 		if (session.gamemode == GameMode.CREATIVE) {
 			if (session.cubeTarget != null)
 				if (session.cubeTarget.unit != null)
-					session.map.removeUnit(session.cubeTarget.unit);
+					map.removeUnit(session.cubeTarget.unit);
 				else
-					session.map.remove((ModelCube) session.cubeTarget);
+					map.remove((ModelCube) session.cubeTarget);
 
 		} else if (session.gamemode == GameMode.CLASSIC) {
 
 			if (session.getAction() == UserAction.CREA_DESTROY) {
 				if (session.cubeTarget != null)
 					if (session.cubeTarget.unit != null)
-						session.map.removeUnit(session.cubeTarget.unit);
+						map.removeUnit(session.cubeTarget.unit);
 					else
-						session.map.remove((ModelCube) session.cubeTarget);
+						map.remove((ModelCube) session.cubeTarget);
 			} else
 				session.fen.gui.select(session.cubeTarget);
-
 		}
 	}
 
@@ -156,27 +166,28 @@ public class Keyboard {
 					&& session.fen.getHeight() / 2 == mouseLocationY);
 		}
 
-		if (session.stateGUI != StateHUD.PAUSE && session.stateGUI != StateHUD.DIALOG && !mouseFreeze) {
-			session.camera.setVx(session.camera.getVx() - ((session.fen.getWidth() / 2 - mouseLocationX) * mouseSpeed));
-			session.camera
-					.setVy(session.camera.getVy() + ((session.fen.getHeight() / 2 - mouseLocationY) * mouseSpeed));
+		Camera camera = session.getAction() == UserAction.EDITOR ? session.fen.editor.camera : session.camera;
+
+		if (session.stateHUD != StateHUD.PAUSE && session.stateHUD != StateHUD.DIALOG && !mouseFreeze) {
+			camera.setVx(camera.getVx() - ((session.fen.getWidth() / 2 - mouseLocationX) * mouseSpeed));
+			camera.setVy(camera.getVy() + ((session.fen.getHeight() / 2 - mouseLocationY) * mouseSpeed));
 
 			robot.mouseMove(frameLocationX + session.fen.getWidth() / 2, frameLocationY + session.fen.getHeight() / 2);
 
-			if (session.camera.getVx() >= 360)
-				session.camera.setVx(session.camera.getVx() - 360);
-			else if (session.camera.getVx() < 0)
-				session.camera.setVx(session.camera.getVx() + 360);
-			if (session.camera.getVy() > 90)
-				session.camera.setVy(90);
-			else if (session.camera.getVy() < -90)
-				session.camera.setVy(-90);
+			if (camera.getVx() >= 360)
+				camera.setVx(camera.getVx() - 360);
+			else if (camera.getVx() < 0)
+				camera.setVx(camera.getVx() + 360);
+			if (camera.getVy() > 90)
+				camera.setVy(90);
+			else if (camera.getVy() < -90)
+				camera.setVy(-90);
 
-			if (session.camera.getVx() >= 45 && session.camera.getVx() < 135)
+			if (camera.getVx() >= 45 && camera.getVx() < 135)
 				session.playerOrientation = Orientation.EAST;
-			else if (session.camera.getVx() >= 315 || session.camera.getVx() < 45)
+			else if (camera.getVx() >= 315 || camera.getVx() < 45)
 				session.playerOrientation = Orientation.NORTH;
-			else if (session.camera.getVx() < 225)
+			else if (camera.getVx() < 225)
 				session.playerOrientation = Orientation.SOUTH;
 			else
 				session.playerOrientation = Orientation.WEST;
@@ -197,13 +208,13 @@ public class Keyboard {
 	// =========================================================================================================================
 
 	public void dialog() {
-		session.stateGUI = StateHUD.DIALOG;
+		session.stateHUD = StateHUD.DIALOG;
 	}
 
 	// =========================================================================================================================
 
 	public void pause() {
-		session.stateGUI = StateHUD.PAUSE;
+		session.stateHUD = StateHUD.PAUSE;
 
 		session.fen.setCursorVisible(true);
 
@@ -211,7 +222,7 @@ public class Keyboard {
 	}
 
 	public void resume() {
-		session.stateGUI = StateHUD.GAME;
+		session.stateHUD = StateHUD.GAME;
 
 		if (session.gamemode == GameMode.CREATIVE) {
 			session.fen.setCursorVisible(false);
@@ -225,25 +236,26 @@ public class Keyboard {
 
 	public void cameraMovement() {
 		double x = 0, z = 0;
+		Camera camera = session.getAction() == UserAction.EDITOR ? session.fen.editor.camera : session.camera;
 
 		if (session.keyboard.forwardKeyEnabled) {
-			x = Math.cos(session.camera.getVx() * FlixBlocksUtils.toRadian);
-			z = Math.sin(session.camera.getVx() * FlixBlocksUtils.toRadian);
+			x = Math.cos(camera.getVx() * FlixBlocksUtils.toRadian);
+			z = Math.sin(camera.getVx() * FlixBlocksUtils.toRadian);
 		}
 
 		if (session.keyboard.backwardKeyEnabled) {
-			x += -Math.cos(session.camera.getVx() * FlixBlocksUtils.toRadian);
-			z += -Math.sin(session.camera.getVx() * FlixBlocksUtils.toRadian);
+			x += -Math.cos(camera.getVx() * FlixBlocksUtils.toRadian);
+			z += -Math.sin(camera.getVx() * FlixBlocksUtils.toRadian);
 		}
 
 		if (session.keyboard.rightKeyEnabled) {
-			x += Math.cos((session.camera.getVx() + 90) * FlixBlocksUtils.toRadian);
-			z += Math.sin((session.camera.getVx() + 90) * FlixBlocksUtils.toRadian);
+			x += Math.cos((camera.getVx() + 90) * FlixBlocksUtils.toRadian);
+			z += Math.sin((camera.getVx() + 90) * FlixBlocksUtils.toRadian);
 		}
 
 		if (session.keyboard.leftKeyEnabled) {
-			x += -Math.cos((session.camera.getVx() + 90) * FlixBlocksUtils.toRadian);
-			z += -Math.sin((session.camera.getVx() + 90) * FlixBlocksUtils.toRadian);
+			x += -Math.cos((camera.getVx() + 90) * FlixBlocksUtils.toRadian);
+			z += -Math.sin((camera.getVx() + 90) * FlixBlocksUtils.toRadian);
 		}
 
 		// Slow down the camera if moving in 2 directions
@@ -260,11 +272,11 @@ public class Keyboard {
 		}
 
 		if (session.keyboard.jumpKeyEnabled)
-			session.camera.moveY(.4);
+			camera.moveY(.4);
 		if (session.keyboard.sneakKeyEnabled)
-			session.camera.moveY(-.4);
+			camera.moveY(-.4);
 
-		session.camera.move(x, z);
+		camera.move(x, z);
 	}
 
 	// =========================================================================================================================
@@ -274,7 +286,7 @@ public class Keyboard {
 			while (true) {
 				ticks++;
 
-				if (session.stateGUI == StateHUD.GAME)
+				if (session.stateHUD == StateHUD.GAME || session.stateHUD == StateHUD.EDITOR)
 					cameraMovement();
 
 				try {

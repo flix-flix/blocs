@@ -14,6 +14,7 @@ import client.window.graphicEngine.calcul.Engine;
 import client.window.graphicEngine.calcul.Point3D;
 import client.window.graphicEngine.extended.ModelCube;
 import client.window.graphicEngine.extended.ModelMap;
+import client.window.graphicEngine.structures.Model;
 import client.window.panels.StateHUD;
 import data.dynamic.TickClock;
 import data.id.ItemTable;
@@ -49,7 +50,6 @@ public class Session implements Serializable {
 
 	// ================================
 
-	private boolean with3DEngine = true;
 	private Engine engine;
 
 	public Camera camera;
@@ -92,7 +92,7 @@ public class Session implements Serializable {
 	public boolean processing = false;
 
 	/** State of the window [GAME, PAUSE, DIALOG, ...] */
-	public StateHUD stateGUI = StateHUD.GAME;
+	public StateHUD stateHUD = StateHUD.GAME;
 
 	// =============== Dialog =================
 	public MessageManager messages;
@@ -104,10 +104,9 @@ public class Session implements Serializable {
 		ModelCube.texturePack = texturePack;
 
 		fen = new Fen(this);
-
 		client = new Client(this);
-
 		keyboard = new Keyboard(this);
+		clock = new TickClock("Client Clock");
 
 		camera = new Camera(new Point3D(15, 35, 0));
 		camera.setVx(90);
@@ -147,9 +146,7 @@ public class Session implements Serializable {
 
 		fen.start();
 		keyboard.start();
-		Thread tClock = new Thread(clock);
-		tClock.setName("Client clock");
-		tClock.start();
+		clock.start();
 	}
 
 	// =========================================================================================================================
@@ -157,10 +154,8 @@ public class Session implements Serializable {
 	public void setMap(ModelMap map) {
 		this.map = map;
 
-		if (with3DEngine)
-			engine = new Engine(camera, this.map, texturePack);
+		engine = new Engine(camera, this.map, texturePack);
 
-		clock = new TickClock();
 		clock.add(map);
 
 		start();
@@ -172,6 +167,10 @@ public class Session implements Serializable {
 		engine.texturePack = texturePack;
 		if (fen != null)
 			fen.gui.updateTexturePack();
+	}
+
+	public void setModelCamera(Model model, Camera camera) {
+		engine.setModelCamera(model, camera);
 	}
 
 	// =========================================================================================================================
@@ -212,8 +211,6 @@ public class Session implements Serializable {
 
 	public void setAction(UserAction action) {
 		this.action = action;
-		if (fen != null)
-			fen.updateCursor();
 	}
 
 	public UserAction getAction() {

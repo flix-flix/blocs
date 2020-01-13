@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.event.MouseEvent;
 
 import client.session.Session;
 import client.window.graphicEngine.calcul.Camera;
@@ -85,6 +86,6 @@ public class MenuRessources extends Menu {
 	// =========================================================================================================================
 
 	@Override
-	public void click() {
+	public void click(MouseEvent e) {
 	}
 }

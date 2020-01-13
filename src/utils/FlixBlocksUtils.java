@@ -1,6 +1,7 @@
 package utils;
 
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -80,6 +81,16 @@ public class FlixBlocksUtils {
 
 	public static void debug(String str) {
 		debugBefore(str);
+	}
+
+	// =========================================================================================================================
+
+	public static void writeImage(BufferedImage img, String name) {
+		try {
+			ImageIO.write(img, "png", new File("img.png"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	// =========================================================================================================================

@@ -2,6 +2,7 @@ package client.window.panels.menus;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.event.MouseEvent;
 
 import client.session.Session;
 import data.id.ItemTable;
@@ -55,6 +56,6 @@ public class MenuMap extends Menu {
 	// Menu
 
 	@Override
-	public void click() {
+	public void click(MouseEvent e) {
 	}
 }

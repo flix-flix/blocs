@@ -52,7 +52,7 @@ public class MenuInfosBuilding extends Menu implements ButtonContainer {
 	public MenuInfosBuilding(Session session) {
 		super(session);
 
-		stocks = new MenuGrid(session);
+		stocks = new MenuGrid();
 		stocks.setCols(3);
 		stocks.setRowHeight(50);
 		stocks.setSize(getWidth(), 50);

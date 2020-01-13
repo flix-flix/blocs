@@ -2,9 +2,8 @@ package client.window.panels.menus;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-
-import client.session.Session;
 
 public class MenuGrid extends Menu {
 	private static final long serialVersionUID = 1941339088614372748L;
@@ -20,20 +19,16 @@ public class MenuGrid extends Menu {
 	/** Number of pixels between the items of the grid */
 	int padding = 2;
 
+	private Color color = Color.LIGHT_GRAY;
+
 	/** List of the panels in the grid */
 	ArrayList<Menu> list = new ArrayList<>();
 
 	// =========================================================================================================================
 
-	public MenuGrid(Session session) {
-		super(session);
-	}
-
-	// =========================================================================================================================
-
 	@Override
 	protected void paintComponent(Graphics g) {
-		g.setColor(Color.LIGHT_GRAY);
+		g.setColor(color);
 		g.fillRect(0, 0, getWidth(), getHeight());
 	}
 
@@ -76,6 +71,12 @@ public class MenuGrid extends Menu {
 
 	// =========================================================================================================================
 
+	public void setColor(Color color) {
+		this.color = color;
+	}
+
+	// =========================================================================================================================
+
 	@Override
 	public void setSize(int width, int height) {
 		int size = (width - (cols - 1) * padding) / cols;
@@ -98,6 +99,6 @@ public class MenuGrid extends Menu {
 	}
 
 	@Override
-	public void click() {
+	public void click(MouseEvent e) {
 	}
 }
