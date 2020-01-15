@@ -90,7 +90,7 @@ public class PanGUI extends JPanel implements ButtonContainer {
 		menu.addTop(gridActions = new MenuGrid(), 100);
 
 		for (int i = 0; i < _userActions.length; i++)
-			gridActions.addItem(userActions[i] = new MenuButtonUserAction(session, _userActions[i]));
+			gridActions.addMenu(userActions[i] = new MenuButtonUserAction(session, _userActions[i]));
 
 		menu.addBottom(map = new MenuMap(session), MenuCol.WIDTH);
 		menu.addBottom(ress = new MenuRessources(session), 130);

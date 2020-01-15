@@ -143,7 +143,7 @@ public class MenuInfosBuilding extends Menu implements ButtonContainer {
 			if (build.hasStock(type)) {
 				MenuResource r = new MenuResource();
 				r.update(build.getStocks(type));
-				stocks.addItem(r);
+				stocks.addMenu(r);
 			}
 
 		_update();

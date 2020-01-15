@@ -41,7 +41,6 @@ public class MenuRessources extends Menu {
 				session.texturePack);
 		engine.background = Engine.NONE;
 		units = engine.getImage(imgSize, imgSize);
-
 	}
 
 	// =========================================================================================================================

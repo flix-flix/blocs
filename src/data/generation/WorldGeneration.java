@@ -20,10 +20,11 @@ public class WorldGeneration {
 		Player ia = new Player("IA");
 
 		int ground = 10;
+		int size = 30;
 
 		// ========== Ground and Borders ==========
-		for (int x = 0; x < 100; x++)
-			for (int z = 0; z < 100; z++)
+		for (int x = 0; x < size; x++)
+			for (int z = 0; z < size; z++)
 				if (x % 99 == 0 || z % 99 == 0)
 					for (int y = 0; y <= ground + 3; y++)
 						map.add(new Cube(x, y, z, ItemID.BORDER));

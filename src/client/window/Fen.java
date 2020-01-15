@@ -138,56 +138,70 @@ public class Fen extends JFrame {
 			}
 
 			public void keyPressed(KeyEvent k) {
-				if (k.getKeyCode() == Key.PAUSE.code) {
-					if (session.stateHUD != StateHUD.GAME)
-						session.keyboard.resume();
-					else
-						session.keyboard.pause();
+				if (session.stateHUD == StateHUD.EDITOR && editor.isListeningKey()) {
+					editor.keyEvent(k);
 				}
 
 				else if (session.stateHUD == StateHUD.DIALOG) {
+					if (Key.get(k.getKeyCode()) != null)
+						switch (Key.get(k.getKeyCode())) {
+						case PAUSE:
+							session.keyboard.resume();
+							break;
+						case KEY_ENTER:
+							session.messages.send();
+							session.keyboard.mouseToCenter();
+							session.stateHUD = StateHUD.GAME;
+							break;
+						case KEY_DEL:
+							session.messages.deletePrevious();
+							break;
+						case KEY_SUPPR:
+							session.messages.deleteNext();
+							break;
 
-					if (k.getKeyCode() == Key.KEY_ENTER.code) {
-						session.messages.send();
-						session.keyboard.mouseToCenter();
-						session.stateHUD = StateHUD.GAME;
-					} else if (k.getKeyCode() == Key.KEY_DEL.code)
-						session.messages.deletePrevious();
-					else if (k.getKeyCode() == Key.KEY_SUPPR.code)
-						session.messages.deleteNext();
+						case KEY_UP:
+							session.messages.historyPrevious();
+							break;
+						case KEY_DOWN:
+							session.messages.historyNext();
+							break;
+						case KEY_RIGHT:
+							session.messages.cursorMoveRight();
+							break;
+						case KEY_LEFT:
+							session.messages.cursorMoveLeft();
+							break;
 
-					else if (k.getKeyCode() == Key.KEY_UP.code)
-						session.messages.historyPrevious();
-					else if (k.getKeyCode() == Key.KEY_DOWN.code)
-						session.messages.historyNext();
-					else if (k.getKeyCode() == Key.KEY_RIGHT.code)
-						session.messages.cursorMoveRight();
-					else if (k.getKeyCode() == Key.KEY_LEFT.code)
-						session.messages.cursorMoveLeft();
+						case KEY_PAGE_UP:
+							session.messages.pageUp();
+							break;
+						case KEY_PAGE_DOWN:
+							session.messages.pageDown();
+							break;
+						case KEY_TAB:
+							break;
+						case KEY_END:
+							session.messages.end();
+							break;
+						case KEY_START:
+							session.messages.start();
+							break;
 
-					else if (k.getKeyCode() == Key.KEY_PAGE_UP.code)
-						session.messages.pageUp();
-					else if (k.getKeyCode() == Key.KEY_PAGE_DOWN.code)
-						session.messages.pageDown();
-					else if (k.getKeyCode() == Key.KEY_TAB.code)
-						;
-					else if (k.getKeyCode() == Key.KEY_END.code)
-						session.messages.end();
-					else if (k.getKeyCode() == Key.KEY_START.code)
-						session.messages.start();
+						default:
+							break;
+						}
 
-					else { // TODO [Improve] List of accepted character in dialog
-						char c = k.getKeyChar();
-						if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9')
-								|| " \\/(){}[]+-:;,!?#|&\"'_²@=<>%.*^$£€".contains("" + c))
-							session.messages.write(c);
-					}
+					// TODO [Improve] List of accepted character in dialog
+					char c = k.getKeyChar();
+					if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9')
+							|| " \\/(){}[]+-:;,!?#|&\"'_²@=<>%.*^$£€".contains("" + c))
+						session.messages.write(c);
 				}
 
 				else if (session.stateHUD == StateHUD.GAME || session.stateHUD == StateHUD.EDITOR) {
 					if (Key.get(k.getKeyCode()) != null)
 						switch (Key.get(k.getKeyCode())) {
-
 						case FORWARD:
 							session.keyboard.forwardKeyEnabled = true;
 							break;
@@ -252,13 +266,16 @@ public class Fen extends JFrame {
 						// =====================================================
 
 						case PAUSE:
+							session.keyboard.pause();
 							break;
 
 						// =====================================================
 						default:
 							break;
 						}
-				}
+				} else if (session.stateHUD == StateHUD.PAUSE)
+					session.keyboard.resume();
+
 			}
 
 			public void keyReleased(KeyEvent k) {

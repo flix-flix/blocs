@@ -6,7 +6,6 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelEvent;
 import java.awt.image.BufferedImage;
 
 import client.window.panels.menus.Menu;
@@ -71,6 +70,7 @@ public class MenuColor extends Menu {
 		this.add(valid);
 
 		alpha = new MenuButtonEditor(editor, ActionEditor.SELECT_ALPHA);
+		alpha.setWheelMinMax(0, 20);
 		alpha.setWheelStep(20);
 		this.add(alpha);
 
@@ -207,17 +207,7 @@ public class MenuColor extends Menu {
 	// =========================================================================================================================
 
 	public void validColor() {
-		selectedColor = squareSelectedColor;
-	}
-
-	public void modifyAlpha(MouseWheelEvent e) {
-		int a = alpha.getWheelStep();
-		a -= e.getWheelRotation();
-		if (a > 20)
-			a = 20;
-		if (a < 0)
-			a = 0;
-		alpha.setWheelStep(a);
+		selectedColor = (alpha.getValue() << 24) + squareSelectedColor;
 	}
 
 	// =========================================================================================================================

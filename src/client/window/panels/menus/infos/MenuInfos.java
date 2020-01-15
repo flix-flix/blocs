@@ -60,7 +60,7 @@ public class MenuInfos extends Menu {
 
 		for (int i = 0; i < _cubes.size(); i++) {
 			cubes.add(new MenuButtonCube(session, _cubes.get(i)));
-			gridCubes.addItem(cubes.get(i));
+			gridCubes.addMenu(cubes.get(i));
 		}
 
 		// =========================================================================================================================

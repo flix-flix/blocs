@@ -1,6 +1,7 @@
 package client.window.panels.editor;
 
-import java.awt.event.MouseWheelEvent;
+import java.awt.Color;
+import java.awt.event.KeyEvent;
 
 import javax.swing.JPanel;
 
@@ -40,14 +41,19 @@ public class PanEditor extends JPanel {
 			ActionEditor.MINIATURE, ActionEditor.SAVE, ActionEditor.PLAYER_COLOR };
 	MenuButtonEditor[] buttonsGrid = new MenuButtonEditor[_buttonsGrid.length];
 
+	ActionEditor[] _buttonsItem = { ActionEditor.ITEM_NAME, ActionEditor.ITEM_ID, ActionEditor.ITEM_COLOR,
+			ActionEditor.ITEM_SAVE, ActionEditor.ITEM_NEW, ActionEditor.ITEM_CLEAR };
+	MenuButtonEditor[] buttonsItem = new MenuButtonEditor[_buttonsGrid.length];
+
 	MenuGrid topActions;
 	MenuGrid gridActions;
+	MenuGrid gridItemID;
 
-	public MenuItemID panItemID;
-	public MenuColor panColor;
+	MenuColor panColor;
 
 	// ======================= ? =========================
-	private ActionEditor action;
+	private ActionEditor action = null;
+	private ActionEditor listeningKey = null;
 
 	// =========================================================================================================================
 
@@ -75,22 +81,35 @@ public class PanEditor extends JPanel {
 		menu.addTop(topActions = new MenuGrid(), 100);
 
 		for (int i = 0; i < _buttonsTop.length; i++)
-			topActions.addItem(buttonsTop[i] = new MenuButtonEditor(this, _buttonsTop[i]));
+			topActions.addMenu(buttonsTop[i] = new MenuButtonEditor(this, _buttonsTop[i]));
 
 		menu.addBottom(panColor = new MenuColor(this), MenuCol.WIDTH);
-		menu.addBottom(panItemID = new MenuItemID(this), 65);
+		menu.addBottom(gridItemID = new MenuGrid(), 110);
+
+		gridItemID.setCols(3);
+		gridItemID.setRowHeight(50);
+		gridItemID.setBackground(Color.GRAY);
+		gridItemID.setBorder(5, Color.DARK_GRAY);
+		gridItemID.setPadding(MenuGrid.GRID_SPACE);
+
+		for (int i = 0; i < _buttonsItem.length; i++)
+			gridItemID.addMenu(buttonsItem[i] = new MenuButtonEditor(this, _buttonsItem[i]));
+
+		buttonsItem[1].setWheelMinMax(0, 999);
 
 		menu.addTop(gridActions = new MenuGrid(), MenuCol.REMAINING);
 
 		for (int i = 0; i < _buttonsGrid.length; i++)
-			gridActions.addItem(buttonsGrid[i] = new MenuButtonEditor(this, _buttonsGrid[i]));
+			gridActions.addMenu(buttonsGrid[i] = new MenuButtonEditor(this, _buttonsGrid[i]));
 	}
 
 	// =========================================================================================================================
 
 	public void clicked(ActionEditor action) {
+		listeningKey = null;
 		switch (action) {
 		case EDITOR:// Close Editor
+			setAction(null);
 			session.fen.setAction(UserAction.EDITOR);
 			break;
 
@@ -126,6 +145,20 @@ public class PanEditor extends JPanel {
 			panColor.validColor();
 			break;
 
+		// ================== PanItem ======================
+		case ITEM_NAME:
+		case ITEM_ID:
+			listeningKey = action;
+			break;
+		case ITEM_COLOR:
+			buttonsItem[2].setValue(panColor.selectedColor);
+			break;
+
+		case ITEM_SAVE:
+		case ITEM_NEW:
+		case ITEM_CLEAR:
+			break;
+
 		// ================== SAVE ======================
 		case SAVE:
 			break;
@@ -134,7 +167,7 @@ public class PanEditor extends JPanel {
 		}
 	}
 
-	public void wheel(ActionEditor action, MouseWheelEvent e) {
+	public void wheel(ActionEditor action) {
 		switch (action) {
 		// ================== EDIT TYPE ======================
 		case EDIT_CUBE:
@@ -159,7 +192,11 @@ public class PanEditor extends JPanel {
 
 		// ================== PanColor ======================
 		case SELECT_ALPHA:
-			panColor.modifyAlpha(e);
+			break;
+
+		// ================== PanItem ======================
+		case ITEM_ID:
+			listeningKey = action;
 			break;
 
 		// ================== Not handled ======================
@@ -170,6 +207,38 @@ public class PanEditor extends JPanel {
 		default:
 			break;
 		}
+	}
+
+	// =========================================================================================================================
+
+	public void keyEvent(KeyEvent e) {
+		int key = e.getKeyCode();
+		char c = e.getKeyChar();
+
+		MenuButtonEditor button = buttonsItem[0];
+
+		if (key == 27) {
+			button.clearString();
+			listeningKey = null;
+		} else if (key == 8)
+			button.delChar();
+		else if (key == 10)
+			listeningKey = null;
+
+		else {
+			if ('a' <= c && c <= 'z')
+				c -= 32;
+
+			if (c == ' ')
+				c = '_';
+
+			if (('A' <= c && c <= 'Z') || c == '_')
+				button.addChar(c);
+		}
+	}
+
+	public boolean isListeningKey() {
+		return listeningKey != null;
 	}
 
 	// =========================================================================================================================
