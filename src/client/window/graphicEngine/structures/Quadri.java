@@ -13,6 +13,10 @@ public class Quadri {
 
 	public Line[] lines = new Line[4];
 
+	public final int NOT_NUMBERED = -1;
+	/** Order of drawing in the Draw */
+	public int id = NOT_NUMBERED;
+
 	// =========================================================================================================================
 
 	public Quadri(Point p0, Point p1, Point p2, Point p3, int color, boolean fill) {
@@ -24,6 +28,11 @@ public class Quadri {
 		lines[1] = new Line(points[1], points[2]);
 		lines[2] = new Line(points[3], points[2]);
 		lines[3] = new Line(points[0], points[3]);
+	}
+
+	public Quadri(Point p0, Point p1, Point p2, Point p3, int color, boolean fill, int id) {
+		this(p0, p1, p2, p3, color, fill);
+		this.id = id;
 	}
 
 	// =========================================================================================================================

@@ -6,6 +6,7 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
 import java.awt.image.BufferedImage;
 
 import client.window.panels.menus.Menu;
@@ -22,6 +23,8 @@ public class MenuColor extends Menu {
 	// =========================================================================================================================
 	PanEditor editor;
 
+	MenuButtonEditor valid, alpha;
+
 	int[] colorLine = new int[6 * 44];
 	int lineStartX = 0;// Set in paintComponent
 	int lineStartY = 20;
@@ -37,7 +40,13 @@ public class MenuColor extends Menu {
 
 	int squareSelectedColor = 0;
 
+	// =========================================================================================================================
 	int selectedColor = 0;
+
+	String newStr = "New : ";
+	String currentStr = "Current : ";
+
+	int startSelectedColor = 25 + Math.max(fm.stringWidth(newStr), fm.stringWidth(currentStr));
 
 	// =========================================================================================================================
 
@@ -56,6 +65,16 @@ public class MenuColor extends Menu {
 				colorLine[i * 44 + j] = (((tab[1] << 8) + tab[2]) << 8) + tab[0];
 			}
 		}
+
+		valid = new MenuButtonEditor(editor, ActionEditor.VALID_COLOR);
+		valid.setBounds(getWidth() - 150, getHeight() - 50, 75, 35);
+		this.add(valid);
+
+		alpha = new MenuButtonEditor(editor, ActionEditor.SELECT_ALPHA);
+		alpha.setWheelStep(20);
+		this.add(alpha);
+
+		alpha.setBounds(getWidth() - 60, getHeight() - 50, 50, 35);
 
 		addMouseMotionListener(new MouseMotionListener() {
 			@Override
@@ -134,20 +153,18 @@ public class MenuColor extends Menu {
 		int border = 10;
 
 		g.setColor(Color.DARK_GRAY);
-		g.drawRect((getWidth() - sizeX) / 2 - 1, getHeight() - border - sizeY * 2 - 1, sizeX + 1, sizeY * 2 + 1);
-		g.drawRect((getWidth() - sizeX) / 2 - 2, getHeight() - border - sizeY * 2 - 2, sizeX + 3, sizeY * 2 + 3);
+		g.drawRect(startSelectedColor - 1, getHeight() - border - sizeY * 2 - 1, sizeX + 1, sizeY * 2 + 1);
+		g.drawRect(startSelectedColor - 2, getHeight() - border - sizeY * 2 - 2, sizeX + 3, sizeY * 2 + 3);
 
 		g.setColor(new Color(squareSelectedColor));
-		g.fillRect((getWidth() - sizeX) / 2, getHeight() - border - sizeY * 2, sizeX, sizeY);
+		g.fillRect(startSelectedColor, getHeight() - border - sizeY * 2, sizeX, sizeY);
 		g.setColor(new Color(selectedColor));
-		g.fillRect((getWidth() - sizeX) / 2, getHeight() - border - sizeY, sizeX, sizeY);
+		g.fillRect(startSelectedColor, getHeight() - border - sizeY, sizeX, sizeY);
 
 		g.setColor(Color.LIGHT_GRAY);
 		g.setFont(font);
-		String newStr = "New : ";
-		String prevStr = "Previous : ";
-		g.drawString(newStr, (getWidth() - sizeX) / 2 - fm.stringWidth(newStr), getHeight() - border - sizeY - 10);
-		g.drawString(prevStr, (getWidth() - sizeX) / 2 - fm.stringWidth(prevStr), getHeight() - border - 10);
+		g.drawString(newStr, startSelectedColor - fm.stringWidth(newStr), getHeight() - border - sizeY - 10);
+		g.drawString(currentStr, startSelectedColor - fm.stringWidth(currentStr), getHeight() - border - 10);
 	}
 
 	// =========================================================================================================================
@@ -189,6 +206,22 @@ public class MenuColor extends Menu {
 
 	// =========================================================================================================================
 
+	public void validColor() {
+		selectedColor = squareSelectedColor;
+	}
+
+	public void modifyAlpha(MouseWheelEvent e) {
+		int a = alpha.getWheelStep();
+		a -= e.getWheelRotation();
+		if (a > 20)
+			a = 20;
+		if (a < 0)
+			a = 0;
+		alpha.setWheelStep(a);
+	}
+
+	// =========================================================================================================================
+
 	@Override
 	public void click(MouseEvent e) {
 		// Line selector
@@ -209,5 +242,10 @@ public class MenuColor extends Menu {
 
 	@Override
 	public void resize() {
+		int start = squareStartX + 260;
+		int remain = getHeight() - start;
+
+		valid.setBounds(getWidth() - 150, start + remain / 2 - 35 / 2, 75, 35);
+		alpha.setBounds(getWidth() - 60, start + remain / 2 - 35 / 2, 50, 35);
 	}
 }

@@ -76,35 +76,41 @@ public class DrawCubeFace extends Draw {
 		int sample = texture.getColor(0, 0);
 		boolean darker = (sample & 0xff) + (sample >> 8 & 0xff) + (sample >> 16 & 0xff) > 600;
 
+		boolean isFaceSelected = cube.selectedQuadri != ModelCube.NO_QUADRI && cube.selectedFace == face;
+
 		for (int row = 0; row < texture.height; row++)
 			for (int col = 0; col < texture.width; col++) {
 				int color = texture.getColor(row, col);
+				boolean selected = isFaceSelected && (row * texture.width + col) == cube.selectedQuadri;
 
-				// If the quadri is invisible -> next
-				if (((color >> 24) & 0xff) == 0)
-					continue;
+				// If the quadri is invisible -> ignore color modifications
+				if (((color >> 24) & 0xff) == 0) {
+					if (selected)
+						color = 0xffcccccc;
+				} else {
+					// Remplace default alpha by the forced one
+					if (forcedAlpha != DEFAULT_ALPHA)
+						color = (forcedAlpha << 24) + (color & 0xffffff);
 
-				// Remplace default alpha by the forced one
-				if (forcedAlpha != DEFAULT_ALPHA)
-					color = (forcedAlpha << 24) + (color & 0xffffff);
+					// If the cube is highlighted : its color will be lighter
+					if (cube.isHighlight() || selected)
+						if (darker)
+							color = Engine.addHue(color, Engine.createColor(255, 0, 0, 0), .4);
+						else
+							color = Engine.addHue(color, Engine.createColor(255, 255, 255, 255), .4);
 
-				// If the cube is highlighted : its color will be lighter
-				if (cube.isHighlight())
-					if (darker)
-						color = Engine.addHue(color, Engine.createColor(255, 0, 0, 0), .4);
-					else
-						color = Engine.addHue(color, Engine.createColor(255, 255, 255, 255), .4);
-
-				// If the cube is preview (or building in construction) makes it transparent
-				if (cube.isPreview() || (cube.build != null && !cube.build.isBuild())) {
-					color = (127 << 24) + (color & 0xffffff);
-					// If the multibloc is invalid : its color will have a red hue
-					if (cube.multibloc != null && !cube.multibloc.valid)
-						color = Engine.addHue(color, Engine.createColor(255, 255, 0, 0), .4);
+					// If the cube is preview (or building in construction) makes it transparent
+					if (cube.isPreview() || (cube.build != null && !cube.build.isBuild())) {
+						color = (127 << 24) + (color & 0xffffff);
+						// If the multibloc is invalid : its color will have a red hue
+						if (cube.multibloc != null && !cube.multibloc.valid)
+							color = Engine.addHue(color, Engine.createColor(255, 255, 0, 0), .4);
+					}
 				}
 
 				quadri.add(new Quadri(points2D[row * cols1 + col], points2D[(row + 1) * cols1 + col],
-						points2D[(row + 1) * cols1 + col + 1], points2D[row * cols1 + col + 1], color, true));
+						points2D[(row + 1) * cols1 + col + 1], points2D[row * cols1 + col + 1], color, true,
+						row * texture.width + col));
 			}
 	}
 

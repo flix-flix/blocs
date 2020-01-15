@@ -34,7 +34,7 @@ public class MenuButtonCube extends Menu {
 		this.cube = cube;
 
 		engine = new Engine(new Camera(new Point3D(-.4, 1.5, -1), 58, -35), new ModelCube(cube), session.texturePack);
-		engine.drawSky = false;
+		engine.background = Engine.NONE;
 	}
 
 	@Override

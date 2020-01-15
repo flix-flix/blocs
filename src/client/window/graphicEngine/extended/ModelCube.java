@@ -54,6 +54,11 @@ public class ModelCube extends Cube implements Model {
 	/** true : pointed by the player */
 	private boolean highlight;
 
+	// =================== Quadri ===================
+	public Face selectedFace = null;
+	public static final int NO_QUADRI = -1;
+	public int selectedQuadri = NO_QUADRI;
+
 	// =================== Model ===================
 	private boolean visible = true;
 	private ArrayList<Draw> draws = new ArrayList<>();
@@ -172,6 +177,13 @@ public class ModelCube extends Cube implements Model {
 
 	public boolean isHighlight() {
 		return highlight;
+	}
+
+	// =========================================================================================================================
+
+	public void setSelectedQuadri(Face face, int id) {
+		selectedFace = face;
+		selectedQuadri = id;
 	}
 
 	// =========================================================================================================================

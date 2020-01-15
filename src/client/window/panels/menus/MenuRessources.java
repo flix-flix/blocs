@@ -39,7 +39,7 @@ public class MenuRessources extends Menu {
 		unit.orientation = Orientation.WEST;
 		Engine engine = new Engine(new Camera(new Point3D(-.4, 1.5, -1), 58, -35), new ModelCube(unit),
 				session.texturePack);
-		engine.drawSky = false;
+		engine.background = Engine.NONE;
 		units = engine.getImage(imgSize, imgSize);
 
 	}

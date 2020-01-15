@@ -20,11 +20,13 @@ import javax.swing.JFrame;
 import client.keys.Key;
 import client.session.Session;
 import client.session.UserAction;
+import client.window.graphicEngine.calcul.Engine;
 import client.window.panels.PanDevlop;
 import client.window.panels.PanGUI;
 import client.window.panels.PanGame;
 import client.window.panels.PanPause;
 import client.window.panels.StateHUD;
+import client.window.panels.editor.ActionEditor;
 import client.window.panels.editor.PanEditor;
 import data.id.ItemTable;
 import data.map.Cube;
@@ -55,6 +57,8 @@ public class Fen extends JFrame {
 	private static Cursor cursorPickaxe = createCursor("cursorPickaxe");
 	private static Cursor cursorBucket = createCursor("cursorBucket");
 
+	private static Cursor cursorPaint = createCursor("cursorPaint");
+
 	private boolean cursorVisible = true;
 
 	public int mouseX, mouseY;
@@ -81,6 +85,7 @@ public class Fen extends JFrame {
 
 	public Fen(Session session) {
 		this.session = session;
+		session.fen = this;
 
 		// ======================================
 
@@ -377,60 +382,66 @@ public class Fen extends JFrame {
 
 		if (!cursorVisible)
 			cursor = cursorInvisible;
-		else if (session.getAction() == UserAction.MOUSE)
-			if (cube != null && session.fen.gui.unit != null && session.fen.gui.unit.getPlayer().equals(session.player))
-				if (ItemTable.isResource(cube.itemID))// Harvestable
-					switch (ItemTable.getResourceType(cube.itemID)) {
-					case WOOD:
-						cursor = cursorAxe;
-						session.unitAction = Action.UNIT_HARVEST;
-						break;
-					case STONE:
-						cursor = cursorPickaxe;
-						session.unitAction = Action.UNIT_HARVEST;
-						break;
-					case WATER:
-						cursor = cursorBucket;
-						session.unitAction = Action.UNIT_HARVEST;
-						break;
-					}
-				else if (cube.build != null) {// Building
-					if (cube.build.getPlayer().equals(session.player)) {
-						if (!cube.build.isBuild()) {
-							cursor = cursorBuild;
-							session.unitAction = Action.UNIT_BUILD;
-						} else if (session.fen.gui.unit.hasResource()
-								&& cube.build.canStock(session.fen.gui.unit.getResource())) {// Stock
-							cursor = cursorDrop;
-							session.unitAction = Action.UNIT_STORE;
+		else if (session.stateHUD == StateHUD.EDITOR) {
+			if (editor.getAction() == ActionEditor.PAINT)
+				cursor = cursorPaint;
+		} else if (session.stateHUD == StateHUD.GAME)
+			if (session.getAction() == UserAction.MOUSE)
 
-							switch (session.fen.gui.unit.getResource().getType()) {
-							case WOOD:
-								cursor = cursorDropWood;
-								break;
-							case STONE:
-								cursor = cursorDropStone;
-								break;
-							case WATER:
-								cursor = cursorDropWater;
-								break;
-							}
+				if (cube != null && session.fen.gui.unit != null
+						&& session.fen.gui.unit.getPlayer().equals(session.player))
+					if (ItemTable.isResource(cube.itemID))// Harvestable
+						switch (ItemTable.getResourceType(cube.itemID)) {
+						case WOOD:
+							cursor = cursorAxe;
+							session.unitAction = Action.UNIT_HARVEST;
+							break;
+						case STONE:
+							cursor = cursorPickaxe;
+							session.unitAction = Action.UNIT_HARVEST;
+							break;
+						case WATER:
+							cursor = cursorBucket;
+							session.unitAction = Action.UNIT_HARVEST;
+							break;
 						}
-					} else {// Opponent
-						cursor = cursorAttack;
-						session.unitAction = Action.UNIT_ATTACK;
-					}
-				} else if (cube.unit != null) {// Unit
-					if (cube.unit.getPlayer().equals(session.player)) {// Own
+					else if (cube.build != null) {// Building
+						if (cube.build.getPlayer().equals(session.player)) {
+							if (!cube.build.isBuild()) {
+								cursor = cursorBuild;
+								session.unitAction = Action.UNIT_BUILD;
+							} else if (session.fen.gui.unit.hasResource()
+									&& cube.build.canStock(session.fen.gui.unit.getResource())) {// Stock
+								cursor = cursorDrop;
+								session.unitAction = Action.UNIT_STORE;
 
-					} else {// Opponent
-						cursor = cursorAttack;
-						session.unitAction = Action.UNIT_ATTACK;
+								switch (session.fen.gui.unit.getResource().getType()) {
+								case WOOD:
+									cursor = cursorDropWood;
+									break;
+								case STONE:
+									cursor = cursorDropStone;
+									break;
+								case WATER:
+									cursor = cursorDropWater;
+									break;
+								}
+							}
+						} else {// Opponent
+							cursor = cursorAttack;
+							session.unitAction = Action.UNIT_ATTACK;
+						}
+					} else if (cube.unit != null) {// Unit
+						if (cube.unit.getPlayer().equals(session.player)) {// Own
+
+						} else {// Opponent
+							cursor = cursorAttack;
+							session.unitAction = Action.UNIT_ATTACK;
+						}
+					} else {
+						cursor = cursorGoto;
+						session.unitAction = Action.UNIT_GOTO;
 					}
-				} else {
-					cursor = cursorGoto;
-					session.unitAction = Action.UNIT_GOTO;
-				}
 
 		setCursor(cursor);
 	}
@@ -459,23 +470,22 @@ public class Fen extends JFrame {
 	public void setAction(UserAction action) {
 		if (action == UserAction.EDITOR) {
 			if (session.stateHUD == StateHUD.EDITOR) {// Close Editor
-				session.setAction(null);
+				session.stateHUD = StateHUD.GAME;
+
 				session.setModelCamera(session.map, session.camera);
 
-				editor.setVisible(false);
-				gui.setVisible(true);
-
-				session.stateHUD = StateHUD.GAME;
 				setAction(UserAction.MOUSE);
 			} else {// Open Editor
 				session.stateHUD = StateHUD.EDITOR;
+				session.setAction(UserAction.EDITOR);
 
-				session.setAction(action);
 				session.setModelCamera(editor.map, editor.camera);
-
-				gui.setVisible(false);
-				editor.setVisible(true);
 			}
+			boolean game = session.stateHUD == StateHUD.GAME;
+
+			gui.setVisible(game);
+			editor.setVisible(!game);
+			session.setEngineBackground(game ? Engine.SKY : Engine.FILL);
 		} else {
 
 			session.setAction(action);
@@ -483,6 +493,12 @@ public class Fen extends JFrame {
 			updateCursor();
 			gui.refreshGUI();
 		}
+	}
+
+	// =========================================================================================================================
+
+	public boolean isNeededQuadriPrecision() {
+		return editor.getAction() == ActionEditor.PAINT;
 	}
 
 	// =========================================================================================================================

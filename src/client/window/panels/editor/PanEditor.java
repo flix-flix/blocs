@@ -36,8 +36,8 @@ public class PanEditor extends JPanel {
 			ActionEditor.EDIT_MULTI_TEXTURE, ActionEditor.EDITOR };
 	MenuButtonEditor[] buttonsTop = new MenuButtonEditor[_buttonsTop.length];
 
-	ActionEditor[] _buttonsGrid = { ActionEditor.ALONE, ActionEditor.DECOR, ActionEditor.GRID, ActionEditor.MINIATURE,
-			ActionEditor.SAVE, ActionEditor.PLAYER_COLOR };
+	ActionEditor[] _buttonsGrid = { ActionEditor.ALONE, ActionEditor.DECOR, ActionEditor.PAINT, ActionEditor.GRID,
+			ActionEditor.MINIATURE, ActionEditor.SAVE, ActionEditor.PLAYER_COLOR };
 	MenuButtonEditor[] buttonsGrid = new MenuButtonEditor[_buttonsGrid.length];
 
 	MenuGrid topActions;
@@ -45,6 +45,9 @@ public class PanEditor extends JPanel {
 
 	public MenuItemID panItemID;
 	public MenuColor panColor;
+
+	// ======================= ? =========================
+	private ActionEditor action;
 
 	// =========================================================================================================================
 
@@ -56,6 +59,7 @@ public class PanEditor extends JPanel {
 
 		map = new ModelMap();
 		map.add(new Cube(new Coord(0, 0, 0), ItemID.BORDER));
+		map.add(new Cube(new Coord(0, 1, 0), ItemID.GLASS));
 
 		camera = new Camera(new Point3D(0, 0, -10), 90, 0);
 
@@ -104,6 +108,10 @@ public class PanEditor extends JPanel {
 		case DECOR:
 			break;
 
+		case PAINT:
+			setAction(ActionEditor.PAINT);
+			session.fen.updateCursor();
+			break;
 		case GRID:
 			break;
 		case MINIATURE:
@@ -113,6 +121,12 @@ public class PanEditor extends JPanel {
 		case QUIT:
 			break;
 
+		// ================== PanColor ======================
+		case VALID_COLOR:
+			panColor.validColor();
+			break;
+
+		// ================== SAVE ======================
 		case SAVE:
 			break;
 		default:
@@ -143,6 +157,11 @@ public class PanEditor extends JPanel {
 		case PLAYER_COLOR:
 			break;
 
+		// ================== PanColor ======================
+		case SELECT_ALPHA:
+			panColor.modifyAlpha(e);
+			break;
+
 		// ================== Not handled ======================
 		case EDITOR:
 		case QUIT:
@@ -151,6 +170,16 @@ public class PanEditor extends JPanel {
 		default:
 			break;
 		}
+	}
+
+	// =========================================================================================================================
+
+	public ActionEditor getAction() {
+		return action;
+	}
+
+	public void setAction(ActionEditor action) {
+		this.action = action;
 	}
 
 	// =========================================================================================================================

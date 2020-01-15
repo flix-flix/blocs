@@ -54,13 +54,14 @@ public class Session implements Serializable {
 
 	public Camera camera;
 	public Keyboard keyboard;
-	public Fen fen;
+	public Fen fen;// Set in Fen
 	public TickClock clock;
 
 	// ============= Target ===================
 
 	public ModelCube cubeTarget;
 	public Face faceTarget;
+	public int quadriTarget;
 
 	/** Next cube to add (its coords aren't valid) */
 	private Cube nextCube;
@@ -103,7 +104,7 @@ public class Session implements Serializable {
 		texturePack = new TexturePack();
 		ModelCube.texturePack = texturePack;
 
-		fen = new Fen(this);
+		new Fen(this);
 		client = new Client(this);
 		keyboard = new Keyboard(this);
 		clock = new TickClock("Client Clock");
@@ -171,6 +172,10 @@ public class Session implements Serializable {
 
 	public void setModelCamera(Model model, Camera camera) {
 		engine.setModelCamera(model, camera);
+	}
+
+	public void setEngineBackground(int i) {
+		engine.background = i;
 	}
 
 	// =========================================================================================================================
@@ -255,7 +260,8 @@ public class Session implements Serializable {
 	}
 
 	public void targetUpdate() {
-		boolean sameTarget = cubeTarget == Engine.cubeTarget && faceTarget == Engine.faceTarget;
+		boolean sameTarget = cubeTarget == Engine.cubeTarget && faceTarget == Engine.faceTarget
+				&& (quadriTarget == Engine.quadriTarget || fen.isNeededQuadriPrecision());
 
 		// Removes previous selection display
 		if (cubeTarget != null)
@@ -266,11 +272,16 @@ public class Session implements Serializable {
 				// Removes preview cubes
 				if (map.gridContains(previousPreview) && map.gridGet(previousPreview).isPreview())
 					map.remove(previousPreview);
+
+				// Removes highlight of previous selected quadri
+				cubeTarget.setSelectedQuadri(null, ModelCube.NO_QUADRI);
 			}
 
 		// Refresh target
 		cubeTarget = Engine.cubeTarget;
 		faceTarget = Engine.faceTarget;
+		quadriTarget = Engine.quadriTarget;
+
 		fen.updateCursor();
 
 		if (gamemode == GameMode.CLASSIC)
@@ -301,6 +312,10 @@ public class Session implements Serializable {
 					map.setHighlight(cubeTarget, true);
 				} else if (action == UserAction.MOUSE) {
 					map.setHighlight(cubeTarget, true);
+				}
+				// ================ EDITOR ==================
+				else if (fen.isNeededQuadriPrecision()) {
+					cubeTarget.setSelectedQuadri(faceTarget, quadriTarget);
 				}
 	}
 

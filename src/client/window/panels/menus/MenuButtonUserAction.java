@@ -13,6 +13,7 @@ import client.window.graphicEngine.calcul.Point3D;
 import client.window.graphicEngine.extended.ModelCube;
 import data.id.ItemID;
 import data.map.Cube;
+import utils.FlixBlocksUtils;
 
 public class MenuButtonUserAction extends Menu {
 	private static final long serialVersionUID = -2696383944798968722L;
@@ -28,12 +29,12 @@ public class MenuButtonUserAction extends Menu {
 		super(session);
 		this.action = action;
 
-		img = action.getImage();
+		img = FlixBlocksUtils.getImage("menu/" + action.name().toLowerCase());
 
 		if (action == UserAction.CREA_ADD) {
 			engine = new Engine(new Camera(new Point3D(-.4, 1.5, -1), 58, -35), new ModelCube(new Cube(ItemID.GRASS)),
 					session.texturePack);
-			engine.drawSky = false;
+			engine.background = Engine.NONE;
 		}
 	}
 

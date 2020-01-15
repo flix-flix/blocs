@@ -97,7 +97,7 @@ public class MenuInfoUnit extends Menu implements ButtonContainer {
 		cube.orientation = Orientation.WEST;
 
 		engine = new Engine(new Camera(new Point3D(-.4, 1.5, -1), 58, -35), new ModelCube(cube), session.texturePack);
-		engine.drawSky = false;
+		engine.background = Engine.NONE;
 		img = engine.getImage(75, 75);
 
 		_update();

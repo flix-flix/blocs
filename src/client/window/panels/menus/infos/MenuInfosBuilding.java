@@ -134,7 +134,7 @@ public class MenuInfosBuilding extends Menu implements ButtonContainer {
 		map.add(new Building(null, ItemID.CASTLE, 0, 0, 0, true).getCube());
 
 		engine = new Engine(new Camera(new Point3D(3.7, 3, 4.2), 236, -30), map, session.texturePack);
-		engine.drawSky = false;
+		engine.background = Engine.NONE;
 		img = engine.getImage(imgSize, imgSize);
 
 		stocks.clear();

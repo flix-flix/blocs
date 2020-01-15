@@ -37,6 +37,7 @@ public class Engine {
 
 	static public ModelCube cubeTarget;
 	static public Face faceTarget;
+	static public int quadriTarget;
 
 	// ================ Dev (F3) =====================
 	public long timeStart, timeMat, timeDraw, timeEnd;
@@ -55,8 +56,16 @@ public class Engine {
 	 */
 	public int widthRatio;
 
-	/** true : draw a sky on the background | false : it will be transparent */
-	public boolean drawSky = true;
+	// ================ Background =====================
+	/** Leave the background transparent */
+	public static final int NONE = 0;
+	/** Fill the background with black */
+	public static final int FILL = 1;
+	/** Draw the sky in the background */
+	public static final int SKY = 2;
+
+	/** State of the background */
+	public int background = SKY;
 
 	// =========================================================================================================================
 
@@ -94,8 +103,7 @@ public class Engine {
 
 		timeEnd = System.currentTimeMillis();
 
-		if (drawSky)
-			drawSky();
+		drawBackgroung();
 
 		return bimg;
 	}
@@ -115,7 +123,17 @@ public class Engine {
 
 	// =========================================================================================================================
 
-	public void drawSky() {
+	public void drawBackgroung() {
+		if (background == NONE)
+			return;
+
+		if (background == FILL) {
+			for (int row = 0; row < imgHeight; row++)
+				for (int col = 0; col < imgWidth; col++)
+					setPixel(col, row, 0xff000000);
+			return;
+		}
+
 		int blue = createColor(255, 51, 150, 219);
 		int light_blue = createColor(255, 160, 200, 230);
 		int black = createColor(255, 0, 0, 0);
@@ -154,24 +172,31 @@ public class Engine {
 		draws.sort(null);
 
 		timeDraw = System.currentTimeMillis();
+		
 
 		for (Draw d : draws) {
 			Polygon poly = d.getPoly(this);
+			boolean targeted = false;
+
 			// Test if at least one of the points appear on the screen
 			for (int index = 0; index < 4; index++)
 				if (poly.xpoints[index] < imgWidth && poly.xpoints[index] > 0 && poly.ypoints[index] < imgHeight
 						&& poly.ypoints[index] > 0) {
+					// Test if the target is in the polygon
 					if (cubeTarget == null && poly.contains(cursorX, cursorY)
 							&& ((DrawCubeFace) d).cube.isTargetable()) {
+						targeted = true;
 						faceTarget = ((DrawCubeFace) d).face;
 						cubeTarget = ((DrawCubeFace) d).cube;
 					}
 				}
 			for (Quadri q : d.getQuadri(this))
 				// Test if at least one of the points appear on the screen
-				for (int index = 0; index < 4; index++)
-					if (q.points[index].x < imgWidth && q.points[index].x > 0 && q.points[index].y < imgHeight
-							&& q.points[index].y > 0) {
+				for (int i = 0; i < 4; i++)
+					if (q.points[i].x < imgWidth && q.points[i].x > 0 && q.points[i].y < imgHeight
+							&& q.points[i].y > 0) {
+						if(targeted && q.getPoly().contains(cursorX, cursorY))
+							quadriTarget = q.id;
 						drawQuadri(q);
 						break;
 					}

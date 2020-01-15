@@ -166,7 +166,7 @@ public class Keyboard {
 					&& session.fen.getHeight() / 2 == mouseLocationY);
 		}
 
-		Camera camera = session.getAction() == UserAction.EDITOR ? session.fen.editor.camera : session.camera;
+		Camera camera = session.stateHUD == StateHUD.EDITOR ? session.fen.editor.camera : session.camera;
 
 		if (session.stateHUD != StateHUD.PAUSE && session.stateHUD != StateHUD.DIALOG && !mouseFreeze) {
 			camera.setVx(camera.getVx() - ((session.fen.getWidth() / 2 - mouseLocationX) * mouseSpeed));
@@ -236,7 +236,7 @@ public class Keyboard {
 
 	public void cameraMovement() {
 		double x = 0, z = 0;
-		Camera camera = session.getAction() == UserAction.EDITOR ? session.fen.editor.camera : session.camera;
+		Camera camera = session.stateHUD == StateHUD.EDITOR ? session.fen.editor.camera : session.camera;
 
 		if (session.keyboard.forwardKeyEnabled) {
 			x = Math.cos(camera.getVx() * FlixBlocksUtils.toRadian);
