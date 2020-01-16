@@ -10,6 +10,7 @@ import client.window.graphicEngine.calcul.Point3D;
 import client.window.graphicEngine.calcul.Vector;
 import client.window.graphicEngine.structures.Draw;
 import client.window.graphicEngine.structures.Quadri;
+import data.id.ItemID;
 import data.id.ItemTable;
 import data.map.Cube;
 import data.map.enumerations.Face;
@@ -47,10 +48,16 @@ public class DrawCubeFace extends Draw {
 	public ArrayList<Quadri> getQuadri(Engine engine) {
 		quadri.clear();
 
-		// Draw the black contour of the face
-		if (ItemTable.drawContour(cube.itemID)) {
+		// Draw white contour for the grid in editor mode
+		if (cube.itemID == ItemID.EDITOR_PREVIEW_GRID) {
 			Point[] points2D = generate2D(engine, 1, 1);
-			quadri.add(new Quadri(points2D[0], points2D[1], points2D[3], points2D[2], -0xffffff, false));
+			quadri.add(new Quadri(points2D[0], points2D[1], points2D[3], points2D[2], 0xffffffff, false));
+		}
+
+		// Draw the black contour of the face
+		else if (ItemTable.drawContour(cube.itemID)) {
+			Point[] points2D = generate2D(engine, 1, 1);
+			quadri.add(new Quadri(points2D[0], points2D[1], points2D[3], points2D[2], 0xff000000, false));
 		}
 
 		// Draw the mining animation
@@ -73,6 +80,7 @@ public class DrawCubeFace extends Draw {
 
 		Point[] points2D = generate2D(engine, texture.width, texture.height);
 
+		// TODO [Improve] Highlight darker when white face/quadri
 		int sample = texture.getColor(0, 0);
 		boolean darker = (sample & 0xff) + (sample >> 8 & 0xff) + (sample >> 16 & 0xff) > 600;
 
@@ -107,6 +115,13 @@ public class DrawCubeFace extends Draw {
 							color = Engine.addHue(color, Engine.createColor(255, 255, 0, 0), .4);
 					}
 				}
+
+				// TODO [Improve] Editor force if() for each quadri drawn
+				// Draw the white grid for the editor mode
+				if (cube.itemID == ItemID.EDITOR_PREVIEW_GRID)
+					quadri.add(new Quadri(points2D[row * cols1 + col], points2D[(row + 1) * cols1 + col],
+							points2D[(row + 1) * cols1 + col + 1], points2D[row * cols1 + col + 1], 0xffffffff, false,
+							row * texture.width + col));
 
 				quadri.add(new Quadri(points2D[row * cols1 + col], points2D[(row + 1) * cols1 + col],
 						points2D[(row + 1) * cols1 + col + 1], points2D[row * cols1 + col + 1], color, true,

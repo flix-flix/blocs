@@ -17,9 +17,13 @@ public class TextureFace {
 	public TextureFace() {
 	}
 
-	public TextureFace(String folder, String file) {
-		normal = TextureSquare.generateSquare(folder, file);
+	public TextureFace(TextureSquare normal) {
+		this.normal = normal;
 		generateRotatedTexture();
+	}
+
+	public TextureFace(String folder, String file) {
+		this(TextureSquare.generateSquare(folder, file));
 	}
 
 	public TextureFace(String file) {

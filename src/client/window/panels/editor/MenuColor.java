@@ -34,13 +34,13 @@ public class MenuColor extends Menu {
 
 	int squareStartX = 25;
 	int squareStartY = 25;
-	int squareSelectorX = 0;
+	int squareSelectorX = 255;
 	int squareSelectorY = 0;
 
 	int squareSelectedColor = 0;
 
 	// =========================================================================================================================
-	int selectedColor = 0;
+	private int selectedColor = 0;
 
 	String newStr = "New : ";
 	String currentStr = "Current : ";
@@ -64,6 +64,8 @@ public class MenuColor extends Menu {
 				colorLine[i * 44 + j] = (((tab[1] << 8) + tab[2]) << 8) + tab[0];
 			}
 		}
+		
+		updatePointedColor();
 
 		valid = new MenuButtonEditor(editor, ActionEditor.VALID_COLOR);
 		valid.setBounds(getWidth() - 150, getHeight() - 50, 75, 35);
@@ -204,10 +206,14 @@ public class MenuColor extends Menu {
 				(255. - squareSelectorX) / 255);
 	}
 
+	public void selectColor() {
+		selectedColor = squareSelectedColor;
+	}
+
 	// =========================================================================================================================
 
-	public void validColor() {
-		selectedColor = (alpha.getValue() << 24) + squareSelectedColor;
+	public int getColor() {
+		return ((int) (255 * (alpha.getWheelStep() / 20.)) << 24) + selectedColor;
 	}
 
 	// =========================================================================================================================

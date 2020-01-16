@@ -71,4 +71,15 @@ public class TexturePack {
 	public TextureSquare getMiningFrame(int step) {
 		return miningFrames[Math.min(step, nbAnim - 1)];
 	}
+
+	// =========================================================================================================================
+	// Editor
+
+	public void addTextureCube(TextureCube t, int id) {
+		texturesCubes.put(id, t);
+	}
+
+	public boolean isIDAvailable(int id) {
+		return !texturesCubes.containsKey(id);
+	}
 }

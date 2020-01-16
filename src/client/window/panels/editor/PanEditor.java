@@ -7,6 +7,9 @@ import javax.swing.JPanel;
 
 import client.session.Session;
 import client.session.UserAction;
+import client.textures.TextureCube;
+import client.textures.TextureFace;
+import client.textures.TextureSquare;
 import client.window.graphicEngine.calcul.Camera;
 import client.window.graphicEngine.calcul.Point3D;
 import client.window.graphicEngine.extended.ModelMap;
@@ -55,6 +58,10 @@ public class PanEditor extends JPanel {
 	private ActionEditor action = null;
 	private ActionEditor listeningKey = null;
 
+	// ======================= Texture generation =========================
+	private static final int MAX_SIZE = 16;
+	private int[][][] texture = new int[6][MAX_SIZE][MAX_SIZE];
+
 	// =========================================================================================================================
 
 	public PanEditor(Session session) {
@@ -64,8 +71,6 @@ public class PanEditor extends JPanel {
 		this.session = session;
 
 		map = new ModelMap();
-		map.add(new Cube(new Coord(0, 0, 0), ItemID.BORDER));
-		map.add(new Cube(new Coord(0, 1, 0), ItemID.GLASS));
 
 		camera = new Camera(new Point3D(0, 0, -10), 90, 0);
 
@@ -95,12 +100,69 @@ public class PanEditor extends JPanel {
 		for (int i = 0; i < _buttonsItem.length; i++)
 			gridItemID.addMenu(buttonsItem[i] = new MenuButtonEditor(this, _buttonsItem[i]));
 
-		buttonsItem[1].setWheelMinMax(0, 999);
+		buttonsItem[1].setWheelMinMax(0, 999); // Alpha
 
 		menu.addTop(gridActions = new MenuGrid(), MenuCol.REMAINING);
 
 		for (int i = 0; i < _buttonsGrid.length; i++)
 			gridActions.addMenu(buttonsGrid[i] = new MenuButtonEditor(this, _buttonsGrid[i]));
+
+		buttonsGrid[3].setWheelStep(3); // Grid
+		buttonsGrid[3].setWheelMinMax(1, 16);
+
+		// ========================================================================================
+
+		initTextureFrame();
+		map.add(new Cube(new Coord(0, 0, 0), ItemID.EDITOR_PREVIEW));
+	}
+
+	// =========================================================================================================================
+
+	public void initTextureFrame() {
+		for (int face = 0; face < 6; face++)
+			for (int i = 0; i < MAX_SIZE; i++)
+				for (int j = 0; j < MAX_SIZE; j++)
+					texture[face][i][j] = (i + j) % 2 == 0 ? 0xff888888 : 0xff555555;
+
+		saveTexture();
+	}
+
+	public TextureCube createTexture() {
+		int size = buttonsGrid[3].getWheelStep();
+
+		TextureFace[] tf = new TextureFace[6];
+
+		for (int face = 0; face < 6; face++) { // Generates faces
+			int[] tab = new int[size * size];
+			for (int k = 0; k < tab.length; k++) // Generates data-arrays
+				tab[k] = texture[face][k / size][k % size];
+			tf[face] = new TextureFace(new TextureSquare(tab, size));
+		}
+
+		return new TextureCube(tf);
+	}
+
+	public void saveTexture() {
+		saveTexture(createTexture(), ItemID.EDITOR_PREVIEW.id);
+		saveTexture(createTexture(), ItemID.EDITOR_PREVIEW_GRID.id);
+	}
+
+	public void saveTexture(TextureCube tc, int id) {
+		session.texturePack.addTextureCube(tc, id);
+	}
+
+	// =========================================================================================================================
+
+	public void paint() {
+		if (session.faceTarget == null || (session.cubeTarget.itemID != ItemID.EDITOR_PREVIEW
+				&& session.cubeTarget.itemID != ItemID.EDITOR_PREVIEW_GRID))
+			return;
+
+		int size = buttonsGrid[3].getWheelStep();
+		texture[session.faceTarget.ordinal()][session.quadriTarget / size][session.quadriTarget % size] = panColor
+				.getColor();
+
+		saveTexture();
 	}
 
 	// =========================================================================================================================
@@ -121,7 +183,7 @@ public class PanEditor extends JPanel {
 		case EDIT_MULTI_TEXTURE:
 			break;
 
-		// ================== EDIT TYPE ======================
+		// ================== GRID ======================
 		case ALONE:
 			break;
 		case DECOR:
@@ -132,6 +194,10 @@ public class PanEditor extends JPanel {
 			session.fen.updateCursor();
 			break;
 		case GRID:
+			if (map.gridGet(0, 0, 0).itemID == ItemID.EDITOR_PREVIEW)
+				map.gridGet(0, 0, 0).itemID = ItemID.EDITOR_PREVIEW_GRID;
+			else
+				map.gridGet(0, 0, 0).itemID = ItemID.EDITOR_PREVIEW;
 			break;
 		case MINIATURE:
 			break;
@@ -142,7 +208,7 @@ public class PanEditor extends JPanel {
 
 		// ================== PanColor ======================
 		case VALID_COLOR:
-			panColor.validColor();
+			panColor.selectColor();
 			break;
 
 		// ================== PanItem ======================
@@ -151,12 +217,17 @@ public class PanEditor extends JPanel {
 			listeningKey = action;
 			break;
 		case ITEM_COLOR:
-			buttonsItem[2].setValue(panColor.selectedColor);
+			buttonsItem[2].setValue(panColor.getColor() & 0xffffff);
 			break;
 
 		case ITEM_SAVE:
+			int id = buttonsItem[1].getWheelStep();
+			if (session.texturePack.isIDAvailable(id))
+				saveTexture(createTexture(), id);
+			break;
 		case ITEM_NEW:
 		case ITEM_CLEAR:
+			initTextureFrame();
 			break;
 
 		// ================== SAVE ======================
@@ -184,6 +255,7 @@ public class PanEditor extends JPanel {
 			break;
 
 		case GRID:
+			saveTexture();
 			break;
 		case MINIATURE:
 			break;
