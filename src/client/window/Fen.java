@@ -57,7 +57,10 @@ public class Fen extends JFrame {
 	private static Cursor cursorPickaxe = createCursor("cursorPickaxe");
 	private static Cursor cursorBucket = createCursor("cursorBucket");
 
+	// Editor
 	private static Cursor cursorPaint = createCursor("cursorPaint");
+	private static Cursor cursorFill = createCursor("cursorFill");
+	private static Cursor cursorSelectColor = createCursor("cursorSelectColor");
 
 	private boolean cursorVisible = true;
 
@@ -71,6 +74,9 @@ public class Fen extends JFrame {
 
 	// ============= Editor ===================
 	public PanEditor editor;
+
+	private boolean controlDown = false;
+	private boolean shiftDown = false;
 
 	// ============= Thread ===================
 	/** Refresh the image */
@@ -129,8 +135,6 @@ public class Fen extends JFrame {
 		threadActu.setName("Max fps counter");
 		threadImage.setName("Image generator");
 
-		updateCursor();
-
 		// =========================================================================================================================
 
 		this.addKeyListener(new KeyListener() {
@@ -138,6 +142,8 @@ public class Fen extends JFrame {
 			}
 
 			public void keyPressed(KeyEvent k) {
+				updateControlShiftStatus(k);
+
 				if (session.stateHUD == StateHUD.EDITOR && editor.isListeningKey()) {
 					editor.keyEvent(k);
 				}
@@ -279,6 +285,8 @@ public class Fen extends JFrame {
 			}
 
 			public void keyReleased(KeyEvent k) {
+				updateControlShiftStatus(k);
+
 				if (Key.get(k.getKeyCode()) != null)
 					switch (Key.get(k.getKeyCode())) {
 					case FORWARD:
@@ -401,7 +409,9 @@ public class Fen extends JFrame {
 			cursor = cursorInvisible;
 		else if (session.stateHUD == StateHUD.EDITOR) {
 			if (editor.getAction() == ActionEditor.PAINT)
-				cursor = cursorPaint;
+				cursor = isControlDown() ? cursorSelectColor : cursorPaint;
+			else if (editor.getAction() == ActionEditor.FILL)
+				cursor = isControlDown() ? cursorSelectColor : cursorFill;
 		} else if (session.stateHUD == StateHUD.GAME)
 			if (session.getAction() == UserAction.MOUSE)
 
@@ -516,6 +526,21 @@ public class Fen extends JFrame {
 
 	public boolean isNeededQuadriPrecision() {
 		return editor.getAction() == ActionEditor.PAINT;
+	}
+
+	// =========================================================================================================================
+
+	public void updateControlShiftStatus(KeyEvent e) {
+		controlDown = e.isControlDown();
+		shiftDown = e.isShiftDown();
+	}
+
+	public boolean isControlDown() {
+		return controlDown;
+	}
+
+	public boolean isShiftDown() {
+		return shiftDown;
 	}
 
 	// =========================================================================================================================

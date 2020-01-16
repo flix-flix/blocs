@@ -9,7 +9,6 @@ import client.window.graphicEngine.calcul.Camera;
 import client.window.graphicEngine.extended.ModelCube;
 import client.window.graphicEngine.extended.ModelMap;
 import client.window.panels.StateHUD;
-import client.window.panels.editor.ActionEditor;
 import data.map.Coord;
 import data.map.Cube;
 import data.map.enumerations.Orientation;
@@ -125,8 +124,9 @@ public class Keyboard {
 
 		} else if (session.gamemode == GameMode.CLASSIC) {
 
-			if(session.fen.editor.getAction() == ActionEditor.PAINT)
-				session.fen.editor.paint();
+			if (session.fen.editor.isListeningClick())
+				session.fen.editor.click();
+
 			else if (session.getAction() == UserAction.CREA_DESTROY) {
 				if (session.cubeTarget != null)
 					if (session.cubeTarget.unit != null)

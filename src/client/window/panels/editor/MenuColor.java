@@ -64,7 +64,7 @@ public class MenuColor extends Menu {
 				colorLine[i * 44 + j] = (((tab[1] << 8) + tab[2]) << 8) + tab[0];
 			}
 		}
-		
+
 		updatePointedColor();
 
 		valid = new MenuButtonEditor(editor, ActionEditor.VALID_COLOR);
@@ -213,7 +213,13 @@ public class MenuColor extends Menu {
 	// =========================================================================================================================
 
 	public int getColor() {
+		if (alpha.getWheelStep() == 0)
+			return 0;
 		return ((int) (255 * (alpha.getWheelStep() / 20.)) << 24) + selectedColor;
+	}
+
+	public void setColor(int color) {
+		selectedColor = color & 0xffffff;
 	}
 
 	// =========================================================================================================================

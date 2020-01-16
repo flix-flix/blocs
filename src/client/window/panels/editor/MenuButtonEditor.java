@@ -58,7 +58,7 @@ public class MenuButtonEditor extends Menu {
 				if (wheelStep < wheelMin)
 					wheelStep = wheelMin;
 
-				editor.wheel(action);
+				editor.menuWheel(action);
 			}
 		});
 	}
@@ -187,7 +187,7 @@ public class MenuButtonEditor extends Menu {
 
 	@Override
 	public void click(MouseEvent e) {
-		editor.clicked(action);
+		editor.menuClick(action);
 	}
 
 	@Override

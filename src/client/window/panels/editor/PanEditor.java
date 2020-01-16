@@ -2,6 +2,7 @@ package client.window.panels.editor;
 
 import java.awt.Color;
 import java.awt.event.KeyEvent;
+import java.util.HashMap;
 
 import javax.swing.JPanel;
 
@@ -38,15 +39,15 @@ public class PanEditor extends JPanel {
 
 	ActionEditor[] _buttonsTop = { ActionEditor.EDIT_CUBE, ActionEditor.EDIT_MULTI_CUBE,
 			ActionEditor.EDIT_MULTI_TEXTURE, ActionEditor.EDITOR };
-	MenuButtonEditor[] buttonsTop = new MenuButtonEditor[_buttonsTop.length];
+	HashMap<ActionEditor, MenuButtonEditor> buttonsTop = new HashMap<>();
 
-	ActionEditor[] _buttonsGrid = { ActionEditor.ALONE, ActionEditor.DECOR, ActionEditor.PAINT, ActionEditor.GRID,
-			ActionEditor.MINIATURE, ActionEditor.SAVE, ActionEditor.PLAYER_COLOR };
-	MenuButtonEditor[] buttonsGrid = new MenuButtonEditor[_buttonsGrid.length];
+	ActionEditor[] _buttonsAction = { ActionEditor.ALONE, ActionEditor.DECOR, ActionEditor.PAINT, ActionEditor.FILL,
+			ActionEditor.GRID, ActionEditor.MINIATURE, ActionEditor.SAVE, ActionEditor.PLAYER_COLOR };
+	HashMap<ActionEditor, MenuButtonEditor> buttonsAction = new HashMap<>();
 
-	ActionEditor[] _buttonsItem = { ActionEditor.ITEM_NAME, ActionEditor.ITEM_ID, ActionEditor.ITEM_COLOR,
+	ActionEditor[] _buttonsItemID = { ActionEditor.ITEM_NAME, ActionEditor.ITEM_ID, ActionEditor.ITEM_COLOR,
 			ActionEditor.ITEM_SAVE, ActionEditor.ITEM_NEW, ActionEditor.ITEM_CLEAR };
-	MenuButtonEditor[] buttonsItem = new MenuButtonEditor[_buttonsGrid.length];
+	HashMap<ActionEditor, MenuButtonEditor> buttonsItemID = new HashMap<>();
 
 	MenuGrid topActions;
 	MenuGrid gridActions;
@@ -61,6 +62,7 @@ public class PanEditor extends JPanel {
 	// ======================= Texture generation =========================
 	private static final int MAX_SIZE = 16;
 	private int[][][] texture = new int[6][MAX_SIZE][MAX_SIZE];
+	private int size = 3;
 
 	// =========================================================================================================================
 
@@ -85,8 +87,10 @@ public class PanEditor extends JPanel {
 
 		menu.addTop(topActions = new MenuGrid(), 100);
 
-		for (int i = 0; i < _buttonsTop.length; i++)
-			topActions.addMenu(buttonsTop[i] = new MenuButtonEditor(this, _buttonsTop[i]));
+		for (ActionEditor action : _buttonsTop) {
+			buttonsTop.put(action, new MenuButtonEditor(this, action));
+			topActions.addMenu(buttonsTop.get(action));
+		}
 
 		menu.addBottom(panColor = new MenuColor(this), MenuCol.WIDTH);
 		menu.addBottom(gridItemID = new MenuGrid(), 110);
@@ -97,18 +101,22 @@ public class PanEditor extends JPanel {
 		gridItemID.setBorder(5, Color.DARK_GRAY);
 		gridItemID.setPadding(MenuGrid.GRID_SPACE);
 
-		for (int i = 0; i < _buttonsItem.length; i++)
-			gridItemID.addMenu(buttonsItem[i] = new MenuButtonEditor(this, _buttonsItem[i]));
+		for (ActionEditor action : _buttonsItemID) {
+			buttonsItemID.put(action, new MenuButtonEditor(this, action));
+			gridItemID.addMenu(buttonsItemID.get(action));
+		}
 
-		buttonsItem[1].setWheelMinMax(0, 999); // Alpha
+		buttonsItemID.get(ActionEditor.ITEM_ID).setWheelMinMax(0, 999);
 
 		menu.addTop(gridActions = new MenuGrid(), MenuCol.REMAINING);
 
-		for (int i = 0; i < _buttonsGrid.length; i++)
-			gridActions.addMenu(buttonsGrid[i] = new MenuButtonEditor(this, _buttonsGrid[i]));
+		for (ActionEditor action : _buttonsAction) {
+			buttonsAction.put(action, new MenuButtonEditor(this, action));
+			gridActions.addMenu(buttonsAction.get(action));
+		}
 
-		buttonsGrid[3].setWheelStep(3); // Grid
-		buttonsGrid[3].setWheelMinMax(1, 16);
+		buttonsAction.get(ActionEditor.GRID).setWheelStep(size);
+		buttonsAction.get(ActionEditor.GRID).setWheelMinMax(1, 16);
 
 		// ========================================================================================
 
@@ -128,8 +136,6 @@ public class PanEditor extends JPanel {
 	}
 
 	public TextureCube createTexture() {
-		int size = buttonsGrid[3].getWheelStep();
-
 		TextureFace[] tf = new TextureFace[6];
 
 		for (int face = 0; face < 6; face++) { // Generates faces
@@ -153,21 +159,84 @@ public class PanEditor extends JPanel {
 
 	// =========================================================================================================================
 
-	public void paint() {
+	public boolean isListeningClick() {
+		if (action == null)
+			return false;
+
+		switch (action) {
+		case PAINT:
+		case FILL:
+			return true;
+		default:
+			return false;
+		}
+	}
+
+	public void click() {
 		if (session.faceTarget == null || (session.cubeTarget.itemID != ItemID.EDITOR_PREVIEW
 				&& session.cubeTarget.itemID != ItemID.EDITOR_PREVIEW_GRID))
 			return;
 
-		int size = buttonsGrid[3].getWheelStep();
-		texture[session.faceTarget.ordinal()][session.quadriTarget / size][session.quadriTarget % size] = panColor
-				.getColor();
+		switch (action) {
+		case PAINT:
+			paint();
+			break;
 
-		saveTexture();
+		case FILL:
+			if (session.fen.isControlDown())
+				selectColor();
+			else {
+				int face = session.faceTarget.ordinal();
+				int row = session.quadriTarget / size;
+				int col = session.quadriTarget % size;
+
+				fill(texture[face][row][col], face, row, col);
+
+				saveTexture();
+			}
+			break;
+
+		default:
+			break;
+		}
 	}
 
 	// =========================================================================================================================
 
-	public void clicked(ActionEditor action) {
+	public void paint() {
+		if (session.fen.isControlDown())
+			selectColor();
+		else {// Paint
+			texture[session.faceTarget.ordinal()][session.quadriTarget / size][session.quadriTarget % size] = panColor
+					.getColor();
+
+			saveTexture();
+		}
+	}
+
+	public void selectColor() {
+		panColor.setColor(
+				texture[session.faceTarget.ordinal()][session.quadriTarget / size][session.quadriTarget % size]);
+	}
+
+	public void fill(int erase, int face, int row, int col) {
+		if (row < 0 || size <= row || col < 0 || size <= col)
+			return;
+
+		if (texture[face][row][col] != erase || erase == panColor.getColor())
+			return;
+
+		texture[face][row][col] = panColor.getColor();
+
+		fill(erase, face, row + 1, col);
+		fill(erase, face, row - 1, col);
+		fill(erase, face, row, col + 1);
+		fill(erase, face, row, col - 1);
+	}
+
+	// =========================================================================================================================
+
+	public void menuClick(ActionEditor action) {
 		listeningKey = null;
 		switch (action) {
 		case EDITOR:// Close Editor
@@ -190,9 +259,10 @@ public class PanEditor extends JPanel {
 			break;
 
 		case PAINT:
-			setAction(ActionEditor.PAINT);
-			session.fen.updateCursor();
+		case FILL:
+			setAction(action);
 			break;
+
 		case GRID:
 			if (map.gridGet(0, 0, 0).itemID == ItemID.EDITOR_PREVIEW)
 				map.gridGet(0, 0, 0).itemID = ItemID.EDITOR_PREVIEW_GRID;
@@ -217,11 +287,11 @@ public class PanEditor extends JPanel {
 			listeningKey = action;
 			break;
 		case ITEM_COLOR:
-			buttonsItem[2].setValue(panColor.getColor() & 0xffffff);
+			buttonsItemID.get(ActionEditor.ITEM_COLOR).setValue(panColor.getColor() & 0xffffff);
 			break;
 
 		case ITEM_SAVE:
-			int id = buttonsItem[1].getWheelStep();
+			int id = buttonsItemID.get(ActionEditor.ITEM_ID).getWheelStep();
 			if (session.texturePack.isIDAvailable(id))
 				saveTexture(createTexture(), id);
 			break;
@@ -238,7 +308,7 @@ public class PanEditor extends JPanel {
 		}
 	}
 
-	public void wheel(ActionEditor action) {
+	public void menuWheel(ActionEditor action) {
 		switch (action) {
 		// ================== EDIT TYPE ======================
 		case EDIT_CUBE:
@@ -255,6 +325,7 @@ public class PanEditor extends JPanel {
 			break;
 
 		case GRID:
+			size = buttonsAction.get(ActionEditor.GRID).getWheelStep();
 			saveTexture();
 			break;
 		case MINIATURE:
@@ -287,7 +358,7 @@ public class PanEditor extends JPanel {
 		int key = e.getKeyCode();
 		char c = e.getKeyChar();
 
-		MenuButtonEditor button = buttonsItem[0];
+		MenuButtonEditor button = buttonsItemID.get(ActionEditor.ITEM_NAME);
 
 		if (key == 27) {
 			button.clearString();
@@ -321,6 +392,7 @@ public class PanEditor extends JPanel {
 
 	public void setAction(ActionEditor action) {
 		this.action = action;
+		session.fen.updateCursor();
 	}
 
 	// =========================================================================================================================
