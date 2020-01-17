@@ -2,6 +2,7 @@ package client.window.panels.editor;
 
 import java.awt.Color;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.util.HashMap;
 
 import javax.swing.JPanel;
@@ -24,6 +25,7 @@ import data.id.ItemID;
 import data.map.Coord;
 import data.map.Cube;
 import data.map.enumerations.Face;
+import utils.FlixBlocksUtils;
 
 public class PanEditor extends JPanel {
 	private static final long serialVersionUID = -7092208608285186782L;
@@ -76,6 +78,9 @@ public class PanEditor extends JPanel {
 	// ======================= Layer =========================
 	private static String paintLayer = "paint";
 
+	// ======================= Rotation =========================
+	private int prevX, prevY;
+
 	// =========================================================================================================================
 
 	public PanEditor(Session session) {
@@ -86,7 +91,7 @@ public class PanEditor extends JPanel {
 
 		map = new ModelMap();
 
-		camera = new Camera(new Point3D(0, 0, -10), 90, 0);
+		camera = new Camera(new Point3D(0, 0, -10), 90.5, 0);
 
 		clock = new TickClock("Editor Clock");
 		clock.add(map);
@@ -134,6 +139,7 @@ public class PanEditor extends JPanel {
 
 		initTextureFrame();
 		map.add(new Cube(new Coord(0, 0, 0), ItemID.EDITOR_PREVIEW));
+		map.add(new Cube(new Coord(0, 0, 1), ItemID.GLASS));
 	}
 
 	// =========================================================================================================================
@@ -167,6 +173,7 @@ public class PanEditor extends JPanel {
 
 	public void saveTexture(TextureCube tc, int id) {
 		session.texturePack.addTextureCube(tc, id);
+		buttonsAction.get(ActionEditor.MINIATURE).update();
 	}
 
 	// =========================================================================================================================
@@ -185,7 +192,7 @@ public class PanEditor extends JPanel {
 	}
 
 	public void click() {
-		if (session.faceTarget == null)
+		if (session.faceTarget == null || session.keyboard.pressR)
 			return;
 
 		switch (action) {
@@ -196,7 +203,7 @@ public class PanEditor extends JPanel {
 				if (!isPreviewCube())
 					return;
 
-				if (session.fen.isShiftDown())
+				if (session.fen.isShiftDown() && hasLastPixel())
 					if (session.fen.isControlDown())
 						paintSquare();
 					else
@@ -243,9 +250,6 @@ public class PanEditor extends JPanel {
 	}
 
 	public void paintLine() {
-		if (session.faceTarget != lastPaintFace || lastPaintCol >= size || lastPaintRow >= size)
-			return;
-
 		Line l = new Line(session.quadriTarget % size, session.quadriTarget / size, lastPaintCol, lastPaintRow);
 
 		for (int row = l.min; row <= l.max; row++)
@@ -257,9 +261,6 @@ public class PanEditor extends JPanel {
 	}
 
 	public void paintSquare() {
-		if (session.faceTarget != lastPaintFace || lastPaintCol >= size || lastPaintRow >= size)
-			return;
-
 		int col1 = Math.min(session.quadriTarget % size, lastPaintCol);
 		int row1 = Math.min(session.quadriTarget / size, lastPaintRow);
 		int col2 = Math.max(session.quadriTarget % size, lastPaintCol);
@@ -272,6 +273,8 @@ public class PanEditor extends JPanel {
 		updateLastPixel();
 		saveTexture();
 	}
+
+	// =========================================================================================================================
 
 	public void selectColor() {
 		panColor.setColor(
@@ -293,10 +296,17 @@ public class PanEditor extends JPanel {
 		fill(erase, face, row, col - 1);
 	}
 
+	// =========================================================================================================================
+
 	public void updateLastPixel() {
 		lastPaintFace = session.faceTarget;
 		lastPaintCol = session.quadriTarget % size;
 		lastPaintRow = session.quadriTarget / size;
+	}
+
+	public boolean hasLastPixel() {
+		return session.cubeTarget == map.gridGet(0, 0, 0) && session.faceTarget == lastPaintFace && lastPaintCol < size
+				&& lastPaintRow < size;
 	}
 
 	// =========================================================================================================================
@@ -421,6 +431,9 @@ public class PanEditor extends JPanel {
 
 	/** @return true if the event is consumed */
 	public boolean keyEvent(KeyEvent e) {
+		if (e.getKeyCode() == 9) // Tab
+			lookCube();
+
 		if (listeningKey == null)
 			return false;
 
@@ -454,13 +467,16 @@ public class PanEditor extends JPanel {
 	// =========================================================================================================================
 
 	public void updateTarget() {
+		if (session.keyboard.pressR) {
+			looseTarget();
+			return;
+		}
+
 		if (action == ActionEditor.PAINT) {
 			session.cubeTarget.setSelectedQuadri(session.faceTarget, session.quadriTarget);
 
 			// Show Line/Square preview
-			if (session.fen.isShiftDown() && session.faceTarget == lastPaintFace && lastPaintCol < size
-					&& lastPaintRow < size) {
-
+			if (session.fen.isShiftDown() && hasLastPixel()) {
 				ModelCube cube = map.gridGet(0, 0, 0);
 				DrawLayer layer = new DrawLayer(cube, session.faceTarget);
 
@@ -484,6 +500,45 @@ public class PanEditor extends JPanel {
 		// Removes highlight of previous selected quadri
 		session.cubeTarget.setSelectedQuadri(null, ModelCube.NO_QUADRI);
 		session.cubeTarget.removeLayer(paintLayer);
+	}
+
+	// =========================================================================================================================
+	// Camera
+
+	public void lookCube() {
+		camera.setVx(FlixBlocksUtils.toDegres * Math.atan(camera.vue.x / -camera.vue.z) + 90
+				+ (camera.vue.z >= 0 ? 180 : 0));
+		camera.setVy(FlixBlocksUtils.toDegres * Math.atan(Math.hypot(camera.vue.x, camera.vue.z) / camera.vue.y) - 90
+				+ (camera.vue.y <= 0 ? 180 : 0));
+	}
+
+	public void rotateCamera(MouseEvent e) {
+		int x = e.getX() - prevX;
+		int y = e.getY() - prevY;
+		initDrag(e);
+
+		double distY = camera.vue.distToOrigin();
+		double angleY = camera.getVy() + y * -.2;
+
+		if (angleY > 60)
+			angleY = 60;
+		else if (angleY < -60)
+			angleY = -60;
+
+		camera.vue.y = -Math.sin(FlixBlocksUtils.toRadian * angleY) * distY;
+		double distX = Math.cos(FlixBlocksUtils.toRadian * angleY) * distY;
+
+		double angleX = FlixBlocksUtils.toRadian * (camera.getVx() + x * .2);
+
+		camera.vue.x = -distX * Math.cos(angleX);
+		camera.vue.z = -distX * Math.sin(angleX);
+
+		lookCube();
+	}
+
+	public void initDrag(MouseEvent e) {
+		prevX = e.getX();
+		prevY = e.getY();
 	}
 
 	// =========================================================================================================================

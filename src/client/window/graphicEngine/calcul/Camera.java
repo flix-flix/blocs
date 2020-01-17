@@ -13,7 +13,7 @@ public class Camera {
 
 	// =========================================================================================================================
 
-	public Camera(Point3D vue, int vx, int vy) {
+	public Camera(Point3D vue, double vx, double vy) {
 		this.vue = vue;
 		this.vx = vx;
 		this.vy = vy;

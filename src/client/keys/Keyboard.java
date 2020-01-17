@@ -2,6 +2,7 @@ package client.keys;
 
 import java.awt.AWTException;
 import java.awt.Robot;
+import java.awt.event.MouseEvent;
 
 import client.session.Session;
 import client.session.UserAction;
@@ -66,7 +67,10 @@ public class Keyboard {
 
 	// =========================================================================================================================
 
-	public void rightClick() {
+	public void rightClick(MouseEvent e) {
+		if (session.stateHUD == StateHUD.EDITOR)
+			session.fen.editor.initDrag(e);
+
 		ModelMap map;
 		if (session.stateHUD == StateHUD.GAME)
 			map = session.map;
@@ -106,7 +110,7 @@ public class Keyboard {
 		}
 	}
 
-	public void leftClick() {
+	public void leftClick(MouseEvent e) {
 		ModelMap map;
 		if (session.stateHUD == StateHUD.GAME)
 			map = session.map;

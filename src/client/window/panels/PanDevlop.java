@@ -8,6 +8,7 @@ import java.awt.Graphics;
 import javax.swing.JPanel;
 
 import client.session.Session;
+import client.window.graphicEngine.calcul.Camera;
 import data.map.Map;
 
 public class PanDevlop extends JPanel {
@@ -56,11 +57,11 @@ public class PanDevlop extends JPanel {
 
 			// =========================================================================================================================
 
-			writeLeft(String.format("Camera: X = %.1f  Y = %.1f  Z = %.1f", session.camera.vue.x, session.camera.vue.y,
-					session.camera.vue.z));
-			writeLeft("Chunk: " + "X = " + Map.toChunkCoord(session.camera.vue.x) + " Z = "
-					+ Map.toChunkCoord(session.camera.vue.z));
-			writeLeft("View: X = " + session.camera.getVx() + " Y = " + session.camera.getVy());
+			Camera camera = session.stateHUD == StateHUD.EDITOR ? session.fen.editor.camera : session.camera;
+
+			writeLeft(String.format("Camera: X = %.1f  Y = %.1f  Z = %.1f", camera.vue.x, camera.vue.y, camera.vue.z));
+			writeLeft("Chunk: " + "X = " + Map.toChunkCoord(camera.vue.x) + " Z = " + Map.toChunkCoord(camera.vue.z));
+			writeLeft("View: X = " + camera.getVx() + " Y = " + camera.getVy());
 			writeLeft("Orientation: " + session.playerOrientation.toString());
 			left++;
 			writeLeft(strBloc);

@@ -110,6 +110,8 @@ public class Fen extends JFrame {
 		this.setLocation(0, 0);
 		this.setExtendedState(MAXIMIZED_BOTH);
 
+		this.setFocusTraversalKeysEnabled(false);
+
 		// ======================================
 
 		this.setLayout(null);
@@ -327,7 +329,10 @@ public class Fen extends JFrame {
 			}
 
 			public void mouseDragged(MouseEvent e) {
-				mouseMoved(e);
+				if (session.stateHUD == StateHUD.EDITOR && session.keyboard.pressR)
+					editor.rotateCamera(e);
+				else
+					mouseMoved(e);
 			}
 		});
 
@@ -351,10 +356,10 @@ public class Fen extends JFrame {
 			public void mousePressed(MouseEvent e) {
 				if (session.stateHUD != StateHUD.PAUSE && session.stateHUD != StateHUD.DIALOG)
 					if (e.getButton() == 1)
-						session.keyboard.leftClick();
-					else if (e.getButton() == 3)
-						session.keyboard.rightClick();
-
+						session.keyboard.leftClick(e);
+					else if (e.getButton() == 3) {
+						session.keyboard.rightClick(e);
+					}
 			}
 
 			public void mouseExited(MouseEvent e) {

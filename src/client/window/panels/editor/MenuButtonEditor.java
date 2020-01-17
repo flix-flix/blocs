@@ -10,7 +10,13 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
+import client.window.graphicEngine.calcul.Camera;
+import client.window.graphicEngine.calcul.Engine;
+import client.window.graphicEngine.calcul.Point3D;
+import client.window.graphicEngine.extended.ModelCube;
 import client.window.panels.menus.Menu;
+import data.id.ItemID;
+import data.map.Cube;
 import utils.FlixBlocksUtils;
 
 public class MenuButtonEditor extends Menu {
@@ -32,6 +38,8 @@ public class MenuButtonEditor extends Menu {
 	int value = 0;
 	String str = null;
 
+	Engine engine;
+
 	// =========================================================================================================================
 
 	public MenuButtonEditor(PanEditor editor, ActionEditor action) {
@@ -42,6 +50,13 @@ public class MenuButtonEditor extends Menu {
 			img = FlixBlocksUtils.getImage("menu/editor/" + action.name().toLowerCase());
 		else
 			setMinimumSize(new Dimension(fm.stringWidth(getText()), 20));
+
+		if (action == ActionEditor.MINIATURE) {
+			engine = new Engine(new Camera(new Point3D(-.4, 1.5, -1), 58, -35),
+					new ModelCube(new Cube(ItemID.EDITOR_PREVIEW)), editor.session.texturePack);
+			engine.background = Engine.NONE;
+			update();
+		}
 
 		addMouseWheelListener(new MouseWheelListener() {
 			@Override
@@ -94,6 +109,13 @@ public class MenuButtonEditor extends Menu {
 
 			g.drawString(text, getWidth() / 2 - fm.stringWidth(text) / 2, y);
 		}
+	}
+
+	// =========================================================================================================================
+
+	public void update() {
+		if (action == ActionEditor.MINIATURE)
+			img = engine.getImage(getWidth(), getHeight());
 	}
 
 	// =========================================================================================================================
@@ -195,5 +217,6 @@ public class MenuButtonEditor extends Menu {
 
 	@Override
 	public void resize() {
+		update();
 	}
 }
