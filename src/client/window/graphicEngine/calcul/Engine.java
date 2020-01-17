@@ -172,7 +172,6 @@ public class Engine {
 		draws.sort(null);
 
 		timeDraw = System.currentTimeMillis();
-		
 
 		for (Draw d : draws) {
 			Polygon poly = d.getPoly(this);
@@ -195,7 +194,7 @@ public class Engine {
 				for (int i = 0; i < 4; i++)
 					if (q.points[i].x < imgWidth && q.points[i].x > 0 && q.points[i].y < imgHeight
 							&& q.points[i].y > 0) {
-						if(targeted && q.getPoly().contains(cursorX, cursorY))
+						if (targeted && q.getPoly().contains(cursorX, cursorY))
 							quadriTarget = q.id;
 						drawQuadri(q);
 						break;
@@ -225,26 +224,19 @@ public class Engine {
 	// =========================================================================================================================
 
 	private void drawQuadri(Quadri q) {
-		if (q.fill) {
-			int top = yInScreen(q.getTop());
-			int bottom = yInScreen(q.getBottom());
-			for (int row = top; row <= bottom; row++) {
-				int right = xInScreen(q.getRight(row));
-				for (int col = xInScreen(q.getLeft(row)); col <= right; col++)
+		if (q.fill)
+			for (int row = yInScreen(q.getTop()); row <= yInScreen(q.getBottom()); row++)
+				for (int col = xInScreen(q.getLeft(row)); col <= xInScreen(q.getRight(row)); col++)
 					setPixel(col, row, q.color);
-			}
-		} else
+
+		else
 			for (Line l : q.lines) {
 				if (l.max < 0 || l.min >= imgHeight)
 					return;
 
-				int max = yInScreen(l.max);
-				for (int row = yInScreen(l.min); row <= max; row++) {
-
-					int right = xInScreen(l.getRight(row));
-					for (int col = xInScreen(l.getLeft(row)); col <= right; col++)
+				for (int row = yInScreen(l.min); row <= yInScreen(l.max); row++)
+					for (int col = xInScreen(l.getLeft(row)); col <= xInScreen(l.getRight(row)); col++)
 						setPixel(col, row, q.color);
-				}
 			}
 	}
 

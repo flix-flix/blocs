@@ -1,6 +1,7 @@
 package client.window.graphicEngine.extended;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import client.extended.UnitClient;
 import client.textures.TexturePack;
@@ -53,6 +54,9 @@ public class ModelCube extends Cube implements Model {
 	private boolean targetable = true;
 	/** true : pointed by the player */
 	private boolean highlight;
+
+	// =================== Layer ===================
+	public HashMap<String, DrawLayer> layers = new HashMap<>();
 
 	// =================== Quadri ===================
 	public Face selectedFace = null;
@@ -167,6 +171,16 @@ public class ModelCube extends Cube implements Model {
 
 	// =========================================================================================================================
 
+	public void addLayer(String name, DrawLayer layer) {
+		layers.put(name, layer);
+	}
+
+	public void removeLayer(String name) {
+		layers.remove(name);
+	}
+
+	// =========================================================================================================================
+
 	public boolean isPreview() {
 		return preview;
 	}
@@ -239,6 +253,7 @@ public class ModelCube extends Cube implements Model {
 	}
 
 	// =========================================================================================================================
+	// Model
 
 	@Override
 	public void init(Camera camera, Matrix matrice) {

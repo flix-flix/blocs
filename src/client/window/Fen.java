@@ -77,6 +77,7 @@ public class Fen extends JFrame {
 
 	private boolean controlDown = false;
 	private boolean shiftDown = false;
+	private boolean altDown = false;
 
 	// ============= Thread ===================
 	/** Refresh the image */
@@ -144,11 +145,11 @@ public class Fen extends JFrame {
 			public void keyPressed(KeyEvent k) {
 				updateControlShiftStatus(k);
 
-				if (session.stateHUD == StateHUD.EDITOR && editor.isListeningKey()) {
-					editor.keyEvent(k);
-				}
+				if (session.stateHUD == StateHUD.EDITOR)
+					if (editor.keyEvent(k))
+						return;
 
-				else if (session.stateHUD == StateHUD.DIALOG) {
+				if (session.stateHUD == StateHUD.DIALOG) {
 					if (Key.get(k.getKeyCode()) != null)
 						switch (Key.get(k.getKeyCode())) {
 						case PAUSE:
@@ -407,9 +408,11 @@ public class Fen extends JFrame {
 
 		if (!cursorVisible)
 			cursor = cursorInvisible;
+		// TODO [Duplicate] Editor : Cursor selection
 		else if (session.stateHUD == StateHUD.EDITOR) {
 			if (editor.getAction() == ActionEditor.PAINT)
-				cursor = isControlDown() ? cursorSelectColor : cursorPaint;
+				cursor = (isControlDown() && (!isShiftDown() || !editor.isPreviewCube())) ? cursorSelectColor
+						: cursorPaint;
 			else if (editor.getAction() == ActionEditor.FILL)
 				cursor = isControlDown() ? cursorSelectColor : cursorFill;
 		} else if (session.stateHUD == StateHUD.GAME)
@@ -533,6 +536,7 @@ public class Fen extends JFrame {
 	public void updateControlShiftStatus(KeyEvent e) {
 		controlDown = e.isControlDown();
 		shiftDown = e.isShiftDown();
+		altDown = e.isAltDown();
 	}
 
 	public boolean isControlDown() {
@@ -541,6 +545,10 @@ public class Fen extends JFrame {
 
 	public boolean isShiftDown() {
 		return shiftDown;
+	}
+
+	public boolean isAltDown() {
+		return altDown;
 	}
 
 	// =========================================================================================================================

@@ -273,8 +273,7 @@ public class Session implements Serializable {
 				if (map.gridContains(previousPreview) && map.gridGet(previousPreview).isPreview())
 					map.remove(previousPreview);
 
-				// Removes highlight of previous selected quadri
-				cubeTarget.setSelectedQuadri(null, ModelCube.NO_QUADRI);
+				fen.editor.looseTarget();
 			}
 
 		// Refresh target
@@ -314,9 +313,8 @@ public class Session implements Serializable {
 					map.setHighlight(cubeTarget, true);
 				}
 				// ================ EDITOR ==================
-				else if (fen.isNeededQuadriPrecision()) {
-					cubeTarget.setSelectedQuadri(faceTarget, quadriTarget);
-				}
+				else if (fen.isNeededQuadriPrecision())
+					fen.editor.updateTarget();
 	}
 
 	// =========================================================================================================================

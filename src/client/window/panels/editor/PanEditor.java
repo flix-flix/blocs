@@ -12,7 +12,10 @@ import client.textures.TextureCube;
 import client.textures.TextureFace;
 import client.textures.TextureSquare;
 import client.window.graphicEngine.calcul.Camera;
+import client.window.graphicEngine.calcul.Line;
 import client.window.graphicEngine.calcul.Point3D;
+import client.window.graphicEngine.extended.DrawLayer;
+import client.window.graphicEngine.extended.ModelCube;
 import client.window.graphicEngine.extended.ModelMap;
 import client.window.panels.menus.MenuCol;
 import client.window.panels.menus.MenuGrid;
@@ -20,6 +23,7 @@ import data.dynamic.TickClock;
 import data.id.ItemID;
 import data.map.Coord;
 import data.map.Cube;
+import data.map.enumerations.Face;
 
 public class PanEditor extends JPanel {
 	private static final long serialVersionUID = -7092208608285186782L;
@@ -63,6 +67,14 @@ public class PanEditor extends JPanel {
 	private static final int MAX_SIZE = 16;
 	private int[][][] texture = new int[6][MAX_SIZE][MAX_SIZE];
 	private int size = 3;
+
+	// ======================= History =========================
+	private Face lastPaintFace = null;
+	private int lastPaintCol = -1;
+	private int lastPaintRow = -1;
+
+	// ======================= Layer =========================
+	private static String paintLayer = "paint";
 
 	// =========================================================================================================================
 
@@ -173,19 +185,31 @@ public class PanEditor extends JPanel {
 	}
 
 	public void click() {
-		if (session.faceTarget == null || (session.cubeTarget.itemID != ItemID.EDITOR_PREVIEW
-				&& session.cubeTarget.itemID != ItemID.EDITOR_PREVIEW_GRID))
+		if (session.faceTarget == null)
 			return;
 
 		switch (action) {
 		case PAINT:
-			paint();
+			if (session.fen.isControlDown() && (!session.fen.isShiftDown() || !isPreviewCube()))
+				selectColor();
+			else {
+				if (!isPreviewCube())
+					return;
+
+				if (session.fen.isShiftDown())
+					if (session.fen.isControlDown())
+						paintSquare();
+					else
+						paintLine();
+				else
+					paint();
+			}
 			break;
 
 		case FILL:
 			if (session.fen.isControlDown())
 				selectColor();
-			else {
+			else if (isPreviewCube()) {
 				int face = session.faceTarget.ordinal();
 				int row = session.quadriTarget / size;
 				int col = session.quadriTarget % size;
@@ -201,17 +225,52 @@ public class PanEditor extends JPanel {
 		}
 	}
 
+	public boolean isPreviewCube() {
+		if (session.cubeTarget == null)
+			return false;
+		return session.cubeTarget.itemID == ItemID.EDITOR_PREVIEW
+				|| session.cubeTarget.itemID == ItemID.EDITOR_PREVIEW_GRID;
+	}
+
 	// =========================================================================================================================
 
 	public void paint() {
-		if (session.fen.isControlDown())
-			selectColor();
-		else {// Paint
-			texture[session.faceTarget.ordinal()][session.quadriTarget / size][session.quadriTarget % size] = panColor
-					.getColor();
+		texture[session.faceTarget.ordinal()][session.quadriTarget / size][session.quadriTarget % size] = panColor
+				.getColor();
 
-			saveTexture();
-		}
+		updateLastPixel();
+		saveTexture();
+	}
+
+	public void paintLine() {
+		if (session.faceTarget != lastPaintFace || lastPaintCol >= size || lastPaintRow >= size)
+			return;
+
+		Line l = new Line(session.quadriTarget % size, session.quadriTarget / size, lastPaintCol, lastPaintRow);
+
+		for (int row = l.min; row <= l.max; row++)
+			for (int col = l.getLeft(row); col <= l.getRight(row); col++)
+				texture[session.faceTarget.ordinal()][row][col] = panColor.getColor();
+
+		updateLastPixel();
+		saveTexture();
+	}
+
+	public void paintSquare() {
+		if (session.faceTarget != lastPaintFace || lastPaintCol >= size || lastPaintRow >= size)
+			return;
+
+		int col1 = Math.min(session.quadriTarget % size, lastPaintCol);
+		int row1 = Math.min(session.quadriTarget / size, lastPaintRow);
+		int col2 = Math.max(session.quadriTarget % size, lastPaintCol);
+		int row2 = Math.max(session.quadriTarget / size, lastPaintRow);
+
+		for (int col = col1; col <= col2; col++)
+			for (int row = row1; row <= row2; row++)
+				texture[session.faceTarget.ordinal()][row][col] = panColor.getColor();
+
+		updateLastPixel();
+		saveTexture();
 	}
 
 	public void selectColor() {
@@ -232,6 +291,12 @@ public class PanEditor extends JPanel {
 		fill(erase, face, row - 1, col);
 		fill(erase, face, row, col + 1);
 		fill(erase, face, row, col - 1);
+	}
+
+	public void updateLastPixel() {
+		lastPaintFace = session.faceTarget;
+		lastPaintCol = session.quadriTarget % size;
+		lastPaintRow = session.quadriTarget / size;
 	}
 
 	// =========================================================================================================================
@@ -354,7 +419,11 @@ public class PanEditor extends JPanel {
 
 	// =========================================================================================================================
 
-	public void keyEvent(KeyEvent e) {
+	/** @return true if the event is consumed */
+	public boolean keyEvent(KeyEvent e) {
+		if (listeningKey == null)
+			return false;
+
 		int key = e.getKeyCode();
 		char c = e.getKeyChar();
 
@@ -378,10 +447,43 @@ public class PanEditor extends JPanel {
 			if (('A' <= c && c <= 'Z') || c == '_')
 				button.addChar(c);
 		}
+
+		return true;
 	}
 
-	public boolean isListeningKey() {
-		return listeningKey != null;
+	// =========================================================================================================================
+
+	public void updateTarget() {
+		if (action == ActionEditor.PAINT) {
+			session.cubeTarget.setSelectedQuadri(session.faceTarget, session.quadriTarget);
+
+			// Show Line/Square preview
+			if (session.fen.isShiftDown() && session.faceTarget == lastPaintFace && lastPaintCol < size
+					&& lastPaintRow < size) {
+
+				ModelCube cube = map.gridGet(0, 0, 0);
+				DrawLayer layer = new DrawLayer(cube, session.faceTarget);
+
+				int col1 = session.quadriTarget % size;
+				int row1 = session.quadriTarget / size;
+				int col2 = lastPaintCol;
+				int row2 = lastPaintRow;
+
+				if (session.fen.isControlDown()) // Square
+					layer.drawSquare(col1, row1, col2, row2, 0xffdddddd, 0xff555555);
+				else // Line
+					layer.drawLineAndCross(col1, row1, col2, row2, 0xffdddddd, 0xff555555);
+
+				cube.addLayer(paintLayer, layer);
+			} else
+				session.cubeTarget.removeLayer("paint");
+		}
+	}
+
+	public void looseTarget() {
+		// Removes highlight of previous selected quadri
+		session.cubeTarget.setSelectedQuadri(null, ModelCube.NO_QUADRI);
+		session.cubeTarget.removeLayer(paintLayer);
 	}
 
 	// =========================================================================================================================

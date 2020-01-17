@@ -46,10 +46,13 @@ public class MenuButtonEditor extends Menu {
 		addMouseWheelListener(new MouseWheelListener() {
 			@Override
 			public void mouseWheelMoved(MouseWheelEvent e) {
-				if (e.isControlDown())
-					wheelStep -= 10 * e.getWheelRotation();
-				else if (e.isShiftDown())
-					wheelStep -= 100 * e.getWheelRotation();
+				if (wheelMax >= 50) // If needed to reach big values
+					if (e.isShiftDown())
+						wheelStep -= 100 * e.getWheelRotation();
+					else if (e.isControlDown())
+						wheelStep -= 10 * e.getWheelRotation();
+					else
+						wheelStep -= e.getWheelRotation();
 				else
 					wheelStep -= e.getWheelRotation();
 

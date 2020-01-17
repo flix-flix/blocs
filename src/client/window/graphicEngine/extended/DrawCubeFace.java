@@ -48,6 +48,10 @@ public class DrawCubeFace extends Draw {
 	public ArrayList<Quadri> getQuadri(Engine engine) {
 		quadri.clear();
 
+		if (cube.layers != null)
+			for (DrawLayer layer : cube.layers.values())
+				quadri.addAll(layer.getQuadri(engine.texturePack.getFace(cube, face), engine));
+
 		// Draw white contour for the grid in editor mode
 		if (cube.itemID == ItemID.EDITOR_PREVIEW_GRID) {
 			Point[] points2D = generate2D(engine, 1, 1);

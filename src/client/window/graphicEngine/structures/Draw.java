@@ -13,10 +13,7 @@ public abstract class Draw implements Comparable<Draw> {
 
 	/** Center of the Draw (used to calculate the distance to the camera) */
 	public Point3D center;
-	/**
-	 * Used to sort the Draws that are at the same distance from the camera
-	 * (multiblock structures)
-	 */
+	/** Used to sort the Draws that are at the same distance from the camera */
 	public int index = 0;
 
 	// =========================================================================================================================
