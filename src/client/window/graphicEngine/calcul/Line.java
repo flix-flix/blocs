@@ -59,8 +59,10 @@ public class Line {
 		if (row == p2.y)
 			return p2.x;
 
-		if (-1 <= slope && slope <= 1)
-			return getLeft(row - variation);
-		return getLeft(row - variation) - 1;
+		int prevLeft = getLeft(row - variation);
+
+		if (prevLeft == getLeft(row))
+			return prevLeft;
+		return prevLeft - 1;
 	}
 }
