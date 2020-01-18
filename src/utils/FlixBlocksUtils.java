@@ -1,6 +1,9 @@
 package utils;
 
+import java.awt.Cursor;
 import java.awt.Image;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -48,6 +51,13 @@ public class FlixBlocksUtils {
 	public static boolean resourceExist(String name) {
 		URL url = TextureFace.class.getResource("/" + name);
 		return url != null;
+	}
+
+	// =========================================================================================================================
+
+	public static Cursor createCursor(String file) {
+		Image img = FlixBlocksUtils.getImage("cursor/" + file);
+		return Toolkit.getDefaultToolkit().createCustomCursor(img, new Point(0, 0), file);
 	}
 
 	// =========================================================================================================================

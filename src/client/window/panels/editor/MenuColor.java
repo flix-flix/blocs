@@ -8,6 +8,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 
+import client.editor.Editor;
 import client.window.panels.menus.Menu;
 
 public class MenuColor extends Menu {
@@ -20,7 +21,7 @@ public class MenuColor extends Menu {
 	FontMetrics fm = getFontMetrics(font);
 
 	// =========================================================================================================================
-	PanEditor editor;
+	Editor editor;
 
 	MenuButtonEditor valid, alpha;
 
@@ -49,7 +50,7 @@ public class MenuColor extends Menu {
 
 	// =========================================================================================================================
 
-	public MenuColor(PanEditor editor) {
+	public MenuColor(Editor editor) {
 		this.editor = editor;
 
 		int[] tab = new int[] { 0, 255, 0 };// B, R, G

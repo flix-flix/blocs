@@ -1,7 +1,6 @@
 package client.window;
 
 import java.awt.Cursor;
-import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ComponentEvent;
@@ -44,23 +43,18 @@ public class Fen extends JFrame {
 	private static Cursor cursorInvisible = Toolkit.getDefaultToolkit().createCustomCursor(imgCursorInvisible,
 			new Point(0, 0), "blank cursor");
 
-	private static Cursor cursorGoto = createCursor("cursorGoto");
-	private static Cursor cursorBuild = createCursor("cursorBuild");
-	private static Cursor cursorAttack = createCursor("cursorAttack");
+	private static Cursor cursorGoto = FlixBlocksUtils.createCursor("cursorGoto");
+	private static Cursor cursorBuild = FlixBlocksUtils.createCursor("cursorBuild");
+	private static Cursor cursorAttack = FlixBlocksUtils.createCursor("cursorAttack");
 
-	private static Cursor cursorDrop = createCursor("cursorDrop");
-	private static Cursor cursorDropWood = createCursor("cursorDropWood");
-	private static Cursor cursorDropStone = createCursor("cursorDropStone");
-	private static Cursor cursorDropWater = createCursor("cursorDropWater");
+	private static Cursor cursorDrop = FlixBlocksUtils.createCursor("cursorDrop");
+	private static Cursor cursorDropWood = FlixBlocksUtils.createCursor("cursorDropWood");
+	private static Cursor cursorDropStone = FlixBlocksUtils.createCursor("cursorDropStone");
+	private static Cursor cursorDropWater = FlixBlocksUtils.createCursor("cursorDropWater");
 
-	private static Cursor cursorAxe = createCursor("cursorAxe");
-	private static Cursor cursorPickaxe = createCursor("cursorPickaxe");
-	private static Cursor cursorBucket = createCursor("cursorBucket");
-
-	// Editor
-	private static Cursor cursorPaint = createCursor("cursorPaint");
-	private static Cursor cursorFill = createCursor("cursorFill");
-	private static Cursor cursorSelectColor = createCursor("cursorSelectColor");
+	private static Cursor cursorAxe = FlixBlocksUtils.createCursor("cursorAxe");
+	private static Cursor cursorPickaxe = FlixBlocksUtils.createCursor("cursorPickaxe");
+	private static Cursor cursorBucket = FlixBlocksUtils.createCursor("cursorBucket");
 
 	private boolean cursorVisible = true;
 
@@ -100,7 +94,7 @@ public class Fen extends JFrame {
 		pause = new PanPause(session);
 		devlop = new PanDevlop(session);
 		gui = new PanGUI(session);
-		editor = new PanEditor(session);
+		editor = session.editor.panel;
 
 		// ======================================
 
@@ -146,7 +140,7 @@ public class Fen extends JFrame {
 				updateControlShiftStatus(k);
 
 				if (session.stateHUD == StateHUD.EDITOR)
-					if (editor.keyEvent(k))
+					if (session.editor.keyEvent(k))
 						return;
 
 				if (session.stateHUD == StateHUD.DIALOG) {
@@ -328,7 +322,7 @@ public class Fen extends JFrame {
 
 			public void mouseDragged(MouseEvent e) {
 				if (session.stateHUD == StateHUD.EDITOR && session.keyboard.pressR)
-					editor.drag(e);
+					session.editor.drag(e);
 				else
 					mouseMoved(e);
 			}
@@ -409,13 +403,9 @@ public class Fen extends JFrame {
 		if (!cursorVisible)
 			cursor = cursorInvisible;
 		// TODO [Duplicate] Editor : Cursor selection
-		else if (session.stateHUD == StateHUD.EDITOR) {
-			if (editor.getAction() == ActionEditor.PAINT)
-				cursor = (isControlDown() && (!isShiftDown() || !editor.isPreviewCube())) ? cursorSelectColor
-						: cursorPaint;
-			else if (editor.getAction() == ActionEditor.FILL)
-				cursor = isControlDown() ? cursorSelectColor : cursorFill;
-		} else if (session.stateHUD == StateHUD.GAME)
+		else if (session.stateHUD == StateHUD.EDITOR)
+			cursor = session.editor.getCursor();
+		else if (session.stateHUD == StateHUD.GAME)
 			if (session.getAction() == UserAction.MOUSE)
 
 				if (cube != null && session.fen.gui.unit != null
@@ -481,11 +471,6 @@ public class Fen extends JFrame {
 		updateCursor();
 	}
 
-	public static Cursor createCursor(String file) {
-		Image img = FlixBlocksUtils.getImage("cursor/" + file);
-		return Toolkit.getDefaultToolkit().createCustomCursor(img, new Point(0, 0), file);
-	}
-
 	// =========================================================================================================================
 
 	public void start() {
@@ -509,7 +494,7 @@ public class Fen extends JFrame {
 				session.stateHUD = StateHUD.EDITOR;
 				session.setAction(UserAction.EDITOR);
 
-				session.setModelCamera(editor.map, editor.camera);
+				session.setModelCamera(session.editor.map, session.editor.camera);
 			}
 			boolean game = session.stateHUD == StateHUD.GAME;
 
@@ -528,7 +513,7 @@ public class Fen extends JFrame {
 	// =========================================================================================================================
 
 	public boolean isNeededQuadriPrecision() {
-		return editor.getAction() == ActionEditor.PAINT;
+		return session.editor.getAction() == ActionEditor.PAINT;
 	}
 
 	// =========================================================================================================================

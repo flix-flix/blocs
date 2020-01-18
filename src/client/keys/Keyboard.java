@@ -36,14 +36,15 @@ public class Keyboard {
 	public boolean pressR = false, pressL = false;
 
 	// ================== Keyboard ===========================
-
 	public boolean forwardKeyEnabled = false, backwardKeyEnabled = false, rightKeyEnabled = false,
 			leftKeyEnabled = false, jumpKeyEnabled = false, sneakKeyEnabled = false, sprintKeyEnabled = false;
 
 	// =========================== Infos Dev ===========================
-
 	/** Ticks count (camera movements/sec) */
 	public int ticks = 0;
+
+	// =========================== Infos Dev ===========================
+	private StateHUD pausedOn = null;
 
 	// =========================================================================================================================
 
@@ -69,13 +70,13 @@ public class Keyboard {
 
 	public void rightClick(MouseEvent e) {
 		if (session.stateHUD == StateHUD.EDITOR)
-			session.fen.editor.rightClick(e);
+			session.editor.rightClick(e);
 
 		ModelMap map;
 		if (session.stateHUD == StateHUD.GAME)
 			map = session.map;
 		else if (session.stateHUD == StateHUD.EDITOR)
-			map = session.fen.editor.map;
+			map = session.editor.map;
 		else
 			return;
 
@@ -115,7 +116,7 @@ public class Keyboard {
 		if (session.stateHUD == StateHUD.GAME)
 			map = session.map;
 		else if (session.stateHUD == StateHUD.EDITOR)
-			map = session.fen.editor.map;
+			map = session.editor.map;
 		else
 			return;
 
@@ -128,8 +129,8 @@ public class Keyboard {
 
 		} else if (session.gamemode == GameMode.CLASSIC) {
 
-			if (session.fen.editor.isListeningClick())
-				session.fen.editor.click();
+			if (session.editor.isListeningLeftClick())
+				session.editor.leftClick();
 
 			else if (session.getAction() == UserAction.CREA_DESTROY) {
 				if (session.cubeTarget != null)
@@ -173,7 +174,7 @@ public class Keyboard {
 					&& session.fen.getHeight() / 2 == mouseLocationY);
 		}
 
-		Camera camera = session.stateHUD == StateHUD.EDITOR ? session.fen.editor.camera : session.camera;
+		Camera camera = session.stateHUD == StateHUD.EDITOR ? session.editor.camera : session.camera;
 
 		if (session.stateHUD != StateHUD.PAUSE && session.stateHUD != StateHUD.DIALOG && !mouseFreeze) {
 			camera.setVx(camera.getVx() - ((session.fen.getWidth() / 2 - mouseLocationX) * mouseSpeed));
@@ -213,13 +214,13 @@ public class Keyboard {
 			if (session.gamemode == GameMode.CLASSIC)
 				session.camera.moveY(wheelRotation * 10);
 		} else if (session.stateHUD == StateHUD.EDITOR)
-			if (session.fen.editor.isRotate()) {
-				session.fen.editor.camera.move(
-						cameraMovementX(session.fen.editor.camera.getVx(), wheelRotation > 0, wheelRotation < 0, false,
+			if (session.editor.isRotateMode()) {
+				session.editor.camera.move(
+						cameraMovementX(session.editor.camera.getVx(), wheelRotation > 0, wheelRotation < 0, false,
 								false),
-						cameraMovementZ(session.fen.editor.camera.getVx(), wheelRotation > 0, wheelRotation < 0, false,
+						cameraMovementZ(session.editor.camera.getVx(), wheelRotation > 0, wheelRotation < 0, false,
 								false));
-				session.fen.editor.cameraMoved();
+				session.editor.cameraMoved();
 			}
 	}
 
@@ -232,6 +233,7 @@ public class Keyboard {
 	// =========================================================================================================================
 
 	public void pause() {
+		pausedOn = session.stateHUD;
 		session.stateHUD = StateHUD.PAUSE;
 
 		session.fen.setCursorVisible(true);
@@ -240,7 +242,7 @@ public class Keyboard {
 	}
 
 	public void resume() {
-		session.stateHUD = StateHUD.GAME;
+		session.stateHUD = pausedOn;
 
 		if (session.gamemode == GameMode.CREATIVE) {
 			session.fen.setCursorVisible(false);
@@ -254,12 +256,12 @@ public class Keyboard {
 
 	public void cameraMovement() {
 		// Rotate-Mode
-		if (session.stateHUD == StateHUD.EDITOR && session.fen.editor.isRotate())
-			session.fen.editor.rotateCamera(forwardKeyEnabled, backwardKeyEnabled, rightKeyEnabled, leftKeyEnabled);
+		if (session.stateHUD == StateHUD.EDITOR && session.editor.isRotateMode())
+			session.editor.rotateCamera(forwardKeyEnabled, backwardKeyEnabled, rightKeyEnabled, leftKeyEnabled);
 
 		// Classic-Mode
 		else {
-			Camera camera = session.stateHUD == StateHUD.EDITOR ? session.fen.editor.camera : session.camera;
+			Camera camera = session.stateHUD == StateHUD.EDITOR ? session.editor.camera : session.camera;
 
 			double x, z;
 

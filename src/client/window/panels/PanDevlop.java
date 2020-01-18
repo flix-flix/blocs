@@ -57,7 +57,7 @@ public class PanDevlop extends JPanel {
 
 			// =========================================================================================================================
 
-			Camera camera = session.stateHUD == StateHUD.EDITOR ? session.fen.editor.camera : session.camera;
+			Camera camera = session.stateHUD == StateHUD.EDITOR ? session.editor.camera : session.camera;
 
 			writeLeft(String.format("Camera: X = %.1f  Y = %.1f  Z = %.1f", camera.vue.x, camera.vue.y, camera.vue.z));
 			writeLeft("Chunk: " + "X = " + Map.toChunkCoord(camera.vue.x) + " Z = " + Map.toChunkCoord(camera.vue.z));

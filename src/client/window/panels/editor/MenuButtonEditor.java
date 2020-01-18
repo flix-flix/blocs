@@ -12,6 +12,7 @@ import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import client.editor.Editor;
 import client.window.graphicEngine.calcul.Camera;
 import client.window.graphicEngine.calcul.Engine;
 import client.window.graphicEngine.calcul.Point3D;
@@ -27,7 +28,7 @@ public class MenuButtonEditor extends Menu {
 	Font font = new Font("monospace", Font.BOLD, 14);
 	FontMetrics fm = getFontMetrics(font);
 
-	PanEditor editor;
+	Editor editor;
 	ActionEditor action;
 	Image img;
 
@@ -50,7 +51,7 @@ public class MenuButtonEditor extends Menu {
 
 	// =========================================================================================================================
 
-	public MenuButtonEditor(PanEditor editor, ActionEditor action) {
+	public MenuButtonEditor(Editor editor, ActionEditor action) {
 		this.editor = editor;
 		this.action = action;
 

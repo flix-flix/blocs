@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.Serializable;
 
 import client.Client;
+import client.editor.Editor;
 import client.keys.Keyboard;
 import client.textures.TexturePack;
 import client.window.Fen;
@@ -51,6 +52,8 @@ public class Session implements Serializable {
 	// ================================
 
 	private Engine engine;
+
+	public Editor editor;
 
 	public Camera camera;
 	public Keyboard keyboard;
@@ -103,6 +106,8 @@ public class Session implements Serializable {
 	public Session() {
 		texturePack = new TexturePack();
 		ModelCube.texturePack = texturePack;
+
+		editor = new Editor(this);
 
 		new Fen(this);
 		client = new Client(this);
@@ -273,7 +278,7 @@ public class Session implements Serializable {
 				if (map.gridContains(previousPreview) && map.gridGet(previousPreview).isPreview())
 					map.remove(previousPreview);
 
-				fen.editor.looseTarget();
+				editor.looseTarget();
 			}
 
 		// Refresh target
@@ -314,7 +319,7 @@ public class Session implements Serializable {
 				}
 				// ================ EDITOR ==================
 				else if (fen.isNeededQuadriPrecision())
-					fen.editor.updateTarget();
+					editor.updateTarget();
 	}
 
 	// =========================================================================================================================
