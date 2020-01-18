@@ -69,7 +69,7 @@ public class Keyboard {
 
 	public void rightClick(MouseEvent e) {
 		if (session.stateHUD == StateHUD.EDITOR)
-			session.fen.editor.initDrag(e);
+			session.fen.editor.rightClick(e);
 
 		ModelMap map;
 		if (session.stateHUD == StateHUD.GAME)
@@ -209,7 +209,18 @@ public class Keyboard {
 	// =========================================================================================================================
 
 	public void wheelRotation(int wheelRotation) {
-		session.camera.moveY(wheelRotation * 10);
+		if (session.stateHUD == StateHUD.GAME) {
+			if (session.gamemode == GameMode.CLASSIC)
+				session.camera.moveY(wheelRotation * 10);
+		} else if (session.stateHUD == StateHUD.EDITOR)
+			if (session.fen.editor.isRotate()) {
+				session.fen.editor.camera.move(
+						cameraMovementX(session.fen.editor.camera.getVx(), wheelRotation > 0, wheelRotation < 0, false,
+								false),
+						cameraMovementZ(session.fen.editor.camera.getVx(), wheelRotation > 0, wheelRotation < 0, false,
+								false));
+				session.fen.editor.cameraMoved();
+			}
 	}
 
 	// =========================================================================================================================
@@ -242,48 +253,68 @@ public class Keyboard {
 	// =========================================================================================================================
 
 	public void cameraMovement() {
-		double x = 0, z = 0;
-		Camera camera = session.stateHUD == StateHUD.EDITOR ? session.fen.editor.camera : session.camera;
+		// Rotate-Mode
+		if (session.stateHUD == StateHUD.EDITOR && session.fen.editor.isRotate())
+			session.fen.editor.rotateCamera(forwardKeyEnabled, backwardKeyEnabled, rightKeyEnabled, leftKeyEnabled);
 
-		if (session.keyboard.forwardKeyEnabled) {
-			x = Math.cos(camera.getVx() * FlixBlocksUtils.toRadian);
-			z = Math.sin(camera.getVx() * FlixBlocksUtils.toRadian);
+		// Classic-Mode
+		else {
+			Camera camera = session.stateHUD == StateHUD.EDITOR ? session.fen.editor.camera : session.camera;
+
+			double x, z;
+
+			x = cameraMovementX(camera.getVx(), forwardKeyEnabled, backwardKeyEnabled, rightKeyEnabled, leftKeyEnabled);
+			z = cameraMovementZ(camera.getVx(), forwardKeyEnabled, backwardKeyEnabled, rightKeyEnabled, leftKeyEnabled);
+
+			if (jumpKeyEnabled)
+				camera.moveY(.4);
+			if (sneakKeyEnabled)
+				camera.moveY(-.4);
+
+			// Slow down the camera if moving in 2 directions
+			if ((rightKeyEnabled || leftKeyEnabled) && (forwardKeyEnabled || backwardKeyEnabled)) {
+				x *= .5;
+				z *= .5;
+			}
+
+			// Slow down the camera if not running
+			if (!sprintKeyEnabled) {
+				x *= .3;
+				z *= .3;
+			}
+
+			camera.move(x, z);
 		}
+	}
 
-		if (session.keyboard.backwardKeyEnabled) {
-			x += -Math.cos(camera.getVx() * FlixBlocksUtils.toRadian);
-			z += -Math.sin(camera.getVx() * FlixBlocksUtils.toRadian);
-		}
+	public double cameraMovementX(double vx, boolean forward, boolean backward, boolean right, boolean left) {
+		double x = 0;
 
-		if (session.keyboard.rightKeyEnabled) {
-			x += Math.cos((camera.getVx() + 90) * FlixBlocksUtils.toRadian);
-			z += Math.sin((camera.getVx() + 90) * FlixBlocksUtils.toRadian);
-		}
+		if (forward)
+			x = Math.cos(vx * FlixBlocksUtils.toRadian);
+		if (backward)
+			x -= Math.cos(vx * FlixBlocksUtils.toRadian);
+		if (right)
+			x += Math.cos((vx + 90) * FlixBlocksUtils.toRadian);
+		if (left)
+			x -= Math.cos((vx + 90) * FlixBlocksUtils.toRadian);
 
-		if (session.keyboard.leftKeyEnabled) {
-			x += -Math.cos((camera.getVx() + 90) * FlixBlocksUtils.toRadian);
-			z += -Math.sin((camera.getVx() + 90) * FlixBlocksUtils.toRadian);
-		}
+		return x;
+	}
 
-		// Slow down the camera if moving in 2 directions
-		if ((session.keyboard.rightKeyEnabled || session.keyboard.leftKeyEnabled)
-				&& (session.keyboard.forwardKeyEnabled || session.keyboard.backwardKeyEnabled)) {
-			x *= .5;
-			z *= .5;
-		}
+	public double cameraMovementZ(double vx, boolean forward, boolean backward, boolean right, boolean left) {
+		double z = 0;
 
-		if (!session.keyboard.sprintKeyEnabled) {
-			// Slow down the camera
-			x *= .3;
-			z *= .3;
-		}
+		if (forward)
+			z = Math.sin(vx * FlixBlocksUtils.toRadian);
+		if (backward)
+			z -= Math.sin(vx * FlixBlocksUtils.toRadian);
+		if (right)
+			z += Math.sin((vx + 90) * FlixBlocksUtils.toRadian);
+		if (left)
+			z -= Math.sin((vx + 90) * FlixBlocksUtils.toRadian);
 
-		if (session.keyboard.jumpKeyEnabled)
-			camera.moveY(.4);
-		if (session.keyboard.sneakKeyEnabled)
-			camera.moveY(-.4);
-
-		camera.move(x, z);
+		return z;
 	}
 
 	// =========================================================================================================================

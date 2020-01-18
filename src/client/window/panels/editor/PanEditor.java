@@ -7,6 +7,7 @@ import java.util.HashMap;
 
 import javax.swing.JPanel;
 
+import client.keys.Key;
 import client.session.Session;
 import client.session.UserAction;
 import client.textures.TextureCube;
@@ -48,7 +49,8 @@ public class PanEditor extends JPanel {
 	HashMap<ActionEditor, MenuButtonEditor> buttonsTop = new HashMap<>();
 
 	ActionEditor[] _buttonsAction = { ActionEditor.ALONE, ActionEditor.DECOR, ActionEditor.PAINT, ActionEditor.FILL,
-			ActionEditor.GRID, ActionEditor.MINIATURE, ActionEditor.SAVE, ActionEditor.PLAYER_COLOR };
+			ActionEditor.GRID, ActionEditor.MINIATURE, ActionEditor.SAVE, ActionEditor.PLAYER_COLOR,
+			ActionEditor.ROTATE };
 	HashMap<ActionEditor, MenuButtonEditor> buttonsAction = new HashMap<>();
 
 	ActionEditor[] _buttonsItemID = { ActionEditor.ITEM_NAME, ActionEditor.ITEM_ID, ActionEditor.ITEM_COLOR,
@@ -91,13 +93,14 @@ public class PanEditor extends JPanel {
 
 		map = new ModelMap();
 
-		camera = new Camera(new Point3D(0, 0, -10), 90.5, 0);
+		camera = new Camera(new Point3D(0, 0, -10), 90.5, .5);
 
 		clock = new TickClock("Editor Clock");
 		clock.add(map);
 		clock.start();
 
 		// ========================================================================================
+		// Menu + Top
 
 		menu.setBounds(0, 0, menuWidth, getHeight());
 		this.add(menu);
@@ -109,7 +112,16 @@ public class PanEditor extends JPanel {
 			topActions.addMenu(buttonsTop.get(action));
 		}
 
+		buttonsTop.get(ActionEditor.EDITOR).setSelected(true);
+
+		// ========================================================================================
+		// Color
+
 		menu.addBottom(panColor = new MenuColor(this), MenuCol.WIDTH);
+
+		// ========================================================================================
+		// ItemID
+
 		menu.addBottom(gridItemID = new MenuGrid(), 110);
 
 		gridItemID.setCols(3);
@@ -125,6 +137,9 @@ public class PanEditor extends JPanel {
 
 		buttonsItemID.get(ActionEditor.ITEM_ID).setWheelMinMax(0, 999);
 
+		// ========================================================================================
+		// Actions
+
 		menu.addTop(gridActions = new MenuGrid(), MenuCol.REMAINING);
 
 		for (ActionEditor action : _buttonsAction) {
@@ -134,6 +149,15 @@ public class PanEditor extends JPanel {
 
 		buttonsAction.get(ActionEditor.GRID).setWheelStep(size);
 		buttonsAction.get(ActionEditor.GRID).setWheelMinMax(1, 16);
+		buttonsAction.get(ActionEditor.GRID).setSelectable(true);
+
+		buttonsAction.get(ActionEditor.ROTATE).setSelectable(true);
+
+		buttonsAction.get(ActionEditor.PAINT).setSelectable(true);
+		buttonsAction.get(ActionEditor.FILL).setSelectable(true);
+		buttonsAction.get(ActionEditor.PLAYER_COLOR).setSelectable(true);
+		MenuButtonEditor.group(buttonsAction.get(ActionEditor.FILL), buttonsAction.get(ActionEditor.PAINT),
+				buttonsAction.get(ActionEditor.PLAYER_COLOR));
 
 		// ========================================================================================
 
@@ -335,7 +359,11 @@ public class PanEditor extends JPanel {
 
 		case PAINT:
 		case FILL:
-			setAction(action);
+		case PLAYER_COLOR:
+			if (action == this.action)
+				setAction(null);
+			else
+				setAction(action);
 			break;
 
 		case GRID:
@@ -345,8 +373,6 @@ public class PanEditor extends JPanel {
 				map.gridGet(0, 0, 0).itemID = ItemID.EDITOR_PREVIEW;
 			break;
 		case MINIATURE:
-			break;
-		case PLAYER_COLOR:
 			break;
 		case QUIT:
 			break;
@@ -431,8 +457,8 @@ public class PanEditor extends JPanel {
 
 	/** @return true if the event is consumed */
 	public boolean keyEvent(KeyEvent e) {
-		if (e.getKeyCode() == 9) // Tab
-			lookCube();
+		if (e.getKeyCode() == Key.DOWN.code)
+			return action == ActionEditor.PAINT;
 
 		if (listeningKey == null)
 			return false;
@@ -506,39 +532,82 @@ public class PanEditor extends JPanel {
 	// Camera
 
 	public void lookCube() {
-		camera.setVx(FlixBlocksUtils.toDegres * Math.atan(camera.vue.x / -camera.vue.z) + 90
-				+ (camera.vue.z >= 0 ? 180 : 0));
-		camera.setVy(FlixBlocksUtils.toDegres * Math.atan(Math.hypot(camera.vue.x, camera.vue.z) / camera.vue.y) - 90
-				+ (camera.vue.y <= 0 ? 180 : 0));
+		camera.setVx(FlixBlocksUtils.toDegres * Math.atan((camera.vue.x - .5) / -(camera.vue.z - .5)) + 90
+				+ (camera.vue.z - .5 >= 0 ? 180 : 0));
+		camera.setVy(FlixBlocksUtils.toDegres
+				* Math.atan(Math.hypot(camera.vue.x - .5, camera.vue.z - .5) / (camera.vue.y - .5)) - 90
+				+ (camera.vue.y - .5 <= 0 ? 180 : 0));
 	}
 
-	public void rotateCamera(MouseEvent e) {
-		int x = e.getX() - prevX;
-		int y = e.getY() - prevY;
-		initDrag(e);
+	public void rotateCamera(int x, int y) {
+		double slow = .2;
 
-		double distY = camera.vue.distToOrigin();
-		double angleY = camera.getVy() + y * -.2;
+		double distY = camera.vue.dist(0.5, 0.5, 0.5);
+		double angleY = camera.getVy() + y * -slow;
 
-		if (angleY > 60)
-			angleY = 60;
-		else if (angleY < -60)
-			angleY = -60;
+		if (angleY >= 60)
+			angleY = 59.9;
+		else if (angleY <= -60)
+			angleY = -59.9;
 
-		camera.vue.y = -Math.sin(FlixBlocksUtils.toRadian * angleY) * distY;
+		camera.vue.y = .5 - Math.sin(FlixBlocksUtils.toRadian * angleY) * distY;
 		double distX = Math.cos(FlixBlocksUtils.toRadian * angleY) * distY;
 
-		double angleX = FlixBlocksUtils.toRadian * (camera.getVx() + x * .2);
+		double angleX = FlixBlocksUtils.toRadian * (camera.getVx() + x * slow);
 
-		camera.vue.x = -distX * Math.cos(angleX);
-		camera.vue.z = -distX * Math.sin(angleX);
+		camera.vue.x = .5 - distX * Math.cos(angleX);
+		camera.vue.z = .5 - distX * Math.sin(angleX);
 
 		lookCube();
 	}
 
-	public void initDrag(MouseEvent e) {
-		prevX = e.getX();
-		prevY = e.getY();
+	public void rotateCamera(boolean forward, boolean backward, boolean right, boolean left) {
+		int x = 0, y = 0;
+		int speed = 15;
+
+		// Slow down with control
+		if (session.fen.isControlDown())
+			speed = 5;
+
+		if (right)
+			x += speed;
+		if (left)
+			x -= speed;
+
+		if (forward)
+			y -= speed;
+		if (backward)
+			y += speed;
+
+		rotateCamera(x, y);
+	}
+
+	public void initDrag(int x, int y) {
+		prevX = x;
+		prevY = y;
+	}
+
+	// =========================================================================================================================
+
+	public void drag(MouseEvent e) {
+		rotateCamera(e.getX() - prevX, e.getY() - prevY);
+		initDrag(e.getX(), e.getY());
+	}
+
+	public void cameraMoved() {
+		if (buttonsAction.get(ActionEditor.ROTATE).isSelected())
+			lookCube();
+	}
+
+	public void rightClick(MouseEvent e) {
+		initDrag(e.getX(), e.getY());
+		lookCube();
+	}
+
+	// =========================================================================================================================
+
+	public boolean isRotate() {
+		return buttonsAction.get(ActionEditor.ROTATE).isSelected();
 	}
 
 	// =========================================================================================================================

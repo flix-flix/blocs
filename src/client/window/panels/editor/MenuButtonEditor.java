@@ -9,6 +9,8 @@ import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import client.window.graphicEngine.calcul.Camera;
 import client.window.graphicEngine.calcul.Engine;
@@ -29,14 +31,20 @@ public class MenuButtonEditor extends Menu {
 	ActionEditor action;
 	Image img;
 
+	// ======================= Wheel =========================
 	private final static int NULL = -1;
 
 	int wheelStep = NULL;
 	int wheelMin = 0;
 	int wheelMax = 0;
 
-	int value = 0;
-	String str = null;
+	// ======================= Data =========================
+	private int value = 0;
+	private String str = null;
+
+	private boolean selectable = false;
+	private boolean selected = false;
+	private ArrayList<MenuButtonEditor> group;
 
 	Engine engine;
 
@@ -61,6 +69,8 @@ public class MenuButtonEditor extends Menu {
 		addMouseWheelListener(new MouseWheelListener() {
 			@Override
 			public void mouseWheelMoved(MouseWheelEvent e) {
+				e.consume();
+
 				if (wheelMax >= 50) // If needed to reach big values
 					if (e.isShiftDown())
 						wheelStep -= 100 * e.getWheelRotation();
@@ -85,8 +95,14 @@ public class MenuButtonEditor extends Menu {
 
 	@Override
 	public void paintComponent(Graphics g) {
-		g.setColor(hasImage() ? Color.GRAY : Color.DARK_GRAY);
+		g.setColor(hasImage() ? (selected ? Color.LIGHT_GRAY : Color.GRAY) : Color.DARK_GRAY);
 		g.fillRect(0, 0, getWidth() - 1, getHeight() - 1);
+
+		if (selected) {
+			g.setColor(Color.GRAY);
+			for (int i = 0; i < 5; i++)
+				g.drawRect(i, i, getWidth() - 1 - 2 * i, getHeight() - 1 - 2 * i);
+		}
 
 		if (hasImage())
 			g.drawImage(img, 0, 0, getWidth(), getHeight(), null);
@@ -208,10 +224,42 @@ public class MenuButtonEditor extends Menu {
 	}
 
 	// =========================================================================================================================
+
+	public boolean isSelected() {
+		return selected;
+	}
+
+	public void setSelected(boolean selected) {
+		this.selected = selected;
+	}
+
+	public void setSelectable(boolean selectable) {
+		this.selectable = selectable;
+	}
+
+	public static void group(MenuButtonEditor... buttons) {
+		ArrayList<MenuButtonEditor> list = new ArrayList<>(Arrays.asList(buttons));
+
+		for (MenuButtonEditor button : buttons)
+			button.group = list;
+	}
+
+	// =========================================================================================================================
 	// Menu
 
 	@Override
 	public void click(MouseEvent e) {
+		if (selectable) {
+			if (selected)
+				setSelected(false);
+			else {
+				if (group != null)
+					for (MenuButtonEditor button : group)
+						button.setSelected(false);
+				setSelected(true);
+			}
+		}
+
 		editor.menuClick(action);
 	}
 

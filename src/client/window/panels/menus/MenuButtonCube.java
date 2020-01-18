@@ -47,9 +47,8 @@ public class MenuButtonCube extends Menu {
 
 		if (selected) {
 			g.setColor(Color.GRAY);
-			g.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
-			g.drawRect(1, 1, getWidth() - 3, getHeight() - 3);
-			g.drawRect(2, 2, getWidth() - 5, getHeight() - 5);
+			for (int i = 0; i < 5; i++)
+				g.drawRect(i, i, getWidth() - 1 - 2 * i, getHeight() - 1 - 2 * i);
 		}
 
 		String str = cube.multibloc == null ? cube.itemID.name()

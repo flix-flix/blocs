@@ -110,8 +110,6 @@ public class Fen extends JFrame {
 		this.setLocation(0, 0);
 		this.setExtendedState(MAXIMIZED_BOTH);
 
-		this.setFocusTraversalKeysEnabled(false);
-
 		// ======================================
 
 		this.setLayout(null);
@@ -229,11 +227,11 @@ public class Fen extends JFrame {
 							break;
 
 						case UP:
-							if (session.gamemode == GameMode.CREATIVE)
+							if (session.gamemode == GameMode.CREATIVE || session.stateHUD == StateHUD.EDITOR)
 								session.keyboard.jumpKeyEnabled = true;
 							break;
 						case DOWN:
-							if (session.gamemode == GameMode.CREATIVE)
+							if (session.gamemode == GameMode.CREATIVE || session.stateHUD == StateHUD.EDITOR)
 								session.keyboard.sneakKeyEnabled = true;
 							break;
 
@@ -330,7 +328,7 @@ public class Fen extends JFrame {
 
 			public void mouseDragged(MouseEvent e) {
 				if (session.stateHUD == StateHUD.EDITOR && session.keyboard.pressR)
-					editor.rotateCamera(e);
+					editor.drag(e);
 				else
 					mouseMoved(e);
 			}
@@ -338,9 +336,7 @@ public class Fen extends JFrame {
 
 		this.addMouseWheelListener(new MouseWheelListener() {
 			public void mouseWheelMoved(MouseWheelEvent e) {
-				if (session.stateHUD == StateHUD.GAME)
-					if (session.gamemode == GameMode.CLASSIC)
-						session.keyboard.wheelRotation(e.getWheelRotation());
+				session.keyboard.wheelRotation(e.getWheelRotation());
 			}
 		});
 
@@ -357,9 +353,8 @@ public class Fen extends JFrame {
 				if (session.stateHUD != StateHUD.PAUSE && session.stateHUD != StateHUD.DIALOG)
 					if (e.getButton() == 1)
 						session.keyboard.leftClick(e);
-					else if (e.getButton() == 3) {
+					else if (e.getButton() == 3)
 						session.keyboard.rightClick(e);
-					}
 			}
 
 			public void mouseExited(MouseEvent e) {
