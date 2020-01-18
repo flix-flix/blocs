@@ -8,6 +8,7 @@ import java.awt.Graphics;
 import javax.swing.JPanel;
 
 import client.session.Session;
+import client.session.StateHUD;
 import client.window.graphicEngine.calcul.Camera;
 import data.map.Map;
 

@@ -5,11 +5,11 @@ import java.awt.Robot;
 import java.awt.event.MouseEvent;
 
 import client.session.Session;
+import client.session.StateHUD;
 import client.session.UserAction;
 import client.window.graphicEngine.calcul.Camera;
 import client.window.graphicEngine.extended.ModelCube;
 import client.window.graphicEngine.extended.ModelMap;
-import client.window.panels.StateHUD;
 import data.map.Coord;
 import data.map.Cube;
 import data.map.enumerations.Orientation;

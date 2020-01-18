@@ -10,6 +10,7 @@ import java.awt.event.ComponentListener;
 import javax.swing.JPanel;
 
 import client.session.Session;
+import client.session.StateHUD;
 import client.session.UserAction;
 import client.window.panels.menus.ButtonContainer;
 import client.window.panels.menus.MenuButtonCube;

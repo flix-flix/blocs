@@ -16,7 +16,6 @@ import client.window.graphicEngine.calcul.Point3D;
 import client.window.graphicEngine.extended.ModelCube;
 import client.window.graphicEngine.extended.ModelMap;
 import client.window.graphicEngine.structures.Model;
-import client.window.panels.StateHUD;
 import data.dynamic.TickClock;
 import data.id.ItemTable;
 import data.map.Coord;

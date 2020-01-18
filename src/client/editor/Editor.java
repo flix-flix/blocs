@@ -3,6 +3,7 @@ package client.editor;
 import java.awt.Cursor;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 import client.keys.Key;
 import client.session.Session;
@@ -16,7 +17,6 @@ import client.window.graphicEngine.calcul.Point3D;
 import client.window.graphicEngine.extended.DrawLayer;
 import client.window.graphicEngine.extended.ModelCube;
 import client.window.graphicEngine.extended.ModelMap;
-import client.window.panels.editor.ActionEditor;
 import client.window.panels.editor.MenuButtonEditor;
 import client.window.panels.editor.PanEditor;
 import data.dynamic.TickClock;
@@ -45,7 +45,7 @@ public class Editor {
 	// ======================= Texture generation =========================
 	private static final int MAX_SIZE = 16;
 	private int[][][] texture = new int[6][MAX_SIZE][MAX_SIZE];
-	public int size = 3;
+	private int textureSize = 3;
 
 	// ======================= Buttons =========================
 	private ActionEditor action = null;
@@ -55,6 +55,16 @@ public class Editor {
 	private Face lastPaintFace = null;
 	private int lastPaintCol = -1;
 	private int lastPaintRow = -1;
+
+	// ======================= History =========================
+	/** Store the modifications */
+	private ArrayList<History> history = new ArrayList<>();
+	/**
+	 * Store the modifications to be packed together before insertion to #history
+	 */
+	private ArrayList<History> historyPack = new ArrayList<>();
+	/** Index of the last modification (-1 means no previous modif) */
+	private int historyPosition = -1;
 
 	// ======================= Layer =========================
 	private static final String paintLayer = "paint";
@@ -84,6 +94,35 @@ public class Editor {
 	}
 
 	// =========================================================================================================================
+	// History
+
+	public void undo() {
+		if (!historyPack.isEmpty())
+			historyPack();
+
+		if (historyPosition == -1)
+			return;
+
+		history.get(historyPosition--).undo(this);
+	}
+
+	public void redo() {
+		if (historyPosition + 1 >= history.size())
+			return;
+
+		history.get(++historyPosition).redo(this);
+	}
+
+	public void historyPack() {
+		history.add(++historyPosition, new HistoryList(historyPack));
+
+		while (history.size() > historyPosition + 1)
+			history.remove(historyPosition + 1);
+
+		historyPack = new ArrayList<>();
+	}
+
+	// =========================================================================================================================
 	// Texture management
 
 	public void initTextureFrame() {
@@ -99,10 +138,10 @@ public class Editor {
 		TextureFace[] tf = new TextureFace[6];
 
 		for (int face = 0; face < 6; face++) { // Generates faces
-			int[] tab = new int[size * size];
+			int[] tab = new int[textureSize * textureSize];
 			for (int k = 0; k < tab.length; k++) // Generates data-arrays
-				tab[k] = texture[face][k / size][k % size];
-			tf[face] = new TextureFace(new TextureSquare(tab, size));
+				tab[k] = texture[face][k / textureSize][k % textureSize];
+			tf[face] = new TextureFace(new TextureSquare(tab, textureSize));
 		}
 
 		return new TextureCube(tf);
@@ -118,58 +157,83 @@ public class Editor {
 		panel.buttonsAction.get(ActionEditor.MINIATURE).update();
 	}
 
+	public void setTextureSize(int textureSize) {
+		this.textureSize = textureSize;
+	}
+
+	public int getTextureSize() {
+		return textureSize;
+	}
+
 	// =========================================================================================================================
 	// Painting
 
-	public void paint() {
-		texture[session.faceTarget.ordinal()][session.quadriTarget / size][session.quadriTarget % size] = panel.panColor
-				.getColor();
-
+	public void paintPixel() {
+		drawPixel(session.faceTarget, session.quadriTarget / textureSize, session.quadriTarget % textureSize,
+				panel.panColor.getColor());
 		updateLastPixel();
 		saveTexture();
+		historyPack();
 	}
 
 	public void paintLine() {
-		Line l = new Line(session.quadriTarget % size, session.quadriTarget / size, lastPaintCol, lastPaintRow);
+		Line l = new Line(session.quadriTarget % textureSize, session.quadriTarget / textureSize, lastPaintCol,
+				lastPaintRow);
 
 		for (int row = l.min; row <= l.max; row++)
 			for (int col = l.getLeft(row); col <= l.getRight(row); col++)
-				texture[session.faceTarget.ordinal()][row][col] = panel.panColor.getColor();
+				drawPixel(session.faceTarget, row, col, panel.panColor.getColor());
 
 		updateLastPixel();
 		saveTexture();
+		historyPack();
 	}
 
 	public void paintSquare() {
-		int col1 = Math.min(session.quadriTarget % size, lastPaintCol);
-		int row1 = Math.min(session.quadriTarget / size, lastPaintRow);
-		int col2 = Math.max(session.quadriTarget % size, lastPaintCol);
-		int row2 = Math.max(session.quadriTarget / size, lastPaintRow);
+		int col1 = Math.min(session.quadriTarget % textureSize, lastPaintCol);
+		int row1 = Math.min(session.quadriTarget / textureSize, lastPaintRow);
+		int col2 = Math.max(session.quadriTarget % textureSize, lastPaintCol);
+		int row2 = Math.max(session.quadriTarget / textureSize, lastPaintRow);
 
 		for (int col = col1; col <= col2; col++)
 			for (int row = row1; row <= row2; row++)
-				texture[session.faceTarget.ordinal()][row][col] = panel.panColor.getColor();
+				drawPixel(session.faceTarget, row, col, panel.panColor.getColor());
 
 		updateLastPixel();
 		saveTexture();
+		historyPack();
+	}
+
+	public void drawPixel(Face face, int col, int row, int color) {
+		// Pack the previous history action if different from PAINT
+		if (!historyPack.isEmpty() && !(historyPack.get(historyPack.size() - 1) instanceof PixelHistory))
+			historyPack();
+		historyPack.add(new PixelHistory(face, col, row, texture[face.ordinal()][col][row], color));
+
+		setPixel(face, col, row, color);
+	}
+
+	public void setPixel(Face face, int col, int row, int color) {
+		texture[face.ordinal()][col][row] = color;
 	}
 
 	// =========================================================================================================================
 	// Other tools
 
 	public void selectColor() {
-		panel.panColor.setColor(
-				texture[session.faceTarget.ordinal()][session.quadriTarget / size][session.quadriTarget % size]);
+		panel.panColor
+				.setColor(texture[session.faceTarget.ordinal()][session.quadriTarget / textureSize][session.quadriTarget
+						% textureSize]);
 	}
 
 	public void fill(int erase, int face, int row, int col) {
-		if (row < 0 || size <= row || col < 0 || size <= col)
+		if (row < 0 || textureSize <= row || col < 0 || textureSize <= col)
 			return;
 
 		if (texture[face][row][col] != erase || erase == panel.panColor.getColor())
 			return;
 
-		texture[face][row][col] = panel.panColor.getColor();
+		drawPixel(Face.faces[face], row, col, panel.panColor.getColor());
 
 		fill(erase, face, row + 1, col);
 		fill(erase, face, row - 1, col);
@@ -182,13 +246,13 @@ public class Editor {
 
 	public void updateLastPixel() {
 		lastPaintFace = session.faceTarget;
-		lastPaintCol = session.quadriTarget % size;
-		lastPaintRow = session.quadriTarget / size;
+		lastPaintCol = session.quadriTarget % textureSize;
+		lastPaintRow = session.quadriTarget / textureSize;
 	}
 
 	public boolean hasLastPixel() {
-		return session.cubeTarget == map.gridGet(0, 0, 0) && session.faceTarget == lastPaintFace && lastPaintCol < size
-				&& lastPaintRow < size;
+		return session.cubeTarget == map.gridGet(0, 0, 0) && session.faceTarget == lastPaintFace
+				&& lastPaintCol < textureSize && lastPaintRow < textureSize;
 	}
 
 	// =========================================================================================================================
@@ -285,7 +349,8 @@ public class Editor {
 			break;
 
 		case GRID:
-			size = panel.buttonsAction.get(ActionEditor.GRID).getWheelStep();
+			historyPack.add(new SizeHistory(textureSize,
+					textureSize = panel.buttonsAction.get(ActionEditor.GRID).getWheelStep()));
 			saveTexture();
 			break;
 		case MINIATURE:
@@ -317,6 +382,17 @@ public class Editor {
 
 	/** @return true if the event is consumed */
 	public boolean keyEvent(KeyEvent e) {
+		// Undo/Redo
+		if (e.isControlDown())
+			if (e.getKeyCode() == 90) {
+				undo();
+				return true;
+			} else if (e.getKeyCode() == 89) {
+				redo();
+				return true;
+			}
+
+		// Allow SHIFT to draw line and square
 		if (e.getKeyCode() == Key.DOWN.code)
 			return action == ActionEditor.PAINT;
 
@@ -425,8 +501,8 @@ public class Editor {
 				ModelCube cube = map.gridGet(0, 0, 0);
 				DrawLayer layer = new DrawLayer(cube, session.faceTarget);
 
-				int col1 = session.quadriTarget % size;
-				int row1 = session.quadriTarget / size;
+				int col1 = session.quadriTarget % textureSize;
+				int row1 = session.quadriTarget / textureSize;
 				int col2 = lastPaintCol;
 				int row2 = lastPaintRow;
 
@@ -498,7 +574,7 @@ public class Editor {
 					else
 						paintLine();
 				else
-					paint();
+					paintPixel();
 			}
 			break;
 
@@ -507,12 +583,13 @@ public class Editor {
 				selectColor();
 			else if (isPreviewCube()) {
 				int face = session.faceTarget.ordinal();
-				int row = session.quadriTarget / size;
-				int col = session.quadriTarget % size;
+				int row = session.quadriTarget / textureSize;
+				int col = session.quadriTarget % textureSize;
 
 				fill(texture[face][row][col], face, row, col);
 
 				saveTexture();
+				historyPack();
 			}
 			break;
 

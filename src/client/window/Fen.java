@@ -16,16 +16,16 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JFrame;
 
+import client.editor.ActionEditor;
 import client.keys.Key;
 import client.session.Session;
+import client.session.StateHUD;
 import client.session.UserAction;
 import client.window.graphicEngine.calcul.Engine;
 import client.window.panels.PanDevlop;
 import client.window.panels.PanGUI;
 import client.window.panels.PanGame;
 import client.window.panels.PanPause;
-import client.window.panels.StateHUD;
-import client.window.panels.editor.ActionEditor;
 import client.window.panels.editor.PanEditor;
 import data.id.ItemTable;
 import data.map.Cube;

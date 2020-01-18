@@ -12,6 +12,7 @@ import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import client.editor.ActionEditor;
 import client.editor.Editor;
 import client.window.graphicEngine.calcul.Camera;
 import client.window.graphicEngine.calcul.Engine;
@@ -72,7 +73,10 @@ public class MenuButtonEditor extends Menu {
 			public void mouseWheelMoved(MouseWheelEvent e) {
 				e.consume();
 
-				if (wheelMax >= 50) // If needed to reach big values
+				int prev = wheelStep;
+
+				// If needed to reach big values
+				if (wheelMax >= 50)
 					if (e.isShiftDown())
 						wheelStep -= 100 * e.getWheelRotation();
 					else if (e.isControlDown())
@@ -87,7 +91,13 @@ public class MenuButtonEditor extends Menu {
 				if (wheelStep < wheelMin)
 					wheelStep = wheelMin;
 
-				editor.menuWheel(action);
+				if (wheelStep == prev) {
+					if (prev == wheelMax)
+						;
+					else if (prev == wheelMin)
+						;
+				} else
+					editor.menuWheel(action);
 			}
 		});
 	}

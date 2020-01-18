@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import javax.swing.JPanel;
 
+import client.editor.ActionEditor;
 import client.editor.Editor;
 import client.window.panels.menus.MenuCol;
 import client.window.panels.menus.MenuGrid;
@@ -94,7 +95,7 @@ public class PanEditor extends JPanel {
 			gridActions.addMenu(buttonsAction.get(action));
 		}
 
-		buttonsAction.get(ActionEditor.GRID).setWheelStep(editor.size);
+		buttonsAction.get(ActionEditor.GRID).setWheelStep(editor.getTextureSize());
 		buttonsAction.get(ActionEditor.GRID).setWheelMinMax(1, 16);
 		buttonsAction.get(ActionEditor.GRID).setSelectable(true);
 

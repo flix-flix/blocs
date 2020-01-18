@@ -1,4 +1,4 @@
-package client.window.panels.editor;
+package client.editor;
 
 public enum ActionEditor {
 	EDITOR, EDIT_CUBE, EDIT_MULTI_CUBE, EDIT_MULTI_TEXTURE,

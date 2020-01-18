@@ -8,6 +8,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 
+import client.editor.ActionEditor;
 import client.editor.Editor;
 import client.window.panels.menus.Menu;
 
