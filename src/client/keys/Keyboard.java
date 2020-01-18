@@ -69,6 +69,8 @@ public class Keyboard {
 	// =========================================================================================================================
 
 	public void rightClick(MouseEvent e) {
+		pressR = true;
+
 		if (session.stateHUD == StateHUD.EDITOR)
 			session.editor.rightClick(e);
 
@@ -89,7 +91,6 @@ public class Keyboard {
 			}
 
 		} else if (session.gamemode == GameMode.CLASSIC) {
-			pressR = true;
 
 			if (session.cubeTarget != null && session.faceTarget != null) {
 
@@ -112,6 +113,8 @@ public class Keyboard {
 	}
 
 	public void leftClick(MouseEvent e) {
+		pressL = true;
+
 		ModelMap map;
 		if (session.stateHUD == StateHUD.GAME)
 			map = session.map;
@@ -149,6 +152,8 @@ public class Keyboard {
 
 	public void leftClickEnd() {
 		pressL = false;
+		if(session.stateHUD == StateHUD.EDITOR)
+		session.editor.leftClickEnd();
 	}
 
 	// =========================================================================================================================

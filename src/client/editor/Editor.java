@@ -17,6 +17,7 @@ import client.window.graphicEngine.calcul.Point3D;
 import client.window.graphicEngine.extended.DrawLayer;
 import client.window.graphicEngine.extended.ModelCube;
 import client.window.graphicEngine.extended.ModelMap;
+import client.window.graphicEngine.structures.Quadri;
 import client.window.panels.editor.MenuButtonEditor;
 import client.window.panels.editor.PanEditor;
 import data.dynamic.TickClock;
@@ -114,6 +115,9 @@ public class Editor {
 	}
 
 	public void historyPack() {
+		if (historyPack.isEmpty())
+			return;
+
 		history.add(++historyPosition, new HistoryList(historyPack));
 
 		while (history.size() > historyPosition + 1)
@@ -158,6 +162,7 @@ public class Editor {
 	}
 
 	public void setTextureSize(int textureSize) {
+		panel.buttonsAction.get(ActionEditor.GRID).setWheelStep(textureSize);
 		this.textureSize = textureSize;
 	}
 
@@ -173,7 +178,6 @@ public class Editor {
 				panel.panColor.getColor());
 		updateLastPixel();
 		saveTexture();
-		historyPack();
 	}
 
 	public void paintLine() {
@@ -208,6 +212,7 @@ public class Editor {
 		// Pack the previous history action if different from PAINT
 		if (!historyPack.isEmpty() && !(historyPack.get(historyPack.size() - 1) instanceof PixelHistory))
 			historyPack();
+
 		historyPack.add(new PixelHistory(face, col, row, texture[face.ordinal()][col][row], color));
 
 		setPixel(face, col, row, color);
@@ -493,8 +498,18 @@ public class Editor {
 			return;
 		}
 
+		if (session.quadriTarget == Quadri.NOT_NUMBERED)
+			return;
+
 		if (action == ActionEditor.PAINT) {
 			session.cubeTarget.setSelectedQuadri(session.faceTarget, session.quadriTarget);
+
+			session.cubeTarget.removeLayer("paint");
+
+			if (session.keyboard.pressL) {
+				paintPixel();
+				return;
+			}
 
 			// Show Line/Square preview
 			if (session.fen.isShiftDown() && hasLastPixel()) {
@@ -512,8 +527,7 @@ public class Editor {
 					layer.drawLineAndCross(col1, row1, col2, row2, 0xffdddddd, 0xff555555);
 
 				cube.addLayer(paintLayer, layer);
-			} else
-				session.cubeTarget.removeLayer("paint");
+			}
 		}
 	}
 
@@ -601,6 +615,11 @@ public class Editor {
 	public void rightClick(MouseEvent e) {
 		initDrag(e.getX(), e.getY());
 		lookCube();
+	}
+
+	public void leftClickEnd() {
+		// Save the current paint line (drag)
+		historyPack();
 	}
 
 	public void drag(MouseEvent e) {

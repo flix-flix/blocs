@@ -14,12 +14,11 @@ import java.util.Arrays;
 
 import client.editor.ActionEditor;
 import client.editor.Editor;
-import client.window.graphicEngine.calcul.Camera;
 import client.window.graphicEngine.calcul.Engine;
-import client.window.graphicEngine.calcul.Point3D;
 import client.window.graphicEngine.extended.ModelCube;
 import client.window.panels.menus.Menu;
 import data.id.ItemID;
+import data.id.ItemTable;
 import data.map.Cube;
 import utils.FlixBlocksUtils;
 
@@ -61,9 +60,19 @@ public class MenuButtonEditor extends Menu {
 		else
 			setMinimumSize(new Dimension(fm.stringWidth(getText()), 20));
 
-		if (action == ActionEditor.MINIATURE) {
-			engine = new Engine(new Camera(new Point3D(-.4, 1.5, -1), 58, -35),
-					new ModelCube(new Cube(ItemID.EDITOR_PREVIEW)), editor.session.texturePack);
+		if (hasEngine()) {
+			ItemID itemID;
+			switch (action) {
+			case MINIATURE:
+				itemID = ItemID.EDITOR_PREVIEW;
+				break;
+
+			default:
+				itemID = ItemID.BORDER;
+				break;
+			}
+			engine = new Engine(ItemTable.getCamera(itemID), new ModelCube(new Cube(itemID)),
+					editor.session.texturePack);
 			engine.background = Engine.NONE;
 			update();
 		}
@@ -141,7 +150,7 @@ public class MenuButtonEditor extends Menu {
 	// =========================================================================================================================
 
 	public void update() {
-		if (action == ActionEditor.MINIATURE)
+		if (hasEngine())
 			img = engine.getImage(getWidth(), getHeight());
 	}
 
@@ -160,6 +169,16 @@ public class MenuButtonEditor extends Menu {
 			return false;
 		default:
 			return true;
+		}
+	}
+
+	public boolean hasEngine() {
+		switch (action) {
+		case MINIATURE:
+		case EDIT_CUBE:
+			return true;
+		default:
+			return false;
 		}
 	}
 

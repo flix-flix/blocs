@@ -13,7 +13,7 @@ public class Quadri {
 
 	public Line[] lines = new Line[4];
 
-	public final int NOT_NUMBERED = -1;
+	public final static int NOT_NUMBERED = -1;
 	/** Order of drawing in the Draw */
 	public int id = NOT_NUMBERED;
 

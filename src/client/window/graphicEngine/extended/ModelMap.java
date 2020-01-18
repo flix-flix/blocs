@@ -21,7 +21,7 @@ public class ModelMap extends Map implements Model {
 
 	// ===== Model =====
 	public boolean visible = true;
-	private ArrayList<Draw> draws = new ArrayList<>();
+	private ArrayList<Draw> draws;
 
 	// ======== Parameters ========
 	/** Range of chunks to draw */
@@ -242,7 +242,7 @@ public class ModelMap extends Map implements Model {
 
 	@Override
 	public ArrayList<Draw> getDraws(Camera camera) {
-		draws.clear();
+		draws = new ArrayList<>();
 
 		int camChunkX = toChunkCoord(camera.vue.x);
 		int camChunkZ = toChunkCoord(camera.vue.z);

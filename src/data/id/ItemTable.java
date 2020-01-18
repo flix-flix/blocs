@@ -3,6 +3,8 @@ package data.id;
 import java.awt.Color;
 
 import client.textures.TexturePack;
+import client.window.graphicEngine.calcul.Camera;
+import client.window.graphicEngine.calcul.Point3D;
 import data.map.Cube;
 import data.map.buildings.Building;
 import data.map.multiblocs.MultiBloc;
@@ -173,6 +175,12 @@ public class ItemTable {
 
 	// =========================================================================================================================
 
+	public static Camera getCamera(ItemID itemID) {
+		return new Camera(new Point3D(-.4, 1.5, -1), 58, -35);
+	}
+
+	// =========================================================================================================================
+
 	public static Color getMapColor(ItemID itemID) {
 		if (itemID == null)
 			return new Color(0x7d0085);
@@ -192,7 +200,7 @@ public class ItemTable {
 			return new Color(0x109f0c);
 		case OAK_TRUNK:
 			return new Color(0x5e4303);
-		
+
 		case CASTLE:
 			return new Color(0x1e00ff);// Player 2 0xff0000
 		case UNIT:

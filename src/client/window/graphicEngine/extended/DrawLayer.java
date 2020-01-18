@@ -90,11 +90,11 @@ public class DrawLayer {
 			if (data instanceof LineData)
 				quadris.add(new Quadri(getPoint2D(engine, size, data.col1, data.row1),
 						getPoint2D(engine, size, data.col2, data.row2), getPoint2D(engine, size, data.col2, data.row2),
-						getPoint2D(engine, size, data.col1, data.row1), data.color, false, -1));
+						getPoint2D(engine, size, data.col1, data.row1), data.color, false));
 			else
 				quadris.add(new Quadri(getPoint2D(engine, size, data.col1, data.row1),
 						getPoint2D(engine, size, data.col1, data.row2), getPoint2D(engine, size, data.col2, data.row2),
-						getPoint2D(engine, size, data.col2, data.row1), data.color, true, -1));
+						getPoint2D(engine, size, data.col2, data.row1), data.color, true));
 		}
 
 		return quadris;
