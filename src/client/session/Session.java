@@ -89,7 +89,7 @@ public class Session implements Serializable {
 
 	// ============ Options ============
 	/** Max frames/seconde allowed */
-	public int FPSmax = 60;
+	public int FPSmax = 30;
 
 	/** true : currently generating an image */
 	public boolean processing = false;

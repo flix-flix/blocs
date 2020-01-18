@@ -546,7 +546,7 @@ public class Fen extends JFrame {
 			// Count the number of frames displayed since the last "second timer" restart
 			int fps = 0;
 			// The number of ms before generating another frame
-			int wait = 0;
+			long wait = 0;
 			// Store the time which the last second starts
 			long time = System.currentTimeMillis();
 			while (true) {
@@ -563,16 +563,15 @@ public class Fen extends JFrame {
 					session.keyboard.ticks = 0;
 				}
 
-				wait--;
 				try {
 					Thread.sleep(1);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 
-				if (session.stateHUD != StateHUD.PAUSE && !session.processing && wait < 0) {
+				if (session.stateHUD != StateHUD.PAUSE && !session.processing && wait < System.currentTimeMillis()) {
 					session.processing = true;
-					wait = 1000 / session.FPSmax;
+					wait = System.currentTimeMillis() + 1000 / session.FPSmax;
 
 					repaint = true;
 					fps++;
