@@ -97,7 +97,7 @@ public class Editor {
 	// =========================================================================================================================
 	// History
 
-	public void undo() {
+	private void undo() {
 		if (!historyPack.isEmpty())
 			historyPack();
 
@@ -107,14 +107,14 @@ public class Editor {
 		history.get(historyPosition--).undo(this);
 	}
 
-	public void redo() {
+	private void redo() {
 		if (historyPosition + 1 >= history.size())
 			return;
 
 		history.get(++historyPosition).redo(this);
 	}
 
-	public void historyPack() {
+	private void historyPack() {
 		if (historyPack.isEmpty())
 			return;
 

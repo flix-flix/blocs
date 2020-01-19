@@ -25,7 +25,13 @@ public class PanGame extends JPanel {
 
 	// =========================================================================================================================
 
-	public int centerX, centerY;
+	public int startW = 400;
+	public int width = 0;
+	public int height = 0;
+
+	// =========================================================================================================================
+
+	public int centerW, centerH;
 	// Size of the central indicator (creative mode)
 	public int crossSize = 7;
 
@@ -39,34 +45,36 @@ public class PanGame extends JPanel {
 	// =========================================================================================================================
 
 	public void paintComponent(Graphics g) {
+		width = getWidth() - 1 - startW;
+		height = this.getHeight() - 1;
+
+		centerW = startW + width / 2;
+		centerH = height / 2;
+
 		if (img == null) {
 			g.setColor(new Color(236, 135, 15));
-			g.fillRect(0, 0, this.getWidth(), this.getHeight());
+			g.fillRect(startW, 0, width, height);
 
 			int textwidth = (int) (font.getStringBounds("loading...", frc).getWidth());
 			int textheight = (int) (font.getStringBounds("loading...", frc).getHeight());
 
 			g.setColor(Color.LIGHT_GRAY);
 			g.setFont(font);
-			g.drawString("loading...", this.getWidth() / 2 - textwidth / 2 + 10,
-					this.getHeight() / 2 + textheight / 2 - 20);
+			g.drawString("loading...", centerW - textwidth / 2 + 10, centerH + textheight / 2 - 20);
 			g.setFont(new Font("arial", Font.BOLD, 10));
-			g.drawString("(If too long it probably crashed ;p)", this.getWidth() / 2 - 200 / 2 + 10,
-					this.getHeight() / 2 + textheight / 2);
+			g.drawString("(If too long it probably crashed ;p)", centerW - 200 / 2 + 10, centerH + textheight / 2);
 		} else {
-			centerX = getWidth() / 2;
-			centerY = getHeight() / 2;
 
-			g.drawImage(img, 0, 0, null);
+			g.drawImage(img, startW, 0, null);
 			session.processing = false;
 
 			if (session.gamemode == GameMode.CREATIVE) {
 				// Middle indicator : cross
 				g.setColor(Color.WHITE);
-				g.drawLine(centerX - crossSize, centerY - 1, centerX + crossSize - 1, centerY - 1);
-				g.drawLine(centerX - crossSize, centerY, centerX + crossSize - 1, centerY);
-				g.drawLine(centerX - 1, centerY - crossSize, centerX - 1, centerY + crossSize - 1);
-				g.drawLine(centerX, centerY - crossSize, centerX, centerY + crossSize - 1);
+				g.drawLine(centerW - crossSize, centerH - 1, centerW + crossSize - 1, centerH - 1);
+				g.drawLine(centerW - crossSize, centerH, centerW + crossSize - 1, centerH);
+				g.drawLine(centerW - 1, centerH - crossSize, centerW - 1, centerH + crossSize - 1);
+				g.drawLine(centerW, centerH - crossSize, centerW, centerH + crossSize - 1);
 			}
 		}
 	}

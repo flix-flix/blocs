@@ -557,10 +557,11 @@ public class Fen extends JFrame {
 					fps = 0;
 
 					session.ticksKeyBoard = session.keyboard.ticks;
-					// session.ticksPhys = session.clock.ticks;
-					// TODO get ticks from server
-					// session.clock.ticks = 0;
 					session.keyboard.ticks = 0;
+
+					// TODO get ticks from server
+					// session.ticksPhys = session.clock.ticks;
+					// session.clock.ticks = 0;
 				}
 
 				try {
@@ -589,13 +590,15 @@ public class Fen extends JFrame {
 				if (repaint) {
 					repaint = false;
 
-					if (session.gamemode == GameMode.CLASSIC)
-						session.setTarget(mouseX - 8, mouseY - 32);
-					else if (session.gamemode == GameMode.CREATIVE)
-						session.setTarget(game.centerX, game.centerY);
+					game.startW = session.gamemode == GameMode.CLASSIC ? 400 : 0;
 
-					if (game.getWidth() != 0 && game.getHeight() != 0)
-						game.img = session.getImage(game.getWidth(), game.getHeight());
+					if (session.gamemode == GameMode.CLASSIC)
+						session.setTarget(mouseX - 8 - game.startW, mouseY - 32);
+					else if (session.gamemode == GameMode.CREATIVE)
+						session.setTarget(game.centerW - game.startW, game.centerH);
+
+					if (game.width > 0 && game.height > 0)
+						game.img = session.getImage(game.width, game.height);
 
 					session.updateTimeDev();
 					session.targetUpdate();
