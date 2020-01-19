@@ -3,6 +3,7 @@ package client.window.graphicEngine.extended;
 import java.util.ArrayList;
 
 import client.extended.UnitClient;
+import client.textures.TexturePack;
 import client.window.graphicEngine.calcul.Camera;
 import client.window.graphicEngine.calcul.Matrix;
 import client.window.graphicEngine.structures.Draw;
@@ -19,9 +20,12 @@ import data.map.units.Unit;
 public class ModelMap extends Map implements Model {
 	private static final long serialVersionUID = 1111592162081077768L;
 
+	// ===== Texture =====
+	TexturePack texturePack;
+
 	// ===== Model =====
 	public boolean visible = true;
-	private ArrayList<Draw> draws;
+	private ArrayList<Draw> draws = new ArrayList<>();
 
 	// ======== Parameters ========
 	/** Range of chunks to draw */
@@ -32,11 +36,15 @@ public class ModelMap extends Map implements Model {
 
 	// =========================================================================================================================
 
-	public ModelMap() {
+	public ModelMap(TexturePack texturePack) {
+		super();
+		this.texturePack = texturePack;
 	}
 
-	public ModelMap(Map map) {
-		super(map);
+	public ModelMap(Map map, TexturePack texturePack) {
+		this(texturePack);
+
+		copyFromMap(map);
 
 		for (int index : map.getChunks().keySet())
 			updateChunk(chunks.get(index).x, chunks.get(index).z);
@@ -58,20 +66,20 @@ public class ModelMap extends Map implements Model {
 	}
 
 	@Override
-	public Chunk createChunk(Chunk chunk) {
-		return new ModelChunk(chunk);
+	public ModelChunk createChunk(Chunk chunk) {
+		return new ModelChunk(chunk, texturePack);
 	}
 
 	@Override
 	protected ModelCube createCube(Cube c) {
-		return new ModelCube(c);
+		return new ModelCube(c, texturePack);
 	}
 
 	@Override
 	protected ModelCube createUnit(Unit unit) {
 		if (unit instanceof UnitClient)
-			return new ModelCube(new Cube(unit));
-		return new ModelCube(new Cube(new UnitClient(unit)));
+			return new ModelCube(new Cube(unit), texturePack);
+		return new ModelCube(new Cube(new UnitClient(unit)), texturePack);
 	}
 
 	// =========================================================================================================================
@@ -242,7 +250,7 @@ public class ModelMap extends Map implements Model {
 
 	@Override
 	public ArrayList<Draw> getDraws(Camera camera) {
-		draws = new ArrayList<>();
+		draws.clear();
 
 		int camChunkX = toChunkCoord(camera.vue.x);
 		int camChunkZ = toChunkCoord(camera.vue.z);
@@ -262,17 +270,17 @@ public class ModelMap extends Map implements Model {
 	}
 
 	@Override
-	public void init(Camera camera, Matrix matrice) {
+	public void init(Camera camera, Matrix matrix) {
 		int camChunkX = toChunkCoord(camera.vue.x);
 		int camChunkZ = toChunkCoord(camera.vue.z);
 
 		for (int x = -range; x <= range; x++)
 			for (int z = -range; z <= range; z++)
 				if (_containsChunk(camChunkX + x, camChunkZ + z))
-					_getChunk(camChunkX + x, camChunkZ + z).init(camera, matrice);
+					_getChunk(camChunkX + x, camChunkZ + z).init(camera, matrix);
 
 		for (Cube c : units.values())
-			((ModelCube) c).init(camera, matrice);
+			((ModelCube) c).init(camera, matrix);
 	}
 
 	// =========================================================================================================================

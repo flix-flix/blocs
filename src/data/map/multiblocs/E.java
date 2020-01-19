@@ -1,8 +1,8 @@
 package data.map.multiblocs;
 
-import client.window.graphicEngine.calcul.Engine;
 import data.id.ItemID;
 import data.map.Cube;
+import utils.FlixBlocksUtils;
 
 public class E extends MultiBloc {
 	private static final long serialVersionUID = -4312589735027448825L;
@@ -24,10 +24,10 @@ public class E extends MultiBloc {
 		int a = 60, b = 90 - a;
 
 		add(new Cube(x, y + 7.3, z, 0, 0, a, 1, 1, 1, ItemID.BORDER));
-		add(new Cube(x - Math.cos(b * Engine.toRadian), y + 7.3 + Math.sin(b * Engine.toRadian), z, 0, 0, a, 1, 1, 1,
-				ItemID.BORDER));
-		add(new Cube(x - 2 * Math.cos(b * Engine.toRadian), y + 7.3 + 2 * Math.sin(b * Engine.toRadian), z, 0, 0, a, 1,
-				1, 1, ItemID.BORDER));
+		add(new Cube(x - Math.cos(b * FlixBlocksUtils.toRadian), y + 7.3 + Math.sin(b * FlixBlocksUtils.toRadian), z, 0,
+				0, a, 1, 1, 1, ItemID.BORDER));
+		add(new Cube(x - 2 * Math.cos(b * FlixBlocksUtils.toRadian),
+				y + 7.3 + 2 * Math.sin(b * FlixBlocksUtils.toRadian), z, 0, 0, a, 1, 1, 1, ItemID.BORDER));
 	}
 
 	public E() {

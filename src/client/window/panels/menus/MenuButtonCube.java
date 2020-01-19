@@ -19,6 +19,7 @@ public class MenuButtonCube extends Menu {
 	private static final long serialVersionUID = -8393842761922506846L;
 
 	public Cube cube;
+	public ModelCube model;
 
 	public boolean selected = false;
 
@@ -32,8 +33,9 @@ public class MenuButtonCube extends Menu {
 	public MenuButtonCube(Session session, Cube cube) {
 		super(session);
 		this.cube = cube;
+		this.model = new ModelCube(cube, session.texturePack);
 
-		engine = new Engine(new Camera(new Point3D(-.4, 1.5, -1), 58, -35), new ModelCube(cube), session.texturePack);
+		engine = new Engine(new Camera(new Point3D(-.4, 1.5, -1), 58, -35), model);
 		engine.background = Engine.NONE;
 	}
 

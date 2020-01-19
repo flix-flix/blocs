@@ -50,7 +50,7 @@ public class DrawCubeFace extends Draw {
 
 		if (cube.layers != null)
 			for (DrawLayer layer : cube.layers.values())
-				quadri.addAll(layer.getQuadri(engine.texturePack.getFace(cube, face), engine));
+				quadri.addAll(layer.getQuadri(cube.texturePack.getFace(cube, face), engine));
 
 		// Draw white contour for the grid in editor mode
 		if (cube.itemID == ItemID.EDITOR_PREVIEW_GRID) {
@@ -66,10 +66,10 @@ public class DrawCubeFace extends Draw {
 
 		// Draw the mining animation
 		if (cube.miningState != Cube.NO_MINING)
-			generateQuadri(engine.texturePack.getMiningFrame(cube.miningState), engine);
+			generateQuadri(cube.texturePack.getMiningFrame(cube.miningState), engine);
 
 		// Draw the cube
-		generateQuadri(engine.texturePack.getFace(cube, face), engine);
+		generateQuadri(cube.texturePack.getFace(cube, face), engine);
 
 		return quadri;
 	}
@@ -181,5 +181,10 @@ public class DrawCubeFace extends Draw {
 		Point[] points = generate2D(engine, 1, 1);
 		return new Polygon(new int[] { points[0].x, points[1].x, points[3].x, points[2].x },
 				new int[] { points[0].y, points[1].y, points[3].y, points[2].y }, 4);
+	}
+
+	@Override
+	public boolean isTargetable() {
+		return cube.isTargetable();
 	}
 }

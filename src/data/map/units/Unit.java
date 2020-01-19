@@ -369,8 +369,11 @@ public class Unit implements Serializable {
 					end.face(face))) != null)
 				if (path == null || temp.size() < path.size())
 					path = temp;
-		for (Coord c : path)
-			System.out.println(c);
+
+		if (path != null)
+			for (Coord c : path)
+				System.out.println(c);
+
 		return setPath(path);
 	}
 

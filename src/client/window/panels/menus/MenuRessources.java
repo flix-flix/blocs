@@ -37,8 +37,8 @@ public class MenuRessources extends Menu {
 
 		Cube unit = new Cube(ItemID.UNIT);
 		unit.orientation = Orientation.WEST;
-		Engine engine = new Engine(new Camera(new Point3D(-.4, 1.5, -1), 58, -35), new ModelCube(unit),
-				session.texturePack);
+		Engine engine = new Engine(new Camera(new Point3D(-.4, 1.5, -1), 58, -35),
+				new ModelCube(unit, session.texturePack));
 		engine.background = Engine.NONE;
 		units = engine.getImage(imgSize, imgSize);
 	}

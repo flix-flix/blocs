@@ -176,6 +176,8 @@ public class ItemTable {
 	// =========================================================================================================================
 
 	public static Camera getCamera(ItemID itemID) {
+		if (itemID == ItemID.CASTLE)
+			return new Camera(new Point3D(3.7, 3, 4.2), 236, -30);
 		return new Camera(new Point3D(-.4, 1.5, -1), 58, -35);
 	}
 

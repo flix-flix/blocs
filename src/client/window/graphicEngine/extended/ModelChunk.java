@@ -2,6 +2,7 @@ package client.window.graphicEngine.extended;
 
 import java.util.ArrayList;
 
+import client.textures.TexturePack;
 import client.window.graphicEngine.calcul.Camera;
 import client.window.graphicEngine.calcul.Engine;
 import client.window.graphicEngine.calcul.Matrix;
@@ -26,15 +27,16 @@ public class ModelChunk extends Chunk implements Model {
 		grid = new ModelCube[X][Y][Z];
 	}
 
-	public ModelChunk(Chunk chunk) {
+	public ModelChunk(Chunk chunk, TexturePack texturePack) {
 		this(chunk.x, chunk.z);
 		for (int x = 0; x < X; x++)
 			for (int y = 0; y < Y; y++)
 				for (int z = 0; z < Z; z++)
-					grid[x][y][z] = chunk.grid[x][y][z] == null ? null : new ModelCube(chunk.grid[x][y][z]);
+					grid[x][y][z] = chunk.grid[x][y][z] == null ? null
+							: new ModelCube(chunk.grid[x][y][z], texturePack);
 
 		for (Cube c : chunk.cubes)
-			cubes.add(new ModelCube(c));
+			cubes.add(new ModelCube(c, texturePack));
 	}
 
 	// =========================================================================================================================
@@ -58,15 +60,15 @@ public class ModelChunk extends Chunk implements Model {
 	}
 
 	@Override
-	public void init(Camera camera, Matrix matrice) {
+	public void init(Camera camera, Matrix matrix) {
 		for (int x = 0; x < X; x++)
 			for (int y = 0; y < Y; y++)
 				for (int z = 0; z < Z; z++)
 					if (grid[x][y][z] != null)
-						((ModelCube) grid[x][y][z]).init(camera, matrice);
+						((ModelCube) grid[x][y][z]).init(camera, matrix);
 
 		for (Cube cube : cubes)
-			((ModelCube) cube).init(camera, matrice);
+			((ModelCube) cube).init(camera, matrix);
 	}
 
 	// =========================================================================================================================

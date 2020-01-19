@@ -8,16 +8,13 @@ import java.awt.Image;
 import java.lang.Thread.State;
 
 import client.session.Session;
-import client.window.graphicEngine.calcul.Camera;
 import client.window.graphicEngine.calcul.Engine;
-import client.window.graphicEngine.calcul.Point3D;
 import client.window.graphicEngine.extended.ModelMap;
 import client.window.panels.menus.ButtonContainer;
 import client.window.panels.menus.Menu;
 import client.window.panels.menus.MenuButtonAction;
 import client.window.panels.menus.MenuGrid;
 import client.window.panels.menus.MenuResource;
-import data.id.ItemID;
 import data.id.ItemTable;
 import data.map.buildings.Building;
 import data.map.resources.ResourceType;
@@ -130,10 +127,10 @@ public class MenuInfosBuilding extends Menu implements ButtonContainer {
 				update.notify();
 			}
 
-		ModelMap map = new ModelMap();
-		map.add(new Building(null, ItemID.CASTLE, 0, 0, 0, true).getCube());
+		ModelMap map = new ModelMap(session.texturePack);
+		map.add(new Building(null, build.getItemID(), 0, 0, 0, true).getCube());
 
-		engine = new Engine(new Camera(new Point3D(3.7, 3, 4.2), 236, -30), map, session.texturePack);
+		engine = new Engine(ItemTable.getCamera(build.getItemID()), map);
 		engine.background = Engine.NONE;
 		img = engine.getImage(imgSize, imgSize);
 

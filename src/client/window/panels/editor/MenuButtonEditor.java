@@ -41,7 +41,7 @@ public class MenuButtonEditor extends Menu {
 
 	// ======================= Data =========================
 	private int value = 0;
-	private String str = null;
+	private String str = "";
 
 	private boolean selectable = false;
 	private boolean selected = false;
@@ -71,8 +71,8 @@ public class MenuButtonEditor extends Menu {
 				itemID = ItemID.BORDER;
 				break;
 			}
-			engine = new Engine(ItemTable.getCamera(itemID), new ModelCube(new Cube(itemID)),
-					editor.session.texturePack);
+			engine = new Engine(ItemTable.getCamera(itemID),
+					new ModelCube(new Cube(itemID), editor.session.texturePack));
 			engine.background = Engine.NONE;
 			update();
 		}
@@ -139,7 +139,7 @@ public class MenuButtonEditor extends Menu {
 			g.setColor(Color.LIGHT_GRAY);
 			g.setFont(font);
 
-			String text = str == null ? getText() : str;
+			String text = str.isEmpty() ? getText() : str;
 
 			int y = getHeight() / 2 + (int) (fm.getStringBounds(text, g).getHeight() / 2) - 3;
 
@@ -246,7 +246,7 @@ public class MenuButtonEditor extends Menu {
 	}
 
 	public void clearString() {
-		str = null;
+		str = "";
 	}
 
 	public String getString() {

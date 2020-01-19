@@ -10,6 +10,8 @@ public class MainServer {
 		Server server = new Server();
 		Thread serverThread = new Thread(server);
 
+		serverThread.setName("Server");
+
 		serverThread.start();
 
 		// server.stop();

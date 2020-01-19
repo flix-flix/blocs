@@ -6,19 +6,13 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.util.ArrayList;
 
-import client.textures.TexturePack;
-import client.window.graphicEngine.extended.DrawCubeFace;
-import client.window.graphicEngine.extended.ModelCube;
 import client.window.graphicEngine.structures.Draw;
 import client.window.graphicEngine.structures.Model;
 import client.window.graphicEngine.structures.Quadri;
-import data.map.enumerations.Face;
 
 public class Engine {
 
-	public static final double toRadian = Math.PI / 180;
-
-	public TexturePack texturePack;
+	private static final double toRadian = Math.PI / 180;
 
 	/** Contains the data to be drawn */
 	private Model model;
@@ -35,15 +29,14 @@ public class Engine {
 	// ================ Target =====================
 	public int cursorX = 100, cursorY = 100;
 
-	static public ModelCube cubeTarget;
-	static public Face faceTarget;
-	static public int quadriTarget;
+	public Draw drawTarget;
+	public Quadri quadriTarget;
 
 	// ================ Dev (F3) =====================
 	public long timeStart, timeMat, timeDraw, timeEnd;
 
 	// ================ Data =====================
-	private Matrix matrice;
+	private Matrix matrix;
 
 	private BufferedImage bimg;
 	private DataBuffer dataBuffer;
@@ -69,10 +62,9 @@ public class Engine {
 
 	// =========================================================================================================================
 
-	public Engine(Camera camera, Model model, TexturePack texturePack) {
+	public Engine(Camera camera, Model model) {
 		this.camera = camera;
 		this.model = model;
-		this.texturePack = texturePack;
 	}
 
 	// =========================================================================================================================
@@ -94,10 +86,10 @@ public class Engine {
 		timeStart = System.currentTimeMillis();
 		init(w, h);
 
-		matrice = new Matrix(-camera.getVx(), -camera.getVy(), camera.vue);
+		matrix = new Matrix(-camera.getVx(), -camera.getVy(), camera.vue);
 
-		cubeTarget = null;
-		faceTarget = null;
+		drawTarget = null;
+		quadriTarget = null;
 
 		draw();
 
@@ -108,7 +100,7 @@ public class Engine {
 		return bimg;
 	}
 
-	public void init(int w, int h) {
+	private void init(int w, int h) {
 		imgWidth = w;
 		imgHeight = h;
 
@@ -123,7 +115,7 @@ public class Engine {
 
 	// =========================================================================================================================
 
-	public void drawBackgroung() {
+	private void drawBackgroung() {
 		if (background == NONE)
 			return;
 
@@ -163,12 +155,12 @@ public class Engine {
 
 	// =========================================================================================================================
 
-	public void draw() {
-		model.init(camera, matrice);
+	private void draw() {
+		model.init(camera, matrix);
 
 		timeMat = System.currentTimeMillis();
 
-		ArrayList<Draw> draws = model.getDraws(camera);
+		ArrayList<Draw> draws = new ArrayList<>(model.getDraws(camera));
 		draws.sort(null);
 
 		timeDraw = System.currentTimeMillis();
@@ -181,12 +173,11 @@ public class Engine {
 			for (int index = 0; index < 4; index++)
 				if (poly.xpoints[index] < imgWidth && poly.xpoints[index] > 0 && poly.ypoints[index] < imgHeight
 						&& poly.ypoints[index] > 0) {
+					// TODO [Remove] DrawCubeFace import
 					// Test if the target is in the polygon
-					if (cubeTarget == null && poly.contains(cursorX, cursorY)
-							&& ((DrawCubeFace) d).cube.isTargetable()) {
+					if (drawTarget == null && poly.contains(cursorX, cursorY) && d.isTargetable()) {
 						targeted = true;
-						faceTarget = ((DrawCubeFace) d).face;
-						cubeTarget = ((DrawCubeFace) d).cube;
+						drawTarget = d;
 					}
 				}
 			for (Quadri q : d.getQuadri(this))
@@ -194,8 +185,9 @@ public class Engine {
 				for (int i = 0; i < 4; i++)
 					if (q.points[i].x < imgWidth && q.points[i].x > 0 && q.points[i].y < imgHeight
 							&& q.points[i].y > 0) {
-						if (targeted && q.getPoly().contains(cursorX, cursorY))
-							quadriTarget = q.id;
+						if (targeted && quadriTarget == null && q.id != Quadri.NOT_NUMBERED
+								&& q.getPoly().contains(cursorX, cursorY))
+							quadriTarget = q;
 						drawQuadri(q);
 						break;
 					}
@@ -254,11 +246,11 @@ public class Engine {
 		setElem(col, row, rgb);
 	}
 
-	public int getElem(int col, int row) {
+	private int getElem(int col, int row) {
 		return dataBuffer.getElem(row * imgWidth + col);
 	}
 
-	public void setElem(int col, int row, int val) {
+	private void setElem(int col, int row, int val) {
 		dataBuffer.setElem(row * imgWidth + col, val);
 	}
 
@@ -341,5 +333,15 @@ public class Engine {
 		int y = centerY + (int) (-yy * imgHeight);
 
 		return new Point(x, y);
+	}
+
+	// =========================================================================================================================
+
+	public Draw getDrawTarget() {
+		return drawTarget;
+	}
+
+	public Quadri getQuadriTarget() {
+		return quadriTarget;
 	}
 }

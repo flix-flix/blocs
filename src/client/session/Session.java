@@ -13,9 +13,11 @@ import client.window.Fen;
 import client.window.graphicEngine.calcul.Camera;
 import client.window.graphicEngine.calcul.Engine;
 import client.window.graphicEngine.calcul.Point3D;
+import client.window.graphicEngine.extended.DrawCubeFace;
 import client.window.graphicEngine.extended.ModelCube;
 import client.window.graphicEngine.extended.ModelMap;
 import client.window.graphicEngine.structures.Model;
+import client.window.graphicEngine.structures.Quadri;
 import data.dynamic.TickClock;
 import data.id.ItemTable;
 import data.map.Coord;
@@ -104,7 +106,6 @@ public class Session implements Serializable {
 
 	public Session() {
 		texturePack = new TexturePack();
-		ModelCube.texturePack = texturePack;
 
 		editor = new Editor(this);
 
@@ -135,7 +136,7 @@ public class Session implements Serializable {
 
 	public void receive(Object obj) {
 		if (obj instanceof Map)
-			setMap(new ModelMap((Map) obj));
+			setMap(new ModelMap((Map) obj, texturePack));
 		else if (obj instanceof Message)
 			messages.receive((Message) obj);
 		else if (obj instanceof SendAction)
@@ -159,7 +160,7 @@ public class Session implements Serializable {
 	public void setMap(ModelMap map) {
 		this.map = map;
 
-		engine = new Engine(camera, this.map, texturePack);
+		engine = new Engine(camera, this.map);
 
 		clock.add(map);
 
@@ -169,7 +170,6 @@ public class Session implements Serializable {
 	public void setTexturePack(TexturePack texturePack) {
 		this.texturePack = texturePack;
 
-		engine.texturePack = texturePack;
 		if (fen != null)
 			fen.gui.updateTexturePack();
 	}
@@ -264,26 +264,32 @@ public class Session implements Serializable {
 	}
 
 	public void targetUpdate() {
-		boolean sameTarget = cubeTarget == Engine.cubeTarget && faceTarget == Engine.faceTarget
-				&& (quadriTarget == Engine.quadriTarget || fen.isNeededQuadriPrecision());
+		DrawCubeFace draw = ((DrawCubeFace) engine.getDrawTarget());
+		Quadri quadri = engine.getQuadriTarget();
+
+		ModelCube _cubeTarget = draw == null ? null : draw.cube;
+		Face _faceTarget = draw == null ? null : draw.face;
+		int _quadriTarget = (quadri == null ? Quadri.NOT_NUMBERED : quadri.id);
+
+		boolean sameTarget = cubeTarget == _cubeTarget && faceTarget == _faceTarget
+				&& (quadriTarget == _quadriTarget || fen.isNeededQuadriPrecision());
 
 		// Removes previous selection display
-		if (cubeTarget != null)
-			if (!sameTarget) {
-				// Removes highlight from previous
-				map.setHighlight(cubeTarget, false);
+		if (!sameTarget && cubeTarget != null) {
+			// Removes highlight
+			map.setHighlight(cubeTarget, false);
 
-				// Removes preview cubes
-				if (map.gridContains(previousPreview) && map.gridGet(previousPreview).isPreview())
-					map.remove(previousPreview);
+			// Removes preview cubes
+			if (map.gridContains(previousPreview) && map.gridGet(previousPreview).isPreview())
+				map.remove(previousPreview);
 
-				editor.looseTarget();
-			}
+			editor.looseTarget();
+		}
 
 		// Refresh target
-		cubeTarget = Engine.cubeTarget;
-		faceTarget = Engine.faceTarget;
-		quadriTarget = Engine.quadriTarget;
+		cubeTarget = _cubeTarget;
+		faceTarget = _faceTarget;
+		quadriTarget = _quadriTarget;
 
 		fen.updateCursor();
 

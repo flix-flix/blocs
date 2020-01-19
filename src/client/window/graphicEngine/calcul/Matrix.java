@@ -1,7 +1,5 @@
 package client.window.graphicEngine.calcul;
 
-import client.window.graphicEngine.extended.ModelCube;
-
 public class Matrix {
 
 	private static final double toRadian = Math.PI / 180;
@@ -76,18 +74,5 @@ public class Matrix {
 		p.x = (line(pp, 0));
 		p.y = (line(pp, 1));
 		p.z = (line(pp, 2));
-	}
-
-	// =========================================================================================================================
-
-	public void transform(ModelCube c) {
-		c.initPoints();
-
-		transform(c.generationPoint);
-		transform(c.centerDecal);
-		transform(c.ppx);
-		transform(c.ppy);
-		transform(c.ppz);
-		c.recalcul();
 	}
 }

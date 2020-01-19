@@ -32,8 +32,8 @@ public class MenuButtonUserAction extends Menu {
 		img = FlixBlocksUtils.getImage("menu/" + action.name().toLowerCase());
 
 		if (action == UserAction.CREA_ADD) {
-			engine = new Engine(new Camera(new Point3D(-.4, 1.5, -1), 58, -35), new ModelCube(new Cube(ItemID.GRASS)),
-					session.texturePack);
+			engine = new Engine(new Camera(new Point3D(-.4, 1.5, -1), 58, -35),
+					new ModelCube(new Cube(ItemID.GRASS), session.texturePack));
 			engine.background = Engine.NONE;
 		}
 	}

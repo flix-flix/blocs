@@ -80,7 +80,7 @@ public class Editor {
 
 		panel = new PanEditor(this);
 
-		map = new ModelMap();
+		map = new ModelMap(session.texturePack);
 
 		camera = new Camera(new Point3D(0, 0, -10), 90.5, .5);
 
@@ -467,8 +467,8 @@ public class Editor {
 		int x = 0, y = 0;
 		int speed = 15;
 
-		// Slow down with control
-		if (session.fen.isControlDown())
+		// Slow down with shift
+		if (session.fen.isShiftDown())
 			speed = 5;
 
 		if (right)
@@ -498,6 +498,7 @@ public class Editor {
 			return;
 		}
 
+		// If no
 		if (session.quadriTarget == Quadri.NOT_NUMBERED)
 			return;
 
@@ -571,7 +572,11 @@ public class Editor {
 	}
 
 	public void leftClick() {
-		if (session.faceTarget == null || session.keyboard.pressR)
+		if (session.faceTarget == null || session.quadriTarget == Quadri.NOT_NUMBERED)
+			return;
+
+		// Cancel action during rotation
+		if (session.keyboard.pressR)
 			return;
 
 		switch (action) {
@@ -644,6 +649,20 @@ public class Editor {
 			return false;
 		return session.cubeTarget.itemID == ItemID.EDITOR_PREVIEW
 				|| session.cubeTarget.itemID == ItemID.EDITOR_PREVIEW_GRID;
+	}
+
+	public boolean isNeededQuadriPrecision() {
+		if (action == null)
+			return false;
+
+		switch (action) {
+		case PAINT:
+		case FILL:
+		case PLAYER_COLOR:
+			return true;
+		default:
+			return false;
+		}
 	}
 
 	// =========================================================================================================================

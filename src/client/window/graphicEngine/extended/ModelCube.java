@@ -20,7 +20,7 @@ public class ModelCube extends Cube implements Model {
 
 	private static final double toRadian = Math.PI / 180;
 
-	public static TexturePack texturePack;
+	public TexturePack texturePack;
 
 	/** center after map rotation */
 	public Point3D centerDecal;
@@ -69,19 +69,20 @@ public class ModelCube extends Cube implements Model {
 
 	// =========================================================================================================================
 
-	public ModelCube(double x, double y, double z, double rotaX, double rotaY, double rotaZ, double sizeX, double sizeY,
-			double sizeZ, ItemID itemID) {
+	public ModelCube(TexturePack texturePack, double x, double y, double z, double rotaX, double rotaY, double rotaZ,
+			double sizeX, double sizeY, double sizeZ, ItemID itemID) {
 		super(x, y, z, rotaX, rotaY, rotaZ, sizeX, sizeY, sizeZ, itemID);
 
 		centerDecal = new Point3D(x, y, z);
 
+		this.texturePack = texturePack;
 		this.resoX = texturePack.getFace(itemID.id, Face.EAST).width;
 		this.resoY = texturePack.getFace(itemID.id, Face.NORTH).height;
 		this.resoZ = texturePack.getFace(itemID.id, Face.NORTH).width;
 	}
 
-	public ModelCube(Cube c) {
-		this(c.x, c.y, c.z, c.rotaX, c.rotaY, c.rotaZ, c.sizeX, c.sizeY, c.sizeZ, c.itemID);
+	public ModelCube(Cube c, TexturePack texturePack) {
+		this(texturePack, c.x, c.y, c.z, c.rotaX, c.rotaY, c.rotaZ, c.sizeX, c.sizeY, c.sizeZ, c.itemID);
 
 		this.shiftX = c.shiftX;
 		this.shiftY = c.shiftY;
@@ -256,11 +257,11 @@ public class ModelCube extends Cube implements Model {
 	// Model
 
 	@Override
-	public void init(Camera camera, Matrix matrice) {
+	public void init(Camera camera, Matrix matrix) {
 		if (unit != null)
 			updateFromUnit();
 
-		matrice.transform(this);
+		transform(matrix);
 
 		double[] mem = new double[] { 1000000, 1000000, 1000000 };
 		int[] sommets = new int[] { 0, 0, 0 };
@@ -349,9 +350,31 @@ public class ModelCube extends Cube implements Model {
 					}
 	}
 
+	public void transform(Matrix matrix) {
+		initPoints();
+
+		matrix.transform(generationPoint);
+		matrix.transform(centerDecal);
+		matrix.transform(ppx);
+		matrix.transform(ppy);
+		matrix.transform(ppz);
+		recalcul();
+	}
+
 	@Override
 	public ArrayList<Draw> getDraws(Camera camera) {
 		return draws;
+	}
+
+	// =========================================================================================================================
+
+	public void setTexturePack(TexturePack texturePack) {
+		this.texturePack = texturePack;
+
+	}
+
+	public TexturePack getTexturePack() {
+		return texturePack;
 	}
 
 	// =========================================================================================================================

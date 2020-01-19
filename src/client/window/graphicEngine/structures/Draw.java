@@ -24,6 +24,9 @@ public abstract class Draw implements Comparable<Draw> {
 	/** Returns the on-screen polygon representative of this draw */
 	public abstract Polygon getPoly(Engine engine);
 
+	/** Returns true if the Draw can be targeted */
+	public abstract boolean isTargetable();
+
 	// =========================================================================================================================
 
 	@Override

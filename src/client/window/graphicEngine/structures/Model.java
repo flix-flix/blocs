@@ -9,7 +9,7 @@ public interface Model {
 
 	public abstract ArrayList<Draw> getDraws(Camera camera);
 
-	public abstract void init(Camera camera, Matrix matrice);
+	public abstract void init(Camera camera, Matrix matrix);
 
 	// =========================================================================================================================
 

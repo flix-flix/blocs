@@ -30,6 +30,12 @@ public class Map implements Tickable, Serializable {
 	}
 
 	public Map(Map map) {
+		copyFromMap(map);
+	}
+
+	// =========================================================================================================================
+
+	public void copyFromMap(Map map) {
 		name = map.getName();
 
 		for (int index : map.getChunks().keySet())

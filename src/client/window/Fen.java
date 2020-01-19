@@ -16,7 +16,6 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JFrame;
 
-import client.editor.ActionEditor;
 import client.keys.Key;
 import client.session.Session;
 import client.session.StateHUD;
@@ -513,7 +512,9 @@ public class Fen extends JFrame {
 	// =========================================================================================================================
 
 	public boolean isNeededQuadriPrecision() {
-		return session.editor.getAction() == ActionEditor.PAINT;
+		if (session.getAction() == UserAction.EDITOR)
+			return session.editor.isNeededQuadriPrecision();
+		return false;
 	}
 
 	// =========================================================================================================================
@@ -570,7 +571,7 @@ public class Fen extends JFrame {
 					e.printStackTrace();
 				}
 
-				if (session.stateHUD != StateHUD.PAUSE && !session.processing && wait < System.currentTimeMillis()) {
+				if (session.stateHUD != StateHUD.PAUSE && !session.processing && wait <= System.currentTimeMillis()) {
 					session.processing = true;
 					wait = System.currentTimeMillis() + 1000 / session.FPSmax;
 
