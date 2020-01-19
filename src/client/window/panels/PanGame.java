@@ -52,7 +52,7 @@ public class PanGame extends JPanel {
 		centerH = height / 2;
 
 		if (img == null) {
-			g.setColor(new Color(236, 135, 15));
+			g.setColor(new Color(236, 135, 15)); // Orange
 			g.fillRect(startW, 0, width, height);
 
 			int textwidth = (int) (font.getStringBounds("loading...", frc).getWidth());

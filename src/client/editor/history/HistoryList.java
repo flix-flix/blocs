@@ -1,6 +1,8 @@
-package client.editor;
+package client.editor.history;
 
 import java.util.ArrayList;
+
+import client.editor.Editor;
 
 public class HistoryList implements History {
 
@@ -15,6 +17,7 @@ public class HistoryList implements History {
 		for (int i = list.size() - 1; i >= 0; i--)
 			list.get(i).undo(editor);
 		editor.saveTexture();
+		editor.refreshLayerGrid();
 	}
 
 	@Override
@@ -22,5 +25,6 @@ public class HistoryList implements History {
 		for (History h : list)
 			h.redo(editor);
 		editor.saveTexture();
+		editor.refreshLayerGrid();
 	}
 }

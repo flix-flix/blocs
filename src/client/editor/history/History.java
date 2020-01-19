@@ -1,4 +1,6 @@
-package client.editor;
+package client.editor.history;
+
+import client.editor.Editor;
 
 public interface History {
 

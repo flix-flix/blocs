@@ -1,5 +1,6 @@
-package client.editor;
+package client.editor.history;
 
+import client.editor.Editor;
 import data.map.enumerations.Face;
 
 public class PixelHistory implements History {

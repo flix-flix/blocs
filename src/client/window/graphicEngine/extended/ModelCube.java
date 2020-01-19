@@ -1,7 +1,6 @@
 package client.window.graphicEngine.extended;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import client.extended.UnitClient;
 import client.textures.TexturePack;
@@ -56,7 +55,7 @@ public class ModelCube extends Cube implements Model {
 	private boolean highlight;
 
 	// =================== Layer ===================
-	public HashMap<String, DrawLayer> layers = new HashMap<>();
+	public ArrayList<DrawLayer> layers;
 
 	// =================== Quadri ===================
 	public Face selectedFace = null;
@@ -172,12 +171,9 @@ public class ModelCube extends Cube implements Model {
 
 	// =========================================================================================================================
 
-	public void addLayer(String name, DrawLayer layer) {
-		layers.put(name, layer);
-	}
-
-	public void removeLayer(String name) {
-		layers.remove(name);
+	public void removeLayer(int i) {
+		if (layers != null && i < layers.size())
+			layers.set(i, null);
 	}
 
 	// =========================================================================================================================

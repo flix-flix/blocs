@@ -5,7 +5,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
-import client.keys.Key;
+import client.editor.history.History;
+import client.editor.history.HistoryList;
+import client.editor.history.PixelHistory;
+import client.editor.history.SizeHistory;
 import client.session.Session;
 import client.session.UserAction;
 import client.textures.TextureCube;
@@ -22,7 +25,6 @@ import client.window.panels.editor.MenuButtonEditor;
 import client.window.panels.editor.PanEditor;
 import data.dynamic.TickClock;
 import data.id.ItemID;
-import data.map.Coord;
 import data.map.Cube;
 import data.map.enumerations.Face;
 import utils.FlixBlocksUtils;
@@ -37,6 +39,8 @@ public class Editor {
 	public ModelMap map;
 	public Camera camera;
 	public TickClock clock;
+
+	private ModelCube cube;
 
 	// ======================= Texture generation =========================
 	private static Cursor cursorPaint = FlixBlocksUtils.createCursor("cursorPaint");
@@ -68,10 +72,18 @@ public class Editor {
 	private int historyPosition = -1;
 
 	// ======================= Layer =========================
-	private static final String paintLayer = "paint";
+	private static final int lineSquareLayer = 12;
 
 	// ======================= Rotation =========================
 	private int prevX, prevY;
+
+	// ======================= Keys =========================
+	private static final int ALT = 18;
+	private static final int SHIFT = 16;
+
+	private boolean controlDown = false;
+	private boolean shiftDown = false;
+	private boolean altDown = false;
 
 	// =========================================================================================================================
 
@@ -91,7 +103,17 @@ public class Editor {
 		// ========================================================================================
 
 		initTextureFrame();
-		map.add(new Cube(new Coord(0, 0, 0), ItemID.EDITOR_PREVIEW));
+		map.add(new Cube(ItemID.EDITOR_PREVIEW));
+		cube = map.gridGet(0, 0, 0);
+
+		// ========================================================================================
+
+		cube.layers = new ArrayList<>();
+		// 0-5 : grid
+		// 6 - 11: face name
+		// 12 : line/square
+		for (int i = 0; i <= 12; i++)
+			cube.layers.add(null);
 	}
 
 	// =========================================================================================================================
@@ -213,7 +235,8 @@ public class Editor {
 		if (!historyPack.isEmpty() && !(historyPack.get(historyPack.size() - 1) instanceof PixelHistory))
 			historyPack();
 
-		historyPack.add(new PixelHistory(face, col, row, texture[face.ordinal()][col][row], color));
+		if (texture[face.ordinal()][col][row] != color)
+			historyPack.add(new PixelHistory(face, col, row, texture[face.ordinal()][col][row], color));
 
 		setPixel(face, col, row, color);
 	}
@@ -256,8 +279,8 @@ public class Editor {
 	}
 
 	public boolean hasLastPixel() {
-		return session.cubeTarget == map.gridGet(0, 0, 0) && session.faceTarget == lastPaintFace
-				&& lastPaintCol < textureSize && lastPaintRow < textureSize;
+		return session.cubeTarget == cube && session.faceTarget == lastPaintFace && lastPaintCol < textureSize
+				&& lastPaintRow < textureSize;
 	}
 
 	// =========================================================================================================================
@@ -295,10 +318,7 @@ public class Editor {
 			break;
 
 		case GRID:
-			if (map.gridGet(0, 0, 0).itemID == ItemID.EDITOR_PREVIEW)
-				map.gridGet(0, 0, 0).itemID = ItemID.EDITOR_PREVIEW_GRID;
-			else
-				map.gridGet(0, 0, 0).itemID = ItemID.EDITOR_PREVIEW;
+			refreshLayerGrid();
 			break;
 		case MINIATURE:
 			break;
@@ -357,6 +377,7 @@ public class Editor {
 			historyPack.add(new SizeHistory(textureSize,
 					textureSize = panel.buttonsAction.get(ActionEditor.GRID).getWheelStep()));
 			saveTexture();
+			refreshLayerGrid();
 			break;
 		case MINIATURE:
 			break;
@@ -386,7 +407,15 @@ public class Editor {
 	// KeyEvent
 
 	/** @return true if the event is consumed */
-	public boolean keyEvent(KeyEvent e) {
+	public boolean keyPressed(KeyEvent e) {
+		updateControlShiftStatus(e);
+
+		int code = e.getKeyCode();
+
+		// Show face names
+		if (code == ALT)
+			refreshFaceLayer();
+
 		// Undo/Redo
 		if (e.isControlDown())
 			if (e.getKeyCode() == 90) {
@@ -397,27 +426,27 @@ public class Editor {
 				return true;
 			}
 
-		// Allow SHIFT to draw line and square
-		if (e.getKeyCode() == Key.DOWN.code)
-			return action == ActionEditor.PAINT;
+		// Consume SHIFT to allow line/square drawing
+		if (e.getKeyCode() == SHIFT && action == ActionEditor.PAINT)
+			return true;
 
 		if (listeningKey == null)
 			return false;
 
-		int key = e.getKeyCode();
-		char c = e.getKeyChar();
-
+		// Writing
 		MenuButtonEditor button = panel.buttonsItemID.get(ActionEditor.ITEM_NAME);
 
-		if (key == 27) {
+		if (code == 27) { // ESC
 			button.clearString();
 			listeningKey = null;
-		} else if (key == 8)
+		} else if (code == 8) // DELETE
 			button.delChar();
-		else if (key == 10)
+		else if (code == 10) // ENTER
 			listeningKey = null;
 
 		else {
+			char c = e.getKeyChar();
+
 			if ('a' <= c && c <= 'z')
 				c -= 32;
 
@@ -428,6 +457,23 @@ public class Editor {
 				button.addChar(c);
 		}
 		return true;
+	}
+
+	public boolean keyReleased(KeyEvent e) {
+		updateControlShiftStatus(e);
+
+		int code = e.getKeyCode();
+
+		if (code == ALT)
+			refreshFaceLayer();
+
+		return false;
+	}
+
+	public void updateControlShiftStatus(KeyEvent e) {
+		controlDown = e.isControlDown();
+		shiftDown = e.isShiftDown();
+		altDown = e.isAltDown();
 	}
 
 	// =========================================================================================================================
@@ -468,7 +514,7 @@ public class Editor {
 		int speed = 15;
 
 		// Slow down with shift
-		if (session.fen.isShiftDown())
+		if (shiftDown)
 			speed = 5;
 
 		if (right)
@@ -505,7 +551,7 @@ public class Editor {
 		if (action == ActionEditor.PAINT) {
 			session.cubeTarget.setSelectedQuadri(session.faceTarget, session.quadriTarget);
 
-			session.cubeTarget.removeLayer("paint");
+			cube.removeLayer(lineSquareLayer);
 
 			if (session.keyboard.pressL) {
 				paintPixel();
@@ -513,8 +559,7 @@ public class Editor {
 			}
 
 			// Show Line/Square preview
-			if (session.fen.isShiftDown() && hasLastPixel()) {
-				ModelCube cube = map.gridGet(0, 0, 0);
+			if (shiftDown && hasLastPixel()) {
 				DrawLayer layer = new DrawLayer(cube, session.faceTarget);
 
 				int col1 = session.quadriTarget % textureSize;
@@ -522,12 +567,12 @@ public class Editor {
 				int col2 = lastPaintCol;
 				int row2 = lastPaintRow;
 
-				if (session.fen.isControlDown()) // Square
-					layer.drawSquare(col1, row1, col2, row2, 0xffdddddd, 0xff555555);
+				if (controlDown) // Square
+					layer.drawSquareAndCross(col1, row1, col2, row2, 0xffdddddd, 0xff555555);
 				else // Line
 					layer.drawLineAndCross(col1, row1, col2, row2, 0xffdddddd, 0xff555555);
 
-				cube.addLayer(paintLayer, layer);
+				cube.layers.set(lineSquareLayer, layer);
 			}
 		}
 	}
@@ -536,7 +581,38 @@ public class Editor {
 		// Removes highlight of previous selected quadri
 		session.cubeTarget.setSelectedQuadri(null, ModelCube.NO_QUADRI);
 		// Removes line/square preview
-		session.cubeTarget.removeLayer(paintLayer);
+		session.cubeTarget.removeLayer(lineSquareLayer);
+	}
+
+	// =========================================================================================================================
+	// Layers
+
+	public void refreshLayerGrid() {
+		for (Face face : Face.faces)
+			if (panel.get(ActionEditor.GRID).isSelected())
+				cube.layers.set(face.ordinal() + 6, generateGridLayer(face));
+			else
+				cube.removeLayer(face.ordinal() + 6);
+	}
+
+	public void refreshFaceLayer() {
+		for (Face face : Face.faces)
+			if (altDown)
+				cube.layers.set(face.ordinal(), generateNameLayer(face));
+			else
+				cube.removeLayer(face.ordinal());
+	}
+
+	public DrawLayer generateGridLayer(Face face) {
+		DrawLayer layer = new DrawLayer(cube, face);
+		layer.drawGrid();
+		return layer;
+	}
+
+	public DrawLayer generateNameLayer(Face face) {
+		DrawLayer layer = new DrawLayer(cube, face);
+		layer.drawFace();
+		return layer;
 	}
 
 	// =========================================================================================================================
@@ -546,11 +622,9 @@ public class Editor {
 		Cursor cursor = Cursor.getDefaultCursor();
 
 		if (session.editor.getAction() == ActionEditor.PAINT)
-			cursor = (session.fen.isControlDown() && (!session.fen.isShiftDown() || !session.editor.isPreviewCube()))
-					? cursorSelectColor
-					: cursorPaint;
+			cursor = (controlDown && (!shiftDown || !session.editor.isPreviewCube())) ? cursorSelectColor : cursorPaint;
 		else if (session.editor.getAction() == ActionEditor.FILL)
-			cursor = session.fen.isControlDown() ? cursorSelectColor : cursorFill;
+			cursor = controlDown ? cursorSelectColor : cursorFill;
 
 		return cursor;
 	}
@@ -581,14 +655,14 @@ public class Editor {
 
 		switch (action) {
 		case PAINT:
-			if (session.fen.isControlDown() && (!session.fen.isShiftDown() || !isPreviewCube()))
+			if (controlDown && (!shiftDown || !isPreviewCube()))
 				selectColor();
 			else {
 				if (!isPreviewCube())
 					return;
 
-				if (session.fen.isShiftDown() && hasLastPixel())
-					if (session.fen.isControlDown())
+				if (shiftDown && hasLastPixel())
+					if (controlDown)
 						paintSquare();
 					else
 						paintLine();
@@ -598,7 +672,7 @@ public class Editor {
 			break;
 
 		case FILL:
-			if (session.fen.isControlDown())
+			if (controlDown)
 				selectColor();
 			else if (isPreviewCube()) {
 				int face = session.faceTarget.ordinal();

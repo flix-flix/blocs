@@ -110,6 +110,18 @@ public class PanEditor extends JPanel {
 
 	// =========================================================================================================================
 
+	public MenuButtonEditor get(ActionEditor action) {
+		if (buttonsAction.containsKey(action))
+			return buttonsAction.get(action);
+		else if (buttonsItemID.containsKey(action))
+			return buttonsItemID.get(action);
+		else if (buttonsTop.containsKey(action))
+			return buttonsTop.get(action);
+		return null;
+	}
+
+	// =========================================================================================================================
+
 	@Override
 	public void setBounds(int x, int y, int width, int height) {
 		super.setBounds(x, y, width, height);

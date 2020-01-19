@@ -49,8 +49,9 @@ public class DrawCubeFace extends Draw {
 		quadri.clear();
 
 		if (cube.layers != null)
-			for (DrawLayer layer : cube.layers.values())
-				quadri.addAll(layer.getQuadri(cube.texturePack.getFace(cube, face), engine));
+			for (DrawLayer layer : cube.layers)
+				if (layer != null)
+					quadri.addAll(layer.getQuadri(this, engine));
 
 		// Draw white contour for the grid in editor mode
 		if (cube.itemID == ItemID.EDITOR_PREVIEW_GRID) {

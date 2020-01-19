@@ -68,10 +68,6 @@ public class Fen extends JFrame {
 	// ============= Editor ===================
 	public PanEditor editor;
 
-	private boolean controlDown = false;
-	private boolean shiftDown = false;
-	private boolean altDown = false;
-
 	// ============= Thread ===================
 	/** Refresh the image */
 	private Thread threadActu;
@@ -101,7 +97,7 @@ public class Fen extends JFrame {
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setSize(1200, 1040);
 		this.setLocation(0, 0);
-		this.setExtendedState(MAXIMIZED_BOTH);
+		// this.setExtendedState(MAXIMIZED_BOTH);
 
 		// ======================================
 
@@ -136,10 +132,8 @@ public class Fen extends JFrame {
 			}
 
 			public void keyPressed(KeyEvent k) {
-				updateControlShiftStatus(k);
-
 				if (session.stateHUD == StateHUD.EDITOR)
-					if (session.editor.keyEvent(k))
+					if (session.editor.keyPressed(k))
 						return;
 
 				if (session.stateHUD == StateHUD.DIALOG) {
@@ -279,7 +273,9 @@ public class Fen extends JFrame {
 			}
 
 			public void keyReleased(KeyEvent k) {
-				updateControlShiftStatus(k);
+				if (session.stateHUD == StateHUD.EDITOR)
+					if (session.editor.keyReleased(k))
+						return;
 
 				if (Key.get(k.getKeyCode()) != null)
 					switch (Key.get(k.getKeyCode())) {
@@ -515,26 +511,6 @@ public class Fen extends JFrame {
 		if (session.getAction() == UserAction.EDITOR)
 			return session.editor.isNeededQuadriPrecision();
 		return false;
-	}
-
-	// =========================================================================================================================
-
-	public void updateControlShiftStatus(KeyEvent e) {
-		controlDown = e.isControlDown();
-		shiftDown = e.isShiftDown();
-		altDown = e.isAltDown();
-	}
-
-	public boolean isControlDown() {
-		return controlDown;
-	}
-
-	public boolean isShiftDown() {
-		return shiftDown;
-	}
-
-	public boolean isAltDown() {
-		return altDown;
 	}
 
 	// =========================================================================================================================
