@@ -111,7 +111,8 @@ public class Fen extends JFrame {
 
 		editor.setVisible(false);
 
-		this.setContentPane(game);
+		//this.setContentPane(game);
+		this.add(game);
 		game.add(pause, -1);
 		game.add(devlop, -1);
 		game.add(gui, -1);

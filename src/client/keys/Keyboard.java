@@ -115,6 +115,10 @@ public class Keyboard {
 	public void leftClick(MouseEvent e) {
 		pressL = true;
 
+		if (session.stateHUD == StateHUD.EDITOR)
+			if(session.editor.leftClick())
+				return;
+
 		ModelMap map;
 		if (session.stateHUD == StateHUD.GAME)
 			map = session.map;
@@ -132,10 +136,8 @@ public class Keyboard {
 
 		} else if (session.gamemode == GameMode.CLASSIC) {
 
-			if (session.editor.isListeningLeftClick())
-				session.editor.leftClick();
 
-			else if (session.getAction() == UserAction.CREA_DESTROY) {
+			if (session.getAction() == UserAction.CREA_DESTROY) {
 				if (session.cubeTarget != null)
 					if (session.cubeTarget.unit != null)
 						map.removeUnit(session.cubeTarget.unit);
@@ -152,8 +154,8 @@ public class Keyboard {
 
 	public void leftClickEnd() {
 		pressL = false;
-		if(session.stateHUD == StateHUD.EDITOR)
-		session.editor.leftClickEnd();
+		if (session.stateHUD == StateHUD.EDITOR)
+			session.editor.leftClickEnd();
 	}
 
 	// =========================================================================================================================

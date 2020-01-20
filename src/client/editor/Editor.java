@@ -21,7 +21,6 @@ import client.window.graphicEngine.extended.DrawLayer;
 import client.window.graphicEngine.extended.ModelCube;
 import client.window.graphicEngine.extended.ModelMap;
 import client.window.graphicEngine.structures.Quadri;
-import client.window.panels.editor.MenuButtonEditor;
 import client.window.panels.editor.PanEditor;
 import data.dynamic.TickClock;
 import data.id.ItemID;
@@ -54,7 +53,7 @@ public class Editor {
 
 	// ======================= Buttons =========================
 	private ActionEditor action = null;
-	private ActionEditor listeningKey = null;
+	private ActionEditor buttonListeningKey = null;
 
 	// ======================= Memory =========================
 	private Face lastPaintFace = null;
@@ -84,6 +83,10 @@ public class Editor {
 	private boolean controlDown = false;
 	private boolean shiftDown = false;
 	private boolean altDown = false;
+
+	// ======================= Write =========================
+	private String writingString = "";
+	private String realString = "";
 
 	// =========================================================================================================================
 
@@ -175,16 +178,15 @@ public class Editor {
 
 	public void saveTexture() {
 		saveTexture(createTexture(), ItemID.EDITOR_PREVIEW.id);
-		saveTexture(createTexture(), ItemID.EDITOR_PREVIEW_GRID.id);
 	}
 
 	public void saveTexture(TextureCube tc, int id) {
 		session.texturePack.addTextureCube(tc, id);
-		panel.buttonsAction.get(ActionEditor.MINIATURE).update();
+		panel.get(ActionEditor.MINIATURE).update();
 	}
 
 	public void setTextureSize(int textureSize) {
-		panel.buttonsAction.get(ActionEditor.GRID).setWheelStep(textureSize);
+		panel.get(ActionEditor.GRID).setWheelStep(textureSize);
 		this.textureSize = textureSize;
 	}
 
@@ -287,7 +289,8 @@ public class Editor {
 	// Buttons events
 
 	public void menuClick(ActionEditor action) {
-		listeningKey = null;
+		mayLooseListeningKey(action);
+
 		switch (action) {
 		case EDITOR:// Close Editor
 			setAction(null);
@@ -332,21 +335,26 @@ public class Editor {
 
 		// ================== PanItem ======================
 		case ITEM_NAME:
-		case ITEM_ID:
-			listeningKey = action;
+			if (panel.get(action).isSelected())
+				setListeningKey(action);
 			break;
 		case ITEM_COLOR:
-			panel.buttonsItemID.get(ActionEditor.ITEM_COLOR).setValue(panel.panColor.getColor() & 0xffffff);
+			panel.get(ActionEditor.ITEM_COLOR).setValue(panel.panColor.getColor() & 0xffffff);
 			break;
 
 		case ITEM_SAVE:
-			int id = panel.buttonsItemID.get(ActionEditor.ITEM_ID).getWheelStep();
-			if (session.texturePack.isIDAvailable(id))
-				saveTexture(createTexture(), id);
+			int id = panel.get(ActionEditor.ITEM_ID).getWheelStep();
+			if (!session.texturePack.isIDAvailable(id))
+				return;
+			saveTexture(createTexture(), id);
+			// session.fen.gui.infos.addCube(new Cube(id));
 			break;
 		case ITEM_NEW:
 		case ITEM_CLEAR:
 			initTextureFrame();
+			panel.get(ActionEditor.ITEM_NAME).reinit();
+			panel.get(ActionEditor.ITEM_ID).reinit();
+			panel.get(ActionEditor.ITEM_COLOR).reinit();
 			break;
 
 		// ================== SAVE ======================
@@ -358,6 +366,8 @@ public class Editor {
 	}
 
 	public void menuWheel(ActionEditor action) {
+		mayLooseListeningKey(action);
+
 		switch (action) {
 		// ================== EDIT TYPE ======================
 		case EDIT_CUBE:
@@ -374,8 +384,7 @@ public class Editor {
 			break;
 
 		case GRID:
-			historyPack.add(new SizeHistory(textureSize,
-					textureSize = panel.buttonsAction.get(ActionEditor.GRID).getWheelStep()));
+			historyPack.add(new SizeHistory(textureSize, textureSize = panel.get(ActionEditor.GRID).getWheelStep()));
 			saveTexture();
 			refreshLayerGrid();
 			break;
@@ -390,7 +399,7 @@ public class Editor {
 
 		// ================== PanItem ======================
 		case ITEM_ID:
-			listeningKey = action;
+			panel.get(action).setBool(session.texturePack.isIDAvailable(panel.get(action).getWheelStep()));
 			break;
 
 		// ================== Not handled ======================
@@ -430,33 +439,13 @@ public class Editor {
 		if (e.getKeyCode() == SHIFT && action == ActionEditor.PAINT)
 			return true;
 
-		if (listeningKey == null)
-			return false;
-
 		// Writing
-		MenuButtonEditor button = panel.buttonsItemID.get(ActionEditor.ITEM_NAME);
-
-		if (code == 27) { // ESC
-			button.clearString();
-			listeningKey = null;
-		} else if (code == 8) // DELETE
-			button.delChar();
-		else if (code == 10) // ENTER
-			listeningKey = null;
-
-		else {
-			char c = e.getKeyChar();
-
-			if ('a' <= c && c <= 'z')
-				c -= 32;
-
-			if (c == ' ')
-				c = '_';
-
-			if (('A' <= c && c <= 'Z') || c == '_')
-				button.addChar(c);
+		if (buttonListeningKey == ActionEditor.ITEM_NAME) {
+			write(e);
+			return true;
 		}
-		return true;
+
+		return false;
 	}
 
 	public boolean keyReleased(KeyEvent e) {
@@ -477,8 +466,84 @@ public class Editor {
 	}
 
 	// =========================================================================================================================
-	// Rotate-Mode
+	// Write
 
+	public void write(KeyEvent e) {
+		int code = e.getKeyCode();
+
+		if (code == 27)
+			esc();
+		else if (code == 8) { // Delete
+			if (!writingString.isEmpty())
+				writeName(writingString = writingString.substring(0, writingString.length() - 1));
+		} else if (code == 10)
+			enter();
+
+		else {
+			char c = e.getKeyChar();
+
+			if ('a' <= c && c <= 'z')
+				c -= 32;
+
+			if (c == ' ')
+				c = '_';
+
+			if (('A' <= c && c <= 'Z') || c == '_')
+				writeName(writingString += c);
+		}
+	}
+
+	public void writeName(String str) {
+		boolean valid = true;
+		for (ItemID itemID : ItemID.values())
+			if (str.equals(itemID.name())) {
+				valid = false;
+				break;
+			}
+
+		panel.get(buttonListeningKey).setString(str);
+		panel.get(buttonListeningKey).setBool(valid);
+	}
+
+	public void esc() {
+		writeName(realString);
+		panel.get(buttonListeningKey).setSelected(false);
+		buttonListeningKey = null;
+	}
+
+	public void enter() {
+		realString = writingString;
+		esc();
+	}
+
+	public void setListeningKey(ActionEditor action) {
+		if (buttonListeningKey != null && buttonListeningKey != action)
+			looseListeningKey();
+
+		buttonListeningKey = action;
+		realString = panel.get(action).getString();
+		writingString = panel.get(action).getString();
+	}
+
+	public void looseListeningKey() {
+		if (buttonListeningKey == null)
+			return;
+
+		esc();
+	}
+
+	public void mayLooseListeningKey(ActionEditor action) {
+		if (buttonListeningKey == null)
+			return;
+		// Valid writting button
+		if (action == ActionEditor.ITEM_SAVE || action == ActionEditor.ITEM_ID || action == buttonListeningKey)
+			enter();
+		else // Loose focus on writing button
+			looseListeningKey();
+	}
+
+	// =========================================================================================================================
+	// Rotate-Mode
 	public void lookCube() {
 		camera.setVx(FlixBlocksUtils.toDegres * Math.atan((camera.vue.x - .5) / -(camera.vue.z - .5)) + 90
 				+ (camera.vue.z - .5 >= 0 ? 180 : 0));
@@ -632,26 +697,19 @@ public class Editor {
 	// =========================================================================================================================
 	// Mouse Event
 
-	public boolean isListeningLeftClick() {
-		if (action == null)
-			return false;
+	/** Return true if the event is consumed */
+	public boolean leftClick() {
+		looseListeningKey();
 
-		switch (action) {
-		case PAINT:
-		case FILL:
-			return true;
-		default:
-			return false;
-		}
-	}
-
-	public void leftClick() {
 		if (session.faceTarget == null || session.quadriTarget == Quadri.NOT_NUMBERED)
-			return;
+			return false;
 
 		// Cancel action during rotation
 		if (session.keyboard.pressR)
-			return;
+			return false;
+
+		if (action == null)
+			return false;
 
 		switch (action) {
 		case PAINT:
@@ -659,7 +717,7 @@ public class Editor {
 				selectColor();
 			else {
 				if (!isPreviewCube())
-					return;
+					return false;
 
 				if (shiftDown && hasLastPixel())
 					if (controlDown)
@@ -689,9 +747,12 @@ public class Editor {
 		default:
 			break;
 		}
+		return false;
 	}
 
 	public void rightClick(MouseEvent e) {
+		looseListeningKey();
+
 		initDrag(e.getX(), e.getY());
 		lookCube();
 	}
@@ -707,7 +768,7 @@ public class Editor {
 	}
 
 	public void cameraMoved() {
-		if (panel.buttonsAction.get(ActionEditor.ROTATE).isSelected())
+		if (panel.get(ActionEditor.ROTATE).isSelected())
 			lookCube();
 	}
 
@@ -715,14 +776,13 @@ public class Editor {
 	// Mode getters
 
 	public boolean isRotateMode() {
-		return panel.buttonsAction.get(ActionEditor.ROTATE).isSelected();
+		return panel.get(ActionEditor.ROTATE).isSelected();
 	}
 
 	public boolean isPreviewCube() {
 		if (session.cubeTarget == null)
 			return false;
-		return session.cubeTarget.itemID == ItemID.EDITOR_PREVIEW
-				|| session.cubeTarget.itemID == ItemID.EDITOR_PREVIEW_GRID;
+		return session.cubeTarget.itemID == ItemID.EDITOR_PREVIEW;
 	}
 
 	public boolean isNeededQuadriPrecision() {

@@ -1,6 +1,5 @@
 package client.window.panels.menus.infos;
 
-import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
@@ -23,6 +22,10 @@ public class MenuInfos extends Menu {
 	public MenuInfosBuilding build;
 
 	public MenuGrid gridCubes;
+
+	private ItemID[] itemIDs = new ItemID[] { ItemID.BORDER, ItemID.GRASS, ItemID.DIRT, ItemID.OAK_TRUNK,
+			ItemID.OAK_LEAVES, ItemID.OAK_BOARD, ItemID.STONE, ItemID.GLASS, ItemID.GLASS_GRAY, ItemID.GLASS_RED,
+			ItemID.WATER, ItemID.TEST_TRANSPARENT };
 	private ArrayList<Cube> _cubes = new ArrayList<>();
 	public ArrayList<MenuButtonCube> cubes = new ArrayList<>();
 
@@ -30,8 +33,6 @@ public class MenuInfos extends Menu {
 
 	public MenuInfos(Session session) {
 		super(session);
-
-		setBackground(Color.BLUE);
 
 		resource = new MenuInfosResource(session);
 		unit = new MenuInfoUnit(session);
@@ -42,26 +43,15 @@ public class MenuInfos extends Menu {
 
 		// =========================================================================================================================
 
-		_cubes.add(new Cube(ItemID.BORDER));
-		_cubes.add(new Cube(ItemID.GRASS));
-		_cubes.add(new Cube(ItemID.DIRT));
-		_cubes.add(new Cube(ItemID.OAK_TRUNK));
-		_cubes.add(new Cube(ItemID.OAK_LEAVES));
-		_cubes.add(new Cube(ItemID.OAK_BOARD));
-		_cubes.add(new Cube(ItemID.STONE));
-		_cubes.add(new Cube(ItemID.GLASS));
-		_cubes.add(new Cube(ItemID.GLASS_GRAY));
-		_cubes.add(new Cube(ItemID.GLASS_RED));
+		for (ItemID itemID : itemIDs)
+			_cubes.add(new Cube(itemID));
+
 		_cubes.add(new Tree().getCube());
 		_cubes.add(new E().getCube());
-		_cubes.add(new Cube(ItemID.WATER));
-		_cubes.add(new Cube(ItemID.TEST_TRANSPARENT));
 		_cubes.add(ItemTable.createBuilding(new Building(null, ItemID.CASTLE, 0, 0, 0, false)).getCube());
 
-		for (int i = 0; i < _cubes.size(); i++) {
-			cubes.add(new MenuButtonCube(session, _cubes.get(i)));
-			gridCubes.addMenu(cubes.get(i));
-		}
+		for (Cube cube : _cubes)
+			addCube(cube);
 
 		// =========================================================================================================================
 
@@ -71,6 +61,14 @@ public class MenuInfos extends Menu {
 		add(gridCubes);
 
 		clear();
+	}
+
+	// =========================================================================================================================
+
+	public void addCube(Cube cube) {
+		MenuButtonCube button = new MenuButtonCube(session, cube);
+		cubes.add(button);
+		gridCubes.addMenu(button);
 	}
 
 	// =========================================================================================================================

@@ -60,7 +60,7 @@ public class PanEditor extends JPanel {
 			topActions.addMenu(buttonsTop.get(action));
 		}
 
-		buttonsTop.get(ActionEditor.EDITOR).setSelected(true);
+		get(ActionEditor.EDITOR).setSelected(true);
 
 		// ========================================================================================
 		// Color
@@ -83,7 +83,9 @@ public class PanEditor extends JPanel {
 			gridItemID.addMenu(buttonsItemID.get(action));
 		}
 
-		buttonsItemID.get(ActionEditor.ITEM_ID).setWheelMinMax(0, 999);
+		get(ActionEditor.ITEM_NAME).setSelectable(true);
+		get(ActionEditor.ITEM_ID).setWheelMinMax(0, 999);
+		get(ActionEditor.ITEM_ID).setWheelStep(0);
 
 		// ========================================================================================
 		// Actions
@@ -95,17 +97,16 @@ public class PanEditor extends JPanel {
 			gridActions.addMenu(buttonsAction.get(action));
 		}
 
-		buttonsAction.get(ActionEditor.GRID).setWheelStep(editor.getTextureSize());
-		buttonsAction.get(ActionEditor.GRID).setWheelMinMax(1, 16);
-		buttonsAction.get(ActionEditor.GRID).setSelectable(true);
+		get(ActionEditor.GRID).setWheelStep(editor.getTextureSize());
+		get(ActionEditor.GRID).setWheelMinMax(1, 16);
+		get(ActionEditor.GRID).setSelectable(true);
 
-		buttonsAction.get(ActionEditor.ROTATE).setSelectable(true);
+		get(ActionEditor.ROTATE).setSelectable(true);
 
-		buttonsAction.get(ActionEditor.PAINT).setSelectable(true);
-		buttonsAction.get(ActionEditor.FILL).setSelectable(true);
-		buttonsAction.get(ActionEditor.PLAYER_COLOR).setSelectable(true);
-		MenuButtonEditor.group(buttonsAction.get(ActionEditor.FILL), buttonsAction.get(ActionEditor.PAINT),
-				buttonsAction.get(ActionEditor.PLAYER_COLOR));
+		get(ActionEditor.PAINT).setSelectable(true);
+		get(ActionEditor.FILL).setSelectable(true);
+		get(ActionEditor.PLAYER_COLOR).setSelectable(true);
+		MenuButtonEditor.group(get(ActionEditor.FILL), get(ActionEditor.PAINT), get(ActionEditor.PLAYER_COLOR));
 	}
 
 	// =========================================================================================================================

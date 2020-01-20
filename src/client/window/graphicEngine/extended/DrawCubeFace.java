@@ -10,7 +10,6 @@ import client.window.graphicEngine.calcul.Point3D;
 import client.window.graphicEngine.calcul.Vector;
 import client.window.graphicEngine.structures.Draw;
 import client.window.graphicEngine.structures.Quadri;
-import data.id.ItemID;
 import data.id.ItemTable;
 import data.map.Cube;
 import data.map.enumerations.Face;
@@ -53,14 +52,8 @@ public class DrawCubeFace extends Draw {
 				if (layer != null)
 					quadri.addAll(layer.getQuadri(this, engine));
 
-		// Draw white contour for the grid in editor mode
-		if (cube.itemID == ItemID.EDITOR_PREVIEW_GRID) {
-			Point[] points2D = generate2D(engine, 1, 1);
-			quadri.add(new Quadri(points2D[0], points2D[1], points2D[3], points2D[2], 0xffffffff, false));
-		}
-
 		// Draw the black contour of the face
-		else if (ItemTable.drawContour(cube.itemID)) {
+		if (ItemTable.drawContour(cube.itemID)) {
 			Point[] points2D = generate2D(engine, 1, 1);
 			quadri.add(new Quadri(points2D[0], points2D[1], points2D[3], points2D[2], 0xff000000, false));
 		}
@@ -120,13 +113,6 @@ public class DrawCubeFace extends Draw {
 							color = Engine.addHue(color, Engine.createColor(255, 255, 0, 0), .4);
 					}
 				}
-
-				// TODO [Improve] Editor force if() for each quadri drawn
-				// Draw the white grid for the editor mode
-				if (cube.itemID == ItemID.EDITOR_PREVIEW_GRID)
-					quadri.add(new Quadri(points2D[row * cols1 + col], points2D[(row + 1) * cols1 + col],
-							points2D[(row + 1) * cols1 + col + 1], points2D[row * cols1 + col + 1], 0xffffffff, false,
-							row * texture.width + col));
 
 				quadri.add(new Quadri(points2D[row * cols1 + col], points2D[(row + 1) * cols1 + col],
 						points2D[(row + 1) * cols1 + col + 1], points2D[row * cols1 + col + 1], color, true,

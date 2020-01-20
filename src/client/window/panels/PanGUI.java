@@ -72,7 +72,7 @@ public class PanGUI extends JPanel implements ButtonContainer {
 	MenuRessources ress;
 
 	// ==== Select ====
-	MenuInfos infos;
+	public MenuInfos infos;
 	public Unit unit;
 	public Building build;
 

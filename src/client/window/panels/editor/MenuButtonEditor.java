@@ -25,29 +25,41 @@ import utils.FlixBlocksUtils;
 public class MenuButtonEditor extends Menu {
 	private static final long serialVersionUID = 8368480819248766526L;
 
-	Font font = new Font("monospace", Font.BOLD, 14);
-	FontMetrics fm = getFontMetrics(font);
+	private Editor editor;
+	private ActionEditor action;
+	private Image img;
 
-	Editor editor;
-	ActionEditor action;
-	Image img;
+	private Engine engine;
+
+	// ======================= Decor =========================
+	private Font font = new Font("monospace", Font.BOLD, 14);
+	private FontMetrics fm = getFontMetrics(font);
+
+	private int borderSize = 5;
 
 	// ======================= Wheel =========================
 	private final static int NULL = -1;
 
-	int wheelStep = NULL;
-	int wheelMin = 0;
-	int wheelMax = 0;
+	private int wheelStep = NULL;
+	private int wheelMin = 0;
+	private int wheelMax = 0;
 
 	// ======================= Data =========================
+	/** ITEM_COLOR : color */
 	private int value = 0;
+	/** ITEM_NAME : name */
 	private String str = "";
+	/**
+	 * ITEM_NAME : name available
+	 * 
+	 * ITEM_ID : id available
+	 */
+	private boolean bool = true;
 
+	// ======================= Select =========================
 	private boolean selectable = false;
 	private boolean selected = false;
 	private ArrayList<MenuButtonEditor> group;
-
-	Engine engine;
 
 	// =========================================================================================================================
 
@@ -77,9 +89,14 @@ public class MenuButtonEditor extends Menu {
 			update();
 		}
 
+		if (action == ActionEditor.ITEM_ID)
+			bool = false;
+
 		addMouseWheelListener(new MouseWheelListener() {
 			@Override
 			public void mouseWheelMoved(MouseWheelEvent e) {
+				if (wheelStep == NULL)
+					return;
 				e.consume();
 
 				int prev = wheelStep;
@@ -115,19 +132,20 @@ public class MenuButtonEditor extends Menu {
 
 	@Override
 	public void paintComponent(Graphics g) {
-		g.setColor(hasImage() ? (selected ? Color.LIGHT_GRAY : Color.GRAY) : Color.DARK_GRAY);
+		// ===== Background =====
+		g.setColor(hasImage() ? (selected ? Color.LIGHT_GRAY : Color.GRAY) : (selected ? Color.GRAY : Color.DARK_GRAY));
 		g.fillRect(0, 0, getWidth() - 1, getHeight() - 1);
 
-		if (selected) {
-			g.setColor(Color.GRAY);
-			for (int i = 0; i < 5; i++)
-				g.drawRect(i, i, getWidth() - 1 - 2 * i, getHeight() - 1 - 2 * i);
-		}
+		// ===== Border =====
+		g.setColor(hasImage() ? Color.GRAY : Color.DARK_GRAY);
+		for (int i = 0; i < borderSize; i++)
+			g.drawRect(i, i, getWidth() - 1 - 2 * i, getHeight() - 1 - 2 * i);
 
+		// ===== Content =====
 		if (hasImage())
 			g.drawImage(img, 0, 0, getWidth(), getHeight(), null);
-		else if (action == ActionEditor.ITEM_COLOR) {
 
+		else if (action == ActionEditor.ITEM_COLOR) {
 			int x = 40;
 			int y = 25;
 
@@ -135,8 +153,13 @@ public class MenuButtonEditor extends Menu {
 			g.drawRect(getWidth() / 2 - x / 2 - 1, getHeight() / 2 - y / 2 - 1, x + 1, y + 1);
 			g.setColor(new Color(value));
 			g.fillRect(getWidth() / 2 - x / 2, getHeight() / 2 - y / 2, x, y);
-		} else {
+
+		} else { // Text
 			g.setColor(Color.LIGHT_GRAY);
+			if (action == ActionEditor.ITEM_ID || action == ActionEditor.ITEM_NAME)
+				if (!bool)
+					g.setColor(Color.RED);
+
 			g.setFont(font);
 
 			String text = str.isEmpty() ? getText() : str;
@@ -225,32 +248,32 @@ public class MenuButtonEditor extends Menu {
 
 	// =========================================================================================================================
 
-	public void setValue(int x) {
-		this.value = x;
-	}
-
 	public int getValue() {
 		return value;
 	}
 
-	public void addChar(char c) {
-		if (str == null)
-			str = "" + c;
-		else
-			str += c;
-	}
-
-	public void delChar() {
-		if (str.length() >= 1)
-			str = str.substring(0, str.length() - 1);
-	}
-
-	public void clearString() {
-		str = "";
+	public void setValue(int x) {
+		this.value = x;
 	}
 
 	public String getString() {
 		return str;
+	}
+
+	public void setString(String str) {
+		this.str = str;
+	}
+
+	public void setBool(boolean bool) {
+		this.bool = bool;
+	}
+
+	public void reinit() {
+		wheelStep = 0;
+
+		value = 0;
+		str = "";
+		bool = true;
 	}
 
 	// =========================================================================================================================
@@ -291,6 +314,7 @@ public class MenuButtonEditor extends Menu {
 		}
 
 		editor.menuClick(action);
+		e.consume();
 	}
 
 	@Override
