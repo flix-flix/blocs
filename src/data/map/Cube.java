@@ -18,7 +18,7 @@ public class Cube implements Serializable {
 
 	public double x, y, z;
 	public Coord gridCoord;
-	public ItemID itemID;
+	public int itemID;
 
 	public Point3D center;
 
@@ -59,7 +59,7 @@ public class Cube implements Serializable {
 	// =========================================================================================================================
 
 	public Cube(double x, double y, double z, double rotaX, double rotaY, double rotaZ, double sizeX, double sizeY,
-			double sizeZ, ItemID itemID) {
+			double sizeZ, int itemID) {
 		this.itemID = itemID;
 
 		this.x = x;
@@ -82,20 +82,20 @@ public class Cube implements Serializable {
 			resource = ItemTable.getResource(itemID);
 	}
 
-	public Cube(double x, double y, double z, double sizeX, double sizeY, double sizeZ, ItemID itemID) {
+	public Cube(double x, double y, double z, double sizeX, double sizeY, double sizeZ, int itemID) {
 		this(x, y, z, 0, 0, 0, sizeX, sizeY, sizeZ, itemID);
 	}
 
-	public Cube(int x, int y, int z, ItemID itemID) {
+	public Cube(int x, int y, int z, int itemID) {
 		this(x, y, z, 1, 1, 1, itemID);
 		onGrid = true;
 	}
 
-	public Cube(Coord cube, ItemID itemID) {
+	public Cube(Coord cube, int itemID) {
 		this(cube.x, cube.y, cube.z, itemID);
 	}
 
-	public Cube(ItemID itemID) {
+	public Cube(int itemID) {
 		this(0, 0, 0, itemID);
 	}
 

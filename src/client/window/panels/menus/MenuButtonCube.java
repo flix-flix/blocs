@@ -13,6 +13,7 @@ import client.window.graphicEngine.calcul.Camera;
 import client.window.graphicEngine.calcul.Engine;
 import client.window.graphicEngine.calcul.Point3D;
 import client.window.graphicEngine.extended.ModelCube;
+import data.id.ItemTable;
 import data.map.Cube;
 
 public class MenuButtonCube extends Menu {
@@ -53,7 +54,7 @@ public class MenuButtonCube extends Menu {
 				g.drawRect(i, i, getWidth() - 1 - 2 * i, getHeight() - 1 - 2 * i);
 		}
 
-		String str = cube.multibloc == null ? cube.itemID.name()
+		String str = cube.multibloc == null ? ItemTable.getName(cube.itemID)
 				: cube.multibloc.getClass().getName()
 						.substring(cube.multibloc.getClass().getName().lastIndexOf(".") + 1);
 

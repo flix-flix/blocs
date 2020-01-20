@@ -24,6 +24,7 @@ import client.window.graphicEngine.structures.Quadri;
 import client.window.panels.editor.PanEditor;
 import data.dynamic.TickClock;
 import data.id.ItemID;
+import data.id.ItemTable;
 import data.map.Cube;
 import data.map.enumerations.Face;
 import utils.FlixBlocksUtils;
@@ -177,7 +178,7 @@ public class Editor {
 	}
 
 	public void saveTexture() {
-		saveTexture(createTexture(), ItemID.EDITOR_PREVIEW.id);
+		saveTexture(createTexture(), ItemID.EDITOR_PREVIEW);
 	}
 
 	public void saveTexture(TextureCube tc, int id) {
@@ -347,7 +348,7 @@ public class Editor {
 			if (!session.texturePack.isIDAvailable(id))
 				return;
 			saveTexture(createTexture(), id);
-			// session.fen.gui.infos.addCube(new Cube(id));
+			session.fen.gui.infos.addCube(new Cube(id));
 			break;
 		case ITEM_NEW:
 		case ITEM_CLEAR:
@@ -495,8 +496,9 @@ public class Editor {
 
 	public void writeName(String str) {
 		boolean valid = true;
-		for (ItemID itemID : ItemID.values())
-			if (str.equals(itemID.name())) {
+
+		for (String name : ItemTable.getItemNameList())
+			if (str.equals(name)) {
 				valid = false;
 				break;
 			}

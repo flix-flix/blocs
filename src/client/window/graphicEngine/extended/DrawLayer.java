@@ -95,7 +95,7 @@ public class DrawLayer {
 	}
 
 	public void drawGrid() {
-		TextureSquare texture = cube.texturePack.getFace(cube.itemID.id, face);
+		TextureSquare texture = cube.texturePack.getFace(cube.itemID, face);
 
 		for (int row = 0; row <= texture.height; row++)
 			drawLine(0, row, texture.width, row, 0xffffffff, face);

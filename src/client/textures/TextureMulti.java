@@ -1,6 +1,5 @@
 package client.textures;
 
-import data.id.ItemID;
 import data.id.ItemTable;
 import data.map.Cube;
 import data.map.enumerations.Face;
@@ -11,12 +10,12 @@ public class TextureMulti {
 
 	// =========================================================================================================================
 
-	TextureMulti(ItemID itemID) {
+	TextureMulti(int itemID) {
 		// (up, down, north, south, east, west)
 		TextureSquare[] faces = new TextureSquare[6];
 		for (Face face : Face.faces)
 			faces[face.ordinal()] = TextureSquare.generateSquare("multi",
-					TextureFace.getFileName("multi", itemID.id + "", face));
+					TextureFace.getFileName("multi", itemID + "", face));
 
 		int pixelsX = faces[0].height;
 		int pixelsY = faces[2].height;

@@ -17,7 +17,7 @@ public class TexturePack {
 	public static final int[] texturesToLoad = new int[] { 0, 1, 2, 3, 20, 21, 50, 51, 52, 100, 200, 997, 998, 999 };
 
 	/** ID of textures multi-blocks to load */
-	public static final ItemID[] texturesMultiToLoad = new ItemID[] { ItemID.CASTLE };
+	public static final int[] texturesMultiToLoad = new int[] { ItemID.CASTLE };
 
 	/** Map to store the textures of the cubes (access by id) */
 	HashMap<Integer, TextureCube> texturesCubes = new HashMap<>();
@@ -39,8 +39,8 @@ public class TexturePack {
 		for (int i : texturesToLoad)
 			texturesCubes.put(i, new TextureCube(i));
 
-		for (ItemID id : texturesMultiToLoad)
-			texturesMulti.put(id.id, new TextureMulti(id));
+		for (int id : texturesMultiToLoad)
+			texturesMulti.put(id, new TextureMulti(id));
 
 		for (int i = 0; i < nbAnim; i++)
 			miningFrames[i] = TextureSquare.generateSquare("anim", "mining-" + i);
@@ -50,9 +50,9 @@ public class TexturePack {
 
 	public TextureSquare getFace(ModelCube cube, Face face) {
 		if (ItemTable.isMultiBloc(cube.itemID))
-			return texturesMulti.get(cube.itemID.id).getFace(cube, face);
+			return texturesMulti.get(cube.itemID).getFace(cube, face);
 		else
-			return getFace(cube.itemID.id, face, cube.rotation, cube.orientation);
+			return getFace(cube.itemID, face, cube.rotation, cube.orientation);
 	}
 
 	public TextureSquare getFace(int id, Face face) {

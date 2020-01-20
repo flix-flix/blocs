@@ -10,7 +10,6 @@ import client.window.graphicEngine.calcul.Point3D;
 import client.window.graphicEngine.calcul.Vector;
 import client.window.graphicEngine.structures.Draw;
 import client.window.graphicEngine.structures.Model;
-import data.id.ItemID;
 import data.map.Cube;
 import data.map.enumerations.Face;
 
@@ -69,15 +68,15 @@ public class ModelCube extends Cube implements Model {
 	// =========================================================================================================================
 
 	public ModelCube(TexturePack texturePack, double x, double y, double z, double rotaX, double rotaY, double rotaZ,
-			double sizeX, double sizeY, double sizeZ, ItemID itemID) {
+			double sizeX, double sizeY, double sizeZ, int itemID) {
 		super(x, y, z, rotaX, rotaY, rotaZ, sizeX, sizeY, sizeZ, itemID);
 
 		centerDecal = new Point3D(x, y, z);
 
 		this.texturePack = texturePack;
-		this.resoX = texturePack.getFace(itemID.id, Face.EAST).width;
-		this.resoY = texturePack.getFace(itemID.id, Face.NORTH).height;
-		this.resoZ = texturePack.getFace(itemID.id, Face.NORTH).width;
+		this.resoX = texturePack.getFace(itemID, Face.EAST).width;
+		this.resoY = texturePack.getFace(itemID, Face.NORTH).height;
+		this.resoZ = texturePack.getFace(itemID, Face.NORTH).width;
 	}
 
 	public ModelCube(Cube c, TexturePack texturePack) {

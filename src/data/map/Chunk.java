@@ -88,13 +88,13 @@ public class Chunk implements Serializable {
 
 	// =========================================================================================================================
 
-	public ItemID getHighestCube(int _x, int _z) {
+	public int getHighestCubeID(int _x, int _z) {
 		int x = toInChunkCoord(_x), z = toInChunkCoord(_z);
 
 		for (int y = Y - 1; y >= 0; y--)
 			if (grid[x][y][z] != null)
 				return grid[x][y][z].itemID;
-		return null;
+		return ItemID.NULL;
 	}
 
 	// =========================================================================================================================

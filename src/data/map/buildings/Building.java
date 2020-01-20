@@ -3,7 +3,6 @@ package data.map.buildings;
 import java.io.Serializable;
 import java.util.HashMap;
 
-import data.id.ItemID;
 import data.id.ItemTable;
 import data.map.Coord;
 import data.map.Cube;
@@ -20,7 +19,7 @@ public class Building implements Serializable {
 	private int id;
 	public Coord coord;
 	private Player player;
-	private ItemID itemID;
+	private int itemID;
 	private MultiBloc multi;
 
 	/** false : the building isn't ready to be used */
@@ -32,7 +31,7 @@ public class Building implements Serializable {
 
 	// =========================================================================================================================
 
-	public Building(Player player, ItemID itemID, int x, int y, int z, boolean isBuild) {
+	public Building(Player player, int itemID, int x, int y, int z, boolean isBuild) {
 		id = nextID++;
 		coord = new Coord(x, y, z);
 		this.player = player;
@@ -97,7 +96,7 @@ public class Building implements Serializable {
 	// =========================================================================================================================
 	// Getters
 
-	public ItemID getItemID() {
+	public int getItemID() {
 		return itemID;
 	}
 

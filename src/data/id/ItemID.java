@@ -1,53 +1,37 @@
 package data.id;
 
-public enum ItemID {
+public class ItemID {
 
-	BORDER(0),
+	public static final int NULL = -1;
 
-	// =========================================================================================================================
+	public static final int BORDER = 0;
 
-	GRASS(1), DIRT(2), STONE(3), COBBLE(4), SAND(5),
+	public static final int GRASS = 1;
+	public static final int DIRT = 2;
+	public static final int STONE = 3;
+	public static final int COBBLE = 4;
+	public static final int SAND = 5;
 
-	// =========================================================================================================================
+	public static final int OAK_TRUNK = 20;
+	public static final int OAK_LEAVES = 21;
+	public static final int OAK_BOARD = 22;
 
-	OAK_TRUNK(20), OAK_LEAVES(21), OAK_BOARD(22),
+	public static final int GLASS = 50;
+	public static final int GLASS_GRAY = 51;
+	public static final int GLASS_RED = 52;
 
-	// =========================================================================================================================
+	public static final int WATER = 100;
+	public static final int LAVA = 101;
 
-	COAL_ORE(40), COAL_BLOC(41), IRON_ORE(42), IRON_BLOC(43),
+	public static final int UNIT = 200;
 
-	// =========================================================================================================================
+	public static final int CASTLE = 300;
 
-	GLASS(50), GLASS_GRAY(51), GLASS_RED(52),
+	public static final int EDITOR_PREVIEW = 900;
 
-	// =========================================================================================================================
-
-	WATER(100), LAVA(101),
-
-	// =========================================================================================================================
-	// Units
-
-	UNIT(200),
-
-	// =========================================================================================================================
-	// Buildings
-
-	CASTLE(300),
-
-	// =========================================================================================================================
-	// Editor
-
-	EDITOR_PREVIEW(900),
-
-	// =========================================================================================================================
-
-	TEST_BIG(996), TEST_TRANSPARENT(997), TEST(998), ERROR(999);
-
-	// =========================================================================================================================
-
-	public int id;
-
-	ItemID(int i) {
-		id = i;
-	}
+	public static final int MAGIC_BLOC = 995;
+	public static final int TEST_BIG = 996;
+	public static final int TEST_TRANSPARENT = 997;
+	public static final int TEST = 998;
+	public static final int ERROR = 999;
 }

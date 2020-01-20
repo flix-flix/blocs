@@ -73,7 +73,7 @@ public class MenuButtonEditor extends Menu {
 			setMinimumSize(new Dimension(fm.stringWidth(getText()), 20));
 
 		if (hasEngine()) {
-			ItemID itemID;
+			int itemID;
 			switch (action) {
 			case MINIATURE:
 				itemID = ItemID.EDITOR_PREVIEW;
@@ -274,6 +274,9 @@ public class MenuButtonEditor extends Menu {
 		value = 0;
 		str = "";
 		bool = true;
+
+		if (action == ActionEditor.ITEM_ID)
+			bool = false;
 	}
 
 	// =========================================================================================================================
