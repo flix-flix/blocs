@@ -24,8 +24,6 @@ public class DrawCubeFace extends Draw {
 	public final static int DEFAULT_ALPHA = -1;
 	private int forcedAlpha;
 
-	private ArrayList<Quadri> quadri = new ArrayList<>();
-
 	// =========================================================================================================================
 
 	public DrawCubeFace(ModelCube cube, Face face, Point3D center, int index, int forcedAlpha) {
@@ -45,7 +43,7 @@ public class DrawCubeFace extends Draw {
 
 	@Override
 	public ArrayList<Quadri> getQuadri(Engine engine) {
-		quadri.clear();
+		ArrayList<Quadri> quadri = new ArrayList<>();
 
 		if (cube.layers != null)
 			for (DrawLayer layer : cube.layers)
@@ -60,10 +58,10 @@ public class DrawCubeFace extends Draw {
 
 		// Draw the mining animation
 		if (cube.miningState != Cube.NO_MINING)
-			generateQuadri(cube.texturePack.getMiningFrame(cube.miningState), engine);
+			generateQuadri(cube.texturePack.getMiningFrame(cube.miningState), engine, quadri);
 
 		// Draw the cube
-		generateQuadri(cube.texturePack.getFace(cube, face), engine);
+		generateQuadri(cube.texturePack.getFace(cube, face), engine, quadri);
 
 		return quadri;
 	}
@@ -73,7 +71,7 @@ public class DrawCubeFace extends Draw {
 	/**
 	 * Generates and add the quadri, from the texture, to the list of quadri
 	 */
-	public void generateQuadri(TextureSquare texture, Engine engine) {
+	public void generateQuadri(TextureSquare texture, Engine engine, ArrayList<Quadri> quadri) {
 		int cols1 = texture.width + 1;
 
 		Point[] points2D = generate2D(engine, texture.width, texture.height);
