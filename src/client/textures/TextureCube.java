@@ -16,22 +16,6 @@ public class TextureCube {
 
 	// =========================================================================================================================
 
-	public TextureCube(String folder, String id) {
-		for (Face face : Face.faces)
-			textures[face.ordinal()] = new TextureFace(folder, id, face);
-	}
-
-	public TextureCube(String id) {
-		for (Face face : Face.faces)
-			textures[face.ordinal()] = new TextureFace(id, face);
-	}
-
-	public TextureCube(int id) {
-		this(id + "");
-	}
-
-	// =========================================================================================================================
-
 	public TextureCube() {
 		for (int i = 0; i < 6; i++)
 			this.textures[i] = null;
@@ -45,11 +29,6 @@ public class TextureCube {
 	public TextureCube(TextureFace up, TextureFace down, TextureFace north, TextureFace south, TextureFace east,
 			TextureFace west) {
 		this(new TextureFace[] { up, down, north, south, east, west });
-	}
-
-	public TextureCube(String up, String down, String north, String south, String east, String west) {
-		this(new TextureFace(up), new TextureFace(down), new TextureFace(north), new TextureFace(south),
-				new TextureFace(east), new TextureFace(west));
 	}
 
 	// =========================================================================================================================
@@ -151,9 +130,7 @@ public class TextureCube {
 	// =========================================================================================================================
 
 	public void setFace(Face face, TextureSquare t) {
-		TextureFace tf = new TextureFace();
-		tf.setNormal(t);
-		textures[face.ordinal()] = tf;
+		textures[face.ordinal()] = new TextureFace(t);
 	}
 
 	// =========================================================================================================================

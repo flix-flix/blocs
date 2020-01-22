@@ -76,6 +76,7 @@ public class PanEditor extends JPanel {
 		gridItemID.setRowHeight(50);
 		gridItemID.setBackground(Color.GRAY);
 		gridItemID.setBorder(5, Color.DARK_GRAY);
+		gridItemID.setGridSpace(4);
 		gridItemID.setPadding(MenuGrid.GRID_SPACE);
 
 		for (ActionEditor action : _buttonsItemID) {

@@ -5,6 +5,8 @@ import java.util.LinkedList;
 
 import data.map.Coord;
 import data.map.Cube;
+import data.map.buildings.Building;
+import data.map.units.Unit;
 
 public class MultiBloc implements Serializable {
 	private static final long serialVersionUID = 6445228941735562941L;
@@ -64,6 +66,20 @@ public class MultiBloc implements Serializable {
 		this.z = z;
 	}
 
+	// =========================================================================================================================
+
+	public void setBuild(Building build) {
+		for (Cube c : list)
+			c.build = build;
+	}
+
+	public void setUnit(Unit unit) {
+		for (Cube c : list)
+			c.unit = unit;
+	}
+
+	// =========================================================================================================================
+
 	public MultiBloc clone() {
 		MultiBloc m = new MultiBloc(x, y, z);
 		m.list.addAll(list);
@@ -75,5 +91,4 @@ public class MultiBloc implements Serializable {
 	public int getId() {
 		return id;
 	}
-
 }

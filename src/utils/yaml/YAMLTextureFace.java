@@ -17,6 +17,7 @@ public class YAMLTextureFace {
 
 	// face-row-col
 	int[][] faces = new int[6][];
+	TextureSquare[] ts = new TextureSquare[6];
 	TextureFace[] tf = new TextureFace[6];
 	TextureCube texture = new TextureCube(tf);
 
@@ -59,9 +60,11 @@ public class YAMLTextureFace {
 			faces[face.ordinal()] = new int[row * col];
 			for (int i = 0; i < row; i++) {
 				for (int j = 0; j < col; j++)
-					faces[face.ordinal()][i * row + j] = FlixBlocksUtils
+					faces[face.ordinal()][i * col + j] = FlixBlocksUtils
 							.parseHexa(((String[]) ((Object[]) faceData)[i])[j]);
-				tf[face.ordinal()] = new TextureFace(new TextureSquare(faces[face.ordinal()], col));
+
+				ts[face.ordinal()] = new TextureSquare(faces[face.ordinal()], col);
+				tf[face.ordinal()] = new TextureFace(ts[face.ordinal()]);
 			}
 
 			texture = new TextureCube(tf);

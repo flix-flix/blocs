@@ -44,8 +44,8 @@ public class TextureSquare {
 
 	// =========================================================================================================================
 
-	public static TextureSquare generateSquare(String folder, String file) {
-		BufferedImage bimg = (BufferedImage) FlixBlocksUtils.getImage(folder + "/" + file);
+	public static TextureSquare generateSquare(String file) {
+		BufferedImage bimg = (BufferedImage) FlixBlocksUtils.getImage(file);
 
 		int[] color = new int[bimg.getHeight() * bimg.getWidth()];
 
@@ -58,6 +58,7 @@ public class TextureSquare {
 
 	// =========================================================================================================================
 
+	/** Returns a portion of the Face */
 	public TextureSquare getRect(int x, int y, int width, int height) {
 		TextureSquare text = new TextureSquare(width, height);
 

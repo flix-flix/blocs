@@ -2,7 +2,6 @@ package client.textures;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.TreeMap;
 
 import client.window.graphicEngine.extended.ModelCube;
 import data.id.ItemID;
@@ -13,6 +12,7 @@ import data.map.enumerations.Rotation;
 import utils.FlixBlocksUtils;
 import utils.yaml.YAML;
 import utils.yaml.YAMLTextureFace;
+import utils.yaml.YAMLTextureMulti;
 
 public class TexturePack {
 
@@ -31,31 +31,33 @@ public class TexturePack {
 	TextureSquare[] miningFrames = new TextureSquare[nbAnim];
 
 	/** Default missing texture */
-	TextureSquare faceError = TextureSquare.generateSquare("cubes", "999");
+	TextureSquare faceError = TextureSquare.generateSquare("999");
 
 	public TexturePack() {
-		texturesCubes.put(996,
-				new TextureCube(new TextureFace("multi", "test-up"), new TextureFace("multi", "test-down"),
-						new TextureFace("multi", "test-north"), new TextureFace("multi", "test-south"),
-						new TextureFace("multi", "test-east"), new TextureFace("multi", "test-west")));
-
 		ArrayList<String> list = FlixBlocksUtils.getFilesName("resources/cubes");
 
 		for (String file : list) {
 			if (file.indexOf(".yml") == -1)
 				continue;
 
-			TreeMap<String, Object> tree = YAML.parseFile(file);
-			YAMLTextureFace texture = new YAMLTextureFace(tree);
+			YAMLTextureFace texture = new YAMLTextureFace(YAML.parseFile(file));
 
 			texturesCubes.put(texture.id, texture.getTextureCube());
 		}
 
-		for (int id : texturesMultiToLoad)
-			texturesMulti.put(id, new TextureMulti(id));
+		ArrayList<String> listMulti = FlixBlocksUtils.getFilesName("resources/multi");
+
+		for (String file : listMulti) {
+			if (file.indexOf(".yml") == -1)
+				continue;
+
+			YAMLTextureMulti texture = new YAMLTextureMulti(YAML.parseFile(file));
+
+			texturesMulti.put(texture.id, texture.getTextureMulti());
+		}
 
 		for (int i = 0; i < nbAnim; i++)
-			miningFrames[i] = TextureSquare.generateSquare("anim", "mining-" + i);
+			miningFrames[i] = TextureSquare.generateSquare("anim/mining-" + i);
 	}
 
 	// =========================================================================================================================

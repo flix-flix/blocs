@@ -1,6 +1,7 @@
 package data.generation;
 
 import data.id.ItemID;
+import data.id.ItemTable;
 import data.map.Cube;
 import data.map.Map;
 import data.map.buildings.Building;
@@ -115,6 +116,11 @@ public class WorldGeneration {
 		m.setCoords(5, ground, 25);
 
 		map.add(m.getCube());
+
+		// Add Multibloc
+		MultiBloc testBig = ItemTable.createMulti(ItemID.TEST_BIG);
+		testBig.setCoords(15, ground, 19);
+		map.add(testBig.getCube());
 
 		// Add River
 		for (int i = 0; i < 90; i++)

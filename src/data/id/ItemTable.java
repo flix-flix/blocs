@@ -43,6 +43,7 @@ public class ItemTable {
 		switch (itemID) {
 		case ItemID.WATER:
 		case ItemID.CASTLE:
+		case ItemID.TEST_BIG:
 			return false;
 
 		default:
@@ -54,20 +55,23 @@ public class ItemTable {
 	// Multi blocs
 
 	public static MultiBloc createBuilding(Building build) {
-		if (!isMultiBloc(build.getItemID())) {
-			FlixBlocksUtils.debugBefore(build.getItemID() + " isn't a multibloc");
+		MultiBloc multi = createMulti(build.getItemID());
+		multi.setBuild(build);
+		return multi;
+	}
+
+	public static MultiBloc createMulti(int itemID) {
+		if (!isMultiBloc(itemID)) {
+			FlixBlocksUtils.debugBefore(itemID + " isn't a multibloc");
 			return null;
 		}
 
 		MultiBloc multi = new MultiBloc();
 
-		for (int x = 0; x < getXSize(build.getItemID()); x++)
-			for (int y = 0; y < getYSize(build.getItemID()); y++)
-				for (int z = 0; z < getZSize(build.getItemID()); z++) {
-					Cube c = new Cube(x, y, z, build.getItemID());
-					c.build = build;
-					multi.add(c);
-				}
+		for (int x = 0; x < getXSize(itemID); x++)
+			for (int y = 0; y < getYSize(itemID); y++)
+				for (int z = 0; z < getZSize(itemID); z++)
+					multi.add(new Cube(x, y, z, itemID));
 
 		return multi;
 	}
@@ -75,6 +79,7 @@ public class ItemTable {
 	public static boolean isMultiBloc(int itemID) {
 		switch (itemID) {
 		case ItemID.CASTLE:
+		case ItemID.TEST_BIG:
 			return true;
 		default:
 			return false;
@@ -85,6 +90,8 @@ public class ItemTable {
 		switch (itemID) {
 		case ItemID.CASTLE:
 			return 3;
+		case ItemID.TEST_BIG:
+			return 3;
 		default:
 			return 1;
 		}
@@ -94,6 +101,8 @@ public class ItemTable {
 		switch (itemID) {
 		case ItemID.CASTLE:
 			return 2;
+		case ItemID.TEST_BIG:
+			return 2;
 		default:
 			return 1;
 		}
@@ -102,6 +111,8 @@ public class ItemTable {
 	public static int getZSize(int itemID) {
 		switch (itemID) {
 		case ItemID.CASTLE:
+			return 2;
+		case ItemID.TEST_BIG:
 			return 2;
 		default:
 			return 1;
