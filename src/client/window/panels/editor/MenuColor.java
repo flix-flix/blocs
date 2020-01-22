@@ -18,28 +18,29 @@ public class MenuColor extends Menu {
 	private static final int WHITE = 0xffffff;
 	private static final int BLACK = 0;
 
-	Font font = new Font("monospace", Font.BOLD, 14);
-	FontMetrics fm = getFontMetrics(font);
+	private Font font = new Font("monospace", Font.BOLD, 14);
+	private FontMetrics fm = getFontMetrics(font);
 
 	// =========================================================================================================================
-	Editor editor;
+	private MenuButtonEditor valid, alpha;
 
-	MenuButtonEditor valid, alpha;
+	private int[] colorLine = new int[6 * 44];
+	private int lineStartX = 0;// Set in resize
+	private int lineStartY = 20;
+	private int lineSize = 20;
+	private int lineSelector = 0;
 
-	int[] colorLine = new int[6 * 44];
-	int lineStartX = 0;// Set in paintComponent
-	int lineStartY = 20;
-	int lineSize = 20;
-	int lineSelector = 0;
+	private int lineSelectedColor = 0;
 
-	int lineSelectedColor = 0;
-
-	int squareStartX = 25;
-	int squareStartY = 25;
-	int squareSelectorX = 255;
-	int squareSelectorY = 0;
+	private int squareStartX = 25;
+	private int squareStartY = 25;
+	private int squareSelectorX = 255;
+	private int squareSelectorY = 0;
 
 	int squareSelectedColor = 0;
+
+	private static final int NULL = 0, SQUARE = 1, LINE = -1;
+	private int selectedSelector = 0;
 
 	// =========================================================================================================================
 	private int selectedColor = 0;
@@ -52,8 +53,6 @@ public class MenuColor extends Menu {
 	// =========================================================================================================================
 
 	public MenuColor(Editor editor) {
-		this.editor = editor;
-
 		int[] tab = new int[] { 0, 255, 0 };// B, R, G
 
 		for (int i = 0; i < 6; i++) {
@@ -87,7 +86,7 @@ public class MenuColor extends Menu {
 
 			@Override
 			public void mouseDragged(MouseEvent e) {
-				click(e);
+				clickColor(e.getX(), e.getY());
 			}
 		});
 	}
@@ -100,8 +99,6 @@ public class MenuColor extends Menu {
 		g.fillRect(0, 0, getWidth() - 1, getHeight() - 1);
 
 		// =================================================
-
-		lineStartX = getWidth() - 45;
 
 		g.setColor(Color.DARK_GRAY);
 		g.drawRect(lineStartX - 1, lineStartY - 1, lineSize + 2, 6 * 44 + 1);
@@ -127,10 +124,7 @@ public class MenuColor extends Menu {
 		for (int y = 0; y < 256; y++) {
 			int color = addHue(lineSelectedColor, WHITE, y / 255.);
 			for (int x = 0; x < 256; x++) {
-				// TODO Gradient color selector
-
 				g.setColor(new Color(addHue(color, BLACK, (255. - x) / 255)));
-				// g.setColor(Color.LIGHT_GRAY);
 				g.drawLine(squareStartX + x, squareStartY + y, squareStartX + x, squareStartY + y);
 			}
 		}
@@ -202,6 +196,25 @@ public class MenuColor extends Menu {
 
 	// =========================================================================================================================
 
+	public void clickColor(int x, int y) {
+		if (selectedSelector == LINE) {
+			lineSelector = y - lineStartY;
+
+			lineSelector = Math.min(6 * 44 - 1, lineSelector);
+			lineSelector = Math.max(0, lineSelector);
+		} else if (selectedSelector == SQUARE) {
+			squareSelectorX = x - squareStartX;
+			squareSelectorY = y - squareStartY;
+
+			squareSelectorX = Math.min(255, squareSelectorX);
+			squareSelectorX = Math.max(0, squareSelectorX);
+			squareSelectorY = Math.min(255, squareSelectorY);
+			squareSelectorY = Math.max(0, squareSelectorY);
+		}
+
+		updatePointedColor();
+	}
+
 	public void updatePointedColor() {
 		lineSelectedColor = colorLine[lineSelector];
 		squareSelectedColor = addHue(addHue(lineSelectedColor, WHITE, squareSelectorY / 255.), BLACK,
@@ -228,24 +241,23 @@ public class MenuColor extends Menu {
 
 	@Override
 	public void click(MouseEvent e) {
-		// Line selector
 		if (e.getX() >= lineStartX && e.getX() <= lineStartX + lineSize && e.getY() >= lineStartY
-				&& e.getY() < lineStartY + 6 * 44) {
-			lineSelector = e.getY() - lineStartY;
-			updatePointedColor();
-		}
+				&& e.getY() < lineStartY + 6 * 44)
+			selectedSelector = LINE;
 
-		// Square selector
-		if (e.getX() >= squareStartX && e.getX() < squareStartX + 256 && e.getY() >= squareStartY
-				&& e.getY() < squareStartY + 256) {
-			squareSelectorX = e.getX() - squareStartX;
-			squareSelectorY = e.getY() - squareStartY;
-			updatePointedColor();
-		}
+		else if (e.getX() >= squareStartX && e.getX() < squareStartX + 256 && e.getY() >= squareStartY
+				&& e.getY() < squareStartY + 256)
+			selectedSelector = SQUARE;
+		else
+			selectedSelector = NULL;
+
+		clickColor(e.getX(), e.getY());
 	}
 
 	@Override
 	public void resize() {
+		lineStartX = getWidth() - 45;
+
 		int start = squareStartX + 260;
 		int remain = getHeight() - start;
 
