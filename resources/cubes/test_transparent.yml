@@ -1,0 +1,69 @@
+colors: 
+    down: 
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+    east: 
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+    north: 
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+    south: 
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+    up: 
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+    west: 
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+        - [bfffffff, bfffffff, bfffffff, 7fffffff, 7fffffff, 7fffffff, 3fffffff, 3fffffff, 3fffffff]
+id: 997
+minimap: 
+    color: ffeaff00
+name: TEST_TRANSPARENT
+pixels: 
+    x: 9
+    y: 9
+    z: 9

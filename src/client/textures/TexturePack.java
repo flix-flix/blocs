@@ -1,6 +1,8 @@
 package client.textures;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.TreeMap;
 
 import client.window.graphicEngine.extended.ModelCube;
 import data.id.ItemID;
@@ -8,13 +10,14 @@ import data.id.ItemTable;
 import data.map.enumerations.Face;
 import data.map.enumerations.Orientation;
 import data.map.enumerations.Rotation;
+import utils.FlixBlocksUtils;
+import utils.yaml.YAML;
+import utils.yaml.YAMLTextureFace;
 
 public class TexturePack {
 
 	/** Number of mining animation frames to load */
 	public static final int nbAnim = 5;
-	/** ID of textures blocks to load */
-	public static final int[] texturesToLoad = new int[] { 0, 1, 2, 3, 20, 21, 50, 51, 52, 100, 200, 997, 998, 999 };
 
 	/** ID of textures multi-blocks to load */
 	public static final int[] texturesMultiToLoad = new int[] { ItemID.CASTLE };
@@ -28,7 +31,7 @@ public class TexturePack {
 	TextureSquare[] miningFrames = new TextureSquare[nbAnim];
 
 	/** Default missing texture */
-	TextureSquare faceError = TextureSquare.generateSquare("blocs", "999");
+	TextureSquare faceError = TextureSquare.generateSquare("cubes", "999");
 
 	public TexturePack() {
 		texturesCubes.put(996,
@@ -36,8 +39,17 @@ public class TexturePack {
 						new TextureFace("multi", "test-north"), new TextureFace("multi", "test-south"),
 						new TextureFace("multi", "test-east"), new TextureFace("multi", "test-west")));
 
-		for (int i : texturesToLoad)
-			texturesCubes.put(i, new TextureCube(i));
+		ArrayList<String> list = FlixBlocksUtils.getFilesName("resources/cubes");
+
+		for (String file : list) {
+			if (file.indexOf(".yml") == -1)
+				continue;
+
+			TreeMap<String, Object> tree = YAML.parseFile(file);
+			YAMLTextureFace texture = new YAMLTextureFace(tree);
+
+			texturesCubes.put(texture.id, texture.getTextureCube());
+		}
 
 		for (int id : texturesMultiToLoad)
 			texturesMulti.put(id, new TextureMulti(id));
@@ -75,7 +87,7 @@ public class TexturePack {
 	// =========================================================================================================================
 	// Editor
 
-	public void addTextureCube(TextureCube t, int id) {
+	public void setTextureCube(TextureCube t, int id) {
 		texturesCubes.put(id, t);
 	}
 

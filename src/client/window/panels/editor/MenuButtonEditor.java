@@ -151,7 +151,7 @@ public class MenuButtonEditor extends Menu {
 
 			g.setColor(Color.LIGHT_GRAY);
 			g.drawRect(getWidth() / 2 - x / 2 - 1, getHeight() / 2 - y / 2 - 1, x + 1, y + 1);
-			g.setColor(new Color(value));
+			g.setColor(new Color(value & 0xffffff));
 			g.fillRect(getWidth() / 2 - x / 2, getHeight() / 2 - y / 2, x, y);
 
 		} else { // Text

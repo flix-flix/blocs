@@ -1,0 +1,33 @@
+colors: 
+    down: 
+        - [ff4cb872, ff00ab3c, ff45dc7a]
+        - [ff00ab3c, ff4cb872, ff228c47]
+        - [ff228c47, ff30cf68, ff00ab3c]
+    east: 
+        - [ff4cb872, ff00ab3c, ff45dc7a]
+        - [ff00ab3c, ff4cb872, ff228c47]
+        - [ff228c47, ff30cf68, ff00ab3c]
+    north: 
+        - [ff4cb872, ff00ab3c, ff45dc7a]
+        - [ff00ab3c, ff4cb872, ff228c47]
+        - [ff228c47, ff30cf68, ff00ab3c]
+    south: 
+        - [ff4cb872, ff00ab3c, ff45dc7a]
+        - [ff00ab3c, ff4cb872, ff228c47]
+        - [ff228c47, ff30cf68, ff00ab3c]
+    up: 
+        - [ff4cb872, ff00ab3c, ff45dc7a]
+        - [ff00ab3c, ff4cb872, ff228c47]
+        - [ff228c47, ff30cf68, ff00ab3c]
+    west: 
+        - [ff4cb872, ff00ab3c, ff45dc7a]
+        - [ff00ab3c, ff4cb872, ff228c47]
+        - [ff228c47, ff30cf68, ff00ab3c]
+id: 1
+minimap: 
+    color: ff07d240
+name: GRASS
+pixels: 
+    x: 3
+    y: 3
+    z: 3

@@ -1,6 +1,5 @@
 package data.id;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -228,33 +227,33 @@ public class ItemTable {
 
 	// =========================================================================================================================
 
-	public static Color getMapColor(int itemID) {
+	public static int getMapColor(int itemID) {
 		if (itemID == ItemID.NULL)
-			return new Color(0x7d0085);
+			return 0x7d0085;
 
 		switch (itemID) {
 		case ItemID.GRASS:
-			return new Color(0x07d240);
+			return 0x07d240;
 		case ItemID.DIRT:
-			return new Color(0x705700);
+			return 0x705700;
 		case ItemID.STONE:
-			return new Color(0x8c8c8c);
+			return 0x8c8c8c;
 		case ItemID.WATER:
-			return new Color(0x6b83c8);
+			return 0x6b83c8;
 		case ItemID.BORDER:
-			return new Color(0xffffff);
+			return 0xffffff;
 		case ItemID.OAK_LEAVES:
-			return new Color(0x109f0c);
+			return 0x109f0c;
 		case ItemID.OAK_TRUNK:
-			return new Color(0x5e4303);
+			return 0x5e4303;
 
 		case ItemID.CASTLE:
-			return new Color(0x1e00ff);// Player 2 0xff0000
+			return 0x1e00ff;// Player 2 0xff0000
 		case ItemID.UNIT:
-			return new Color(0x1e00ff);
+			return 0x1e00ff;
 
 		default:
-			return new Color(0xeaff00);
+			return 0xeaff00;
 		}
 	}
 }

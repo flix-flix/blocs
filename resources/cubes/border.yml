@@ -1,0 +1,33 @@
+colors: 
+    down: 
+        - [ff474646, ff7c7c7c, ff363636]
+        - [ff363636, ff9a9a9a, ff474646]
+        - [ff797979, ff000000, ff9a9a9a]
+    east: 
+        - [ff474646, ff7c7c7c, ff363636]
+        - [ff363636, ff9a9a9a, ff474646]
+        - [ff797979, ff000000, ff9a9a9a]
+    north: 
+        - [ff474646, ff7c7c7c, ff363636]
+        - [ff363636, ff9a9a9a, ff474646]
+        - [ff797979, ff000000, ff9a9a9a]
+    south: 
+        - [ff474646, ff7c7c7c, ff363636]
+        - [ff363636, ff9a9a9a, ff474646]
+        - [ff797979, ff000000, ff9a9a9a]
+    up: 
+        - [ff474646, ff7c7c7c, ff363636]
+        - [ff363636, ff9a9a9a, ff474646]
+        - [ff797979, ff000000, ff9a9a9a]
+    west: 
+        - [ff474646, ff7c7c7c, ff363636]
+        - [ff363636, ff9a9a9a, ff474646]
+        - [ff797979, ff000000, ff9a9a9a]
+id: 0
+minimap: 
+    color: ffffffff
+name: BORDER
+pixels: 
+    x: 3
+    y: 3
+    z: 3

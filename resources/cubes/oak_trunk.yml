@@ -1,0 +1,33 @@
+colors: 
+    down: 
+        - [ff473a07, ff776005, ff473a07]
+        - [ff776005, ffd2bb60, ff776005]
+        - [ff473a07, ff776005, ff473a07]
+    east: 
+        - [ff473a07, ff7c6507, ff5e4c05]
+        - [ff5e4c05, ff635620, ff473a07]
+        - [ff473a07, ff7c6507, ff5e4c05]
+    north: 
+        - [ff473a07, ff7c6507, ff5e4c05]
+        - [ff5e4c05, ff635620, ff473a07]
+        - [ff473a07, ff7c6507, ff5e4c05]
+    south: 
+        - [ff473a07, ff7c6507, ff5e4c05]
+        - [ff5e4c05, ff635620, ff473a07]
+        - [ff473a07, ff7c6507, ff5e4c05]
+    up: 
+        - [ff473a07, ff776005, ff473a07]
+        - [ff776005, ffd2bb60, ff776005]
+        - [ff473a07, ff776005, ff473a07]
+    west: 
+        - [ff473a07, ff7c6507, ff5e4c05]
+        - [ff5e4c05, ff635620, ff473a07]
+        - [ff473a07, ff7c6507, ff5e4c05]
+id: 20
+minimap: 
+    color: ff5e4303
+name: OAK_TRUNK
+pixels: 
+    x: 3
+    y: 3
+    z: 3

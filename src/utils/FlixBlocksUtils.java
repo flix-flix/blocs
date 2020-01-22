@@ -13,6 +13,12 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.imageio.ImageIO;
 
@@ -22,6 +28,27 @@ import client.window.panels.PanGame;
 public class FlixBlocksUtils {
 	public static final double toRadian = Math.PI / 180;
 	public static final double toDegres = 180 / Math.PI;
+
+	// =========================================================================================================================
+
+	/** str must be 8 long (or 6 long assuming alpha = 255) */
+	public static int parseHexa(String str) {
+		if (str.length() != 8 && str.length() != 6)
+			return -123;
+		int x = str.length() == 8 ? 0 : 255;
+		int decal = 0;
+
+		while (decal < str.length()) {
+			x <<= 8;
+			x += Integer.parseInt(str.substring(decal, decal += 2), 16);
+		}
+
+		return x;
+	}
+
+	public static String hexaToString(int x) {
+		return String.format("%04x", (x >> 16) & 0xffff) + String.format("%04x", x & 0xffff);
+	}
 
 	// =========================================================================================================================
 
@@ -101,6 +128,23 @@ public class FlixBlocksUtils {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	// =========================================================================================================================
+
+	public static ArrayList<String> getFilesName(String folder) {
+		ArrayList<String> list = null;
+
+		try (Stream<Path> walk = Files.walk(Paths.get(folder))) {
+
+			list = new ArrayList<String>(
+					walk.filter(Files::isRegularFile).map(x -> x.toString()).collect(Collectors.toList()));
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return list;
 	}
 
 	// =========================================================================================================================

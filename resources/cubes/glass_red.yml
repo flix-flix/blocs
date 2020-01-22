@@ -1,0 +1,51 @@
+colors: 
+    down: 
+        - [ffff0000, ffff0000, ffff0000, ffff0000, ffff0000, ffff0000]
+        - [ffff0000, 7fff0000, 7fff0000, 7fff0000, 7fff0000, ffff0000]
+        - [ffff0000, 7fff0000, 7fff0000, 7fff0000, 7fff0000, ffff0000]
+        - [ffff0000, 7fff0000, 7fff0000, 7fff0000, 7fff0000, ffff0000]
+        - [ffff0000, 7fff0000, 7fff0000, 7fff0000, 7fff0000, ffff0000]
+        - [ffff0000, ffff0000, ffff0000, ffff0000, ffff0000, ffff0000]
+    east: 
+        - [ffff0000, ffff0000, ffff0000, ffff0000, ffff0000, ffff0000]
+        - [ffff0000, 7fff0000, 7fff0000, 7fff0000, 7fff0000, ffff0000]
+        - [ffff0000, 7fff0000, 7fff0000, 7fff0000, 7fff0000, ffff0000]
+        - [ffff0000, 7fff0000, 7fff0000, 7fff0000, 7fff0000, ffff0000]
+        - [ffff0000, 7fff0000, 7fff0000, 7fff0000, 7fff0000, ffff0000]
+        - [ffff0000, ffff0000, ffff0000, ffff0000, ffff0000, ffff0000]
+    north: 
+        - [ffff0000, ffff0000, ffff0000, ffff0000, ffff0000, ffff0000]
+        - [ffff0000, 7fff0000, 7fff0000, 7fff0000, 7fff0000, ffff0000]
+        - [ffff0000, 7fff0000, 7fff0000, 7fff0000, 7fff0000, ffff0000]
+        - [ffff0000, 7fff0000, 7fff0000, 7fff0000, 7fff0000, ffff0000]
+        - [ffff0000, 7fff0000, 7fff0000, 7fff0000, 7fff0000, ffff0000]
+        - [ffff0000, ffff0000, ffff0000, ffff0000, ffff0000, ffff0000]
+    south: 
+        - [ffff0000, ffff0000, ffff0000, ffff0000, ffff0000, ffff0000]
+        - [ffff0000, 7fff0000, 7fff0000, 7fff0000, 7fff0000, ffff0000]
+        - [ffff0000, 7fff0000, 7fff0000, 7fff0000, 7fff0000, ffff0000]
+        - [ffff0000, 7fff0000, 7fff0000, 7fff0000, 7fff0000, ffff0000]
+        - [ffff0000, 7fff0000, 7fff0000, 7fff0000, 7fff0000, ffff0000]
+        - [ffff0000, ffff0000, ffff0000, ffff0000, ffff0000, ffff0000]
+    up: 
+        - [ffff0000, ffff0000, ffff0000, ffff0000, ffff0000, ffff0000]
+        - [ffff0000, 7fff0000, 7fff0000, 7fff0000, 7fff0000, ffff0000]
+        - [ffff0000, 7fff0000, 7fff0000, 7fff0000, 7fff0000, ffff0000]
+        - [ffff0000, 7fff0000, 7fff0000, 7fff0000, 7fff0000, ffff0000]
+        - [ffff0000, 7fff0000, 7fff0000, 7fff0000, 7fff0000, ffff0000]
+        - [ffff0000, ffff0000, ffff0000, ffff0000, ffff0000, ffff0000]
+    west: 
+        - [ffff0000, ffff0000, ffff0000, ffff0000, ffff0000, ffff0000]
+        - [ffff0000, 7fff0000, 7fff0000, 7fff0000, 7fff0000, ffff0000]
+        - [ffff0000, 7fff0000, 7fff0000, 7fff0000, 7fff0000, ffff0000]
+        - [ffff0000, 7fff0000, 7fff0000, 7fff0000, 7fff0000, ffff0000]
+        - [ffff0000, 7fff0000, 7fff0000, 7fff0000, 7fff0000, ffff0000]
+        - [ffff0000, ffff0000, ffff0000, ffff0000, ffff0000, ffff0000]
+id: 52
+minimap: 
+    color: ffeaff00
+name: GLASS_RED
+pixels: 
+    x: 6
+    y: 6
+    z: 6

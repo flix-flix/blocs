@@ -8,7 +8,7 @@ public class TextureFace {
 	private static String folder = "blocs";
 
 	/** Texture of the face pre-generated in the 4 possibles */
-	private TextureSquare normal, reverse, right, left;
+	TextureSquare normal, reverse, right, left;
 
 	public int rotation = 0;
 

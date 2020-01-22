@@ -1,0 +1,51 @@
+colors: 
+    down: 
+        - [ffffffff, ffffffff, ffffffff, ffffffff, ffffffff, ffffffff]
+        - [ffffffff, 00000000, 00000000, 00000000, 00000000, ffffffff]
+        - [ffffffff, 00000000, 00000000, 00000000, 00000000, ffffffff]
+        - [ffffffff, 00000000, 00000000, 00000000, 00000000, ffffffff]
+        - [ffffffff, 00000000, 00000000, 00000000, 00000000, ffffffff]
+        - [ffffffff, ffffffff, ffffffff, ffffffff, ffffffff, ffffffff]
+    east: 
+        - [ffffffff, ffffffff, ffffffff, ffffffff, ffffffff, ffffffff]
+        - [ffffffff, 00000000, 00000000, 00000000, 00000000, ffffffff]
+        - [ffffffff, 00000000, 00000000, 00000000, 00000000, ffffffff]
+        - [ffffffff, 00000000, 00000000, 00000000, 00000000, ffffffff]
+        - [ffffffff, 00000000, 00000000, 00000000, 00000000, ffffffff]
+        - [ffffffff, ffffffff, ffffffff, ffffffff, ffffffff, ffffffff]
+    north: 
+        - [ffffffff, ffffffff, ffffffff, ffffffff, ffffffff, ffffffff]
+        - [ffffffff, 00000000, 00000000, 00000000, 00000000, ffffffff]
+        - [ffffffff, 00000000, 00000000, 00000000, 00000000, ffffffff]
+        - [ffffffff, 00000000, 00000000, 00000000, 00000000, ffffffff]
+        - [ffffffff, 00000000, 00000000, 00000000, 00000000, ffffffff]
+        - [ffffffff, ffffffff, ffffffff, ffffffff, ffffffff, ffffffff]
+    south: 
+        - [ffffffff, ffffffff, ffffffff, ffffffff, ffffffff, ffffffff]
+        - [ffffffff, 00000000, 00000000, 00000000, 00000000, ffffffff]
+        - [ffffffff, 00000000, 00000000, 00000000, 00000000, ffffffff]
+        - [ffffffff, 00000000, 00000000, 00000000, 00000000, ffffffff]
+        - [ffffffff, 00000000, 00000000, 00000000, 00000000, ffffffff]
+        - [ffffffff, ffffffff, ffffffff, ffffffff, ffffffff, ffffffff]
+    up: 
+        - [ffffffff, ffffffff, ffffffff, ffffffff, ffffffff, ffffffff]
+        - [ffffffff, 00000000, 00000000, 00000000, 00000000, ffffffff]
+        - [ffffffff, 00000000, 00000000, 00000000, 00000000, ffffffff]
+        - [ffffffff, 00000000, 00000000, 00000000, 00000000, ffffffff]
+        - [ffffffff, 00000000, 00000000, 00000000, 00000000, ffffffff]
+        - [ffffffff, ffffffff, ffffffff, ffffffff, ffffffff, ffffffff]
+    west: 
+        - [ffffffff, ffffffff, ffffffff, ffffffff, ffffffff, ffffffff]
+        - [ffffffff, 00000000, 00000000, 00000000, 00000000, ffffffff]
+        - [ffffffff, 00000000, 00000000, 00000000, 00000000, ffffffff]
+        - [ffffffff, 00000000, 00000000, 00000000, 00000000, ffffffff]
+        - [ffffffff, 00000000, 00000000, 00000000, 00000000, ffffffff]
+        - [ffffffff, ffffffff, ffffffff, ffffffff, ffffffff, ffffffff]
+id: 50
+minimap: 
+    color: ffeaff00
+name: GLASS
+pixels: 
+    x: 6
+    y: 6
+    z: 6

@@ -1,0 +1,33 @@
+colors: 
+    down: 
+        - [ffbc9c75, ff643600, ff705536]
+        - [ff795b37, ffbc9c75, ffc18239]
+        - [ff643600, ff795b37, ff643600]
+    east: 
+        - [ffbc9c75, ff643600, ff705536]
+        - [ff795b37, ffbc9c75, ffc18239]
+        - [ff643600, ff795b37, ff643600]
+    north: 
+        - [ffbc9c75, ff643600, ff705536]
+        - [ff795b37, ffbc9c75, ffc18239]
+        - [ff643600, ff795b37, ff643600]
+    south: 
+        - [ffbc9c75, ff643600, ff705536]
+        - [ff795b37, ffbc9c75, ffc18239]
+        - [ff643600, ff795b37, ff643600]
+    up: 
+        - [ffbc9c75, ff643600, ff705536]
+        - [ff795b37, ffbc9c75, ffc18239]
+        - [ff643600, ff795b37, ff643600]
+    west: 
+        - [ffbc9c75, ff643600, ff705536]
+        - [ff795b37, ffbc9c75, ffc18239]
+        - [ff643600, ff795b37, ff643600]
+id: 2
+minimap: 
+    color: ff705700
+name: DIRT
+pixels: 
+    x: 3
+    y: 3
+    z: 3

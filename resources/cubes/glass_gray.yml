@@ -1,0 +1,51 @@
+colors: 
+    down: 
+        - [ffc8c8c8, ffc8c8c8, ffc8c8c8, ffc8c8c8, ffc8c8c8, ffc8c8c8]
+        - [ffc8c8c8, 7fc8c8c8, 7fc8c8c8, 7fc8c8c8, 7fc8c8c8, ffc8c8c8]
+        - [ffc8c8c8, 7fc8c8c8, 7fc8c8c8, 7fc8c8c8, 7fc8c8c8, ffc8c8c8]
+        - [ffc8c8c8, 7fc8c8c8, 7fc8c8c8, 7fc8c8c8, 7fc8c8c8, ffc8c8c8]
+        - [ffc8c8c8, 7fc8c8c8, 7fc8c8c8, 7fc8c8c8, 7fc8c8c8, ffc8c8c8]
+        - [ffc8c8c8, ffc8c8c8, ffc8c8c8, ffc8c8c8, ffc8c8c8, ffc8c8c8]
+    east: 
+        - [ffc8c8c8, ffc8c8c8, ffc8c8c8, ffc8c8c8, ffc8c8c8, ffc8c8c8]
+        - [ffc8c8c8, 7fc8c8c8, 7fc8c8c8, 7fc8c8c8, 7fc8c8c8, ffc8c8c8]
+        - [ffc8c8c8, 7fc8c8c8, 7fc8c8c8, 7fc8c8c8, 7fc8c8c8, ffc8c8c8]
+        - [ffc8c8c8, 7fc8c8c8, 7fc8c8c8, 7fc8c8c8, 7fc8c8c8, ffc8c8c8]
+        - [ffc8c8c8, 7fc8c8c8, 7fc8c8c8, 7fc8c8c8, 7fc8c8c8, ffc8c8c8]
+        - [ffc8c8c8, ffc8c8c8, ffc8c8c8, ffc8c8c8, ffc8c8c8, ffc8c8c8]
+    north: 
+        - [ffc8c8c8, ffc8c8c8, ffc8c8c8, ffc8c8c8, ffc8c8c8, ffc8c8c8]
+        - [ffc8c8c8, 7fc8c8c8, 7fc8c8c8, 7fc8c8c8, 7fc8c8c8, ffc8c8c8]
+        - [ffc8c8c8, 7fc8c8c8, 7fc8c8c8, 7fc8c8c8, 7fc8c8c8, ffc8c8c8]
+        - [ffc8c8c8, 7fc8c8c8, 7fc8c8c8, 7fc8c8c8, 7fc8c8c8, ffc8c8c8]
+        - [ffc8c8c8, 7fc8c8c8, 7fc8c8c8, 7fc8c8c8, 7fc8c8c8, ffc8c8c8]
+        - [ffc8c8c8, ffc8c8c8, ffc8c8c8, ffc8c8c8, ffc8c8c8, ffc8c8c8]
+    south: 
+        - [ffc8c8c8, ffc8c8c8, ffc8c8c8, ffc8c8c8, ffc8c8c8, ffc8c8c8]
+        - [ffc8c8c8, 7fc8c8c8, 7fc8c8c8, 7fc8c8c8, 7fc8c8c8, ffc8c8c8]
+        - [ffc8c8c8, 7fc8c8c8, 7fc8c8c8, 7fc8c8c8, 7fc8c8c8, ffc8c8c8]
+        - [ffc8c8c8, 7fc8c8c8, 7fc8c8c8, 7fc8c8c8, 7fc8c8c8, ffc8c8c8]
+        - [ffc8c8c8, 7fc8c8c8, 7fc8c8c8, 7fc8c8c8, 7fc8c8c8, ffc8c8c8]
+        - [ffc8c8c8, ffc8c8c8, ffc8c8c8, ffc8c8c8, ffc8c8c8, ffc8c8c8]
+    up: 
+        - [ffc8c8c8, ffc8c8c8, ffc8c8c8, ffc8c8c8, ffc8c8c8, ffc8c8c8]
+        - [ffc8c8c8, 7fc8c8c8, 7fc8c8c8, 7fc8c8c8, 7fc8c8c8, ffc8c8c8]
+        - [ffc8c8c8, 7fc8c8c8, 7fc8c8c8, 7fc8c8c8, 7fc8c8c8, ffc8c8c8]
+        - [ffc8c8c8, 7fc8c8c8, 7fc8c8c8, 7fc8c8c8, 7fc8c8c8, ffc8c8c8]
+        - [ffc8c8c8, 7fc8c8c8, 7fc8c8c8, 7fc8c8c8, 7fc8c8c8, ffc8c8c8]
+        - [ffc8c8c8, ffc8c8c8, ffc8c8c8, ffc8c8c8, ffc8c8c8, ffc8c8c8]
+    west: 
+        - [ffc8c8c8, ffc8c8c8, ffc8c8c8, ffc8c8c8, ffc8c8c8, ffc8c8c8]
+        - [ffc8c8c8, 7fc8c8c8, 7fc8c8c8, 7fc8c8c8, 7fc8c8c8, ffc8c8c8]
+        - [ffc8c8c8, 7fc8c8c8, 7fc8c8c8, 7fc8c8c8, 7fc8c8c8, ffc8c8c8]
+        - [ffc8c8c8, 7fc8c8c8, 7fc8c8c8, 7fc8c8c8, 7fc8c8c8, ffc8c8c8]
+        - [ffc8c8c8, 7fc8c8c8, 7fc8c8c8, 7fc8c8c8, 7fc8c8c8, ffc8c8c8]
+        - [ffc8c8c8, ffc8c8c8, ffc8c8c8, ffc8c8c8, ffc8c8c8, ffc8c8c8]
+id: 51
+minimap: 
+    color: ffeaff00
+name: GLASS_GRAY
+pixels: 
+    x: 6
+    y: 6
+    z: 6

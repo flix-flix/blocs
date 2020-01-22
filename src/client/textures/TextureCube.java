@@ -1,8 +1,11 @@
 package client.textures;
 
+import java.util.TreeMap;
+
 import data.map.enumerations.Face;
 import data.map.enumerations.Orientation;
 import data.map.enumerations.Rotation;
+import utils.FlixBlocksUtils;
 
 public class TextureCube {
 
@@ -93,9 +96,9 @@ public class TextureCube {
 			return null;
 		}
 
-		if(preview[face.ordinal()] == null)
+		if (preview[face.ordinal()] == null)
 			return TextureSquare.defaultFace;
-		
+
 		return preview[face.ordinal()].getRotated();
 	}
 
@@ -151,5 +154,44 @@ public class TextureCube {
 		TextureFace tf = new TextureFace();
 		tf.setNormal(t);
 		textures[face.ordinal()] = tf;
+	}
+
+	// =========================================================================================================================
+
+	public TreeMap<String, Object> getYAMLTree(int id, String name, int miniMapColor) {
+		TreeMap<String, Object> tree = new TreeMap<>();
+
+		tree.put("id", id);
+		tree.put("name", name);
+
+		TreeMap<String, Object> pixels = new TreeMap<>();
+		tree.put("pixels", pixels);
+
+		pixels.put("x", textures[0].normal.height);
+		pixels.put("y", textures[2].normal.height);
+		pixels.put("z", textures[0].normal.width);
+
+		TreeMap<String, Object> colors = new TreeMap<>();
+		tree.put("colors", colors);
+
+		for (Face face : Face.faces) {
+			int[] array = textures[face.ordinal()].normal.color;
+			int w = textures[face.ordinal()].normal.width;
+			int h = textures[face.ordinal()].normal.height;
+			String[][] colorsFace = new String[w][h];
+
+			for (int i = 0; i < w; i++)
+				for (int j = 0; j < h; j++)
+					colorsFace[i][j] = FlixBlocksUtils.hexaToString(array[i * w + j]);
+
+			colors.put(face.name().toLowerCase(), colorsFace);
+		}
+
+		TreeMap<String, Object> minimap = new TreeMap<>();
+		tree.put("minimap", minimap);
+
+		minimap.put("color", FlixBlocksUtils.hexaToString(miniMapColor));
+
+		return tree;
 	}
 }

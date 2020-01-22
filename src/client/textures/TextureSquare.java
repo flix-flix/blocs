@@ -9,7 +9,7 @@ public class TextureSquare {
 	public int width, height;
 
 	// row * width + col
-	private int color[];
+	int color[];
 
 	public static TextureSquare defaultFace;
 

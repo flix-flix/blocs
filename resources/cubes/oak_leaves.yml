@@ -1,0 +1,33 @@
+colors: 
+    down: 
+        - [ff6cd473, ff01b70e, ff24932c]
+        - [ff24932c, ff6cd473, ffa3d7a6]
+        - [ff6cd473, ff24932c, ff01b70e]
+    east: 
+        - [ff6cd473, ff01b70e, ff24932c]
+        - [ff24932c, ff6cd473, ffa3d7a6]
+        - [ff6cd473, ff24932c, ff01b70e]
+    north: 
+        - [ff6cd473, ff01b70e, ff24932c]
+        - [ff24932c, ff6cd473, ffa3d7a6]
+        - [ff6cd473, ff24932c, ff01b70e]
+    south: 
+        - [ff6cd473, ff01b70e, ff24932c]
+        - [ff24932c, ff6cd473, ffa3d7a6]
+        - [ff6cd473, ff24932c, ff01b70e]
+    up: 
+        - [ff6cd473, ff01b70e, ff24932c]
+        - [ff24932c, ff6cd473, ffa3d7a6]
+        - [ff6cd473, ff24932c, ff01b70e]
+    west: 
+        - [ff6cd473, ff01b70e, ff24932c]
+        - [ff24932c, ff6cd473, ffa3d7a6]
+        - [ff6cd473, ff24932c, ff01b70e]
+id: 21
+minimap: 
+    color: ff109f0c
+name: OAK_LEAVES
+pixels: 
+    x: 3
+    y: 3
+    z: 3

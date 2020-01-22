@@ -1,0 +1,33 @@
+colors: 
+    down: 
+        - [ff888888, ffc4c4c4, ffd2d2d2]
+        - [ffd1d1d1, ffbcbcbc, ffbfbfbf]
+        - [ffbfbfbf, ff949494, ffbababa]
+    east: 
+        - [ff888888, ffc4c4c4, ffd2d2d2]
+        - [ffd1d1d1, ffbcbcbc, ffbfbfbf]
+        - [ffbfbfbf, ff949494, ffbababa]
+    north: 
+        - [ff888888, ffc4c4c4, ffd2d2d2]
+        - [ffd1d1d1, ffbcbcbc, ffbfbfbf]
+        - [ffbfbfbf, ff949494, ffbababa]
+    south: 
+        - [ff888888, ffc4c4c4, ffd2d2d2]
+        - [ffd1d1d1, ffbcbcbc, ffbfbfbf]
+        - [ffbfbfbf, ff949494, ffbababa]
+    up: 
+        - [ff888888, ffc4c4c4, ffd2d2d2]
+        - [ffd1d1d1, ffbcbcbc, ffbfbfbf]
+        - [ffbfbfbf, ff949494, ffbababa]
+    west: 
+        - [ff888888, ffc4c4c4, ffd2d2d2]
+        - [ffd1d1d1, ffbcbcbc, ffbfbfbf]
+        - [ffbfbfbf, ff949494, ffbababa]
+id: 3
+minimap: 
+    color: ff8c8c8c
+name: STONE
+pixels: 
+    x: 3
+    y: 3
+    z: 3

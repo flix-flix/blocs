@@ -28,6 +28,7 @@ import data.id.ItemTable;
 import data.map.Cube;
 import data.map.enumerations.Face;
 import utils.FlixBlocksUtils;
+import utils.yaml.YAML;
 
 public class Editor {
 
@@ -48,6 +49,7 @@ public class Editor {
 	private static Cursor cursorSelectColor = FlixBlocksUtils.createCursor("cursorSelectColor");
 
 	// ======================= Texture generation =========================
+	private TextureCube textureCube;
 	private static final int MAX_SIZE = 16;
 	private int[][][] texture = new int[6][MAX_SIZE][MAX_SIZE];
 	private int textureSize = 3;
@@ -161,7 +163,7 @@ public class Editor {
 				for (int j = 0; j < MAX_SIZE; j++)
 					texture[face][i][j] = (i + j) % 2 == 0 ? 0xff888888 : 0xff555555;
 
-		saveTexture();
+		updatePreviewTexture();
 	}
 
 	public TextureCube createTexture() {
@@ -177,13 +179,16 @@ public class Editor {
 		return new TextureCube(tf);
 	}
 
-	public void saveTexture() {
-		saveTexture(createTexture(), ItemID.EDITOR_PREVIEW);
+	public void updatePreviewTexture() {
+		updatePreviewTexture(createTexture(), ItemID.EDITOR_PREVIEW);
 	}
 
-	public void saveTexture(TextureCube tc, int id) {
-		session.texturePack.addTextureCube(tc, id);
+	public void updatePreviewTexture(TextureCube tc, int id) {
+		// Update TexturePack
+		session.texturePack.setTextureCube(tc, id);
+		// Update miniature preview
 		panel.get(ActionEditor.MINIATURE).update();
+		textureCube = tc;
 	}
 
 	public void setTextureSize(int textureSize) {
@@ -195,6 +200,23 @@ public class Editor {
 		return textureSize;
 	}
 
+	public void saveTexture() {
+		int id = panel.get(ActionEditor.ITEM_ID).getWheelStep();
+		String name = panel.get(ActionEditor.ITEM_NAME).getString();
+		int color = panel.get(ActionEditor.ITEM_COLOR).getValue();
+
+		if (!session.texturePack.isIDAvailable(id))
+			return;
+
+		// Create and set textureCube | Update preview
+		updatePreviewTexture(createTexture(), id);
+		// Add the cube to the list of available cubes
+		session.fen.gui.infos.addCube(new Cube(id));
+
+		// Save the cube in file
+		YAML.encodeFile(textureCube.getYAMLTree(id, name, color), "resources/temp/" + name.toLowerCase() + ".yml");
+	}
+
 	// =========================================================================================================================
 	// Painting
 
@@ -202,7 +224,7 @@ public class Editor {
 		drawPixel(session.faceTarget, session.quadriTarget / textureSize, session.quadriTarget % textureSize,
 				panel.panColor.getColor());
 		updateLastPixel();
-		saveTexture();
+		updatePreviewTexture();
 	}
 
 	public void paintLine() {
@@ -214,7 +236,7 @@ public class Editor {
 				drawPixel(session.faceTarget, row, col, panel.panColor.getColor());
 
 		updateLastPixel();
-		saveTexture();
+		updatePreviewTexture();
 		historyPack();
 	}
 
@@ -229,7 +251,7 @@ public class Editor {
 				drawPixel(session.faceTarget, row, col, panel.panColor.getColor());
 
 		updateLastPixel();
-		saveTexture();
+		updatePreviewTexture();
 		historyPack();
 	}
 
@@ -340,15 +362,11 @@ public class Editor {
 				setListeningKey(action);
 			break;
 		case ITEM_COLOR:
-			panel.get(ActionEditor.ITEM_COLOR).setValue(panel.panColor.getColor() & 0xffffff);
+			panel.get(ActionEditor.ITEM_COLOR).setValue(panel.panColor.getColor() & 0xffffffff);
 			break;
 
 		case ITEM_SAVE:
-			int id = panel.get(ActionEditor.ITEM_ID).getWheelStep();
-			if (!session.texturePack.isIDAvailable(id))
-				return;
-			saveTexture(createTexture(), id);
-			session.fen.gui.infos.addCube(new Cube(id));
+			saveTexture();
 			break;
 		case ITEM_NEW:
 		case ITEM_CLEAR:
@@ -386,7 +404,7 @@ public class Editor {
 
 		case GRID:
 			historyPack.add(new SizeHistory(textureSize, textureSize = panel.get(ActionEditor.GRID).getWheelStep()));
-			saveTexture();
+			updatePreviewTexture();
 			refreshLayerGrid();
 			break;
 		case MINIATURE:
@@ -741,7 +759,7 @@ public class Editor {
 
 				fill(texture[face][row][col], face, row, col);
 
-				saveTexture();
+				updatePreviewTexture();
 				historyPack();
 			}
 			break;

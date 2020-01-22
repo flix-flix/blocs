@@ -1,0 +1,39 @@
+colors: 
+    down: 
+        - [7fc9e1ff, 7f244d80, 7f68acff, 7f77a0d2]
+        - [7f2c6cba, 7f68acff, 7fc9e1ff, 7f77a0d2]
+        - [7f68acff, 7f2c6cba, 7fc9e1ff, 7f244d80]
+        - [7f68acff, 7f2c6cba, 7f77a0d2, 7f244d80]
+    east: 
+        - [7fc9e1ff, 7f244d80, 7f68acff, 7f77a0d2]
+        - [7f2c6cba, 7f68acff, 7fc9e1ff, 7f77a0d2]
+        - [7f68acff, 7f2c6cba, 7fc9e1ff, 7f244d80]
+        - [7f68acff, 7f2c6cba, 7f77a0d2, 7f244d80]
+    north: 
+        - [7fc9e1ff, 7f244d80, 7f68acff, 7f77a0d2]
+        - [7f2c6cba, 7f68acff, 7fc9e1ff, 7f77a0d2]
+        - [7f68acff, 7f2c6cba, 7fc9e1ff, 7f244d80]
+        - [7f68acff, 7f2c6cba, 7f77a0d2, 7f244d80]
+    south: 
+        - [7fc9e1ff, 7f244d80, 7f68acff, 7f77a0d2]
+        - [7f2c6cba, 7f68acff, 7fc9e1ff, 7f77a0d2]
+        - [7f68acff, 7f2c6cba, 7fc9e1ff, 7f244d80]
+        - [7f68acff, 7f2c6cba, 7f77a0d2, 7f244d80]
+    up: 
+        - [7fc9e1ff, 7f244d80, 7f68acff, 7f77a0d2]
+        - [7f2c6cba, 7f68acff, 7fc9e1ff, 7f77a0d2]
+        - [7f68acff, 7f2c6cba, 7fc9e1ff, 7f244d80]
+        - [7f68acff, 7f2c6cba, 7f77a0d2, 7f244d80]
+    west: 
+        - [7fc9e1ff, 7f244d80, 7f68acff, 7f77a0d2]
+        - [7f2c6cba, 7f68acff, 7fc9e1ff, 7f77a0d2]
+        - [7f68acff, 7f2c6cba, 7fc9e1ff, 7f244d80]
+        - [7f68acff, 7f2c6cba, 7f77a0d2, 7f244d80]
+id: 100
+minimap: 
+    color: ff6b83c8
+name: WATER
+pixels: 
+    x: 4
+    y: 4
+    z: 4
