@@ -16,19 +16,21 @@ public class MultiBloc implements Serializable {
 	public LinkedList<Cube> list = new LinkedList<>();
 
 	protected int id;
+	public int itemID;
 	protected int x, y, z;
 
 	public boolean valid = true;
 
-	public MultiBloc(int x, int y, int z) {
+	public MultiBloc(int itemID, int x, int y, int z) {
 		id = nextID++;
+		this.itemID = itemID;
 		this.x = x;
 		this.y = y;
 		this.z = z;
 	}
 
-	public MultiBloc() {
-		this(0, 0, 0);
+	public MultiBloc(int itemID) {
+		this(itemID, 0, 0, 0);
 	}
 
 	// =========================================================================================================================
@@ -81,7 +83,7 @@ public class MultiBloc implements Serializable {
 	// =========================================================================================================================
 
 	public MultiBloc clone() {
-		MultiBloc m = new MultiBloc(x, y, z);
+		MultiBloc m = new MultiBloc(itemID, x, y, z);
 		m.list.addAll(list);
 		return m;
 	}

@@ -211,7 +211,7 @@ public class PanGUI extends JPanel implements ButtonContainer {
 
 	public void updateTexturePack() {
 		for (MenuButtonCube m : infos.cubes)
-			m.model.setTexturePack(session.texturePack);
+			m.updateTexturePack(session.texturePack);
 	}
 
 	// =========================================================================================================================

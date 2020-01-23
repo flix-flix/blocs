@@ -45,7 +45,6 @@ public class Session implements Serializable {
 	public ModelMap map;
 
 	// ============= ===================
-	public ItemTable itemTable;
 	public transient TexturePack texturePack;
 
 	private UserAction action;
@@ -103,8 +102,8 @@ public class Session implements Serializable {
 	// =========================================================================================================================
 
 	public Session() {
-		itemTable = new ItemTable();
-		texturePack = new TexturePack();
+		texturePack = new TexturePack("classic");
+		ItemTable.setTexturePack(texturePack);
 
 		editor = new Editor(this);
 

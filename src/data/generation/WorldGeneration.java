@@ -75,7 +75,7 @@ public class WorldGeneration {
 
 		// Cubes (texture 16x16) with the differents step of the mining animation
 		for (int x = 0; x < 5; x++) {
-			Cube c = new Cube(x, 2, -3, ItemID.MAGIC_BLOC);
+			Cube c = new Cube(x, 2, -3, ItemID.TEST);
 			c.miningState = x;
 			map.add(c);
 		}

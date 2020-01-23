@@ -7,6 +7,8 @@ public class MainServer {
 	public static void main(String[] args) {
 		System.out.println("======== SERVER ==========");
 
+		// ItemTable.init();
+
 		Server server = new Server();
 		Thread serverThread = new Thread(server);
 

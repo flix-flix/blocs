@@ -1,58 +1,74 @@
 package data.id;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.TreeMap;
 
 import client.textures.TexturePack;
 import client.window.graphicEngine.calcul.Camera;
-import client.window.graphicEngine.calcul.Point3D;
 import data.map.Cube;
 import data.map.buildings.Building;
 import data.map.multiblocs.MultiBloc;
-import data.map.resources.Resource;
 import data.map.resources.ResourceType;
 import utils.FlixBlocksUtils;
+import utils.yaml.YAML;
 
 public class ItemTable {
 
+	static TreeMap<Integer, Item> items = new TreeMap<>();
+
+	static ArrayList<String> tags = new ArrayList<>();
+
 	// =========================================================================================================================
-	// Graphic Engine
 
-	public static boolean isOpaque(int itemID) {
-		switch (itemID) {
-		case ItemID.GLASS:
-			return false;
-		case ItemID.GLASS_GRAY:
-			return false;
-		case ItemID.GLASS_RED:
-			return false;
-		case ItemID.WATER:
-			return false;
-		case ItemID.TEST_TRANSPARENT:
-			return false;
+	public static void init() {
+		for (String file : FlixBlocksUtils.getFilesName("resources/items"))
+			addItem(new Item(YAML.parseFile(file)));
 
-		case ItemID.UNIT:
-			return false;
+		YAML lang = YAML.parseFile("resources/lang/fr/fr.yml");
 
-		default:
-			return true;
-		}
+		for (Item item : items.values())
+			item.setLanguage(lang);
 	}
 
-	public static boolean drawContour(int itemID) {
-		switch (itemID) {
-		case ItemID.WATER:
-		case ItemID.CASTLE:
-		case ItemID.TEST_BIG:
-			return false;
-
-		default:
-			return true;
-		}
+	public static void setTexturePack(TexturePack texturePack) {
+		for (int i : items.keySet())
+			if (texturePack.yamls.get(i) != null)
+				items.get(i).setTexture(texturePack.yamls.get(i));
 	}
 
 	// =========================================================================================================================
-	// Multi blocs
+
+	public static Item get(int itemID) {
+		if (!items.containsKey(itemID))
+			System.err.println("[ItemTable] Missing ID: " + itemID);
+		return items.get(itemID);
+	}
+
+	public static void addItem(Item item) {
+		items.put(item.id, item);
+
+		tags.add(item.tag);
+	}
+
+	// =========================================================================================================================
+	// List
+
+	public static ArrayList<String> getItemTagList() {
+		return tags;
+	}
+
+	public static ArrayList<Integer> getItemIDList() {
+		return new ArrayList<Integer>(items.keySet());
+	}
+
+	// =========================================================================================================================
+
+	public static String getType(int itemID) {
+		return get(itemID).type;
+	}
+
+	// =========================================================================================================================
+	// Multibloc
 
 	public static MultiBloc createBuilding(Building build) {
 		MultiBloc multi = createMulti(build.getItemID());
@@ -66,7 +82,7 @@ public class ItemTable {
 			return null;
 		}
 
-		MultiBloc multi = new MultiBloc();
+		MultiBloc multi = new MultiBloc(itemID);
 
 		for (int x = 0; x < getXSize(itemID); x++)
 			for (int y = 0; y < getYSize(itemID); y++)
@@ -77,63 +93,37 @@ public class ItemTable {
 	}
 
 	public static boolean isMultiBloc(int itemID) {
-		switch (itemID) {
-		case ItemID.CASTLE:
-		case ItemID.TEST_BIG:
-			return true;
-		default:
-			return false;
-		}
+		return get(itemID).multibloc;
 	}
 
 	public static int getXSize(int itemID) {
-		switch (itemID) {
-		case ItemID.CASTLE:
-			return 3;
-		case ItemID.TEST_BIG:
-			return 3;
-		default:
-			return 1;
-		}
+		return isMultiBloc(itemID) ? get(itemID).sizeX : 1;
 	}
 
 	public static int getYSize(int itemID) {
-		switch (itemID) {
-		case ItemID.CASTLE:
-			return 2;
-		case ItemID.TEST_BIG:
-			return 2;
-		default:
-			return 1;
-		}
+		return isMultiBloc(itemID) ? get(itemID).sizeY : 1;
 	}
 
 	public static int getZSize(int itemID) {
-		switch (itemID) {
-		case ItemID.CASTLE:
-			return 2;
-		case ItemID.TEST_BIG:
-			return 2;
-		default:
-			return 1;
-		}
+		return isMultiBloc(itemID) ? get(itemID).sizeZ : 1;
+	}
+
+	// =========================================================================================================================
+	// Graphic Engine
+
+	public static boolean isOpaque(int itemID) {
+		return get(itemID).opaque;
+	}
+
+	public static boolean drawContour(int itemID) {
+		return get(itemID).contour;
 	}
 
 	// =========================================================================================================================
 	// Mining
 
 	public static int getMiningTime(int itemID) {
-		switch (itemID) {
-		case ItemID.DIRT:
-		case ItemID.GRASS:
-			return 100;
-		case ItemID.STONE:
-			return 200;
-		case ItemID.OAK_TRUNK:
-			return 100;
-		default:
-			return -1;
-		}
+		return get(itemID).miningTime;
 	}
 
 	public static int getNumberOfMiningSteps() {
@@ -144,127 +134,38 @@ public class ItemTable {
 	// Build
 
 	public static int getBuildingTime(int itemID) {
-		switch (itemID) {
-		case ItemID.CASTLE:
-			return 200;
-		default:
-			return -1;
-		}
+		return get(itemID).buildingTime;
 	}
 
 	// =========================================================================================================================
 	// Resource
 
 	public static boolean isResource(int itemID) {
-		return getResource(itemID) != null;
-	}
-
-	public static Resource getResource(int itemID) {
-		switch (itemID) {
-		case ItemID.OAK_TRUNK:
-			return new Resource(ResourceType.WOOD, 10);
-		case ItemID.STONE:
-			return new Resource(ResourceType.STONE, 10);
-		case ItemID.WATER:
-			return new Resource(ResourceType.WATER, 10);
-		default:
-			return null;
-		}
+		return getResourceType(itemID) != null;
 	}
 
 	public static ResourceType getResourceType(int itemID) {
-		switch (itemID) {
-		case ItemID.OAK_TRUNK:
-			return ResourceType.WOOD;
-		case ItemID.STONE:
-			return ResourceType.STONE;
-		case ItemID.WATER:
-			return ResourceType.WATER;
-		default:
-			return null;
-		}
+		return get(itemID).resourceType;
 	}
 
 	// =========================================================================================================================
+	// Textures
 
 	public static Camera getCamera(int itemID) {
-		if (itemID == ItemID.CASTLE)
-			return new Camera(new Point3D(3.7, 3, 4.2), 236, -30);
-		return new Camera(new Point3D(-.4, 1.5, -1), 58, -35);
+		return get(itemID).camera;
 	}
-
-	// =========================================================================================================================
-
-	public static String getName(int itemID) {
-		switch (itemID) {
-		case ItemID.BORDER:
-			return "BORDER";
-
-		case ItemID.GRASS:
-			return "GRASS";
-		case ItemID.DIRT:
-			return "DIRT";
-		case ItemID.STONE:
-			return "STONE";
-
-		case ItemID.OAK_TRUNK:
-			return "OAK_TRUNK";
-		case ItemID.OAK_LEAVES:
-			return "OAK_LEAVES";
-
-		case ItemID.GLASS:
-			return "GLASS";
-		case ItemID.GLASS_GRAY:
-			return "GLASS_GRAY";
-		case ItemID.GLASS_RED:
-			return "GLASS_RED";
-
-		case ItemID.UNIT:
-			return "UNIT";
-
-		case ItemID.CASTLE:
-			return "CASTLE";
-
-		default:
-			return "NULL";
-		}
-	}
-
-	public static ArrayList<String> getItemTagList() {
-		String[] array = new String[] { "BORDER", "DIRT", "STONE" };
-
-		return new ArrayList<String>(Arrays.asList(array));
-	}
-
-	// =========================================================================================================================
 
 	public static int getMapColor(int itemID) {
-		if (itemID == ItemID.NULL)
-			return 0x7d0085;
+		if (itemID == -1)
+			return 0;
+		return get(itemID).mapColor;
+	}
 
-		switch (itemID) {
-		case ItemID.GRASS:
-			return 0x07d240;
-		case ItemID.DIRT:
-			return 0x705700;
-		case ItemID.STONE:
-			return 0x8c8c8c;
-		case ItemID.WATER:
-			return 0x6b83c8;
-		case ItemID.BORDER:
-			return 0xffffff;
-		case ItemID.OAK_LEAVES:
-			return 0x109f0c;
-		case ItemID.OAK_TRUNK:
-			return 0x5e4303;
+	// =========================================================================================================================
+	// Language
 
-		case ItemID.CASTLE:
-			return 0x1e00ff;// Player 2 0xff0000
-		case ItemID.UNIT:
-			return 0x1e00ff;
+	public static String getName(int itemID) {
 
-		default:
-			return 0xeaff00;
-		}
+		return get(itemID).name;
 	}
 }

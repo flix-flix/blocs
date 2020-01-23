@@ -8,7 +8,7 @@ public class E extends MultiBloc {
 	private static final long serialVersionUID = -4312589735027448825L;
 
 	public E(int x, int y, int z) {
-		super(0, 0, 0);
+		super(ItemID.E, 0, 0, 0);
 
 		for (int i = 0; i <= 6; i++)
 			add(new Cube(x, y + i, z, ItemID.BORDER));

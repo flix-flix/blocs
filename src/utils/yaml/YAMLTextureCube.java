@@ -8,7 +8,6 @@ import data.map.enumerations.Face;
 public class YAMLTextureCube {
 
 	public int id;
-	public String name;
 
 	int x, y, z;
 
@@ -24,7 +23,6 @@ public class YAMLTextureCube {
 
 	public YAMLTextureCube(YAML yaml) {
 		id = yaml.getInt("id");
-		name = yaml.getString("name");
 
 		x = yaml.getInt("pixels.x");
 		y = yaml.getInt("pixels.y");

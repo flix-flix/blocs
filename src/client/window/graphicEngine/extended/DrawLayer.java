@@ -23,7 +23,7 @@ public class DrawLayer {
 
 	static {
 		for (Face face : Face.faces)
-			faces[face.ordinal()] = TextureSquare.generateSquare("menu/editor/faces/" + face.name().toLowerCase());
+			faces[face.ordinal()] = TextureSquare.generateSquare("static/faces/" + face.name().toLowerCase());
 	}
 
 	// =========================================================================================================================

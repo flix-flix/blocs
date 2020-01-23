@@ -29,7 +29,7 @@ public class MenuButtonAction extends Menu {
 		this.action = action;
 		this.container = container;
 
-		img = FlixBlocksUtils.getImage("menu/" + action.name().toLowerCase());
+		img = FlixBlocksUtils.getImage(session.texturePack.getFolder() + "menu/" + action.name().toLowerCase());
 	}
 
 	// =========================================================================================================================

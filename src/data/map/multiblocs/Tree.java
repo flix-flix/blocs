@@ -7,7 +7,7 @@ public class Tree extends MultiBloc {
 	private static final long serialVersionUID = -29779535748503307L;
 
 	public Tree(int x, int y, int z) {
-		super(x, y, z);
+		super(ItemID.TREE, x, y, z);
 
 		add(new Cube(x, y, z, ItemID.OAK_TRUNK));
 		add(new Cube(x, y + 1, z, ItemID.OAK_TRUNK));

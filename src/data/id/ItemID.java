@@ -27,6 +27,9 @@ public class ItemID {
 
 	public static final int CASTLE = 300;
 
+	public static final int TREE = 400;
+	public static final int E = 401;
+
 	public static final int EDITOR_PREVIEW = 900;
 
 	public static final int MAGIC_BLOC = 995;

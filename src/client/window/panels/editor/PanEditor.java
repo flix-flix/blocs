@@ -70,7 +70,7 @@ public class PanEditor extends JPanel {
 		// ========================================================================================
 		// ItemID
 
-		menu.addBottom(gridItemID = new MenuGrid(), 110);
+		menu.addBottom(gridItemID = new MenuGrid(), 122);
 
 		gridItemID.setCols(3);
 		gridItemID.setRowHeight(50);

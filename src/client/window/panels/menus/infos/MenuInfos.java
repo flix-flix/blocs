@@ -24,8 +24,7 @@ public class MenuInfos extends Menu {
 	public MenuGrid gridCubes;
 
 	private int[] itemIDs = new int[] { ItemID.BORDER, ItemID.GRASS, ItemID.DIRT, ItemID.OAK_TRUNK, ItemID.OAK_LEAVES,
-			ItemID.OAK_BOARD, ItemID.STONE, ItemID.GLASS, ItemID.GLASS_GRAY, ItemID.GLASS_RED, ItemID.WATER,
-			ItemID.TEST_TRANSPARENT };
+			ItemID.STONE, ItemID.GLASS, ItemID.GLASS_GRAY, ItemID.GLASS_RED, ItemID.WATER, ItemID.TEST_TRANSPARENT };
 	private ArrayList<Cube> _cubes = new ArrayList<>();
 	public ArrayList<MenuButtonCube> cubes = new ArrayList<>();
 
@@ -48,7 +47,7 @@ public class MenuInfos extends Menu {
 
 		_cubes.add(new Tree().getCube());
 		_cubes.add(new E().getCube());
-		_cubes.add(ItemTable.createBuilding(new Building(null, ItemID.CASTLE, 0, 0, 0, false)).getCube());
+		_cubes.add(ItemTable.createBuilding(new Building(null, ItemID.CASTLE, 0, 0, 0, true)).getCube());
 
 		for (Cube cube : _cubes)
 			addCube(cube);

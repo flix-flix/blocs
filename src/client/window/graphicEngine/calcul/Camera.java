@@ -2,8 +2,6 @@ package client.window.graphicEngine.calcul;
 
 public class Camera {
 
-	// ==== Camera infos ====
-
 	/** Position of the camera */
 	public Point3D vue = new Point3D(0, 0, 0);
 	/** Rotation of the camera on the horizontal axe */
@@ -50,5 +48,12 @@ public class Camera {
 
 	public void setVy(double vy) {
 		this.vy = vy;
+	}
+
+	// =========================================================================================================================
+
+	@Override
+	public String toString() {
+		return "Camera [vue=" + vue.toString() + ", vx=" + vx + ", vy=" + vy + "]";
 	}
 }

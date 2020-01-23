@@ -141,7 +141,9 @@ public class MenuGrid extends Menu {
 	private void setMenu(Menu menu, int row, int col) {
 		int padding = this.padding == GRID_SPACE ? gridSpace : this.padding;
 
-		int w = (getWidth() - (cols - 1) * gridSpace - 2 * (borderSize + padding)) / cols;
+		int width = getWidth() - (visibleHeight < getHeight() ? scrollWidth+gridSpace : 0);
+		int w = (width - (cols - 1) * gridSpace - 2 * (borderSize + padding)) / cols;
+
 		int wMore = (getWidth() - (cols - 1) * gridSpace - 2 * (borderSize + padding)) % cols;
 		int h = rowHeight == SQUARE ? w : rowHeight;
 

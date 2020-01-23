@@ -23,6 +23,7 @@ import client.window.graphicEngine.extended.ModelMap;
 import client.window.graphicEngine.structures.Quadri;
 import client.window.panels.editor.PanEditor;
 import data.dynamic.TickClock;
+import data.id.Item;
 import data.id.ItemID;
 import data.id.ItemTable;
 import data.map.Cube;
@@ -43,10 +44,10 @@ public class Editor {
 
 	private ModelCube cube;
 
-	// ======================= Texture generation =========================
-	private static Cursor cursorPaint = FlixBlocksUtils.createCursor("cursorPaint");
-	private static Cursor cursorFill = FlixBlocksUtils.createCursor("cursorFill");
-	private static Cursor cursorSelectColor = FlixBlocksUtils.createCursor("cursorSelectColor");
+	// ======================= Cursor =========================
+	private Cursor cursorPaint;
+	private Cursor cursorFill;
+	private Cursor cursorSelectColor;
 
 	// ======================= Texture generation =========================
 	private TextureCube textureCube;
@@ -105,6 +106,8 @@ public class Editor {
 		clock = new TickClock("Editor Clock");
 		clock.add(map);
 		clock.start();
+
+		generateCursor();
 
 		// ========================================================================================
 
@@ -202,19 +205,21 @@ public class Editor {
 
 	public void saveTexture() {
 		int id = panel.get(ActionEditor.ITEM_ID).getWheelStep();
-		String name = panel.get(ActionEditor.ITEM_NAME).getString();
+		String tag = panel.get(ActionEditor.ITEM_NAME).getString();
 		int color = panel.get(ActionEditor.ITEM_COLOR).getValue();
 
 		if (!session.texturePack.isIDAvailable(id))
 			return;
 
+		// Add to ItemTable
+		ItemTable.addItem(new Item(id, tag));
 		// Create and set textureCube | Update preview
 		updatePreviewTexture(createTexture(), id);
 		// Add the cube to the list of available cubes
 		session.fen.gui.infos.addCube(new Cube(id));
 
 		// Save the cube in file
-		YAML.encodeFile(textureCube.getYAML(id, name, color), "resources/temp/" + name.toLowerCase() + ".yml");
+		YAML.encodeFile(textureCube.getYAML(id, tag, color), "resources/temp/" + tag.toLowerCase() + ".yml");
 	}
 
 	// =========================================================================================================================
@@ -712,6 +717,12 @@ public class Editor {
 			cursor = controlDown ? cursorSelectColor : cursorFill;
 
 		return cursor;
+	}
+
+	public void generateCursor() {
+		cursorPaint = FlixBlocksUtils.createCursor(session.texturePack.getFolder() + "cursor/cursorPaint");
+		cursorFill = FlixBlocksUtils.createCursor(session.texturePack.getFolder() + "cursor/cursorFill");
+		cursorSelectColor = FlixBlocksUtils.createCursor(session.texturePack.getFolder() + "cursor/cursorSelectColor");
 	}
 
 	// =========================================================================================================================

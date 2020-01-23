@@ -68,7 +68,8 @@ public class MenuButtonEditor extends Menu {
 		this.action = action;
 
 		if (hasImage())
-			img = FlixBlocksUtils.getImage("menu/editor/" + action.name().toLowerCase());
+			img = FlixBlocksUtils
+					.getImage(editor.session.texturePack.getFolder() + "menu/editor/" + action.name().toLowerCase());
 		else
 			setMinimumSize(new Dimension(fm.stringWidth(getText()), 20));
 

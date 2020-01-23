@@ -14,12 +14,12 @@ public class TextureMulti {
 
 	// =========================================================================================================================
 
-	public TextureMulti(TextureSquare[] textures, int resX, int resY, int resZ) {
+	public TextureMulti(TextureSquare[] textures, int itemID) {
 		this.textures = textures;
 
-		this.resX = resX;
-		this.resY = resY;
-		this.resZ = resZ;
+		this.resX = ItemTable.getXSize(itemID);
+		this.resY = ItemTable.getYSize(itemID);
+		this.resZ = ItemTable.getZSize(itemID);
 
 		cut();
 	}
@@ -78,7 +78,7 @@ public class TextureMulti {
 	// =========================================================================================================================
 
 	public TextureSquare getFace(Cube cube, Face face) {
-		if(cube.multibloc == null)
+		if (cube.multibloc == null)
 			return textures[face.ordinal()];
 		return cubes[cube.multiblocX][cube.multiblocY][cube.multiblocZ].getTexture(face, cube.rotation,
 				cube.orientation);
@@ -86,19 +86,14 @@ public class TextureMulti {
 
 	// =========================================================================================================================
 
-	public YAML getYAML(int id, String name, int miniMapColor) {
+	public YAML getYAML(int id, int miniMapColor) {
 		YAML yaml = new YAML();
 
 		yaml.put("id", id);
-		yaml.put("name", name);
 
 		yaml.put("pixels.x", textures[0].height);
 		yaml.put("pixels.y", textures[2].height);
 		yaml.put("pixels.z", textures[0].width);
-
-		yaml.put("cubes.x", ItemTable.getXSize(id));
-		yaml.put("cubes.y", ItemTable.getYSize(id));
-		yaml.put("cubes.z", ItemTable.getZSize(id));
 
 		for (Face face : Face.faces)
 			yaml.putHexaDoubleArrayInline("colors." + face.name().toLowerCase(), textures[face.ordinal()].color,

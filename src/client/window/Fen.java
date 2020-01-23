@@ -28,6 +28,7 @@ import client.window.panels.PanPause;
 import client.window.panels.editor.PanEditor;
 import data.id.ItemTable;
 import data.map.Cube;
+import data.map.resources.ResourceType;
 import server.game.GameMode;
 import server.send.Action;
 import utils.FlixBlocksUtils;
@@ -42,18 +43,9 @@ public class Fen extends JFrame {
 	private static Cursor cursorInvisible = Toolkit.getDefaultToolkit().createCustomCursor(imgCursorInvisible,
 			new Point(0, 0), "blank cursor");
 
-	private static Cursor cursorGoto = FlixBlocksUtils.createCursor("cursorGoto");
-	private static Cursor cursorBuild = FlixBlocksUtils.createCursor("cursorBuild");
-	private static Cursor cursorAttack = FlixBlocksUtils.createCursor("cursorAttack");
-
-	private static Cursor cursorDrop = FlixBlocksUtils.createCursor("cursorDrop");
-	private static Cursor cursorDropWood = FlixBlocksUtils.createCursor("cursorDropWood");
-	private static Cursor cursorDropStone = FlixBlocksUtils.createCursor("cursorDropStone");
-	private static Cursor cursorDropWater = FlixBlocksUtils.createCursor("cursorDropWater");
-
-	private static Cursor cursorAxe = FlixBlocksUtils.createCursor("cursorAxe");
-	private static Cursor cursorPickaxe = FlixBlocksUtils.createCursor("cursorPickaxe");
-	private static Cursor cursorBucket = FlixBlocksUtils.createCursor("cursorBucket");
+	private Cursor cursorGoto, cursorBuild, cursorAttack;
+	private Cursor cursorDrop, cursorDropWood, cursorDropStone, cursorDropWater;
+	private Cursor cursorAxe, cursorPickaxe, cursorBucket;
 
 	private boolean cursorVisible = true;
 
@@ -83,6 +75,9 @@ public class Fen extends JFrame {
 		this.session = session;
 		session.fen = this;
 
+		generateCursor();
+		ResourceType.setTextureFolder(session.texturePack.getFolder());
+
 		// ======================================
 
 		game = new PanGame(session);
@@ -111,7 +106,7 @@ public class Fen extends JFrame {
 
 		editor.setVisible(false);
 
-		//this.setContentPane(game);
+		// this.setContentPane(game);
 		this.add(game);
 		game.add(pause, -1);
 		game.add(devlop, -1);
@@ -465,6 +460,21 @@ public class Fen extends JFrame {
 	public void setCursorVisible(boolean visible) {
 		cursorVisible = visible;
 		updateCursor();
+	}
+
+	public void generateCursor() {
+		cursorGoto = FlixBlocksUtils.createCursor(session.texturePack.getFolder() + "cursor/cursorGoto");
+		cursorBuild = FlixBlocksUtils.createCursor(session.texturePack.getFolder() + "cursor/cursorBuild");
+		cursorAttack = FlixBlocksUtils.createCursor(session.texturePack.getFolder() + "cursor/cursorAttack");
+
+		cursorDrop = FlixBlocksUtils.createCursor(session.texturePack.getFolder() + "cursor/cursorDrop");
+		cursorDropWood = FlixBlocksUtils.createCursor(session.texturePack.getFolder() + "cursor/cursorDropWood");
+		cursorDropStone = FlixBlocksUtils.createCursor(session.texturePack.getFolder() + "cursor/cursorDropStone");
+		cursorDropWater = FlixBlocksUtils.createCursor(session.texturePack.getFolder() + "cursor/cursorDropWater");
+
+		cursorAxe = FlixBlocksUtils.createCursor(session.texturePack.getFolder() + "cursor/cursorAxe");
+		cursorPickaxe = FlixBlocksUtils.createCursor(session.texturePack.getFolder() + "cursor/cursorPickaxe");
+		cursorBucket = FlixBlocksUtils.createCursor(session.texturePack.getFolder() + "cursor/cursorBucket");
 	}
 
 	// =========================================================================================================================

@@ -10,10 +10,10 @@ public enum ResourceType {
 
 	private static Image wood, stone, water;
 
-	static {
-		wood = FlixBlocksUtils.getImage("menu/wood");
-		stone = FlixBlocksUtils.getImage("menu/stone");
-		water = FlixBlocksUtils.getImage("menu/water");
+	public static void setTextureFolder(String folder) {
+		wood = FlixBlocksUtils.getImage(folder + "menu/wood");
+		stone = FlixBlocksUtils.getImage(folder + "menu/stone");
+		water = FlixBlocksUtils.getImage(folder + "menu/water");
 	}
 
 	public Image getImage() {

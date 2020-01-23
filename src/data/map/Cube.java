@@ -79,7 +79,7 @@ public class Cube implements Serializable {
 		this.sizeZ = sizeZ;
 
 		if (ItemTable.isResource(itemID))
-			resource = ItemTable.getResource(itemID);
+			resource = new Resource(ItemTable.getResourceType(itemID), 10);
 	}
 
 	public Cube(double x, double y, double z, double sizeX, double sizeY, double sizeZ, int itemID) {

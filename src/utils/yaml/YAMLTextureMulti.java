@@ -1,10 +1,13 @@
 package utils.yaml;
 
 import client.textures.TextureMulti;
+import client.window.graphicEngine.calcul.Camera;
 
 public class YAMLTextureMulti extends YAMLTextureCube {
 
 	int sizeX, sizeY, sizeZ;
+
+	Camera camera;
 
 	TextureMulti texture;
 
@@ -13,11 +16,7 @@ public class YAMLTextureMulti extends YAMLTextureCube {
 	public YAMLTextureMulti(YAML yaml) {
 		super(yaml);
 
-		sizeX = yaml.getInt("cubes.x");
-		sizeY = yaml.getInt("cubes.y");
-		sizeZ = yaml.getInt("cubes.z");
-
-		texture = new TextureMulti(ts, sizeX, sizeY, sizeZ);
+		texture = new TextureMulti(ts, id);
 	}
 
 	// =========================================================================================================================

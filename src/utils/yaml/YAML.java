@@ -70,6 +70,10 @@ public class YAML {
 		return Integer.valueOf(getString(path));
 	}
 
+	public double getDouble(String path) {
+		return Double.valueOf(getString(path));
+	}
+
 	public int getHexa(String path) {
 		return FlixBlocksUtils.parseHexa((getString(path)));
 	}
@@ -182,7 +186,7 @@ public class YAML {
 	}
 
 	public static boolean isAList(ArrayList<String> list, int index) {
-		return list.size() > index + 1 && list.get(index + 1).contains("-");
+		return list.size() > index + 1 && list.get(index + 1).contains("[");
 	}
 
 	public static Object decodeList(ArrayList<String> list, Int index, int decal) {

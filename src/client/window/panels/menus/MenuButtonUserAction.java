@@ -29,7 +29,7 @@ public class MenuButtonUserAction extends Menu {
 		super(session);
 		this.action = action;
 
-		img = FlixBlocksUtils.getImage("menu/" + action.name().toLowerCase());
+		img = FlixBlocksUtils.getImage(session.texturePack.getFolder() + "menu/" + action.name().toLowerCase());
 
 		if (action == UserAction.CREA_ADD) {
 			engine = new Engine(new Camera(new Point3D(-.4, 1.5, -1), 58, -35),

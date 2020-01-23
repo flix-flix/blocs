@@ -57,7 +57,7 @@ public class FlixBlocksUtils {
 
 		if (url == null) {
 			debugBefore("ERROR: can't read file: " + ("/" + path + ".png"));
-			url = PanGame.class.getResource("/999.png");
+			url = PanGame.class.getResource("/textures/999.png");
 		}
 
 		try {
@@ -83,7 +83,7 @@ public class FlixBlocksUtils {
 	// =========================================================================================================================
 
 	public static Cursor createCursor(String file) {
-		Image img = FlixBlocksUtils.getImage("cursor/" + file);
+		Image img = FlixBlocksUtils.getImage(file);
 		return Toolkit.getDefaultToolkit().createCustomCursor(img, new Point(0, 0), file);
 	}
 
