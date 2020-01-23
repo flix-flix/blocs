@@ -1,0 +1,5 @@
+id: 100
+tag: WATER
+opaque: false
+resource:
+    type: WATER

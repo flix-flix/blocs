@@ -37,3 +37,4 @@ pixels:
     x: 4
     y: 4
     z: 4
+contour: false

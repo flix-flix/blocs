@@ -1,0 +1,24 @@
+items:
+    border: Border
+    dirt: Dirt
+    grass: Grass
+    stone: Stone
+    
+    water: Water
+        
+    oak_leaves: Oak leaves
+    oak_trunk: Oak Trunk
+
+    glass: Glass
+    glass_red: Ged glass
+    glass_gray: Gray glass
+    
+    unit: Unit
+    
+    castle: Castle
+
+    tree: Oak
+    e: E
+
+    preview: Preveiw
+    test: Test

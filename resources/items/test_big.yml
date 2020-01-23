@@ -1,0 +1,8 @@
+id: 996
+tag : TEST_BIG
+type: multibloc
+multibloc:
+    size:
+        x: 3
+        y: 2
+        z: 2

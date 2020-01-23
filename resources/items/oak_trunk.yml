@@ -1,0 +1,6 @@
+id: 20
+tag: OAK_TRUNK
+mining:
+    time: 100
+resource:
+    type: WOOD

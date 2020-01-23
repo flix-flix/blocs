@@ -1,0 +1,24 @@
+items:
+    border: Bordure
+    dirt: Terre
+    grass: Herbe
+    stone: Pierre
+    
+    water: Eau
+        
+    oak_leaves: Feuilles de chêne
+    oak_trunk: Tronc de chêne
+
+    glass: Verre
+    glass_red: Verre rouge
+    glass_gray: Verre gris
+    
+    unit: Unité
+    
+    castle: Chateau
+    
+    tree: Chêne
+    e: E
+    
+    preview: Prévisualisation
+    test: Test

@@ -1,0 +1,10 @@
+id: 300
+tag : CASTLE
+type: multibloc
+multibloc:
+    size:
+        x: 3
+        y: 2
+        z: 2
+building:
+    time: 200

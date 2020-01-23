@@ -1,0 +1,6 @@
+id: 3
+tag: STONE
+mining:
+    time: 200
+resource:
+    type: STONE
