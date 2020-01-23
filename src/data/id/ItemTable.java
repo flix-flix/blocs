@@ -230,7 +230,7 @@ public class ItemTable {
 		}
 	}
 
-	public static ArrayList<String> getItemNameList() {
+	public static ArrayList<String> getItemTagList() {
 		String[] array = new String[] { "BORDER", "DIRT", "STONE" };
 
 		return new ArrayList<String>(Arrays.asList(array));

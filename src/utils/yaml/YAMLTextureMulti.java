@@ -1,10 +1,8 @@
 package utils.yaml;
 
-import java.util.TreeMap;
-
 import client.textures.TextureMulti;
 
-public class YAMLTextureMulti extends YAMLTextureFace {
+public class YAMLTextureMulti extends YAMLTextureCube {
 
 	int sizeX, sizeY, sizeZ;
 
@@ -12,17 +10,14 @@ public class YAMLTextureMulti extends YAMLTextureFace {
 
 	// =========================================================================================================================
 
-	public YAMLTextureMulti(TreeMap<String, Object> tree) {
-		super(tree);
+	public YAMLTextureMulti(YAML yaml) {
+		super(yaml);
 
-		TreeMap<String, String> cubes = (TreeMap<String, String>) tree.get("cubes");
-
-		sizeX = Integer.valueOf(cubes.get("x"));
-		sizeY = Integer.valueOf(cubes.get("y"));
-		sizeZ = Integer.valueOf(cubes.get("z"));
+		sizeX = yaml.getInt("cubes.x");
+		sizeY = yaml.getInt("cubes.y");
+		sizeZ = yaml.getInt("cubes.z");
 
 		texture = new TextureMulti(ts, sizeX, sizeY, sizeZ);
-
 	}
 
 	// =========================================================================================================================

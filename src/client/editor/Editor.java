@@ -214,7 +214,7 @@ public class Editor {
 		session.fen.gui.infos.addCube(new Cube(id));
 
 		// Save the cube in file
-		YAML.encodeFile(textureCube.getYAMLTree(id, name, color), "resources/temp/" + name.toLowerCase() + ".yml");
+		YAML.encodeFile(textureCube.getYAML(id, name, color), "resources/temp/" + name.toLowerCase() + ".yml");
 	}
 
 	// =========================================================================================================================
@@ -515,7 +515,7 @@ public class Editor {
 	public void writeName(String str) {
 		boolean valid = true;
 
-		for (String name : ItemTable.getItemNameList())
+		for (String name : ItemTable.getItemTagList())
 			if (str.equals(name)) {
 				valid = false;
 				break;

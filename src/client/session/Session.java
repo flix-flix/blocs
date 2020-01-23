@@ -36,22 +36,22 @@ import utils.FlixBlocksUtils;
 public class Session implements Serializable {
 	private static final long serialVersionUID = 8569378400890835470L;
 
-	// ============= Emitter ===================
+	// ============= Server ===================
 	Client client;
 
-	// ============= ===================
+	public Player player = new Player("Felix");
+	public GameMode gamemode = GameMode.CLASSIC;
+
 	public ModelMap map;
 
+	// ============= ===================
+	public ItemTable itemTable;
 	public transient TexturePack texturePack;
-
-	public GameMode gamemode = GameMode.CLASSIC;
-	public Player player = new Player("Felix");
 
 	private UserAction action;
 	public Action unitAction;
 
-	// ================================
-
+	// ============= ===================
 	private Engine engine;
 
 	public Editor editor;
@@ -62,7 +62,6 @@ public class Session implements Serializable {
 	public TickClock clock;
 
 	// ============= Target ===================
-
 	public ModelCube cubeTarget;
 	public Face faceTarget;
 	public int quadriTarget;
@@ -73,7 +72,6 @@ public class Session implements Serializable {
 	public Coord previousPreview;
 
 	// ============== F3 (Dev infos) ==================
-
 	/** The orientation of the player */
 	public Orientation playerOrientation = Orientation.NORTH;
 	/** Chronometric marks */
@@ -105,6 +103,7 @@ public class Session implements Serializable {
 	// =========================================================================================================================
 
 	public Session() {
+		itemTable = new ItemTable();
 		texturePack = new TexturePack();
 
 		editor = new Editor(this);
@@ -114,9 +113,7 @@ public class Session implements Serializable {
 		keyboard = new Keyboard(this);
 		clock = new TickClock("Client Clock");
 
-		camera = new Camera(new Point3D(15, 35, 0));
-		camera.setVx(90);
-		camera.setVy(-65);
+		camera = new Camera(new Point3D(15, 35, 0), 90, -65);
 
 		setAction(UserAction.MOUSE);
 

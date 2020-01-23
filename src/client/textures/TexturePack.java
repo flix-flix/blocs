@@ -1,6 +1,5 @@
 package client.textures;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import client.window.graphicEngine.extended.ModelCube;
@@ -11,7 +10,7 @@ import data.map.enumerations.Orientation;
 import data.map.enumerations.Rotation;
 import utils.FlixBlocksUtils;
 import utils.yaml.YAML;
-import utils.yaml.YAMLTextureFace;
+import utils.yaml.YAMLTextureCube;
 import utils.yaml.YAMLTextureMulti;
 
 public class TexturePack {
@@ -34,25 +33,13 @@ public class TexturePack {
 	TextureSquare faceError = TextureSquare.generateSquare("999");
 
 	public TexturePack() {
-		ArrayList<String> list = FlixBlocksUtils.getFilesName("resources/cubes");
-
-		for (String file : list) {
-			if (file.indexOf(".yml") == -1)
-				continue;
-
-			YAMLTextureFace texture = new YAMLTextureFace(YAML.parseFile(file));
-
+		for (String file : FlixBlocksUtils.getFilesName("resources/cubes")) {
+			YAMLTextureCube texture = new YAMLTextureCube(YAML.parseFile(file));
 			texturesCubes.put(texture.id, texture.getTextureCube());
 		}
 
-		ArrayList<String> listMulti = FlixBlocksUtils.getFilesName("resources/multi");
-
-		for (String file : listMulti) {
-			if (file.indexOf(".yml") == -1)
-				continue;
-
+		for (String file : FlixBlocksUtils.getFilesName("resources/multi")) {
 			YAMLTextureMulti texture = new YAMLTextureMulti(YAML.parseFile(file));
-
 			texturesMulti.put(texture.id, texture.getTextureMulti());
 		}
 

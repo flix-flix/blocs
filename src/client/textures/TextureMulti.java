@@ -1,11 +1,9 @@
 package client.textures;
 
-import java.util.TreeMap;
-
 import data.id.ItemTable;
 import data.map.Cube;
 import data.map.enumerations.Face;
-import utils.FlixBlocksUtils;
+import utils.yaml.YAML;
 
 public class TextureMulti {
 
@@ -80,53 +78,34 @@ public class TextureMulti {
 	// =========================================================================================================================
 
 	public TextureSquare getFace(Cube cube, Face face) {
+		if(cube.multibloc == null)
+			return textures[face.ordinal()];
 		return cubes[cube.multiblocX][cube.multiblocY][cube.multiblocZ].getTexture(face, cube.rotation,
 				cube.orientation);
 	}
 
 	// =========================================================================================================================
 
-	public TreeMap<String, Object> getYAMLTree(int id, String name, int miniMapColor) {
-		TreeMap<String, Object> tree = new TreeMap<>();
+	public YAML getYAML(int id, String name, int miniMapColor) {
+		YAML yaml = new YAML();
 
-		tree.put("id", id);
-		tree.put("name", name);
+		yaml.put("id", id);
+		yaml.put("name", name);
 
-		TreeMap<String, Object> pixels = new TreeMap<>();
-		tree.put("pixels", pixels);
+		yaml.put("pixels.x", textures[0].height);
+		yaml.put("pixels.y", textures[2].height);
+		yaml.put("pixels.z", textures[0].width);
 
-		pixels.put("x", textures[0].height);
-		pixels.put("y", textures[2].height);
-		pixels.put("z", textures[0].width);
+		yaml.put("cubes.x", ItemTable.getXSize(id));
+		yaml.put("cubes.y", ItemTable.getYSize(id));
+		yaml.put("cubes.z", ItemTable.getZSize(id));
 
-		TreeMap<String, Object> cubes = new TreeMap<>();
-		tree.put("cubes", cubes);
+		for (Face face : Face.faces)
+			yaml.putHexaDoubleArrayInline("colors." + face.name().toLowerCase(), textures[face.ordinal()].color,
+					textures[face.ordinal()].width);
 
-		cubes.put("x", ItemTable.getXSize(id));
-		cubes.put("y", ItemTable.getYSize(id));
-		cubes.put("z", ItemTable.getZSize(id));
+		yaml.putHexa("minimap.color", miniMapColor);
 
-		TreeMap<String, Object> colors = new TreeMap<>();
-		tree.put("colors", colors);
-
-		for (Face face : Face.faces) {
-			int[] array = textures[face.ordinal()].color;
-			int w = textures[face.ordinal()].width;
-			int h = textures[face.ordinal()].height;
-			String[][] colorsFace = new String[h][w];
-
-			for (int i = 0; i < h; i++)
-				for (int j = 0; j < w; j++)
-					colorsFace[i][j] = FlixBlocksUtils.hexaToString(array[i * w + j]);
-
-			colors.put(face.name().toLowerCase(), colorsFace);
-		}
-
-		TreeMap<String, Object> minimap = new TreeMap<>();
-		tree.put("minimap", minimap);
-
-		minimap.put("color", FlixBlocksUtils.hexaToString(miniMapColor));
-
-		return tree;
+		return yaml;
 	}
 }

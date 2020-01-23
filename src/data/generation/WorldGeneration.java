@@ -73,13 +73,6 @@ public class WorldGeneration {
 		Cube off = new Cube(-1, ground, 0, 0, 45, 45, 1, 1, 1, ItemID.TEST);
 		map.add(off);
 
-		// ========== Preview cubes ==========
-		map.add(new Cube(18, ground, 2, ItemID.GRASS));
-		// map.setPreview(map.gridGet(18, ground, 2), true);
-
-		map.add(new Cube(13, ground, 13, ItemID.DIRT));
-		// map.setPreview(map.gridGet(13, ground, 13), true);
-
 		// Cubes (texture 16x16) with the differents step of the mining animation
 		for (int x = 0; x < 5; x++) {
 			Cube c = new Cube(x, 2, -3, ItemID.MAGIC_BLOC);
@@ -105,18 +98,6 @@ public class WorldGeneration {
 		// Add off-grid cube
 		map.add(new Cube(19, ground, 19, 0, 0, 0, 3, 2, 2, ItemID.TEST_BIG));
 
-		// Add multibloc of off-grids without border
-		MultiBloc m = new MultiBloc();
-		m.add(new Cube(0, 0, 0, 0, 0, 0, 3, 2, 2, ItemID.TEST_BIG));
-		m.add(new Cube(0, 0, 2, 0, 0, 0, 3, 2, 2, ItemID.TEST_BIG));
-		m.add(new Cube(0, 0, 4, 0, 0, 0, 3, 2, 2, ItemID.TEST_BIG));
-		m.add(new Cube(5, 0, 0, 0, 90, 0, 3, 2, 2, ItemID.TEST_BIG));
-		m.add(new Cube(5, 0, 3, 0, 90, 0, 3, 2, 2, ItemID.TEST_BIG));
-
-		m.setCoords(5, ground, 25);
-
-		map.add(m.getCube());
-
 		// Add Multibloc
 		MultiBloc testBig = ItemTable.createMulti(ItemID.TEST_BIG);
 		testBig.setCoords(15, ground, 19);
@@ -130,19 +111,14 @@ public class WorldGeneration {
 		// =========================================================================================================================
 		// Units
 
+		// Dig
 		for (int i = 10; i < 20; i++)
 			for (int j = 6; j < 15; j++)
 				map.remove(i, 9, j);
 
-		// Add Unit
-		Unit u1 = new Unit(felix, 5, ground, 5);
-		map.addUnit(u1);
-		// u1.goTo(map, new Coord(15, ground - 1, 9));
-
-		Unit u2 = new Unit(felix, 6, ground, 2);
-		map.addUnit(u2);
-		// u2.goTo(map, new Coord(10, ground, 2));
-
+		// Add Units
+		map.addUnit(new Unit(felix, 5, ground, 5));
+		map.addUnit(new Unit(felix, 6, ground, 2));
 		map.addUnit(new Unit(felix, 4, ground, 2));
 		map.addUnit(new Unit(felix, 5, ground, 2));
 
