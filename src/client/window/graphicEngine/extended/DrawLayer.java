@@ -19,11 +19,27 @@ public class DrawLayer {
 
 	// =========================================================================================================================
 
-	static TextureSquare[] faces = new TextureSquare[6];
+	static TextureSquare[] letters = new TextureSquare[26];
 
 	static {
-		for (Face face : Face.faces)
-			faces[face.ordinal()] = TextureSquare.generateSquare("static/faces/" + face.name().toLowerCase());
+		TextureSquare alphabet = TextureSquare.generateSquare("static/alphabet");
+
+		int start = 0;
+
+		for (char c = 'A'; c <= 'Z'; c++) {
+			int width = 3;
+
+			// Look after the red end-line
+			while (start + width + 1 < alphabet.width && alphabet.getColor(0, start + width) != -65536)
+				width++;
+
+			letters[c - 'A'] = alphabet.getRect(start, 0, width, 7);
+			start += width + 1;
+		}
+	}
+
+	public static TextureSquare getLetter(char c) {
+		return letters[Character.toUpperCase(c) - 'A'];
 	}
 
 	// =========================================================================================================================
@@ -87,12 +103,7 @@ public class DrawLayer {
 		drawLine(col2, row1, col1, row1, color);
 	}
 
-	public void drawFace() {
-		for (int row = 0; row < 16; row++)
-			for (int col = 0; col < 16; col++)
-				if (faces[face.ordinal()].getColor(row, col) == 0xff000000)
-					dataList.add(new Data(true, col, row, col + 1, row + 1, false, 16, 0xff762277, face, 2));
-	}
+	// =========================================================================================================================
 
 	public void drawGrid() {
 		TextureSquare texture = cube.texturePack.getFace(cube.itemID, face);
@@ -101,6 +112,32 @@ public class DrawLayer {
 			drawLine(0, row, texture.width, row, 0xffffffff, face);
 		for (int col = 0; col <= texture.width; col++)
 			drawLine(col, 0, col, texture.height, 0xffffffff, face);
+	}
+
+	public void drawString(String str) {
+		TextureSquare[] text = new TextureSquare[str.length()];
+		int size = 6 + text.length - 1;// 3 before / 3 after / 1 between each letter
+
+		for (int i = 0; i < text.length; i++) {
+			text[i] = getLetter(str.charAt(i));
+			size += text[i].width;
+		}
+
+		int start = 3;
+		for (int i = 0; i < text.length; i++) {
+			TextureSquare letter = getLetter(str.charAt(i));
+			for (int col = 0; col < letter.width; col++) {
+				for (int row = 0; row < letter.height; row++)
+					if (letter.getColor(row, col) == 0xff000000)
+						dataList.add(new Data(true, start + col, size / 2 - 3 + row, start + col + 1,
+								size / 2 - 3 + row + 1, false, size, 0xffc86400, face, 2));
+			}
+			start += 1 + letter.width;
+		}
+	}
+
+	public void drawFace() {
+		drawString(face.name());
 	}
 
 	// =========================================================================================================================
