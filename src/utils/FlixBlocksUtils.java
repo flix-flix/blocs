@@ -1,10 +1,10 @@
 package utils;
 
 import java.awt.Cursor;
+import java.awt.FontMetrics;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -30,6 +30,7 @@ public class FlixBlocksUtils {
 	public static final double toDegres = 180 / Math.PI;
 
 	// =========================================================================================================================
+	// Hexa
 
 	/** str must be 8 long (or 6 long assuming alpha = 255) */
 	public static int parseHexa(String str) {
@@ -51,6 +52,7 @@ public class FlixBlocksUtils {
 	}
 
 	// =========================================================================================================================
+	// Image
 
 	public static Image getImage(String path) {
 		URL url = PanGame.class.getResource("/" + path + ".png");
@@ -69,8 +71,6 @@ public class FlixBlocksUtils {
 		return null;
 	}
 
-	// =========================================================================================================================
-
 	public static boolean pngExist(String name) {
 		return resourceExist(name + ".png");
 	}
@@ -81,10 +81,29 @@ public class FlixBlocksUtils {
 	}
 
 	// =========================================================================================================================
+	// Cursor
 
 	public static Cursor createCursor(String file) {
 		Image img = FlixBlocksUtils.getImage(file);
 		return Toolkit.getDefaultToolkit().createCustomCursor(img, new Point(0, 0), file);
+	}
+
+	// =========================================================================================================================
+
+	public static ArrayList<String> getLines(String text, FontMetrics fm, int width) {
+		String[] words = text.split(" ");
+		ArrayList<String> lines = new ArrayList<>();
+		String line = "";
+
+		for (String word : words)
+			if (fm.stringWidth(line + " " + word) > width) {
+				lines.add(line);
+				line = word;
+			} else
+				line += (line.isEmpty() ? "" : " ") + word;
+
+		lines.add(line);
+		return lines;
 	}
 
 	// =========================================================================================================================
@@ -109,6 +128,7 @@ public class FlixBlocksUtils {
 	}
 
 	// =========================================================================================================================
+	// Debug
 
 	public static void debugBefore(String str) {
 		System.err.print(str);
@@ -121,16 +141,7 @@ public class FlixBlocksUtils {
 	}
 
 	// =========================================================================================================================
-
-	public static void writeImage(BufferedImage img, String name) {
-		try {
-			ImageIO.write(img, "png", new File("img.png"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	// =========================================================================================================================
+	// Files
 
 	public static ArrayList<String> getFilesName(String folder) {
 		ArrayList<String> list = null;
@@ -148,6 +159,7 @@ public class FlixBlocksUtils {
 	}
 
 	// =========================================================================================================================
+	// Read/Write
 
 	public static String read(String name) {
 		String str = new String();

@@ -22,3 +22,11 @@ items:
     
     preview: Prévisualisation
     test: Test
+
+tips:
+    face_name: Maintenez "Alt" pour voir l'orientation de chaque face
+    rotate: Maintenez le clic droit enfoncé pour faire tourner le cube
+    grid: Utilisez la molette sur le bouton "Grille" pour augmenter/diminuer la résolution de la face
+    pick_color: Avec le pinceau, maintenez "Ctrl" pour récuperer la couleur de la case ciblée
+    zoom: Utilisez la molette pour zoomer/dézoomer
+    line_square: Avec le pinceau, maintenez "Maj" pour dessiner une ligne. "Maj + Ctrl" pour remplir un carré

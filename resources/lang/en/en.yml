@@ -22,3 +22,11 @@ items:
 
     preview: Preveiw
     test: Test
+
+tips:
+    face_name: Maintain "Alt" to see the direction of each face
+    rotate: Maintain the right click to rotate the cube
+    grid: Use the mouse wheel on the "Grid" button to increase/decrease the resolution of the face
+    pick_color: With the pencil, maintain "Ctrl" to pick up tje color of the selected case
+    zoom: Use the mouse wheel to zoom in/zoom out
+    line_square: With the pencil, maintain "Shift" to draw a line. "Shift + Ctrl" to fill a square

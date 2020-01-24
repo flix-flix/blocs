@@ -25,8 +25,7 @@ public class PanEditor extends JPanel {
 	HashMap<ActionEditor, MenuButtonEditor> buttonsTop = new HashMap<>();
 
 	ActionEditor[] _buttonsAction = { ActionEditor.ALONE, ActionEditor.DECOR, ActionEditor.PAINT, ActionEditor.FILL,
-			ActionEditor.GRID, ActionEditor.MINIATURE, ActionEditor.SAVE, ActionEditor.PLAYER_COLOR,
-			ActionEditor.ROTATE };
+			ActionEditor.GRID, ActionEditor.MINIATURE, ActionEditor.SAVE, ActionEditor.PLAYER_COLOR };
 	public HashMap<ActionEditor, MenuButtonEditor> buttonsAction = new HashMap<>();
 
 	ActionEditor[] _buttonsItemID = { ActionEditor.ITEM_NAME, ActionEditor.ITEM_ID, ActionEditor.ITEM_COLOR,
@@ -46,6 +45,11 @@ public class PanEditor extends JPanel {
 
 		this.setLayout(null);
 		this.setOpaque(false);
+
+		MenuHelp help = new MenuHelp();
+		help.setBounds(menuWidth + 25, 25, 500, 100);
+		this.add(help);
+		menu.setBounds(0, 0, menuWidth, getHeight());
 
 		menu.setBounds(0, 0, menuWidth, getHeight());
 		this.add(menu);
@@ -101,8 +105,6 @@ public class PanEditor extends JPanel {
 		get(ActionEditor.GRID).setWheelStep(editor.getTextureSize());
 		get(ActionEditor.GRID).setWheelMinMax(1, 16);
 		get(ActionEditor.GRID).setSelectable(true);
-
-		get(ActionEditor.ROTATE).setSelectable(true);
 
 		get(ActionEditor.PAINT).setSelectable(true);
 		get(ActionEditor.FILL).setSelectable(true);

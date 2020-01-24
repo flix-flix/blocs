@@ -5,6 +5,7 @@ import java.util.TreeMap;
 
 import client.textures.TexturePack;
 import client.window.graphicEngine.calcul.Camera;
+import client.window.panels.editor.MenuHelp.Tip;
 import data.map.Cube;
 import data.map.buildings.Building;
 import data.map.multiblocs.MultiBloc;
@@ -18,13 +19,14 @@ public class ItemTable {
 
 	static ArrayList<String> tags = new ArrayList<>();
 
+	static YAML lang;
 	// =========================================================================================================================
 
 	public static void init() {
 		for (String file : FlixBlocksUtils.getFilesName("resources/items"))
 			addItem(new Item(YAML.parseFile(file)));
 
-		YAML lang = YAML.parseFile("resources/lang/fr/fr.yml");
+		lang = YAML.parseFile("resources/lang/fr/fr.yml");
 
 		for (Item item : items.values())
 			item.setLanguage(lang);
@@ -165,7 +167,10 @@ public class ItemTable {
 	// Language
 
 	public static String getName(int itemID) {
-
 		return get(itemID).name;
+	}
+
+	public static String getTip(Tip tip) {
+		return lang.getString("tips." + tip.name().toLowerCase());
 	}
 }

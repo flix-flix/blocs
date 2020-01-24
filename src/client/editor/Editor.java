@@ -799,7 +799,7 @@ public class Editor {
 	}
 
 	public void cameraMoved() {
-		if (panel.get(ActionEditor.ROTATE).isSelected())
+		if (isRotateMode())
 			lookCube();
 	}
 
@@ -807,7 +807,7 @@ public class Editor {
 	// Mode getters
 
 	public boolean isRotateMode() {
-		return panel.get(ActionEditor.ROTATE).isSelected();
+		return true;
 	}
 
 	public boolean isPreviewCube() {
