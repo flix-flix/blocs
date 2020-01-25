@@ -1,5 +1,7 @@
 package client.window.graphicEngine.calcul;
 
+import data.map.enumerations.Orientation;
+
 public class Camera {
 
 	/** Position of the camera */
@@ -30,6 +32,21 @@ public class Camera {
 	public void move(double x, double z) {
 		vue.x += x;
 		vue.z += z;
+	}
+
+	// =========================================================================================================================
+
+	public Orientation getOrientation() {
+		Orientation orientation = null;
+		if (getVx() >= 45 && getVx() < 135)
+			orientation = Orientation.EAST;
+		else if (getVx() >= 315 || getVx() < 45)
+			orientation = Orientation.NORTH;
+		else if (getVx() < 225)
+			orientation = Orientation.SOUTH;
+		else
+			orientation = Orientation.WEST;
+		return orientation;
 	}
 
 	// =========================================================================================================================

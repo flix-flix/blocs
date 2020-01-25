@@ -12,7 +12,6 @@ import client.window.graphicEngine.extended.ModelCube;
 import client.window.graphicEngine.extended.ModelMap;
 import data.map.Coord;
 import data.map.Cube;
-import data.map.enumerations.Orientation;
 import server.game.GameMode;
 import utils.FlixBlocksUtils;
 
@@ -84,18 +83,18 @@ public class Keyboard {
 
 		if (session.gamemode == GameMode.CREATIVE) {// Add a cube to the map
 			Cube cubeToAdd = session.getNextCube();
-			if (session.cubeTarget != null && session.faceTarget != null && cubeToAdd != null) {
-				cubeToAdd.setCoords(new Coord(session.cubeTarget).face(session.faceTarget));
+			if (session.targetedCube != null && session.targetedFace != null && cubeToAdd != null) {
+				cubeToAdd.setCoords(new Coord(session.targetedCube).face(session.targetedFace));
 
 				map.add(cubeToAdd);
 			}
 
 		} else if (session.gamemode == GameMode.CLASSIC) {
 
-			if (session.cubeTarget != null && session.faceTarget != null) {
+			if (session.targetedCube != null && session.targetedFace != null) {
 
 				if (session.getAction() == UserAction.CREA_ADD) {// Add a cube to the map
-					ModelCube model = map.gridGet(new Coord(session.cubeTarget).face(session.faceTarget));
+					ModelCube model = map.gridGet(new Coord(session.targetedCube).face(session.targetedFace));
 					if (model != null && model.isPreview()) {
 						// Check if multibloc can be added at this position
 						if (model.multibloc != null && !model.multibloc.valid)
@@ -116,7 +115,7 @@ public class Keyboard {
 		pressL = true;
 
 		if (session.stateHUD == StateHUD.EDITOR)
-			if(session.editor.leftClick())
+			if (session.editor.leftClick())
 				return;
 
 		ModelMap map;
@@ -128,23 +127,22 @@ public class Keyboard {
 			return;
 
 		if (session.gamemode == GameMode.CREATIVE) {
-			if (session.cubeTarget != null)
-				if (session.cubeTarget.unit != null)
-					map.removeUnit(session.cubeTarget.unit);
+			if (session.targetedCube != null)
+				if (session.targetedCube.unit != null)
+					map.removeUnit(session.targetedCube.unit);
 				else
-					map.remove((ModelCube) session.cubeTarget);
+					map.remove((ModelCube) session.targetedCube);
 
 		} else if (session.gamemode == GameMode.CLASSIC) {
 
-
 			if (session.getAction() == UserAction.CREA_DESTROY) {
-				if (session.cubeTarget != null)
-					if (session.cubeTarget.unit != null)
-						map.removeUnit(session.cubeTarget.unit);
+				if (session.targetedCube != null)
+					if (session.targetedCube.unit != null)
+						map.removeUnit(session.targetedCube.unit);
 					else
-						map.remove((ModelCube) session.cubeTarget);
+						map.remove((ModelCube) session.targetedCube);
 			} else
-				session.fen.gui.select(session.cubeTarget);
+				session.fen.gui.select(session.targetedCube);
 		}
 	}
 
@@ -197,15 +195,6 @@ public class Keyboard {
 				camera.setVy(90);
 			else if (camera.getVy() < -90)
 				camera.setVy(-90);
-
-			if (camera.getVx() >= 45 && camera.getVx() < 135)
-				session.playerOrientation = Orientation.EAST;
-			else if (camera.getVx() >= 315 || camera.getVx() < 45)
-				session.playerOrientation = Orientation.NORTH;
-			else if (camera.getVx() < 225)
-				session.playerOrientation = Orientation.SOUTH;
-			else
-				session.playerOrientation = Orientation.WEST;
 		}
 	}
 

@@ -19,14 +19,19 @@ public class MenuHelp extends Menu {
 	private Font font = new Font("monospace", Font.BOLD, 15);
 	private FontMetrics fm = getFontMetrics(font);
 
-	private Image img = FlixBlocksUtils.getImage("static/questionMark");
+	// ========== Data ==========
+	Mark mark;
+	private int size, border, total;
+
+	// ========== ==========
+	private Image img;
 
 	private boolean active = false;
 
 	private Ellipse2D ellipse;
 
 	// ========== Tip ==========
-	private Tip tip = Tip.ZOOM;
+	private Tip tip = TipGlobal.ZOOM;
 	private String tipText;
 	private ArrayList<String> tipLines = null;
 
@@ -35,9 +40,18 @@ public class MenuHelp extends Menu {
 
 	// =========================================================================================================================
 
-	MenuHelp() {
-		ellipse = new Ellipse2D.Double(10, 10, 80, 80);
+	MenuHelp(Mark mark, int size, int border) {
+		this.mark = mark;
+		this.border = border;
+		this.size = size;
+		this.total = size + border * 2;
+		ellipse = new Ellipse2D.Double(border, border, size, size);
 		updateTip();
+
+		img = FlixBlocksUtils
+				.getImage("static/" + (mark == Mark.INTERROGATION ? "interrogationMark" : "exclamationMark"));
+
+		setBackground(Color.LIGHT_GRAY);
 	}
 
 	// =========================================================================================================================
@@ -47,13 +61,18 @@ public class MenuHelp extends Menu {
 		tipLines = FlixBlocksUtils.getLines(tipText, fm, getWidth() - 100 - widthArrow - 20);
 	}
 
+	public void setTip(Tip tip) {
+		this.tip = tip;
+		updateTip();
+	}
+
 	// =========================================================================================================================
 
 	@Override
 	protected void paintComponent(Graphics g) {
 		if (active) {
 			g.setColor(Color.GRAY);
-			g.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 100, 100);
+			g.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, total, total);
 
 			// ========== Tip ==========
 			g.setColor(Color.WHITE);
@@ -61,8 +80,8 @@ public class MenuHelp extends Menu {
 			int lineH = (int) fm.getStringBounds("A", g).getHeight();
 
 			for (int i = 0; i < tipLines.size(); i++) {
-				int _y = getHeight() / 2 - lineH * tipLines.size() / 4  + lineH * i;
-				g.drawString(tipLines.get(i), 100, _y);
+				int _y = getHeight() / 2 - lineH * tipLines.size() / 4 + lineH * i;
+				g.drawString(tipLines.get(i), total, _y);
 			}
 
 			// ========== Arrows ==========
@@ -78,14 +97,14 @@ public class MenuHelp extends Menu {
 
 		} else {
 			g.setColor(Color.GRAY);
-			g.fillRoundRect(0, 0, 100, 100, 100, 100);
+			g.fillRoundRect(0, 0, total, total, total, total);
 		}
 
-		// ========== Logo "?" ==========
-		g.setColor(Color.LIGHT_GRAY);
-		g.fillOval(10, 10, 80, 80);
+		// ========== Mark ==========
+		g.setColor(getBackground());
+		g.fillOval(border, border, size, size);
 
-		g.drawImage(img, 20, 20, 60, 60, null);
+		g.drawImage(img, border * 2, border * 2, size - border * 2, size - border * 2, null);
 	}
 
 	// =========================================================================================================================
@@ -111,15 +130,47 @@ public class MenuHelp extends Menu {
 
 	// =========================================================================================================================
 
-	public enum Tip {
+	public interface Tip {
+		Tip next();
+
+		Tip previous();
+
+		String getPath();
+	}
+
+	public enum TipGlobal implements Tip {
 		ZOOM, ROTATE, GRID, PICK_COLOR, FACE_NAME, LINE_SQUARE;
 
-		Tip next() {
+		public TipGlobal next() {
 			return values()[(ordinal() + 1) % values().length];
 		}
 
-		Tip previous() {
+		public TipGlobal previous() {
 			return values()[(ordinal() + values().length - 1) % values().length];
 		}
+
+		public String getPath() {
+			return "tips.global.";
+		}
+	}
+
+	public enum TipCalk implements Tip {
+		APPLY, DELETE, ROTATE;
+
+		public TipCalk next() {
+			return values()[(ordinal() + 1) % values().length];
+		}
+
+		public TipCalk previous() {
+			return values()[(ordinal() + values().length - 1) % values().length];
+		}
+
+		public String getPath() {
+			return "tips.calk.";
+		}
+	}
+
+	enum Mark {
+		INTERROGATION, EXCLAMATION;
 	}
 }

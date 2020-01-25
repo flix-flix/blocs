@@ -48,10 +48,13 @@ public class Editor {
 	private Cursor cursorPaint;
 	private Cursor cursorFill;
 	private Cursor cursorSelectColor;
+	private Cursor cursorSquareSelection;
+	private Cursor cursorMoveSelection;
 
 	// ======================= Texture generation =========================
 	private TextureCube textureCube;
 	private static final int MAX_SIZE = 16;
+	/** [Face][y][x] */
 	private int[][][] texture = new int[6][MAX_SIZE][MAX_SIZE];
 	private int textureSize = 3;
 
@@ -76,6 +79,8 @@ public class Editor {
 
 	// ======================= Layer =========================
 	private static final int lineSquareLayer = 12;
+	private static final int selectionLayer = 13;
+	private static final int calkLayer = 14;
 
 	// ======================= Rotation =========================
 	private int prevX, prevY;
@@ -91,6 +96,33 @@ public class Editor {
 	// ======================= Write =========================
 	private String writingString = "";
 	private String realString = "";
+
+	// ======================= Selection Square =========================
+	private Face selectionFace;
+	private int selectionStartX, selectionStartY;
+	private int selectionEndX, selectionEndY;
+
+	// ======================= Calk =========================
+	/** The selection copied */
+	private int[][] calk = new int[MAX_SIZE][MAX_SIZE];
+	/** The mask of the copied pixels (true : copied | false : not) */
+	private boolean[][] calkMask = new boolean[MAX_SIZE][MAX_SIZE];
+	private int calkStartX, calkStartY;
+	private int calkSizeX, calkSizeY;
+
+	private Face calkFace = null;
+	/** Location of the bottom left corner */
+	private int calkCornerX, calkCornerY;
+
+	private static final int VOID = -999;
+	private int calkMoveClickX = VOID, calkMoveClickY = VOID;
+
+	private boolean hasCalk = false;
+	private boolean cursorInCalk = false;
+
+	private Face lastClickedFace = null;
+	private int lastClickedX = Quadri.NOT_NUMBERED;
+	private int lastClickedY = Quadri.NOT_NUMBERED;
 
 	// =========================================================================================================================
 
@@ -121,7 +153,9 @@ public class Editor {
 		// 0-5 : grid
 		// 6 - 11: face name
 		// 12 : line/square
-		for (int i = 0; i <= 12; i++)
+		// 13 : selection
+		// 13 : calk
+		for (int i = 0; i <= 14; i++)
 			cube.layers.add(null);
 	}
 
@@ -226,19 +260,17 @@ public class Editor {
 	// Painting
 
 	public void paintPixel() {
-		drawPixel(session.faceTarget, session.quadriTarget / textureSize, session.quadriTarget % textureSize,
-				panel.panColor.getColor());
+		drawPixel(session.targetedFace, getTargetedY(), getTargetedX(), panel.panColor.getColor());
 		updateLastPixel();
 		updatePreviewTexture();
 	}
 
 	public void paintLine() {
-		Line l = new Line(session.quadriTarget % textureSize, session.quadriTarget / textureSize, lastPaintCol,
-				lastPaintRow);
+		Line l = new Line(getTargetedX(), getTargetedY(), lastPaintCol, lastPaintRow);
 
 		for (int row = l.min; row <= l.max; row++)
 			for (int col = l.getLeft(row); col <= l.getRight(row); col++)
-				drawPixel(session.faceTarget, row, col, panel.panColor.getColor());
+				drawPixel(session.targetedFace, row, col, panel.panColor.getColor());
 
 		updateLastPixel();
 		updatePreviewTexture();
@@ -246,14 +278,14 @@ public class Editor {
 	}
 
 	public void paintSquare() {
-		int col1 = Math.min(session.quadriTarget % textureSize, lastPaintCol);
-		int row1 = Math.min(session.quadriTarget / textureSize, lastPaintRow);
-		int col2 = Math.max(session.quadriTarget % textureSize, lastPaintCol);
-		int row2 = Math.max(session.quadriTarget / textureSize, lastPaintRow);
+		int col1 = Math.min(getTargetedX(), lastPaintCol);
+		int row1 = Math.min(getTargetedY(), lastPaintRow);
+		int col2 = Math.max(getTargetedX(), lastPaintCol);
+		int row2 = Math.max(getTargetedY(), lastPaintRow);
 
 		for (int col = col1; col <= col2; col++)
 			for (int row = row1; row <= row2; row++)
-				drawPixel(session.faceTarget, row, col, panel.panColor.getColor());
+				drawPixel(session.targetedFace, row, col, panel.panColor.getColor());
 
 		updateLastPixel();
 		updatePreviewTexture();
@@ -266,7 +298,8 @@ public class Editor {
 			historyPack();
 
 		if (texture[face.ordinal()][col][row] != color)
-			historyPack.add(new PixelHistory(face, col, row, texture[face.ordinal()][col][row], color));
+			historyPack.add(new PixelHistory(face, col, row, texture[face.ordinal()][col][row], color, lastPaintCol,
+					lastPaintRow, getTargetedX(), getTargetedY()));
 
 		setPixel(face, col, row, color);
 	}
@@ -276,15 +309,105 @@ public class Editor {
 	}
 
 	// =========================================================================================================================
-	// Other tools
+	// Selection
 
-	public void selectColor() {
-		panel.panColor
-				.setColor(texture[session.faceTarget.ordinal()][session.quadriTarget / textureSize][session.quadriTarget
-						% textureSize]);
+	private void selectAll() {
+		selectionFace = getSelectedFace();
+		selectionStartX = 0;
+		selectionStartY = 0;
+		selectionEndX = textureSize - 1;
+		selectionEndY = textureSize - 1;
 	}
 
-	public void fill(int erase, int face, int row, int col) {
+	private void selectNothing() {
+		selectionFace = null;
+	}
+
+	private void copy() {
+		if (selectionFace == null)
+			return;
+
+		// Apply previous calk
+		if (hasCalk)
+			applyCalk();
+
+		calkStartX = Math.min(selectionStartX, selectionEndX);
+		calkStartY = Math.min(selectionStartY, selectionEndY);
+		calkSizeX = Math.max(selectionStartX, selectionEndX) - calkStartX + 1;
+		calkSizeY = Math.max(selectionStartY, selectionEndY) - calkStartY + 1;
+
+		for (int x = 0; x < MAX_SIZE; x++)
+			for (int y = 0; y < MAX_SIZE; y++) {
+				calk[y][x] = texture[selectionFace.ordinal()][y][x];// Copy all the face
+				calkMask[y][x] = false;// Reset mask
+			}
+
+		// Init Mask
+		for (int x = 0; x < calkSizeX; x++)
+			for (int y = 0; y < calkSizeY; y++)
+				calkMask[calkStartY + y][calkStartX + x] = true;
+	}
+
+	private void paste() {
+		calkFace = getSelectedFace();
+		calkCornerX = Math.max(lastClickedX, 0);
+		calkCornerY = Math.max(lastClickedY, 0);
+
+		hasCalk = true;
+		refreshLayerCalk();
+	}
+
+	private void applyCalk() {
+		if (calkCornerX < 0 || calkCornerY < 0 || calkCornerX + calkSizeX > textureSize
+				|| calkCornerY + calkSizeY > textureSize) {
+			System.err.println("OUT OF BOUNDS");
+			return;
+		}
+
+		for (int x = 0; x < calkSizeX; x++)
+			for (int y = 0; y < calkSizeY; y++)
+				texture[calkFace.ordinal()][calkCornerY + y][calkCornerX + x] = calk[calkStartY + y][calkStartX + x];
+
+		updatePreviewTexture();
+		hasCalk = false;
+		refreshLayerCalk();
+	}
+
+	private void deleteCalk() {
+		hasCalk = false;
+		refreshLayerCalk();
+	}
+
+	/** The upper part will be set on the right side */
+	public void rotateCalkRight() {
+		int sizeX = MAX_SIZE;
+		int sizeY = MAX_SIZE;
+		int[][] calk2 = new int[sizeY][sizeX];
+
+		for (int x = 0; x < sizeX; x++)
+			for (int y = 0; y < sizeY; y++)
+				calk2[sizeX - 1 - x][y] = calk[y][x];
+
+		int _calkStartX = calkStartX;
+		calkStartX = calkStartY;
+		calkStartY = sizeY - _calkStartX - calkSizeX;
+
+		int _calkSizeX = calkSizeX;
+		calkSizeX = calkSizeY;
+		calkSizeY = _calkSizeX;
+
+		calk = calk2;
+		refreshLayerCalk();
+	}
+
+	// =========================================================================================================================
+	// Other tools
+
+	private void selectColor() {
+		panel.panColor.setColor(texture[session.targetedFace.ordinal()][getTargetedY()][getTargetedX()]);
+	}
+
+	private void fill(int erase, int face, int row, int col) {
 		if (row < 0 || textureSize <= row || col < 0 || textureSize <= col)
 			return;
 
@@ -302,15 +425,19 @@ public class Editor {
 	// =========================================================================================================================
 	// Memory
 
+	public void setLastPixel(Face face, int col, int row) {
+		lastPaintFace = face;
+		lastPaintCol = col;
+		lastPaintRow = row;
+	}
+
 	public void updateLastPixel() {
-		lastPaintFace = session.faceTarget;
-		lastPaintCol = session.quadriTarget % textureSize;
-		lastPaintRow = session.quadriTarget / textureSize;
+		setLastPixel(session.targetedFace, getTargetedX(), getTargetedY());
 	}
 
 	public boolean hasLastPixel() {
-		return session.cubeTarget == cube && session.faceTarget == lastPaintFace && lastPaintCol < textureSize
-				&& lastPaintRow < textureSize;
+		return session.targetedCube == cube && session.targetedFace == lastPaintFace && lastPaintCol < textureSize
+				&& lastPaintRow < textureSize && lastPaintRow != -1;
 	}
 
 	// =========================================================================================================================
@@ -318,6 +445,7 @@ public class Editor {
 
 	public void menuClick(ActionEditor action) {
 		mayLooseListeningKey(action);
+		panel.helpTool.setVisible(false);
 
 		switch (action) {
 		case EDITOR:// Close Editor
@@ -342,10 +470,14 @@ public class Editor {
 		case PAINT:
 		case FILL:
 		case PLAYER_COLOR:
+		case SQUARE_SELECTION:
 			if (action == this.action)
 				setAction(null);
-			else
+			else {
+				if (action == ActionEditor.SQUARE_SELECTION)
+					panel.helpTool.setVisible(true);
 				setAction(action);
+			}
 			break;
 
 		case GRID:
@@ -447,20 +579,53 @@ public class Editor {
 
 		// Show face names
 		if (code == ALT)
-			refreshFaceLayer();
+			refreshLayerFace();
 
 		// Undo/Redo
 		if (e.isControlDown())
-			if (e.getKeyCode() == 90) {
+			if (code == 'Z') {
 				undo();
 				return true;
-			} else if (e.getKeyCode() == 89) {
+			} else if (code == 'Y') {
 				redo();
 				return true;
 			}
 
+		// Selection
+		if (e.isControlDown())
+			if (code == 'A') {
+				if (e.isShiftDown())
+					selectNothing();
+				else
+					selectAll();
+				return true;
+			} else if (code == 'C') {
+				copy();
+				return true;
+			} else if (code == 'V') {
+				paste();
+				return true;
+			}
+
+		// Calk
+		if (hasCalk) {
+			if (code == 10) {// Enter
+				applyCalk();
+				return true;
+			} else if (code == 37) {// Left
+				rotateCalkRight();
+				rotateCalkRight();
+				rotateCalkRight();
+				return true;
+			} else if (code == 39) {// Right
+				rotateCalkRight();
+				return true;
+			} else if (code == 27)// Esc
+				deleteCalk();
+		}
+
 		// Consume SHIFT to allow line/square drawing
-		if (e.getKeyCode() == SHIFT && action == ActionEditor.PAINT)
+		if (code == SHIFT && action == ActionEditor.PAINT)
 			return true;
 
 		// Writing
@@ -468,6 +633,10 @@ public class Editor {
 			write(e);
 			return true;
 		}
+
+		// Consume Esc anyway
+		if (code == 27)
+			return true;
 
 		return false;
 	}
@@ -478,7 +647,7 @@ public class Editor {
 		int code = e.getKeyCode();
 
 		if (code == ALT)
-			refreshFaceLayer();
+			refreshLayerFace();
 
 		return false;
 	}
@@ -492,7 +661,7 @@ public class Editor {
 	// =========================================================================================================================
 	// Write
 
-	public void write(KeyEvent e) {
+	private void write(KeyEvent e) {
 		int code = e.getKeyCode();
 
 		if (code == 27)
@@ -517,7 +686,7 @@ public class Editor {
 		}
 	}
 
-	public void writeName(String str) {
+	private void writeName(String str) {
 		boolean valid = true;
 
 		for (String name : ItemTable.getItemTagList())
@@ -530,18 +699,18 @@ public class Editor {
 		panel.get(buttonListeningKey).setBool(valid);
 	}
 
-	public void esc() {
+	private void esc() {
 		writeName(realString);
 		panel.get(buttonListeningKey).setSelected(false);
 		buttonListeningKey = null;
 	}
 
-	public void enter() {
+	private void enter() {
 		realString = writingString;
 		esc();
 	}
 
-	public void setListeningKey(ActionEditor action) {
+	private void setListeningKey(ActionEditor action) {
 		if (buttonListeningKey != null && buttonListeningKey != action)
 			looseListeningKey();
 
@@ -550,14 +719,14 @@ public class Editor {
 		writingString = panel.get(action).getString();
 	}
 
-	public void looseListeningKey() {
+	private void looseListeningKey() {
 		if (buttonListeningKey == null)
 			return;
 
 		esc();
 	}
 
-	public void mayLooseListeningKey(ActionEditor action) {
+	private void mayLooseListeningKey(ActionEditor action) {
 		if (buttonListeningKey == null)
 			return;
 		// Valid writting button
@@ -569,6 +738,7 @@ public class Editor {
 
 	// =========================================================================================================================
 	// Rotate-Mode
+
 	public void lookCube() {
 		camera.setVx(FlixBlocksUtils.toDegres * Math.atan((camera.vue.x - .5) / -(camera.vue.z - .5)) + 90
 				+ (camera.vue.z - .5 >= 0 ? 180 : 0));
@@ -634,12 +804,19 @@ public class Editor {
 			return;
 		}
 
-		// If no
-		if (session.quadriTarget == Quadri.NOT_NUMBERED)
+		// If no quadri targeted -> no update
+		if (session.targetedQuadri == Quadri.NOT_NUMBERED) {
+			cursorInCalk = false;
 			return;
+		}
+
+		int x = getTargetedX();
+		int y = getTargetedY();
+		cursorInCalk = calkCornerX <= x && x < calkCornerX + calkSizeX && calkCornerY <= y
+				&& y < calkCornerY + calkSizeY;
 
 		if (action == ActionEditor.PAINT) {
-			session.cubeTarget.setSelectedQuadri(session.faceTarget, session.quadriTarget);
+			session.targetedCube.setSelectedQuadri(session.targetedFace, session.targetedQuadri);
 
 			cube.removeLayer(lineSquareLayer);
 
@@ -650,10 +827,10 @@ public class Editor {
 
 			// Show Line/Square preview
 			if (shiftDown && hasLastPixel()) {
-				DrawLayer layer = new DrawLayer(cube, session.faceTarget);
+				DrawLayer layer = new DrawLayer(cube, session.targetedFace);
 
-				int col1 = session.quadriTarget % textureSize;
-				int row1 = session.quadriTarget / textureSize;
+				int col1 = getTargetedX();
+				int row1 = getTargetedY();
 				int col2 = lastPaintCol;
 				int row2 = lastPaintRow;
 
@@ -669,9 +846,9 @@ public class Editor {
 
 	public void looseTarget() {
 		// Removes highlight of previous selected quadri
-		session.cubeTarget.setSelectedQuadri(null, ModelCube.NO_QUADRI);
+		session.targetedCube.setSelectedQuadri(null, ModelCube.NO_QUADRI);
 		// Removes line/square preview
-		session.cubeTarget.removeLayer(lineSquareLayer);
+		session.targetedCube.removeLayer(lineSquareLayer);
 	}
 
 	// =========================================================================================================================
@@ -679,30 +856,50 @@ public class Editor {
 
 	public void refreshLayerGrid() {
 		for (Face face : Face.faces)
-			if (panel.get(ActionEditor.GRID).isSelected())
-				cube.layers.set(face.ordinal() + 6, generateGridLayer(face));
-			else
+			if (panel.get(ActionEditor.GRID).isSelected()) {
+				DrawLayer layer = new DrawLayer(cube, face);
+				layer.drawGrid();
+				cube.layers.set(face.ordinal() + 6, layer);
+			} else
 				cube.removeLayer(face.ordinal() + 6);
 	}
 
-	public void refreshFaceLayer() {
+	private void refreshLayerFace() {
 		for (Face face : Face.faces)
-			if (altDown)
-				cube.layers.set(face.ordinal(), generateNameLayer(face));
-			else
+			if (altDown) {
+				DrawLayer layer = new DrawLayer(cube, face);
+				layer.drawFace();
+				cube.layers.set(face.ordinal(), layer);
+			} else
 				cube.removeLayer(face.ordinal());
 	}
 
-	public DrawLayer generateGridLayer(Face face) {
-		DrawLayer layer = new DrawLayer(cube, face);
-		layer.drawGrid();
-		return layer;
+	private void refreshLayerSelection() {
+		if (action == ActionEditor.SQUARE_SELECTION && selectionFace != null) {
+			DrawLayer layer = new DrawLayer(cube, selectionFace);
+			layer.drawDottedSquare(selectionStartX, selectionStartY, selectionEndX, selectionEndY, 0xffffffff,
+					0xff000000, selectionFace);
+			cube.layers.set(selectionLayer, layer);
+		} else
+			cube.removeLayer(selectionLayer);
 	}
 
-	public DrawLayer generateNameLayer(Face face) {
-		DrawLayer layer = new DrawLayer(cube, face);
-		layer.drawFace();
-		return layer;
+	private void refreshLayerCalk() {
+		if (hasCalk && calkFace != null) {
+			DrawLayer layer = new DrawLayer(cube, calkFace);
+
+			layer.drawDottedSquare(calkCornerX, calkCornerY, calkCornerX + calkSizeX - 1, calkCornerY + calkSizeY - 1,
+					0xffffffff, 0xff000000, calkFace);
+
+			for (int x = 0; x < calkSizeX; x++)
+				for (int y = 0; y < calkSizeY; y++) {
+					layer.fillSquare(calkCornerX + x, calkCornerY + y, calk[calkStartY + y][calkStartX + x], true, 1,
+							0);
+				}
+
+			cube.layers.set(calkLayer, layer);
+		} else
+			cube.removeLayer(calkLayer);
 	}
 
 	// =========================================================================================================================
@@ -715,14 +912,23 @@ public class Editor {
 			cursor = (controlDown && (!shiftDown || !session.editor.isPreviewCube())) ? cursorSelectColor : cursorPaint;
 		else if (session.editor.getAction() == ActionEditor.FILL)
 			cursor = controlDown ? cursorSelectColor : cursorFill;
+		else if (session.editor.getAction() == ActionEditor.SQUARE_SELECTION)
+			if (hasCalk) {
+				if (cursorInCalk)
+					cursor = cursorMoveSelection;
+			} else
+				cursor = cursorSquareSelection;
 
 		return cursor;
 	}
 
-	public void generateCursor() {
-		cursorPaint = FlixBlocksUtils.createCursor(session.texturePack.getFolder() + "cursor/cursorPaint");
-		cursorFill = FlixBlocksUtils.createCursor(session.texturePack.getFolder() + "cursor/cursorFill");
-		cursorSelectColor = FlixBlocksUtils.createCursor(session.texturePack.getFolder() + "cursor/cursorSelectColor");
+	private void generateCursor() {
+		String folder = session.texturePack.getFolder() + "cursor/editor/";
+		cursorPaint = FlixBlocksUtils.createCursor(folder + "cursorPaint");
+		cursorFill = FlixBlocksUtils.createCursor(folder + "cursorFill");
+		cursorSelectColor = FlixBlocksUtils.createCursor(folder + "cursorSelectColor");
+		cursorSquareSelection = FlixBlocksUtils.createCursor(folder + "cursorSquareSelection");
+		cursorMoveSelection = FlixBlocksUtils.createCursor(folder + "cursorMoveSelection");
 	}
 
 	// =========================================================================================================================
@@ -732,8 +938,21 @@ public class Editor {
 	public boolean leftClick() {
 		looseListeningKey();
 
-		if (session.faceTarget == null || session.quadriTarget == Quadri.NOT_NUMBERED)
+		lastClickedFace = session.targetedFace;
+		lastClickedX = getTargetedX();
+		lastClickedY = getTargetedY();
+
+		// Click in void
+		if (session.targetedFace == null || session.targetedQuadri == Quadri.NOT_NUMBERED) {
+			// Loose selection
+			if (action == ActionEditor.SQUARE_SELECTION) {
+				calkMoveClickX = VOID;
+				calkMoveClickY = VOID;
+				selectionFace = null;
+				refreshLayerSelection();
+			}
 			return false;
+		}
 
 		// Cancel action during rotation
 		if (session.keyboard.pressR)
@@ -764,15 +983,38 @@ public class Editor {
 			if (controlDown)
 				selectColor();
 			else if (isPreviewCube()) {
-				int face = session.faceTarget.ordinal();
-				int row = session.quadriTarget / textureSize;
-				int col = session.quadriTarget % textureSize;
+				int face = session.targetedFace.ordinal();
+				int col = getTargetedX();
+				int row = getTargetedY();
 
 				fill(texture[face][row][col], face, row, col);
 
 				updatePreviewTexture();
 				historyPack();
 			}
+			break;
+
+		case SQUARE_SELECTION:
+			int x = getTargetedX();
+			int y = getTargetedY();
+			// Init move
+			if (hasCalk) {
+				if (cursorInCalk) {
+					calkMoveClickX = x;
+					calkMoveClickY = y;
+				} else {
+					calkMoveClickX = VOID;
+					calkMoveClickY = VOID;
+				}
+				break;
+			}
+			// Init selection
+			selectionFace = session.targetedFace;
+			selectionStartX = x;
+			selectionStartY = y;
+			selectionEndX = selectionStartX;
+			selectionEndY = selectionStartY;
+			refreshLayerSelection();
 			break;
 
 		default:
@@ -794,8 +1036,38 @@ public class Editor {
 	}
 
 	public void drag(MouseEvent e) {
-		rotateCamera(e.getX() - prevX, e.getY() - prevY);
-		initDrag(e.getX(), e.getY());
+		// Rotate
+		if (session.keyboard.pressR) {
+			rotateCamera(e.getX() - prevX, e.getY() - prevY);
+			initDrag(e.getX(), e.getY());
+		} else if (session.keyboard.pressL) {
+			if (action == ActionEditor.SQUARE_SELECTION) {
+				int x = getTargetedX();
+				int y = getTargetedY();
+
+				// Calk deplacement
+				if (hasCalk) {
+					if (session.targetedQuadri == Quadri.NOT_NUMBERED || calkMoveClickX == VOID
+							|| calkMoveClickY == VOID || session.targetedFace != calkFace)
+						return;
+
+					calkCornerX += x - calkMoveClickX;
+					calkCornerY += y - calkMoveClickY;
+
+					calkMoveClickX = x;
+					calkMoveClickY = y;
+
+					refreshLayerCalk();
+					return;
+				}
+				// Resize selection
+				if (selectionFace != session.targetedFace)
+					return;
+				selectionEndX = x;
+				selectionEndY = y;
+				refreshLayerSelection();
+			}
+		}
 	}
 
 	public void cameraMoved() {
@@ -811,9 +1083,9 @@ public class Editor {
 	}
 
 	public boolean isPreviewCube() {
-		if (session.cubeTarget == null)
+		if (session.targetedCube == null)
 			return false;
-		return session.cubeTarget.itemID == ItemID.EDITOR_PREVIEW;
+		return session.targetedCube.itemID == ItemID.EDITOR_PREVIEW;
 	}
 
 	public boolean isNeededQuadriPrecision() {
@@ -821,6 +1093,7 @@ public class Editor {
 			return false;
 
 		switch (action) {
+		case SQUARE_SELECTION:
 		case PAINT:
 		case FILL:
 		case PLAYER_COLOR:
@@ -828,6 +1101,32 @@ public class Editor {
 		default:
 			return false;
 		}
+	}
+
+	// =========================================================================================================================
+
+	private Face getSelectedFace() {
+		if (lastClickedFace == null)
+			return getFrontFace();
+		return lastClickedFace;
+	}
+
+	private Face getFrontFace() {
+		if (camera.getVy() > 45)
+			return Face.DOWN;
+		if (camera.getVy() < -45)
+			return Face.UP;
+		return camera.getOrientation().face;
+	}
+
+	// =========================================================================================================================
+
+	private int getTargetedX() {
+		return session.targetedQuadri % textureSize;
+	}
+
+	private int getTargetedY() {
+		return session.targetedQuadri / textureSize;
 	}
 
 	// =========================================================================================================================

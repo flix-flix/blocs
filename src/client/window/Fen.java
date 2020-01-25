@@ -312,10 +312,9 @@ public class Fen extends JFrame {
 			}
 
 			public void mouseDragged(MouseEvent e) {
-				if (session.stateHUD == StateHUD.EDITOR && session.keyboard.pressR)
+				if (session.stateHUD == StateHUD.EDITOR)
 					session.editor.drag(e);
-				else
-					mouseMoved(e);
+				mouseMoved(e);
 			}
 		});
 
@@ -387,7 +386,7 @@ public class Fen extends JFrame {
 
 	public void updateCursor() {
 		Cursor cursor = Cursor.getDefaultCursor();
-		Cube cube = session.cubeTarget;
+		Cube cube = session.targetedCube;
 
 		session.unitAction = null;
 

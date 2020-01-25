@@ -48,9 +48,9 @@ public class PanDevlop extends JPanel {
 
 			// ======================= Target =========================
 
-			if (session.cubeTarget != null) {
-				strBloc += session.cubeTarget.toString();
-				strFace += session.faceTarget.toString();
+			if (session.targetedCube != null) {
+				strBloc += session.targetedCube.toString();
+				strFace += session.targetedFace.toString();
 			} else {
 				strBloc += "None";
 				strFace += "None";
@@ -63,7 +63,7 @@ public class PanDevlop extends JPanel {
 			writeLeft(String.format("Camera: X = %.1f  Y = %.1f  Z = %.1f", camera.vue.x, camera.vue.y, camera.vue.z));
 			writeLeft("Chunk: " + "X = " + Map.toChunkCoord(camera.vue.x) + " Z = " + Map.toChunkCoord(camera.vue.z));
 			writeLeft("View: X = " + camera.getVx() + " Y = " + camera.getVy());
-			writeLeft("Orientation: " + session.playerOrientation.toString());
+			writeLeft("Orientation: " + camera.getOrientation().toString());
 			left++;
 			writeLeft(strBloc);
 			writeLeft(strFace);

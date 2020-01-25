@@ -171,6 +171,6 @@ public class ItemTable {
 	}
 
 	public static String getTip(Tip tip) {
-		return lang.getString("tips." + tip.name().toLowerCase());
+		return lang.getString(tip.getPath() + ((Enum<?>) tip).name().toLowerCase());
 	}
 }

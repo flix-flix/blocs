@@ -326,9 +326,9 @@ public class ModelCube extends Cube implements Model {
 
 		draws.clear();
 
-		if (unit == null)// only draw the 3 visible faces of the cube
+		if (unit == null)// Only draw the 3 visible faces of the cube
 			drawFaces(3, faces);
-		else// draw the 6 faces cause the unit cube is rolling
+		else// Draw the 6 faces (e.g. cause the unit cube can be rolling)
 			drawFaces(6, faces);
 
 	}

@@ -24,7 +24,6 @@ import data.map.Coord;
 import data.map.Cube;
 import data.map.Map;
 import data.map.enumerations.Face;
-import data.map.enumerations.Orientation;
 import data.map.units.Unit;
 import server.game.GameMode;
 import server.game.Player;
@@ -61,9 +60,9 @@ public class Session implements Serializable {
 	public TickClock clock;
 
 	// ============= Target ===================
-	public ModelCube cubeTarget;
-	public Face faceTarget;
-	public int quadriTarget;
+	public ModelCube targetedCube;
+	public Face targetedFace;
+	public int targetedQuadri;
 
 	/** Next cube to add (its coords aren't valid) */
 	private Cube nextCube;
@@ -71,8 +70,6 @@ public class Session implements Serializable {
 	public Coord previousPreview;
 
 	// ============== F3 (Dev infos) ==================
-	/** The orientation of the player */
-	public Orientation playerOrientation = Orientation.NORTH;
 	/** Chronometric marks */
 	public long timeMat, timeDraw, timeQuadri;
 	/** Number of cubes and chunks displayed */
@@ -267,13 +264,13 @@ public class Session implements Serializable {
 		Face _faceTarget = draw == null ? null : draw.face;
 		int _quadriTarget = (quadri == null ? Quadri.NOT_NUMBERED : quadri.id);
 
-		boolean sameTarget = cubeTarget == _cubeTarget && faceTarget == _faceTarget
-				&& (quadriTarget == _quadriTarget || fen.isNeededQuadriPrecision());
+		boolean sameTarget = targetedCube == _cubeTarget && targetedFace == _faceTarget
+				&& (targetedQuadri == _quadriTarget || !fen.isNeededQuadriPrecision());
 
 		// Removes previous selection display
-		if (!sameTarget && cubeTarget != null) {
+		if (!sameTarget && targetedCube != null) {
 			// Removes highlight
-			map.setHighlight(cubeTarget, false);
+			map.setHighlight(targetedCube, false);
 
 			// Removes preview cubes
 			if (map.gridContains(previousPreview) && map.gridGet(previousPreview).isPreview())
@@ -283,14 +280,14 @@ public class Session implements Serializable {
 		}
 
 		// Refresh target
-		cubeTarget = _cubeTarget;
-		faceTarget = _faceTarget;
-		quadriTarget = _quadriTarget;
+		targetedCube = _cubeTarget;
+		targetedFace = _faceTarget;
+		targetedQuadri = _quadriTarget;
 
 		fen.updateCursor();
 
 		if (gamemode == GameMode.CLASSIC)
-			if (cubeTarget != null)
+			if (targetedCube != null)
 				if (action == UserAction.CREA_ADD) {
 					// If same target : No need to do something more than the previous iteration
 					if (sameTarget)
@@ -302,7 +299,7 @@ public class Session implements Serializable {
 						return;
 
 					// Calcul coords of the new cube(s)
-					previousPreview = new Coord(cubeTarget).face(faceTarget);
+					previousPreview = new Coord(targetedCube).face(targetedFace);
 					cubeToAdd.setCoords(previousPreview);
 
 					// Test if there is place for the cube(s) at the coords
@@ -314,9 +311,9 @@ public class Session implements Serializable {
 					map.setTargetable(previousPreview, false);
 					map.setHighlight(previousPreview, true);
 				} else if (action == UserAction.CREA_DESTROY) {
-					map.setHighlight(cubeTarget, true);
+					map.setHighlight(targetedCube, true);
 				} else if (action == UserAction.MOUSE) {
-					map.setHighlight(cubeTarget, true);
+					map.setHighlight(targetedCube, true);
 				}
 				// ================ EDITOR ==================
 				else if (fen.isNeededQuadriPrecision())
@@ -376,8 +373,8 @@ public class Session implements Serializable {
 		}
 
 		Unit unit = fen.gui.unit;
-		Coord cube = cubeTarget.coords();// Pointed cube
-		Coord cubeAir = cubeTarget.coords().face(faceTarget);// Cube adjacent to the pointed face (in the air)
+		Coord cube = targetedCube.coords();// Pointed cube
+		Coord cubeAir = targetedCube.coords().face(targetedFace);// Cube adjacent to the pointed face (in the air)
 
 		switch (unitAction) {
 		case UNIT_GOTO:

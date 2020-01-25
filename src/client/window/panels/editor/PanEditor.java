@@ -7,6 +7,8 @@ import javax.swing.JPanel;
 
 import client.editor.ActionEditor;
 import client.editor.Editor;
+import client.window.panels.editor.MenuHelp.Mark;
+import client.window.panels.editor.MenuHelp.TipCalk;
 import client.window.panels.menus.MenuCol;
 import client.window.panels.menus.MenuGrid;
 
@@ -24,8 +26,13 @@ public class PanEditor extends JPanel {
 			ActionEditor.EDIT_MULTI_TEXTURE, ActionEditor.EDITOR };
 	HashMap<ActionEditor, MenuButtonEditor> buttonsTop = new HashMap<>();
 
-	ActionEditor[] _buttonsAction = { ActionEditor.ALONE, ActionEditor.DECOR, ActionEditor.PAINT, ActionEditor.FILL,
-			ActionEditor.GRID, ActionEditor.MINIATURE, ActionEditor.SAVE, ActionEditor.PLAYER_COLOR };
+	ActionEditor[] _buttonsAction = {
+			// Line 1
+			ActionEditor.ALONE, ActionEditor.DECOR, ActionEditor.PAINT, ActionEditor.FILL,
+			// Line 2
+			ActionEditor.SQUARE_SELECTION, ActionEditor.GRID, ActionEditor.MINIATURE, ActionEditor.SAVE,
+			// Line 3
+			ActionEditor.PLAYER_COLOR };
 	public HashMap<ActionEditor, MenuButtonEditor> buttonsAction = new HashMap<>();
 
 	ActionEditor[] _buttonsItemID = { ActionEditor.ITEM_NAME, ActionEditor.ITEM_ID, ActionEditor.ITEM_COLOR,
@@ -38,6 +45,8 @@ public class PanEditor extends JPanel {
 
 	public MenuColor panColor;
 
+	public MenuHelp help, helpTool;
+
 	// =========================================================================================================================
 
 	public PanEditor(Editor editor) {
@@ -46,9 +55,18 @@ public class PanEditor extends JPanel {
 		this.setLayout(null);
 		this.setOpaque(false);
 
-		MenuHelp help = new MenuHelp();
+		help = new MenuHelp(Mark.INTERROGATION, 80, 10);
+		//help.setBackground(new Color(0xff4068c4));
 		help.setBounds(menuWidth + 25, 25, 500, 100);
 		this.add(help);
+
+		helpTool = new MenuHelp(Mark.EXCLAMATION, 60, 7);
+		helpTool.setBackground(new Color(0xff4068c4));
+		helpTool.setBounds(menuWidth + 25, 25, 450, 74);
+		helpTool.setTip(TipCalk.values()[0]);
+		helpTool.setVisible(false);
+		this.add(helpTool);
+
 		menu.setBounds(0, 0, menuWidth, getHeight());
 
 		menu.setBounds(0, 0, menuWidth, getHeight());
@@ -106,10 +124,12 @@ public class PanEditor extends JPanel {
 		get(ActionEditor.GRID).setWheelMinMax(1, 16);
 		get(ActionEditor.GRID).setSelectable(true);
 
+		get(ActionEditor.SQUARE_SELECTION).setSelectable(true);
 		get(ActionEditor.PAINT).setSelectable(true);
 		get(ActionEditor.FILL).setSelectable(true);
 		get(ActionEditor.PLAYER_COLOR).setSelectable(true);
-		MenuButtonEditor.group(get(ActionEditor.FILL), get(ActionEditor.PAINT), get(ActionEditor.PLAYER_COLOR));
+		MenuButtonEditor.group(get(ActionEditor.SQUARE_SELECTION), get(ActionEditor.FILL), get(ActionEditor.PAINT),
+				get(ActionEditor.PLAYER_COLOR));
 	}
 
 	// =========================================================================================================================
@@ -130,5 +150,7 @@ public class PanEditor extends JPanel {
 	public void setBounds(int x, int y, int width, int height) {
 		super.setBounds(x, y, width, height);
 		menu.setBounds(x, y, menuWidth, height);
+
+		helpTool.setLocation(menuWidth + 25, getHeight() - 26 - helpTool.getSize().height);
 	}
 }
