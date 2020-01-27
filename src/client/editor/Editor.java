@@ -1085,7 +1085,7 @@ public class Editor {
 	public boolean isPreviewCube() {
 		if (session.targetedCube == null)
 			return false;
-		return session.targetedCube.itemID == ItemID.EDITOR_PREVIEW;
+		return session.targetedCube.getItemID() == ItemID.EDITOR_PREVIEW;
 	}
 
 	public boolean isNeededQuadriPrecision() {

@@ -13,7 +13,7 @@ import client.textures.TexturePack;
 import client.window.graphicEngine.calcul.Engine;
 import client.window.graphicEngine.extended.ModelCube;
 import client.window.graphicEngine.extended.ModelMap;
-import data.id.ItemTable;
+import data.id.ItemTableClient;
 import data.map.Cube;
 
 public class MenuButtonCube extends Menu {
@@ -39,11 +39,12 @@ public class MenuButtonCube extends Menu {
 		this.model = new ModelMap(session.texturePack);
 		model.add(new ModelCube(cube, session.texturePack));
 
-		name = ItemTable.getName(cube.multibloc == null ? cube.itemID : cube.multibloc.itemID);
+		name = ItemTableClient.getName(cube.multibloc == null ? cube.getItemID() : cube.multibloc.itemID);
 		if (name == null)
 			name = "NULL";
 
-		engine = new Engine(ItemTable.getCamera(cube.multibloc == null ? cube.itemID : cube.multibloc.itemID), model);
+		engine = new Engine(
+				ItemTableClient.getCamera(cube.multibloc == null ? cube.getItemID() : cube.multibloc.itemID), model);
 		engine.background = Engine.NONE;
 	}
 

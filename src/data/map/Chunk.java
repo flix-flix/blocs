@@ -3,10 +3,10 @@ package data.map;
 import java.io.Serializable;
 import java.util.HashSet;
 
-import data.id.ItemID;
-
 public class Chunk implements Serializable {
 	private static final long serialVersionUID = -8763834020086820609L;
+
+	public static final int VOID = -1;
 
 	// Size of a chunk
 	public static final int X = 10, Y = 50, Z = 10;
@@ -93,8 +93,8 @@ public class Chunk implements Serializable {
 
 		for (int y = Y - 1; y >= 0; y--)
 			if (grid[x][y][z] != null)
-				return grid[x][y][z].itemID;
-		return ItemID.NULL;
+				return grid[x][y][z].getItemID();
+		return VOID;
 	}
 
 	// =========================================================================================================================

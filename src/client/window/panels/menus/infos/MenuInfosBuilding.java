@@ -16,6 +16,7 @@ import client.window.panels.menus.MenuButtonAction;
 import client.window.panels.menus.MenuGrid;
 import client.window.panels.menus.MenuResource;
 import data.id.ItemTable;
+import data.id.ItemTableClient;
 import data.map.buildings.Building;
 import data.map.resources.ResourceType;
 import server.send.Action;
@@ -130,7 +131,7 @@ public class MenuInfosBuilding extends Menu implements ButtonContainer {
 		ModelMap map = new ModelMap(session.texturePack);
 		map.add(new Building(null, build.getItemID(), 0, 0, 0, true).getCube());
 
-		engine = new Engine(ItemTable.getCamera(build.getItemID()), map);
+		engine = new Engine(ItemTableClient.getCamera(build.getItemID()), map);
 		engine.background = Engine.NONE;
 		img = engine.getImage(imgSize, imgSize);
 

@@ -147,7 +147,7 @@ public class DrawLayer {
 	// =========================================================================================================================
 
 	public void drawGrid() {
-		TextureSquare texture = cube.texturePack.getFace(cube.itemID, face);
+		TextureSquare texture = cube.texturePack.getFace(cube.getItemID(), face);
 
 		for (int row = 0; row <= texture.height; row++)
 			drawLine(0, row, texture.width, row, 0xffffffff, face);
@@ -167,14 +167,10 @@ public class DrawLayer {
 		int start = 3;
 		for (int i = 0; i < text.length; i++) {
 			TextureSquare letter = getLetter(str.charAt(i));
-			for (int col = 0; col < letter.width; col++) {
+			for (int col = 0; col < letter.width; col++)
 				for (int row = 0; row < letter.height; row++)
 					if (letter.getColor(row, col) == 0xff000000)
 						fillSquare(start + col, size / 2 - 3 + row, 0xffc86400, false, size, 2);
-				// dataList.add(new Data(Type.SQUARE, start + col, size / 2 - 3 + row, start +
-				// col + 1,
-				// size / 2 - 3 + row + 1, false, size, 0xffc86400, face, 2));
-			}
 			start += 1 + letter.width;
 		}
 	}

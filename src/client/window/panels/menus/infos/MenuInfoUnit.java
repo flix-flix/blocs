@@ -16,7 +16,6 @@ import client.window.panels.menus.ButtonContainer;
 import client.window.panels.menus.Menu;
 import client.window.panels.menus.MenuButtonAction;
 import client.window.panels.menus.MenuResource;
-import data.id.ItemID;
 import data.map.Cube;
 import data.map.enumerations.Orientation;
 import data.map.units.Unit;
@@ -93,7 +92,7 @@ public class MenuInfoUnit extends Menu implements ButtonContainer {
 				update.notify();
 			}
 
-		Cube cube = new Cube(ItemID.UNIT);
+		Cube cube = new Cube(unit.getItemID());
 		cube.orientation = Orientation.WEST;
 
 		engine = new Engine(new Camera(new Point3D(-.4, 1.5, -1), 58, -35), new ModelCube(cube, session.texturePack));

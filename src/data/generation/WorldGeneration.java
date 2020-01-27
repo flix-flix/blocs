@@ -117,13 +117,13 @@ public class WorldGeneration {
 				map.remove(i, 9, j);
 
 		// Add Units
-		map.addUnit(new Unit(felix, 5, ground, 5));
-		map.addUnit(new Unit(felix, 6, ground, 2));
-		map.addUnit(new Unit(felix, 4, ground, 2));
-		map.addUnit(new Unit(felix, 5, ground, 2));
+		map.addUnit(new Unit(ItemID.UNIT, felix, 5, ground, 5));
+		map.addUnit(new Unit(ItemID.UNIT, felix, 6, ground, 2));
+		map.addUnit(new Unit(ItemID.UNIT, felix, 4, ground, 2));
+		map.addUnit(new Unit(ItemID.UNIT, felix, 5, ground, 2));
 
 		// Add Unit to IA
-		map.addUnit(new Unit(ia, 7, ground, 4));
+		map.addUnit(new Unit(ItemID.UNIT, ia, 7, ground, 4));
 
 		// =========================================================================================================================
 		// Buildings

@@ -1,14 +1,14 @@
 package client.main;
 
 import client.session.Session;
-import data.id.ItemTable;
+import data.id.ItemTableClient;
 
 public class Main {
 
 	public static void main(String[] args) {
 		System.out.println("======== CLIENT ==========");
 
-		ItemTable.init();
+		ItemTableClient.init();
 
 		server.main.MainServer.main(args);
 		new Session();

@@ -18,7 +18,7 @@ import client.window.graphicEngine.calcul.Engine;
 import client.window.graphicEngine.extended.ModelCube;
 import client.window.panels.menus.Menu;
 import data.id.ItemID;
-import data.id.ItemTable;
+import data.id.ItemTableClient;
 import data.map.Cube;
 import utils.FlixBlocksUtils;
 
@@ -84,7 +84,7 @@ public class MenuButtonEditor extends Menu {
 				itemID = ItemID.BORDER;
 				break;
 			}
-			engine = new Engine(ItemTable.getCamera(itemID),
+			engine = new Engine(ItemTableClient.getCamera(itemID),
 					new ModelCube(new Cube(itemID), editor.session.texturePack));
 			engine.background = Engine.NONE;
 			update();

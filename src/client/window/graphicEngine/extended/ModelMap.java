@@ -8,7 +8,7 @@ import client.window.graphicEngine.calcul.Camera;
 import client.window.graphicEngine.calcul.Matrix;
 import client.window.graphicEngine.structures.Draw;
 import client.window.graphicEngine.structures.Model;
-import data.id.ItemTable;
+import data.id.ItemTableClient;
 import data.map.Chunk;
 import data.map.Coord;
 import data.map.Cube;
@@ -236,9 +236,9 @@ public class ModelMap extends Map implements Model {
 		// Must contain a cube to be opaque
 		return gridContains(x2, y2, z2)
 				// The cube must be opaque...
-				&& (ItemTable.isOpaque(gridGet(x2, y2, z2).itemID)
+				&& (ItemTableClient.isOpaque(gridGet(x2, y2, z2).getItemID())
 						// ... or having the same ID than the next one
-						|| gridGet(x, y, z).itemID == gridGet(x2, y2, z2).itemID)
+						|| gridGet(x, y, z).getItemID() == gridGet(x2, y2, z2).getItemID())
 				// The cube musn't be a preview ... or the next one must be one too
 				&& (!gridGet(x2, y2, z2).isPreview() || gridGet(x, y, z).isPreview())
 				// The cube musn't be a building in construction

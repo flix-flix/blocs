@@ -60,10 +60,10 @@ public class TexturePack {
 	// =========================================================================================================================
 
 	public TextureSquare getFace(ModelCube cube, Face face) {
-		if (ItemTable.isMultiBloc(cube.itemID))
-			return texturesMulti.get(cube.itemID).getFace(cube, face);
+		if (ItemTable.isMultiBloc(cube.getItemID()))
+			return texturesMulti.get(cube.getItemID()).getFace(cube, face);
 		else
-			return getFace(cube.itemID, face, cube.rotation, cube.orientation);
+			return getFace(cube.getItemID(), face, cube.rotation, cube.orientation);
 	}
 
 	public TextureSquare getFace(int id, Face face) {

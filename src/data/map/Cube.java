@@ -3,7 +3,6 @@ package data.map;
 import java.io.Serializable;
 
 import client.window.graphicEngine.calcul.Point3D;
-import data.id.ItemID;
 import data.id.ItemTable;
 import data.map.buildings.Building;
 import data.map.enumerations.Orientation;
@@ -14,11 +13,12 @@ import data.map.units.Unit;
 
 public class Cube implements Serializable {
 	private static final long serialVersionUID = 8529273004787197367L;
+
 	// =========================================================================================================================
 
 	public double x, y, z;
 	public Coord gridCoord;
-	public int itemID;
+	private int itemID;
 
 	public Point3D center;
 
@@ -100,7 +100,7 @@ public class Cube implements Serializable {
 	}
 
 	public Cube(Unit unit) {
-		this(unit.coord, ItemID.UNIT);
+		this(unit.coord, unit.getItemID());
 		this.unit = unit;
 		this.onGrid = false;
 	}
@@ -153,13 +153,13 @@ public class Cube implements Serializable {
 	 * @return true if the bloc broke
 	 */
 	public boolean addMined(int x) {
-		if ((minedAlready += x) > ItemTable.getMiningTime(itemID))
-			minedAlready = ItemTable.getMiningTime(itemID);
+		if ((minedAlready += x) > ItemTable.getMiningTime(getItemID()))
+			minedAlready = ItemTable.getMiningTime(getItemID());
 
-		miningState = (int) (minedAlready / (double) (ItemTable.getMiningTime(itemID))
+		miningState = (int) (minedAlready / (double) (ItemTable.getMiningTime(getItemID()))
 				* ItemTable.getNumberOfMiningSteps());
 
-		return minedAlready == ItemTable.getMiningTime(itemID);
+		return minedAlready == ItemTable.getMiningTime(getItemID());
 	}
 
 	// =========================================================================================================================
@@ -206,6 +206,14 @@ public class Cube implements Serializable {
 
 	// =========================================================================================================================
 
+	public int getItemID() {
+		if (unit != null)
+			return unit.getItemID();
+		return itemID;
+	}
+
+	// =========================================================================================================================
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -215,7 +223,7 @@ public class Cube implements Serializable {
 		if (!(obj instanceof Cube))
 			return false;
 		Cube other = (Cube) obj;
-		if (itemID != other.itemID)
+		if (getItemID() != other.getItemID())
 			return false;
 		if (onGrid != other.onGrid)
 			return false;
@@ -248,6 +256,6 @@ public class Cube implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Cube [coord=" + gridCoord + ", itemID=" + itemID + "]";
+		return "Cube [coord=" + gridCoord + ", itemID=" + getItemID() + "]";
 	}
 }

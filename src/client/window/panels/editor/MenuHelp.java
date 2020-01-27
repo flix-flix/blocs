@@ -10,7 +10,7 @@ import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
 
 import client.window.panels.menus.Menu;
-import data.id.ItemTable;
+import data.id.ItemTableClient;
 import utils.FlixBlocksUtils;
 
 public class MenuHelp extends Menu {
@@ -57,7 +57,7 @@ public class MenuHelp extends Menu {
 	// =========================================================================================================================
 
 	public void updateTip() {
-		tipText = ItemTable.getTip(tip);
+		tipText = ItemTableClient.getTip(tip);
 		tipLines = FlixBlocksUtils.getLines(tipText, fm, getWidth() - 100 - widthArrow - 20);
 	}
 

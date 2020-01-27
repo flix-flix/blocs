@@ -24,6 +24,8 @@ public class Unit implements Serializable {
 	protected int id;
 	/** Player controlling this unit */
 	protected Player player;
+	/** Type of unit */
+	protected int itemID;
 
 	// ========== Position ==========
 	/** Coords of the unit */
@@ -82,7 +84,8 @@ public class Unit implements Serializable {
 
 	// =========================================================================================================================
 
-	public Unit(Player player, int x, int y, int z) {
+	public Unit(int itemID, Player player, int x, int y, int z) {
+		this.itemID = itemID;
 		id = nextID++;
 		this.player = player;
 		coord = new Coord(x, y, z);
@@ -91,6 +94,7 @@ public class Unit implements Serializable {
 	protected Unit(Unit u) {
 		id = u.id;
 		player = u.player;
+		itemID = u.itemID;
 		coord = u.coord;
 
 		orientation = u.orientation;
@@ -508,6 +512,10 @@ public class Unit implements Serializable {
 
 	public void removeResource() {
 		resource = null;
+	}
+
+	public int getItemID() {
+		return itemID;
 	}
 
 	public int getId() {

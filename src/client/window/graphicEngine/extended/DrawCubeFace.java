@@ -10,7 +10,7 @@ import client.window.graphicEngine.calcul.Point3D;
 import client.window.graphicEngine.calcul.Vector;
 import client.window.graphicEngine.structures.Draw;
 import client.window.graphicEngine.structures.Quadri;
-import data.id.ItemTable;
+import data.id.ItemTableClient;
 import data.map.Cube;
 import data.map.enumerations.Face;
 
@@ -51,7 +51,7 @@ public class DrawCubeFace extends Draw {
 					quadri.addAll(layer.getQuadri(this, engine));
 
 		// Draw the black contour of the face
-		if (ItemTable.drawContour(cube.itemID)) {
+		if (ItemTableClient.drawContour(cube.getItemID())) {
 			Point[] points2D = generate2D(engine, 1, 1);
 			quadri.add(new Quadri(points2D[0], points2D[1], points2D[3], points2D[2], 0xff000000, false));
 		}

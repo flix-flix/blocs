@@ -5,7 +5,7 @@ import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 
 import client.session.Session;
-import data.id.ItemTable;
+import data.id.ItemTableClient;
 import data.map.Map;
 
 public class MenuMap extends Menu {
@@ -39,7 +39,7 @@ public class MenuMap extends Menu {
 		if (map != null)
 			for (int x = 0; x < rows; x++)
 				for (int z = 0; z < cols; z++) {
-					g.setColor(new Color(ItemTable.getMapColor(map.getPixelMapRepresentation(x, z))));
+					g.setColor(new Color(ItemTableClient.getMapColor(map.getPixelMapRepresentation(x, z))));
 					for (int i = 0; i < size; i++)
 						g.drawLine(startZ + (cols - x) * size, startX + (rows - z) * size + i,
 								startZ + (cols - x) * size + size - 1, startX + (rows - z) * size + i);

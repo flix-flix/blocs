@@ -80,7 +80,7 @@ public class ModelCube extends Cube implements Model {
 	}
 
 	public ModelCube(Cube c, TexturePack texturePack) {
-		this(texturePack, c.x, c.y, c.z, c.rotaX, c.rotaY, c.rotaZ, c.sizeX, c.sizeY, c.sizeZ, c.itemID);
+		this(texturePack, c.x, c.y, c.z, c.rotaX, c.rotaY, c.rotaZ, c.sizeX, c.sizeY, c.sizeZ, c.getItemID());
 
 		this.shiftX = c.shiftX;
 		this.shiftY = c.shiftY;

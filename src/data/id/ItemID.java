@@ -2,8 +2,6 @@ package data.id;
 
 public class ItemID {
 
-	public static final int NULL = -1;
-
 	public static final int BORDER = 0;
 
 	public static final int GRASS = 1;

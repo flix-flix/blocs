@@ -173,7 +173,6 @@ public class Engine {
 			for (int index = 0; index < 4; index++)
 				if (poly.xpoints[index] < imgWidth && poly.xpoints[index] > 0 && poly.ypoints[index] < imgHeight
 						&& poly.ypoints[index] > 0) {
-					// TODO [Remove] DrawCubeFace import
 					// Test if the target is in the polygon
 					if (drawTarget == null && poly.contains(cursorX, cursorY) && d.isTargetable()) {
 						targeted = true;

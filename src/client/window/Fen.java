@@ -400,8 +400,8 @@ public class Fen extends JFrame {
 
 				if (cube != null && session.fen.gui.unit != null
 						&& session.fen.gui.unit.getPlayer().equals(session.player))
-					if (ItemTable.isResource(cube.itemID))// Harvestable
-						switch (ItemTable.getResourceType(cube.itemID)) {
+					if (ItemTable.isResource(cube.getItemID()))// Harvestable
+						switch (ItemTable.getResourceType(cube.getItemID())) {
 						case WOOD:
 							cursor = cursorAxe;
 							session.unitAction = Action.UNIT_HARVEST;

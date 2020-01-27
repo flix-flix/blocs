@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.TreeMap;
 
 import client.textures.TexturePack;
-import client.window.graphicEngine.calcul.Camera;
-import client.window.panels.editor.MenuHelp.Tip;
 import data.map.Cube;
 import data.map.buildings.Building;
 import data.map.multiblocs.MultiBloc;
@@ -19,17 +17,11 @@ public class ItemTable {
 
 	static ArrayList<String> tags = new ArrayList<>();
 
-	static YAML lang;
 	// =========================================================================================================================
 
 	public static void init() {
 		for (String file : FlixBlocksUtils.getFilesName("resources/items"))
 			addItem(new Item(YAML.parseFile(file)));
-
-		lang = YAML.parseFile("resources/lang/fr/fr.yml");
-
-		for (Item item : items.values())
-			item.setLanguage(lang);
 	}
 
 	public static void setTexturePack(TexturePack texturePack) {
@@ -111,17 +103,6 @@ public class ItemTable {
 	}
 
 	// =========================================================================================================================
-	// Graphic Engine
-
-	public static boolean isOpaque(int itemID) {
-		return get(itemID).opaque;
-	}
-
-	public static boolean drawContour(int itemID) {
-		return get(itemID).contour;
-	}
-
-	// =========================================================================================================================
 	// Mining
 
 	public static int getMiningTime(int itemID) {
@@ -148,29 +129,5 @@ public class ItemTable {
 
 	public static ResourceType getResourceType(int itemID) {
 		return get(itemID).resourceType;
-	}
-
-	// =========================================================================================================================
-	// Textures
-
-	public static Camera getCamera(int itemID) {
-		return get(itemID).camera;
-	}
-
-	public static int getMapColor(int itemID) {
-		if (itemID == -1)
-			return 0;
-		return get(itemID).mapColor;
-	}
-
-	// =========================================================================================================================
-	// Language
-
-	public static String getName(int itemID) {
-		return get(itemID).name;
-	}
-
-	public static String getTip(Tip tip) {
-		return lang.getString(tip.getPath() + ((Enum<?>) tip).name().toLowerCase());
 	}
 }
