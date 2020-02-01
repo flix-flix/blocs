@@ -2,7 +2,6 @@ package data.map;
 
 import java.io.Serializable;
 
-import client.window.graphicEngine.calcul.Point3D;
 import data.id.ItemTable;
 import data.map.buildings.Building;
 import data.map.enumerations.Orientation;
@@ -10,6 +9,7 @@ import data.map.enumerations.Rotation;
 import data.map.multiblocs.MultiBloc;
 import data.map.resources.Resource;
 import data.map.units.Unit;
+import graphicEngine.calcul.Point3D;
 
 public class Cube implements Serializable {
 	private static final long serialVersionUID = 8529273004787197367L;

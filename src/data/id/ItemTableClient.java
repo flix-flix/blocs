@@ -1,7 +1,7 @@
 package data.id;
 
-import client.window.graphicEngine.calcul.Camera;
-import client.window.panels.editor.MenuHelp.Tip;
+import editor.panels.MenuHelp.Tip;
+import graphicEngine.calcul.Camera;
 import utils.yaml.YAML;
 
 public class ItemTableClient extends ItemTable {

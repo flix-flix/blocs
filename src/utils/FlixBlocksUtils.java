@@ -22,8 +22,8 @@ import java.util.stream.Stream;
 
 import javax.imageio.ImageIO;
 
-import client.textures.TextureFace;
-import client.window.panels.PanEnvironment;
+import environment.PanEnvironment;
+import environment.textures.TextureFace;
 
 public class FlixBlocksUtils {
 	public static final double toRadian = Math.PI / 180;

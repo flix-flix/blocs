@@ -2,9 +2,9 @@ package data.map;
 
 import java.io.Serializable;
 
-import client.window.graphicEngine.calcul.Point3D;
 import data.map.enumerations.Face;
 import data.map.enumerations.Orientation;
+import graphicEngine.calcul.Point3D;
 
 public class Coord implements Serializable {
 	private static final long serialVersionUID = 5676550708765407937L;

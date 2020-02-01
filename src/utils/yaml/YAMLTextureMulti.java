@@ -1,7 +1,7 @@
 package utils.yaml;
 
-import client.textures.TextureMulti;
-import client.window.graphicEngine.calcul.Camera;
+import environment.textures.TextureMulti;
+import graphicEngine.calcul.Camera;
 
 public class YAMLTextureMulti extends YAMLTextureCube {
 

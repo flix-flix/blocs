@@ -3,11 +3,11 @@ package data.id;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
-import client.textures.TexturePack;
 import data.map.Cube;
 import data.map.buildings.Building;
 import data.map.multiblocs.MultiBloc;
 import data.map.resources.ResourceType;
+import environment.textures.TexturePack;
 import utils.FlixBlocksUtils;
 import utils.yaml.YAML;
 

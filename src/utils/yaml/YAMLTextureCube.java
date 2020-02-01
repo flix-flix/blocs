@@ -1,9 +1,9 @@
 package utils.yaml;
 
-import client.textures.TextureCube;
-import client.textures.TextureFace;
-import client.textures.TextureSquare;
 import data.map.enumerations.Face;
+import environment.textures.TextureCube;
+import environment.textures.TextureFace;
+import environment.textures.TextureSquare;
 
 public class YAMLTextureCube {
 

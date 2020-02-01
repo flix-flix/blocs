@@ -2,9 +2,9 @@ package data.id;
 
 import java.util.TreeMap;
 
-import client.window.graphicEngine.calcul.Camera;
-import client.window.graphicEngine.calcul.Point3D;
 import data.map.resources.ResourceType;
+import graphicEngine.calcul.Camera;
+import graphicEngine.calcul.Point3D;
 import utils.yaml.YAML;
 
 public class Item {
