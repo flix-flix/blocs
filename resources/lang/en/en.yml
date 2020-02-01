@@ -35,3 +35,18 @@ tips:
         apply: Press "Enter" to apply the calk
         delete: Press "Esc" to delete the calk
         rotate: Press "◄" or "►" to rotate the calk
+
+text:
+    game:
+        loading: Loading...
+        loadingError: (If too long it probably crashed ;p)
+        
+        pause:
+            buttons: 
+                resume: Resume
+                options: Options
+                save_quit: Quit
+
+        infos:
+            build:
+                construction: In construction

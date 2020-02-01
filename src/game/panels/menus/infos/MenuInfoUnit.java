@@ -26,16 +26,19 @@ public class MenuInfoUnit extends Menu implements ButtonContainer {
 
 	private Thread update;
 
+	private Font font = new Font("monospace", Font.PLAIN, 12);
+
+	// =============== Display ===============
 	private Engine engine;
 	private Image img;
 
+	// =============== Data ===============
 	private Unit unit;
 
+	// =============== Panels ===============
 	private MenuResource res;
 	private MenuButtonAction destroy, harvest;
 	private MenuButtonAction[] buttons;
-
-	private Font font = new Font("monospace", Font.PLAIN, 12);
 
 	// =========================================================================================================================
 
@@ -74,7 +77,7 @@ public class MenuInfoUnit extends Menu implements ButtonContainer {
 
 		g.setFont(font);
 		g.setColor(Color.WHITE);
-		g.drawString("Unit", img == null ? 15 : img.getWidth(null) + 15, 50);
+		g.drawString(unit.getName(), img == null ? 15 : img.getWidth(null) + 15, 50);
 
 		if (unit != null) {
 			g.drawString(unit.toString(), img == null ? 15 : img.getWidth(null) + 15, 70);

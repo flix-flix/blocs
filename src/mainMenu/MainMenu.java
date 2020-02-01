@@ -1,8 +1,5 @@
 package mainMenu;
 
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-
 import javax.swing.JPanel;
 
 import editor.Editor;
@@ -30,27 +27,6 @@ public class MainMenu extends JPanel implements Displayable {
 		add(game = new MainMenuButton(this, LauncherButtonAction.GAME));
 		add(editor = new MainMenuButton(this, LauncherButtonAction.EDITOR));
 		add(quit = new MainMenuButton(this, LauncherButtonAction.QUIT));
-
-		this.addComponentListener(new ComponentListener() {
-			@Override
-			public void componentShown(ComponentEvent e) {
-			}
-
-			@Override
-			public void componentResized(ComponentEvent e) {
-				game.setBounds(getWidth() / 2 - 100, 150, 200, 50);
-				editor.setBounds(getWidth() / 2 - 100, 400, 200, 50);
-				quit.setBounds(getWidth() / 2 - 100, 650, 200, 50);
-			}
-
-			@Override
-			public void componentMoved(ComponentEvent e) {
-			}
-
-			@Override
-			public void componentHidden(ComponentEvent e) {
-			}
-		});
 	}
 
 	// =========================================================================================================================
@@ -82,6 +58,10 @@ public class MainMenu extends JPanel implements Displayable {
 	@Override
 	public void updateSize(int x, int y) {
 		setSize(x, y);
+
+		game.setBounds(getWidth() / 2 - 100, 150, 200, 50);
+		editor.setBounds(getWidth() / 2 - 100, 400, 200, 50);
+		quit.setBounds(getWidth() / 2 - 100, 650, 200, 50);
 	}
 
 	@Override

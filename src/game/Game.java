@@ -7,19 +7,19 @@ import javax.swing.JPanel;
 
 import data.dynamic.TickClock;
 import data.id.ItemTable;
+import data.id.ItemTableClient;
 import data.map.Coord;
 import data.map.Cube;
 import data.map.Map;
+import data.map.buildings.Building;
 import data.map.resources.ResourceType;
 import data.map.units.Unit;
 import environment.Environment3D;
-import environment.EnvironmentListner;
+import environment.EnvironmentListener;
 import environment.Target;
 import environment.extendsData.MapClient;
 import environment.textures.TexturePack;
-import game.panels.PanGUI;
 import game.panels.PanGame;
-import game.panels.PanPause;
 import graphicEngine.calcul.Camera;
 import graphicEngine.calcul.Point3D;
 import server.game.GameMode;
@@ -32,8 +32,11 @@ import window.Displayable;
 import window.Fen;
 import window.KeyBoard;
 
-public class Game extends Environment3D implements Displayable, EnvironmentListner {
+public class Game extends Environment3D implements Displayable, EnvironmentListener {
 	public Fen fen;
+
+	// =============== Pan ===============
+	PanGame panel;
 
 	// ============= Cursor ===================
 	private Cursor cursorGoto, cursorBuild, cursorAttack;
@@ -42,34 +45,29 @@ public class Game extends Environment3D implements Displayable, EnvironmentListn
 
 	private boolean cursorVisible = true;
 
-	// ============= Server ===================
-	Client client;
+	// =============== Server ===============
+	private Client client;
 
-	// ============= Data ===================
+	// =============== Data ===============
 	public Player player = new Player("Felix");
-
-	Target target;
-
-	// ============= ===================
 	private UserAction action;
+	public GameMode gamemode = GameMode.CLASSIC;
+
+	private Target target;
+
+	// =============== Action ===============
+	public Unit selectedUnit;
+	public Building selectedBuilding;
 	public Action unitAction;
 
-	// ============= ===================
+	// =============== ===============
 	public transient TexturePack texturePack;
 
 	public KeyboardGame keyboard;
 
 	private TickClock clock;
 
-	// ============= Pan ===================
-	private PanGame game;
-	private PanPause pause;
-	public PanGUI gui;
-
-	// ============= Data ===================
-	public GameMode gamemode = GameMode.CLASSIC;
-
-	// =============== F3 (Dev infos) ===============
+	// =============== Devlop Data (F3) ===============
 	/** Number of state-checks of the mouse and keyboard */
 	public int ticksKeyBoard;
 	/** Number of steps of the simulated environment */
@@ -84,7 +82,7 @@ public class Game extends Environment3D implements Displayable, EnvironmentListn
 	/** Coord of the preview cube */
 	public Coord previousPreview;
 
-	// =============== Dialog =================
+	// =============== Dialog ===============
 	public MessageManager messages;
 
 	// =========================================================================================================================
@@ -92,7 +90,7 @@ public class Game extends Environment3D implements Displayable, EnvironmentListn
 	public Game(Fen fen) {
 		this.fen = fen;
 		texturePack = new TexturePack("classic");
-		ItemTable.setTexturePack(texturePack);
+		ItemTableClient.setTexturePack(texturePack);
 
 		ResourceType.setTextureFolder(texturePack.getFolder());
 
@@ -112,12 +110,8 @@ public class Game extends Environment3D implements Displayable, EnvironmentListn
 
 		// ======================================
 
-		game = new PanGame(this);
-		pause = new PanPause(this);
-		gui = new PanGUI(this);
-
-		game.add(pause, -1);
-		game.add(gui, -1);
+		panel = new PanGame(this);
+		super.panel = panel;
 
 		// ======================================
 
@@ -130,10 +124,10 @@ public class Game extends Environment3D implements Displayable, EnvironmentListn
 	// =========================================================================================================================
 
 	public void start() {
-		messages = new MessageManager(this, gui);
+		messages = new MessageManager(this);
 
 		super.start();
-		gui.refreshGUI();
+		panel.refreshGUI();
 		clock.start();
 		keyboard.start();
 	}
@@ -153,7 +147,7 @@ public class Game extends Environment3D implements Displayable, EnvironmentListn
 	public void setGameMode(GameMode gameMode) {
 		this.gamemode = gameMode;
 
-		gui.refreshGUI();
+		panel.refreshGUI();
 
 		switch (gameMode) {
 		case CLASSIC:
@@ -163,29 +157,33 @@ public class Game extends Environment3D implements Displayable, EnvironmentListn
 			// Replace the camera at the correct altitude
 			camera.vue.y = 35;
 
-			game.setStartXPanel(400);
+			panel.setStartXPanel(400);
 
 			// Deselect
-			gui.select(null);
+			clearSelected();
+
+			keyboard.setTargetOnMouse();
 
 			setCursorVisible(true);
 			break;
 		case CREATIVE:
 			keyboard.mouseToCenter();
-			game.setStartXPanel(0);
+			panel.setStartXPanel(0);
 
 			setCursorVisible(false);
 			break;
 		case SPECTATOR:
 			break;
 		}
+
+		targetUpdate();
 	}
 
 	public void setAction(UserAction action) {
 		this.action = action;
 
 		fen.updateCursor();
-		gui.refreshGUI();
+		panel.refreshGUI();
 	}
 
 	// =========================================================================================================================
@@ -193,16 +191,21 @@ public class Game extends Environment3D implements Displayable, EnvironmentListn
 
 	@Override
 	public Cursor getCursor() {
+		if (!cursorVisible)
+			return Fen.cursorInvisible;
+
 		Cursor cursor = Cursor.getDefaultCursor();
+
+		if (target == null)
+			return cursor;
+
 		Cube cube = target.cube;
 
 		unitAction = null;
 
-		if (!cursorVisible)
-			cursor = Fen.cursorInvisible;
-		else if (getAction() == UserAction.MOUSE)
+		if (getAction() == UserAction.MOUSE)
 
-			if (cube != null && gui.unit != null && gui.unit.getPlayer().equals(player))
+			if (cube != null && selectedUnit != null && selectedUnit.getPlayer().equals(player))
 
 				// Harvestable
 				if (ItemTable.isResource(cube.getItemID()))
@@ -226,11 +229,11 @@ public class Game extends Environment3D implements Displayable, EnvironmentListn
 						if (!cube.build.isBuild()) {
 							cursor = cursorBuild;
 							unitAction = Action.UNIT_BUILD;
-						} else if (gui.unit.hasResource() && cube.build.canStock(gui.unit.getResource())) {// Stock
+						} else if (selectedUnit.hasResource() && cube.build.canStock(selectedUnit.getResource())) {// Stock
 							cursor = cursorDrop;
 							unitAction = Action.UNIT_STORE;
 
-							switch (gui.unit.getResource().getType()) {
+							switch (selectedUnit.getResource().getType()) {
 							case WOOD:
 								cursor = cursorDropWood;
 								break;
@@ -285,19 +288,25 @@ public class Game extends Environment3D implements Displayable, EnvironmentListn
 
 	public void pause() {
 		stateHUD = StateHUD.PAUSE;
+		keyboard.setPaused(true);
 
 		setCursorVisible(true);
 
-		pause.setVisible(true);
+		panel.pause.setVisible(true);
 	}
 
 	public void resume() {
+		stateHUD = StateHUD.GAME;
+		keyboard.setPaused(false);
+
 		if (gamemode == GameMode.CREATIVE) {
 			setCursorVisible(false);
 			keyboard.mouseToCenter();
 		}
 
-		pause.setVisible(false);
+		panel.pause.setVisible(false);
+
+		keyboard.setTargetOnMouse();
 	}
 
 	// =========================================================================================================================
@@ -305,8 +314,7 @@ public class Game extends Environment3D implements Displayable, EnvironmentListn
 	public void setTexturePack(TexturePack texturePack) {
 		this.texturePack = texturePack;
 
-		if (fen != null)
-			gui.updateTexturePack();
+		panel.updateTexturePack();
 	}
 
 	// =========================================================================================================================
@@ -326,6 +334,57 @@ public class Game extends Environment3D implements Displayable, EnvironmentListn
 			return nextCube.multibloc.clone().getCube();
 		}
 		return nextCube;
+	}
+
+	// =========================================================================================================================
+	// Selected
+
+	public void select(Cube cube) {
+		selectedUnit = null;
+		selectedBuilding = null;
+		panel.refreshSelected(cube);
+
+		if (cube != null)
+			if (cube.unit != null)
+				selectedUnit = cube.unit;
+			else if (cube.build != null)
+				selectedBuilding = cube.build;
+	}
+
+	public void clearSelected() {
+		select(null);
+	}
+
+	public void unitDoAction() {
+		if (selectedUnit == null)
+			return;
+		if (unitAction == null) {
+			FlixBlocksUtils.debug("Action NULL");
+			return;
+		}
+
+		// Pointed cube
+		Coord cube = target.cube.coords();
+		// Cube adjacent to the pointed face (in the air)
+		Coord cubeAir = target.cube.coords().face(target.face);
+
+		switch (unitAction) {
+		case UNIT_GOTO:
+			send(SendAction.goTo(selectedUnit, cubeAir));
+			break;
+		case UNIT_BUILD:
+			send(SendAction.build(selectedUnit, map.getBuilding(cube)));
+			break;
+		case UNIT_HARVEST:
+			send(SendAction.harvest(selectedUnit, cube));
+			break;
+		case UNIT_STORE:
+			send(SendAction.store(selectedUnit, map.getBuilding(cube)));
+			break;
+		default:
+			FlixBlocksUtils.debug("[Client] Missing unitDoAction(): " + unitAction);
+			break;
+		}
 	}
 
 	// =========================================================================================================================
@@ -396,40 +455,14 @@ public class Game extends Environment3D implements Displayable, EnvironmentListn
 	}
 
 	// =========================================================================================================================
+	// Getters
 
-	public void unitDoAction() {
-		if (unitAction == null) {
-			System.out.println("Action NULL");
-			return;
-		}
-
-		Unit unit = gui.unit;
-		// Pointed cube
-		Coord cube = target.cube.coords();
-		// Cube adjacent to the pointed face (in the air)
-		Coord cubeAir = target.cube.coords().face(target.face);
-
-		switch (unitAction) {
-		case UNIT_GOTO:
-			send(SendAction.goTo(unit, cubeAir));
-			break;
-		case UNIT_BUILD:
-			send(SendAction.build(unit, map.getBuilding(cube)));
-			break;
-		case UNIT_HARVEST:
-			send(SendAction.harvest(unit, cube));
-			break;
-		case UNIT_STORE:
-			send(SendAction.store(unit, map.getBuilding(cube)));
-			break;
-		default:
-			FlixBlocksUtils.debug("[Client] Missing unitDoAction(): " + unitAction);
-			break;
-		}
+	public Target getTarget() {
+		return target;
 	}
 
 	// =========================================================================================================================
-	// EnvironmentListner
+	// Environment3D
 
 	@Override
 	public void gainTarget(Target target) {
@@ -491,19 +524,22 @@ public class Game extends Environment3D implements Displayable, EnvironmentListn
 		// session.clock.ticks = 0;
 	}
 
+	@Override
+	public void repaint() {
+		panel.repaint();
+	}
+
 	// =========================================================================================================================
 	// Displayable
 
 	@Override
 	public JPanel getContentPane() {
-		return game;
+		return panel;
 	}
 
 	@Override
 	public void updateSize(int x, int y) {
-		game.setSize(x, y);
-		gui.setSize(x, y);
-		pause.setSize(x, y);
+		panel.setSize(x, y);
 	}
 
 	@Override

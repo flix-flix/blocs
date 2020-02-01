@@ -1,6 +1,7 @@
 package data.id;
 
 import editor.panels.MenuHelp.Tip;
+import environment.textures.TexturePack;
 import graphicEngine.calcul.Camera;
 import utils.yaml.YAML;
 
@@ -17,6 +18,12 @@ public class ItemTableClient extends ItemTable {
 
 		for (Item item : items.values())
 			item.setLanguage(lang);
+	}
+
+	public static void setTexturePack(TexturePack texturePack) {
+		for (int i : items.keySet())
+			if (texturePack.yamls.get(i) != null)
+				items.get(i).setTexture(texturePack.yamls.get(i));
 	}
 
 	// =========================================================================================================================
@@ -52,5 +59,9 @@ public class ItemTableClient extends ItemTable {
 
 	public static String getTip(Tip tip) {
 		return lang.getString(tip.getPath() + ((Enum<?>) tip).name().toLowerCase());
+	}
+
+	public static String getText(String path) {
+		return lang.getString("text." + path);
 	}
 }

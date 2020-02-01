@@ -7,7 +7,7 @@ import graphicEngine.calcul.Engine;
 
 public class Environment3D {
 
-	private PanEnvironment panel;
+	protected PanEnvironment panel;
 
 	// =============== F3 (Dev infos) ===============
 	/** Number of frames displayed the last second */
@@ -104,7 +104,7 @@ public class Environment3D {
 	}
 
 	public void setTargetCenter() {
-		setTarget(panel.centerW, panel.centerH);
+		setTarget(panel.envCenterW, panel.envCenterH);
 	}
 
 	// =========================================================================================================================
@@ -127,6 +127,7 @@ public class Environment3D {
 
 		this.target = target;
 	}
+
 	// =========================================================================================================================
 
 	public void updateTimeDev() {
@@ -158,6 +159,11 @@ public class Environment3D {
 	public void oneSecondTick() {
 	}
 
+	/** Repaint the panel */
+	public void repaint() {
+		panel.repaint();
+	}
+
 	// =========================================================================================================================
 
 	public void setProcessing(boolean processing) {
@@ -169,7 +175,7 @@ public class Environment3D {
 	}
 
 	public void switchDevlopMode() {
-		panel.showEngineData = !panel.showEngineData;
+		panel.showEngineInfos = !panel.showEngineInfos;
 	}
 
 	public Camera getCamera() {
@@ -225,13 +231,13 @@ public class Environment3D {
 				if (repaint) {
 					repaint = false;
 
-					if (panel.width > 0 && panel.height > 0)
-						panel.setImage(engine.getImage(panel.width, panel.height));
+					if (panel.envWidth > 0 && panel.envHeight > 0)
+						panel.setImage(engine.getImage(panel.envWidth, panel.envHeight));
 
 					updateTimeDev();
 					targetUpdate();
 
-					panel.repaint();
+					repaint();
 				}
 				try {
 					Thread.sleep(1);

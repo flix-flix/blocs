@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 import data.id.ItemTable;
+import data.id.ItemTableClient;
 import data.map.Coord;
 import data.map.Cube;
 import data.map.multiblocs.MultiBloc;
@@ -118,6 +119,10 @@ public class Building implements Serializable {
 
 	public int getId() {
 		return id;
+	}
+
+	public String getName() {
+		return ItemTableClient.getName(itemID);
 	}
 
 	// =========================================================================================================================

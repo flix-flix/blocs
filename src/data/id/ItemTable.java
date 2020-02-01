@@ -24,12 +24,6 @@ public class ItemTable {
 			addItem(new Item(YAML.parseFile(file)));
 	}
 
-	public static void setTexturePack(TexturePack texturePack) {
-		for (int i : items.keySet())
-			if (texturePack.yamls.get(i) != null)
-				items.get(i).setTexture(texturePack.yamls.get(i));
-	}
-
 	// =========================================================================================================================
 
 	public static Item get(int itemID) {

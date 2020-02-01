@@ -3,6 +3,7 @@ package data.map.units;
 import java.io.Serializable;
 import java.util.LinkedList;
 
+import data.id.ItemTableClient;
 import data.map.Coord;
 import data.map.Map;
 import data.map.buildings.Building;
@@ -523,6 +524,10 @@ public class Unit implements Serializable {
 
 	public int getId() {
 		return id;
+	}
+
+	public String getName() {
+		return ItemTableClient.getName(itemID);
 	}
 
 	// =========================================================================================================================

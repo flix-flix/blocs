@@ -35,3 +35,18 @@ tips:
         apply: Appuyez sur "Entrée" pour appliquer le calque
         delete: Appuyez sur "Esc" pour supprimer le calque
         rotate: Appuyez sur "◄" ou "►" pour tourner le calque
+
+text:
+    game:
+        loading: Chargement...
+        loadingError: (Si tu peux lire ce message, le jeu a probablement planté ^^)
+        
+        pause:
+            buttons: 
+                resume: Reprendre
+                options: Options
+                save_quit: Quitter
+        
+        infos:
+            build:
+                construction: En construction

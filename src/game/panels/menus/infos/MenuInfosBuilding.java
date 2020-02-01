@@ -24,25 +24,25 @@ import utils.panels.MenuGrid;
 public class MenuInfosBuilding extends Menu implements ButtonContainer {
 	private static final long serialVersionUID = -5061597857247176796L;
 
+	// =============== Font ===============
 	private Font font = new Font("monospace", Font.PLAIN, 12);
 	private Font fontBold = new Font("monospace", Font.BOLD, 20);
 	private FontMetrics fmBold = getFontMetrics(fontBold);
 
-	private int imgSize = 125;
-
 	private Thread update;
 
+	// =============== Display ===============
 	private Engine engine;
 	private Image img;
+	private int imgSize = 125;
+	private String constructionText;
 
-	// =========================================================================================================================
-
+	// =============== Panels ===============
 	private MenuButtonAction spawn, upgrade;
 	private MenuButtonAction[] buttons;
 	private MenuGrid stocks;
 
-	// =========================================================================================================================
-
+	// =============== Data ===============
 	private Building build;
 
 	// =========================================================================================================================
@@ -70,6 +70,8 @@ public class MenuInfosBuilding extends Menu implements ButtonContainer {
 		update = new Thread(new Update());
 		update.setName("Update Building infos");
 		update.start();
+
+		refreshLang();
 	}
 
 	// =========================================================================================================================
@@ -87,7 +89,7 @@ public class MenuInfosBuilding extends Menu implements ButtonContainer {
 
 		g.setFont(font);
 		g.setColor(Color.WHITE);
-		g.drawString("Building", 20 + imgSize, 50);
+		g.drawString(build.getName(), 20 + imgSize, 50);
 
 		if (build != null) {
 			g.drawString(build.toString(), 20 + imgSize, 70);
@@ -95,8 +97,7 @@ public class MenuInfosBuilding extends Menu implements ButtonContainer {
 			if (!build.isBuild()) {
 				g.setColor(Color.RED);
 				g.setFont(fontBold);
-				g.drawString("En construction", getWidth() / 2 - fmBold.stringWidth("En construction") / 2,
-						imgSize + 40);
+				g.drawString(constructionText, getWidth() / 2 - fmBold.stringWidth(constructionText) / 2, imgSize + 40);
 
 				int progressWidth = getWidth() / 2;
 				int progressHeight = 30;
@@ -158,6 +159,12 @@ public class MenuInfosBuilding extends Menu implements ButtonContainer {
 		build = null;
 		setVisible(false);
 		releaseButtons();
+	}
+
+	// =========================================================================================================================
+
+	public void refreshLang() {
+		constructionText = ItemTableClient.getText("game.infos.build.construction");
 	}
 
 	// =========================================================================================================================

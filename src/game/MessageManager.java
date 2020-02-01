@@ -2,19 +2,20 @@ package game;
 
 import java.util.ArrayList;
 
-import game.panels.PanGUI;
 import server.game.messages.Message;
 import server.game.messages.TypeMessage;
 
 public class MessageManager {
 
-	// =============== Data =================
+	Game game;
+
+	// =============== Data ===============
 	/** All messages since the beginning of the session */
 	private ArrayList<Message> messagesPrinted = new ArrayList<>();
 	/** Messages history (Navigate with up/down arrows) */
 	private ArrayList<String> history = new ArrayList<>();
 
-	// =============== Display =================
+	// =============== Display ===============
 	/** Current Line */
 	String msg = new String("");
 	/** Maximum number of messages that will be displayed */
@@ -22,7 +23,7 @@ public class MessageManager {
 	/** Number of the first message to display (nbMsg-1 msg follow) */
 	int firstMsg = 0;
 
-	// =============== History =================
+	// =============== History ===============
 	/**
 	 * Selection of a previous line<br>
 	 * 0 > line1<br>
@@ -44,36 +45,27 @@ public class MessageManager {
 	 */
 	int cursorPos = 0;
 
-	// =============== =================
-	Game game;
-	PanGUI gui;
-
 	// =========================================================================================================================
 
 	public MessageManager(Game game) {
 		this.game = game;
 	}
 
-	public MessageManager(Game game, PanGUI gui) {
-		this(game);
-		this.gui = gui;
-	}
-
 	// =========================================================================================================================
 
 	public void updateLine() {
-		gui.msgLine = msg;
+		game.panel.msgLine = msg;
 	}
 
 	public void updateCursor() {
-		gui.cursorPos = cursorPos;
+		game.panel.cursorPos = cursorPos;
 	}
 
 	public void updateMessages() {
-		gui.nbMsg = Math.min(messagesPrinted.size() - firstMsg, nbMsgMax);
+		game.panel.nbMsg = Math.min(messagesPrinted.size() - firstMsg, nbMsgMax);
 
-		for (int i = 0; i < gui.nbMsg; i++)
-			gui.messages[i] = messagesPrinted.get(firstMsg + i);
+		for (int i = 0; i < game.panel.nbMsg; i++)
+			game.panel.messages[i] = messagesPrinted.get(firstMsg + i);
 	}
 
 	// =========================================================================================================================

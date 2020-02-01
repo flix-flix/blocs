@@ -11,6 +11,7 @@ import data.dynamic.TickClock;
 import data.id.Item;
 import data.id.ItemID;
 import data.id.ItemTable;
+import data.id.ItemTableClient;
 import data.map.Cube;
 import data.map.enumerations.Face;
 import data.map.resources.ResourceType;
@@ -20,7 +21,7 @@ import editor.history.PixelHistory;
 import editor.history.SizeHistory;
 import editor.panels.PanEditor;
 import environment.Environment3D;
-import environment.EnvironmentListner;
+import environment.EnvironmentListener;
 import environment.Target;
 import environment.extendsData.CubeClient;
 import environment.extendsData.MapClient;
@@ -41,7 +42,7 @@ import window.Displayable;
 import window.Fen;
 import window.KeyBoard;
 
-public class Editor extends Environment3D implements Displayable, EnvironmentListner {
+public class Editor extends Environment3D implements Displayable, EnvironmentListener {
 
 	public TexturePack texturePack;
 
@@ -147,7 +148,7 @@ public class Editor extends Environment3D implements Displayable, EnvironmentLis
 		this.fen = fen;
 
 		texturePack = new TexturePack("classic");
-		ItemTable.setTexturePack(texturePack);
+		ItemTableClient.setTexturePack(texturePack);
 
 		ResourceType.setTextureFolder(texturePack.getFolder());
 

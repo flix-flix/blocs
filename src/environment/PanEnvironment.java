@@ -4,8 +4,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
@@ -22,11 +20,13 @@ public class PanEnvironment extends JPanel {
 	protected BufferedImage img = null;
 
 	// =============== Size ===============
-	public int width, height;
-	public int centerW, centerH;
+	/** Size of the display of environment */
+	public int envWidth, envHeight;
+	/** Center of the display of environment */
+	public int envCenterW, envCenterH;
 
-	// =============== Engine Data ===============
-	public boolean showEngineData;
+	// =============== Display Engine Infos ===============
+	public boolean showEngineInfos;
 	private Graphics graphics;
 	private Camera camera;
 
@@ -45,35 +45,6 @@ public class PanEnvironment extends JPanel {
 	public PanEnvironment(Environment3D env) {
 		this.env = env;
 		setLayout(null);
-
-		this.addComponentListener(new ComponentListener() {
-			@Override
-			public void componentShown(ComponentEvent e) {
-			}
-
-			@Override
-			public void componentResized(ComponentEvent e) {
-
-			}
-
-			@Override
-			public void componentMoved(ComponentEvent e) {
-			}
-
-			@Override
-			public void componentHidden(ComponentEvent e) {
-			}
-		});
-	}
-
-	@Override
-	public void setSize(int width, int height) {
-		super.setSize(width, height);
-		this.width = width;
-		this.height = height;
-
-		centerW = width / 2;
-		centerH = height / 2;
 	}
 
 	// =========================================================================================================================
@@ -93,8 +64,18 @@ public class PanEnvironment extends JPanel {
 
 	// =========================================================================================================================
 
+	public void updateEnvironmentSize(int width, int height) {
+		this.envWidth = width;
+		this.envHeight = height;
+
+		envCenterW = width / 2;
+		envCenterH = height / 2;
+	}
+
+	// =========================================================================================================================
+
 	public void drawEngineData() {
-		if (showEngineData) {
+		if (showEngineInfos) {
 			left = 0;
 			right = 0;
 			// ======================= Camera =========================
@@ -155,10 +136,10 @@ public class PanEnvironment extends JPanel {
 	 */
 	public void writeRight(String str) {
 		graphics.setColor(Color.WHITE);
-		graphics.fillRect(getWidth() - fm.stringWidth(str) - margin, margin + size * right,
+		graphics.fillRect(envWidth - fm.stringWidth(str) - margin, margin + size * right,
 				fm.stringWidth(str) + 2 * margin, size);
 		graphics.setColor(Color.black);
-		graphics.drawString(str, getWidth() - fm.stringWidth(str), size * (right + 1));
+		graphics.drawString(str, envWidth - fm.stringWidth(str), size * (right + 1));
 		right++;
 	}
 
@@ -174,5 +155,13 @@ public class PanEnvironment extends JPanel {
 
 	public void setCamera(Camera camera) {
 		this.camera = camera;
+	}
+
+	// =========================================================================================================================
+
+	@Override
+	public void setSize(int width, int height) {
+		super.setSize(width, height);
+		updateEnvironmentSize(width, height);
 	}
 }

@@ -21,7 +21,7 @@ public class WorldGeneration {
 		Player ia = new Player("IA");
 
 		int ground = 10;
-		int size = 5;
+		int size = 20;
 
 		// ========== Ground and Borders ==========
 		for (int x = 0; x < size; x++)

@@ -257,15 +257,15 @@ public abstract class KeyboardEnvironment3D extends KeyBoard {
 	// =========================================================================================================================
 
 	/**
-	 * Move the Player orientation in function of the mouse cursor position then
-	 * replace it in the middle of the screen
+	 * Move the Camera orientation in function of the mouse cursor position then
+	 * replace the cursor in the middle of the screen
 	 * 
 	 * @param mouseX
 	 *            X location of the mouse in the frame
 	 * @param mouseY
 	 *            Y location of the mouse in the frame
 	 */
-	public void mouse(int mouseX, int mouseY) {
+	public void rotateCamera(int mouseX, int mouseY) {
 		Point fenLocation = fen.getLocationOnScreen();
 		if (mouseFreeze) {
 			robot.mouseMove(fenLocation.x + fen.getWidth() / 2, fenLocation.y + fen.getHeight() / 2);
@@ -356,6 +356,12 @@ public abstract class KeyboardEnvironment3D extends KeyBoard {
 			z -= Math.sin((vx + 90) * FlixBlocksUtils.toRadian);
 
 		return z;
+	}
+
+	// =========================================================================================================================
+
+	public void setPaused(boolean paused) {
+		this.paused = paused;
 	}
 
 	// =========================================================================================================================
