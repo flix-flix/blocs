@@ -2,6 +2,7 @@ package client.session;
 
 import java.util.ArrayList;
 
+import client.window.Game;
 import client.window.panels.PanGUI;
 import server.game.messages.Message;
 import server.game.messages.TypeMessage;
@@ -9,52 +10,53 @@ import server.game.messages.TypeMessage;
 public class MessageManager {
 
 	// =============== Data =================
-
-	// All messages since the beginning of the session
+	/** All messages since the beginning of the session */
 	private ArrayList<Message> messagesPrinted = new ArrayList<>();
-	// Messages history (Navigate with up/down arrows)
+	/** Messages history (Navigate with up/down arrows) */
 	private ArrayList<String> history = new ArrayList<>();
 
 	// =============== Display =================
-
-	// Current Line
+	/** Current Line */
 	String msg = new String("");
-	// Maximum number of messages that will be displayed
+	/** Maximum number of messages that will be displayed */
 	int nbMsgMax = 10;
-	// Number of the first message to display (nbMsg-1 msg follow)
+	/** Number of the first message to display (nbMsg-1 msg follow) */
 	int firstMsg = 0;
 
 	// =============== History =================
-
-	// Selection of a previous line
-	// 0 > line1
-	// 1 > line2
-	// 2 > line3
-	// 3 > [saved line]
+	/**
+	 * Selection of a previous line<br>
+	 * 0 > line1<br>
+	 * 1 > line2<br>
+	 * 2 > line3<br>
+	 * 3 > [saved line]
+	 */
 	int lineHistory = 0;
 
-	// Saved line
+	/** Saved line */
 	String savedLine = new String();
 
-	// Text cursr position in the written line
-	// .H.E.L.L.O.
-	// ^ ^ ^ ^ ^ ^
-	// 0 1 2 3 4 5
+	/**
+	 * Text cursor position in the written line<br>
+	 * <code>
+	 * .H.E.L.L.O.<br>
+	 * ^ ^ ^ ^ ^ ^<br>
+	 * 0 1 2 3 4 5</code>
+	 */
 	int cursorPos = 0;
 
-	// =============== Draw =================
-
-	Session session;
+	// =============== =================
+	Game game;
 	PanGUI gui;
 
 	// =========================================================================================================================
 
-	public MessageManager(Session session) {
-		this.session = session;
+	public MessageManager(Game game) {
+		this.game = game;
 	}
 
-	public MessageManager(Session session, PanGUI gui) {
-		this.session = session;
+	public MessageManager(Game game, PanGUI gui) {
+		this(game);
 		this.gui = gui;
 	}
 
@@ -157,7 +159,7 @@ public class MessageManager {
 			return;
 
 		saveLine();
-		session.send(new Message(msg, session.player));
+		game.send(new Message(msg, game.player));
 		clearLine();
 	}
 

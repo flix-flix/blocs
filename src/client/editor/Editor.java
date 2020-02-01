@@ -5,16 +5,21 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
+import javax.swing.JPanel;
+
 import client.editor.history.History;
 import client.editor.history.HistoryList;
 import client.editor.history.PixelHistory;
 import client.editor.history.SizeHistory;
-import client.session.Session;
-import client.session.UserAction;
 import client.textures.TextureCube;
 import client.textures.TextureFace;
+import client.textures.TexturePack;
 import client.textures.TextureSquare;
+import client.window.Displayable;
+import client.window.Fen;
+import client.window.KeyBoard;
 import client.window.graphicEngine.calcul.Camera;
+import client.window.graphicEngine.calcul.Engine;
 import client.window.graphicEngine.calcul.Line;
 import client.window.graphicEngine.calcul.Point3D;
 import client.window.graphicEngine.extended.DrawLayer;
@@ -28,21 +33,32 @@ import data.id.ItemID;
 import data.id.ItemTable;
 import data.map.Cube;
 import data.map.enumerations.Face;
+import data.map.resources.ResourceType;
+import launcher.Environment3D;
+import launcher.EnvironmentListner;
+import launcher.Target;
+import server.game.GameMode;
 import utils.FlixBlocksUtils;
 import utils.yaml.YAML;
 
-public class Editor {
+public class Editor extends Environment3D implements Displayable, EnvironmentListner {
 
-	public Session session;
+	public TexturePack texturePack;
 
-	public PanEditor panel;
+	public Fen fen;
+	private PanEditor panel;
 
 	// ======================= World =========================
-	public ModelMap map;
-	public Camera camera;
 	public TickClock clock;
 
 	private ModelCube cube;
+
+	// ======================= GameMode =========================
+	// TODO [Change] Gamemode -> CameraMode/EditorMode
+	GameMode gamemode = GameMode.CLASSIC;
+
+	// ======================= Target =========================
+	private Target target;
 
 	// ======================= Cursor =========================
 	private Cursor cursorPaint;
@@ -86,6 +102,7 @@ public class Editor {
 	private int prevX, prevY;
 
 	// ======================= Keys =========================
+	private KeyboardEditor keyboard;
 	private static final int ALT = 18;
 	private static final int SHIFT = 16;
 
@@ -126,20 +143,33 @@ public class Editor {
 
 	// =========================================================================================================================
 
-	public Editor(Session session) {
-		this.session = session;
+	public Editor(Fen fen) {
+		this.fen = fen;
+
+		texturePack = new TexturePack("classic");
+		ItemTable.setTexturePack(texturePack);
+
+		ResourceType.setTextureFolder(texturePack.getFolder());
+
+		generateCursor();
+
+		// ========================================================================================
+
+		map = new ModelMap(texturePack);
+		camera = new Camera(new Point3D(0, 0, -10), 90.5, .5);
+
+		engine.setBackground(Engine.FILL);
+
+		// ========================================================================================
 
 		panel = new PanEditor(this);
 
-		map = new ModelMap(session.texturePack);
-
-		camera = new Camera(new Point3D(0, 0, -10), 90.5, .5);
+		keyboard = new KeyboardEditor(this);
+		keyboard.start();
 
 		clock = new TickClock("Editor Clock");
 		clock.add(map);
 		clock.start();
-
-		generateCursor();
 
 		// ========================================================================================
 
@@ -149,6 +179,7 @@ public class Editor {
 
 		// ========================================================================================
 
+		// TODO [Improve] Layers handled in ModelCube
 		cube.layers = new ArrayList<>();
 		// 0-5 : grid
 		// 6 - 11: face name
@@ -157,6 +188,8 @@ public class Editor {
 		// 13 : calk
 		for (int i = 0; i <= 14; i++)
 			cube.layers.add(null);
+
+		start();
 	}
 
 	// =========================================================================================================================
@@ -222,7 +255,7 @@ public class Editor {
 
 	public void updatePreviewTexture(TextureCube tc, int id) {
 		// Update TexturePack
-		session.texturePack.setTextureCube(tc, id);
+		texturePack.setTextureCube(tc, id);
 		// Update miniature preview
 		panel.get(ActionEditor.MINIATURE).update();
 		textureCube = tc;
@@ -242,7 +275,7 @@ public class Editor {
 		String tag = panel.get(ActionEditor.ITEM_NAME).getString();
 		int color = panel.get(ActionEditor.ITEM_COLOR).getValue();
 
-		if (!session.texturePack.isIDAvailable(id))
+		if (!texturePack.isIDAvailable(id))
 			return;
 
 		// Add to ItemTable
@@ -250,7 +283,7 @@ public class Editor {
 		// Create and set textureCube | Update preview
 		updatePreviewTexture(createTexture(), id);
 		// Add the cube to the list of available cubes
-		session.fen.gui.infos.addCube(new Cube(id));
+		// session.fen.gui.infos.addCube(new Cube(id));
 
 		// Save the cube in file
 		YAML.encodeFile(textureCube.getYAML(id, tag, color), "resources/temp/" + tag.toLowerCase() + ".yml");
@@ -260,7 +293,7 @@ public class Editor {
 	// Painting
 
 	public void paintPixel() {
-		drawPixel(session.targetedFace, getTargetedY(), getTargetedX(), panel.panColor.getColor());
+		drawPixel(target.face, getTargetedY(), getTargetedX(), panel.panColor.getColor());
 		updateLastPixel();
 		updatePreviewTexture();
 	}
@@ -270,7 +303,7 @@ public class Editor {
 
 		for (int row = l.min; row <= l.max; row++)
 			for (int col = l.getLeft(row); col <= l.getRight(row); col++)
-				drawPixel(session.targetedFace, row, col, panel.panColor.getColor());
+				drawPixel(target.face, row, col, panel.panColor.getColor());
 
 		updateLastPixel();
 		updatePreviewTexture();
@@ -285,7 +318,7 @@ public class Editor {
 
 		for (int col = col1; col <= col2; col++)
 			for (int row = row1; row <= row2; row++)
-				drawPixel(session.targetedFace, row, col, panel.panColor.getColor());
+				drawPixel(target.face, row, col, panel.panColor.getColor());
 
 		updateLastPixel();
 		updatePreviewTexture();
@@ -404,7 +437,7 @@ public class Editor {
 	// Other tools
 
 	private void selectColor() {
-		panel.panColor.setColor(texture[session.targetedFace.ordinal()][getTargetedY()][getTargetedX()]);
+		panel.panColor.setColor(texture[target.face.ordinal()][getTargetedY()][getTargetedX()]);
 	}
 
 	private void fill(int erase, int face, int row, int col) {
@@ -432,11 +465,11 @@ public class Editor {
 	}
 
 	public void updateLastPixel() {
-		setLastPixel(session.targetedFace, getTargetedX(), getTargetedY());
+		setLastPixel(target.face, getTargetedX(), getTargetedY());
 	}
 
 	public boolean hasLastPixel() {
-		return session.targetedCube == cube && session.targetedFace == lastPaintFace && lastPaintCol < textureSize
+		return target.cube == cube && target.face == lastPaintFace && lastPaintCol < textureSize
 				&& lastPaintRow < textureSize && lastPaintRow != -1;
 	}
 
@@ -450,7 +483,7 @@ public class Editor {
 		switch (action) {
 		case EDITOR:// Close Editor
 			setAction(null);
-			session.fen.setAction(UserAction.EDITOR);
+			fen.returnToLauncher();
 			break;
 
 		// ================== EDIT TYPE ======================
@@ -555,7 +588,7 @@ public class Editor {
 
 		// ================== PanItem ======================
 		case ITEM_ID:
-			panel.get(action).setBool(session.texturePack.isIDAvailable(panel.get(action).getWheelStep()));
+			panel.get(action).setBool(texturePack.isIDAvailable(panel.get(action).getWheelStep()));
 			break;
 
 		// ================== Not handled ======================
@@ -571,8 +604,7 @@ public class Editor {
 	// =========================================================================================================================
 	// KeyEvent
 
-	/** @return true if the event is consumed */
-	public boolean keyPressed(KeyEvent e) {
+	public void keyPressed(KeyEvent e) {
 		updateControlShiftStatus(e);
 
 		int code = e.getKeyCode();
@@ -585,10 +617,10 @@ public class Editor {
 		if (e.isControlDown())
 			if (code == 'Z') {
 				undo();
-				return true;
+				return;
 			} else if (code == 'Y') {
 				redo();
-				return true;
+				return;
 			}
 
 		// Selection
@@ -598,47 +630,41 @@ public class Editor {
 					selectNothing();
 				else
 					selectAll();
-				return true;
+				return;
 			} else if (code == 'C') {
 				copy();
-				return true;
+				return;
 			} else if (code == 'V') {
 				paste();
-				return true;
+				return;
 			}
 
 		// Calk
 		if (hasCalk) {
 			if (code == 10) {// Enter
 				applyCalk();
-				return true;
+				return;
 			} else if (code == 37) {// Left
 				rotateCalkRight();
 				rotateCalkRight();
 				rotateCalkRight();
-				return true;
+				return;
 			} else if (code == 39) {// Right
 				rotateCalkRight();
-				return true;
+				return;
 			} else if (code == 27)// Esc
 				deleteCalk();
 		}
 
 		// Consume SHIFT to allow line/square drawing
 		if (code == SHIFT && action == ActionEditor.PAINT)
-			return true;
+			return;
 
 		// Writing
 		if (buttonListeningKey == ActionEditor.ITEM_NAME) {
 			write(e);
-			return true;
+			return;
 		}
-
-		// Consume Esc anyway
-		if (code == 27)
-			return true;
-
-		return false;
 	}
 
 	public boolean keyReleased(KeyEvent e) {
@@ -799,13 +825,13 @@ public class Editor {
 	// Target
 
 	public void updateTarget() {
-		if (session.keyboard.pressR) {
+		if (keyboard.pressR) {
 			looseTarget();
 			return;
 		}
 
 		// If no quadri targeted -> no update
-		if (session.targetedQuadri == Quadri.NOT_NUMBERED) {
+		if (target.quadri == Quadri.NOT_NUMBERED) {
 			cursorInCalk = false;
 			return;
 		}
@@ -816,18 +842,18 @@ public class Editor {
 				&& y < calkCornerY + calkSizeY;
 
 		if (action == ActionEditor.PAINT) {
-			session.targetedCube.setSelectedQuadri(session.targetedFace, session.targetedQuadri);
+			target.cube.setSelectedQuadri(target.face, target.quadri);
 
 			cube.removeLayer(lineSquareLayer);
 
-			if (session.keyboard.pressL) {
+			if (keyboard.pressL) {
 				paintPixel();
 				return;
 			}
 
 			// Show Line/Square preview
 			if (shiftDown && hasLastPixel()) {
-				DrawLayer layer = new DrawLayer(cube, session.targetedFace);
+				DrawLayer layer = new DrawLayer(cube, target.face);
 
 				int col1 = getTargetedX();
 				int row1 = getTargetedY();
@@ -842,13 +868,6 @@ public class Editor {
 				cube.layers.set(lineSquareLayer, layer);
 			}
 		}
-	}
-
-	public void looseTarget() {
-		// Removes highlight of previous selected quadri
-		session.targetedCube.setSelectedQuadri(null, ModelCube.NO_QUADRI);
-		// Removes line/square preview
-		session.targetedCube.removeLayer(lineSquareLayer);
 	}
 
 	// =========================================================================================================================
@@ -908,11 +927,11 @@ public class Editor {
 	public Cursor getCursor() {
 		Cursor cursor = Cursor.getDefaultCursor();
 
-		if (session.editor.getAction() == ActionEditor.PAINT)
-			cursor = (controlDown && (!shiftDown || !session.editor.isPreviewCube())) ? cursorSelectColor : cursorPaint;
-		else if (session.editor.getAction() == ActionEditor.FILL)
+		if (getAction() == ActionEditor.PAINT)
+			cursor = (controlDown && (!shiftDown || !isPreviewCube())) ? cursorSelectColor : cursorPaint;
+		else if (getAction() == ActionEditor.FILL)
 			cursor = controlDown ? cursorSelectColor : cursorFill;
-		else if (session.editor.getAction() == ActionEditor.SQUARE_SELECTION)
+		else if (getAction() == ActionEditor.SQUARE_SELECTION)
 			if (hasCalk) {
 				if (cursorInCalk)
 					cursor = cursorMoveSelection;
@@ -923,7 +942,7 @@ public class Editor {
 	}
 
 	private void generateCursor() {
-		String folder = session.texturePack.getFolder() + "cursor/editor/";
+		String folder = texturePack.getFolder() + "cursor/editor/";
 		cursorPaint = FlixBlocksUtils.createCursor(folder + "cursorPaint");
 		cursorFill = FlixBlocksUtils.createCursor(folder + "cursorFill");
 		cursorSelectColor = FlixBlocksUtils.createCursor(folder + "cursorSelectColor");
@@ -938,12 +957,12 @@ public class Editor {
 	public boolean leftClick() {
 		looseListeningKey();
 
-		lastClickedFace = session.targetedFace;
+		lastClickedFace = target.face;
 		lastClickedX = getTargetedX();
 		lastClickedY = getTargetedY();
 
 		// Click in void
-		if (session.targetedFace == null || session.targetedQuadri == Quadri.NOT_NUMBERED) {
+		if (target.face == null || target.quadri == Quadri.NOT_NUMBERED) {
 			// Loose selection
 			if (action == ActionEditor.SQUARE_SELECTION) {
 				calkMoveClickX = VOID;
@@ -955,7 +974,7 @@ public class Editor {
 		}
 
 		// Cancel action during rotation
-		if (session.keyboard.pressR)
+		if (keyboard.pressR)
 			return false;
 
 		if (action == null)
@@ -983,7 +1002,7 @@ public class Editor {
 			if (controlDown)
 				selectColor();
 			else if (isPreviewCube()) {
-				int face = session.targetedFace.ordinal();
+				int face = target.face.ordinal();
 				int col = getTargetedX();
 				int row = getTargetedY();
 
@@ -1009,7 +1028,7 @@ public class Editor {
 				break;
 			}
 			// Init selection
-			selectionFace = session.targetedFace;
+			selectionFace = target.face;
 			selectionStartX = x;
 			selectionStartY = y;
 			selectionEndX = selectionStartX;
@@ -1037,18 +1056,18 @@ public class Editor {
 
 	public void drag(MouseEvent e) {
 		// Rotate
-		if (session.keyboard.pressR) {
+		if (keyboard.pressR) {
 			rotateCamera(e.getX() - prevX, e.getY() - prevY);
 			initDrag(e.getX(), e.getY());
-		} else if (session.keyboard.pressL) {
+		} else if (keyboard.pressL) {
 			if (action == ActionEditor.SQUARE_SELECTION) {
 				int x = getTargetedX();
 				int y = getTargetedY();
 
 				// Calk deplacement
 				if (hasCalk) {
-					if (session.targetedQuadri == Quadri.NOT_NUMBERED || calkMoveClickX == VOID
-							|| calkMoveClickY == VOID || session.targetedFace != calkFace)
+					if (target.quadri == Quadri.NOT_NUMBERED || calkMoveClickX == VOID || calkMoveClickY == VOID
+							|| target.face != calkFace)
 						return;
 
 					calkCornerX += x - calkMoveClickX;
@@ -1061,7 +1080,7 @@ public class Editor {
 					return;
 				}
 				// Resize selection
-				if (selectionFace != session.targetedFace)
+				if (selectionFace != target.face)
 					return;
 				selectionEndX = x;
 				selectionEndY = y;
@@ -1083,24 +1102,9 @@ public class Editor {
 	}
 
 	public boolean isPreviewCube() {
-		if (session.targetedCube == null)
+		if (target.cube == null)
 			return false;
-		return session.targetedCube.getItemID() == ItemID.EDITOR_PREVIEW;
-	}
-
-	public boolean isNeededQuadriPrecision() {
-		if (action == null)
-			return false;
-
-		switch (action) {
-		case SQUARE_SELECTION:
-		case PAINT:
-		case FILL:
-		case PLAYER_COLOR:
-			return true;
-		default:
-			return false;
-		}
+		return target.cube.getItemID() == ItemID.EDITOR_PREVIEW;
 	}
 
 	// =========================================================================================================================
@@ -1122,11 +1126,11 @@ public class Editor {
 	// =========================================================================================================================
 
 	private int getTargetedX() {
-		return session.targetedQuadri % textureSize;
+		return target.quadri % textureSize;
 	}
 
 	private int getTargetedY() {
-		return session.targetedQuadri / textureSize;
+		return target.quadri / textureSize;
 	}
 
 	// =========================================================================================================================
@@ -1137,6 +1141,61 @@ public class Editor {
 
 	public void setAction(ActionEditor action) {
 		this.action = action;
-		session.fen.updateCursor();
+		fen.updateCursor();
+	}
+
+	// =========================================================================================================================
+	// Environment
+
+	@Override
+	public void gainTarget(Target target) {
+		this.target = target;
+		updateTarget();
+	}
+
+	@Override
+	public void looseTarget() {
+		// Removes highlight of previous selected quadri
+		target.cube.setSelectedQuadri(null, ModelCube.NO_QUADRI);
+		// Removes line/square preview
+		target.cube.removeLayer(lineSquareLayer);
+	}
+
+	@Override
+	public void oneSecondTick() {
+	}
+
+	@Override
+	public boolean isNeededQuadriPrecision() {
+		if (action == null)
+			return false;
+
+		switch (action) {
+		case SQUARE_SELECTION:
+		case PAINT:
+		case FILL:
+		case PLAYER_COLOR:
+			return true;
+		default:
+			return false;
+		}
+	}
+
+	// =========================================================================================================================
+	// Displayable
+
+	@Override
+	public JPanel getContentPane() {
+		return panel;
+	}
+
+	@Override
+	public void updateSize(int x, int y) {
+		panel.setSize(x, y);
+	}
+
+	@Override
+	public KeyBoard getKeyBoard() {
+		return keyboard;
 	}
 }

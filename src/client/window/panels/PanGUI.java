@@ -9,9 +9,9 @@ import java.awt.event.ComponentListener;
 
 import javax.swing.JPanel;
 
-import client.session.Session;
 import client.session.StateHUD;
 import client.session.UserAction;
+import client.window.Game;
 import client.window.panels.menus.ButtonContainer;
 import client.window.panels.menus.MenuButtonCube;
 import client.window.panels.menus.MenuButtonUserAction;
@@ -29,7 +29,7 @@ import server.game.messages.Message;
 public class PanGUI extends JPanel implements ButtonContainer {
 	private static final long serialVersionUID = 3929655843006244723L;
 
-	Session session;
+	Game game;
 
 	// Dialog font
 	Font font = new Font("monospace", Font.BOLD, 18);
@@ -63,7 +63,7 @@ public class PanGUI extends JPanel implements ButtonContainer {
 
 	MenuCol menu = new MenuCol();
 
-	UserAction[] _userActions = { UserAction.MOUSE, UserAction.CREA_ADD, UserAction.CREA_DESTROY, UserAction.EDITOR };
+	UserAction[] _userActions = { UserAction.MOUSE, UserAction.CREA_ADD, UserAction.CREA_DESTROY };
 	MenuButtonUserAction[] userActions = new MenuButtonUserAction[_userActions.length];
 
 	MenuGrid gridActions;
@@ -78,8 +78,8 @@ public class PanGUI extends JPanel implements ButtonContainer {
 
 	// =========================================================================================================================
 
-	public PanGUI(Session s) {
-		session = s;
+	public PanGUI(Game game) {
+		this.game = game;
 		this.setOpaque(false);
 		this.setLayout(null);
 
@@ -91,12 +91,12 @@ public class PanGUI extends JPanel implements ButtonContainer {
 		menu.addTop(gridActions = new MenuGrid(), 100);
 
 		for (int i = 0; i < _userActions.length; i++)
-			gridActions.addMenu(userActions[i] = new MenuButtonUserAction(session, _userActions[i]));
+			gridActions.addMenu(userActions[i] = new MenuButtonUserAction(game, _userActions[i]));
 
-		menu.addBottom(map = new MenuMap(session), MenuCol.WIDTH);
-		menu.addBottom(ress = new MenuRessources(session), 130);
+		menu.addBottom(map = new MenuMap(game), MenuCol.WIDTH);
+		menu.addBottom(ress = new MenuRessources(game), 130);
 
-		menu.addTop(infos = new MenuInfos(session), MenuCol.REMAINING);
+		menu.addTop(infos = new MenuInfos(game), MenuCol.REMAINING);
 
 		refreshGUI();
 	}
@@ -110,7 +110,7 @@ public class PanGUI extends JPanel implements ButtonContainer {
 		g.setFont(fontWIP);
 		g.drawString(wip, getWidth() - fm.stringWidth(wip) - 10, getHeight() - 10);
 
-		if (session.stateHUD == StateHUD.DIALOG) {
+		if (game.stateHUD == StateHUD.DIALOG) {
 			int grayBack = 120;
 			Color colorBack = new Color(grayBack, grayBack, grayBack, 200);
 			Color colorMsg = Color.WHITE;
@@ -181,6 +181,12 @@ public class PanGUI extends JPanel implements ButtonContainer {
 		unit = null;
 		build = null;
 		infos.refresh(cube);
+
+		if (cube != null)
+			if (cube.unit != null)
+				unit = cube.unit;
+			else if (cube.build != null)
+				build = cube.build;
 	}
 
 	public void clear() {
@@ -190,28 +196,23 @@ public class PanGUI extends JPanel implements ButtonContainer {
 	// =========================================================================================================================
 
 	public void refreshGUI() {
-		menu.setVisible(session.gamemode == GameMode.CLASSIC);
+		menu.setVisible(game.gamemode == GameMode.CLASSIC);
 
 		clear();
 
 		for (MenuButtonUserAction e : userActions)
-			e.selected = session.getAction() == e.action;
+			e.selected = game.getAction() == e.action;
 
-		if (session.getAction() == UserAction.CREA_ADD)
+		if (game.getAction() == UserAction.CREA_ADD)
 			infos.showCubes();
 
 		map.updateMap();
 		map.repaint();
 	}
 
-	public void resetCubeSelection() {
-		for (MenuButtonCube e : infos.cubes)
-			e.selected = false;
-	}
-
 	public void updateTexturePack() {
 		for (MenuButtonCube m : infos.cubes)
-			m.updateTexturePack(session.texturePack);
+			m.updateTexturePack(game.texturePack);
 	}
 
 	// =========================================================================================================================

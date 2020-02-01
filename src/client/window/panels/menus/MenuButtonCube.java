@@ -7,9 +7,10 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 
-import client.session.Session;
 import client.textures.TexturePack;
+import client.window.Game;
 import client.window.graphicEngine.calcul.Engine;
 import client.window.graphicEngine.extended.ModelCube;
 import client.window.graphicEngine.extended.ModelMap;
@@ -31,13 +32,16 @@ public class MenuButtonCube extends Menu {
 
 	String name;
 
+	/** Store the linked buttons */
+	private ArrayList<MenuButtonCube> group;
+
 	// =========================================================================================================================
 
-	public MenuButtonCube(Session session, Cube cube) {
-		super(session);
+	public MenuButtonCube(Game game, Cube cube) {
+		super(game);
 		this.cube = cube;
-		this.model = new ModelMap(session.texturePack);
-		model.add(new ModelCube(cube, session.texturePack));
+		this.model = new ModelMap(game.texturePack);
+		model.add(new ModelCube(cube, game.texturePack));
 
 		name = ItemTableClient.getName(cube.multibloc == null ? cube.getItemID() : cube.multibloc.itemID);
 		if (name == null)
@@ -45,7 +49,7 @@ public class MenuButtonCube extends Menu {
 
 		engine = new Engine(
 				ItemTableClient.getCamera(cube.multibloc == null ? cube.getItemID() : cube.multibloc.itemID), model);
-		engine.background = Engine.NONE;
+		engine.setBackground(Engine.NONE);
 	}
 
 	// =========================================================================================================================
@@ -81,9 +85,16 @@ public class MenuButtonCube extends Menu {
 		ModelCube cube = model.gridGet(0, 0, 0);
 		if (cube.multibloc != null)
 			for (Cube c : cube.multibloc.list)
-				((ModelCube) c).setTexturePack(session.texturePack);
+				((ModelCube) c).setTexturePack(game.texturePack);
 		else
-			cube.setTexturePack(session.texturePack);
+			cube.setTexturePack(game.texturePack);
+	}
+
+	// =========================================================================================================================
+
+	public static void group(ArrayList<MenuButtonCube> cubes) {
+		for (MenuButtonCube button : cubes)
+			button.group = cubes;
 	}
 
 	// =========================================================================================================================
@@ -95,8 +106,10 @@ public class MenuButtonCube extends Menu {
 
 	@Override
 	public void click(MouseEvent e) {
-		session.setNextCube(cube);
-		session.fen.gui.resetCubeSelection();
+		game.setNextCube(cube);
+
+		for (MenuButtonCube button : group)
+			button.selected = false;
 		selected = true;
 	}
 }

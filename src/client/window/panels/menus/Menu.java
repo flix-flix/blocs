@@ -7,12 +7,12 @@ import java.awt.event.MouseListener;
 
 import javax.swing.JPanel;
 
-import client.session.Session;
+import client.window.Game;
 
 public abstract class Menu extends JPanel {
 	private static final long serialVersionUID = -5458848328043427804L;
 
-	protected Session session;
+	protected Game game;
 
 	// =========================================================================================================================
 
@@ -63,9 +63,9 @@ public abstract class Menu extends JPanel {
 		});
 	}
 
-	public Menu(Session session) {
+	public Menu(Game game) {
 		this();
-		this.session = session;
+		this.game = game;
 	}
 
 	// =========================================================================================================================

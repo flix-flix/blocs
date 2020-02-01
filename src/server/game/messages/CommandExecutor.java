@@ -1,16 +1,16 @@
 package server.game.messages;
 
 import client.session.MessageManager;
-import client.session.Session;
+import client.window.Game;
 import server.game.GameMode;
 
 public class CommandExecutor {
 
-	Session session;
+	Game game;
 	MessageManager messages;
 
-	public CommandExecutor(Session session, MessageManager messages) {
-		this.session = session;
+	public CommandExecutor(Game game, MessageManager messages) {
+		this.game = game;
 		this.messages = messages;
 	}
 
@@ -33,10 +33,10 @@ public class CommandExecutor {
 			}
 
 			if (parts[2].equals(GameMode.CLASSIC.name())) {
-				session.setGameMode(GameMode.CLASSIC);
+				game.setGameMode(GameMode.CLASSIC);
 				messages.addTextMsg("Gamemode updated to " + GameMode.CLASSIC.name());
 			} else if (parts[2].equals(GameMode.CREATIVE.name())) {
-				session.setGameMode(GameMode.CREATIVE);
+				game.setGameMode(GameMode.CREATIVE);
 				messages.addTextMsg("Gamemode updated to " + GameMode.CLASSIC.name());
 			} else
 				messages.addTextMsg("Available modes : " + GameMode.CLASSIC.name() + ", " + GameMode.CREATIVE.name());

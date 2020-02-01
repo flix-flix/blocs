@@ -462,13 +462,16 @@ public class Unit implements Serializable {
 				setDown(prevDir);
 			}
 		} else {
-			// Detect diagonal rotation
+			// Diagonal rotation
 			if (path.size() >= 2 && coord.getRotationPointDiago(path.get(1)) >= 0
 					&& coord.getRotationPointDiago(path.get(1)) < 4) {
 
 				path.removeFirst();
 				setDiago(coord.getRotationPointDiago(path.removeFirst()));
-			} else {// Do adjacent rotation
+
+			}
+			// Do adjacent rotation
+			else {
 				if (orientation.isSameAxe(dir))
 					rotation();
 				else {

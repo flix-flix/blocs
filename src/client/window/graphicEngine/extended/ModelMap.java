@@ -251,6 +251,7 @@ public class ModelMap extends Map implements Model {
 	@Override
 	public ArrayList<Draw> getDraws(Camera camera) {
 		draws.clear();
+		nbChunks = 0;
 
 		int camChunkX = toChunkCoord(camera.vue.x);
 		int camChunkZ = toChunkCoord(camera.vue.z);

@@ -5,7 +5,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.lang.Thread.State;
 
-import client.session.Session;
+import client.window.Game;
 import client.window.panels.menus.Menu;
 import data.map.Cube;
 import data.map.resources.Resource;
@@ -22,8 +22,8 @@ public class MenuInfosResource extends Menu {
 
 	// =========================================================================================================================
 
-	public MenuInfosResource(Session session) {
-		super(session);
+	public MenuInfosResource(Game game) {
+		super(game);
 
 		update = new Thread(new Update());
 		update.setName("Update Ressource infos");

@@ -7,7 +7,7 @@ import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.lang.Thread.State;
 
-import client.session.Session;
+import client.window.Game;
 import client.window.graphicEngine.calcul.Camera;
 import client.window.graphicEngine.calcul.Engine;
 import client.window.graphicEngine.calcul.Point3D;
@@ -39,8 +39,8 @@ public class MenuInfoUnit extends Menu implements ButtonContainer {
 
 	// =========================================================================================================================
 
-	public MenuInfoUnit(Session session) {
-		super(session);
+	public MenuInfoUnit(Game game) {
+		super(game);
 
 		update = new Thread(new Update());
 		update.setName("Update Unit infos");
@@ -51,11 +51,11 @@ public class MenuInfoUnit extends Menu implements ButtonContainer {
 		res.setLocation(getWidth() / 2 - res.getWidth() / 2, 180);
 		add(res);
 
-		destroy = new MenuButtonAction(session, Action.UNIT_DESTROY, this);
+		destroy = new MenuButtonAction(game, Action.UNIT_DESTROY, this);
 		destroy.setBounds(280, 90, 75, 75);
 		add(destroy);
 
-		harvest = new MenuButtonAction(session, Action.UNIT_HARVEST, this);
+		harvest = new MenuButtonAction(game, Action.UNIT_HARVEST, this);
 		harvest.setBounds(190, 90, 75, 75);
 		add(harvest);
 
@@ -85,7 +85,6 @@ public class MenuInfoUnit extends Menu implements ButtonContainer {
 
 	public void update(Unit unit) {
 		this.unit = unit;
-		session.fen.gui.unit = unit;
 
 		if (update.getState() == State.WAITING)
 			synchronized (update) {
@@ -95,8 +94,8 @@ public class MenuInfoUnit extends Menu implements ButtonContainer {
 		Cube cube = new Cube(unit.getItemID());
 		cube.orientation = Orientation.WEST;
 
-		engine = new Engine(new Camera(new Point3D(-.4, 1.5, -1), 58, -35), new ModelCube(cube, session.texturePack));
-		engine.background = Engine.NONE;
+		engine = new Engine(new Camera(new Point3D(-.4, 1.5, -1), 58, -35), new ModelCube(cube, game.texturePack));
+		engine.setBackground(Engine.NONE);
 		img = engine.getImage(75, 75);
 
 		_update();
@@ -106,7 +105,7 @@ public class MenuInfoUnit extends Menu implements ButtonContainer {
 		if (unit != null)
 			res.update(unit.getResource());
 
-		destroy.setVisible(unit.getPlayer().equals(session.player));
+		destroy.setVisible(unit.getPlayer().equals(game.player));
 
 		setVisible(true);
 		repaint();

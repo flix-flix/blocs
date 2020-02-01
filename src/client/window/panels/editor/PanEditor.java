@@ -7,6 +7,7 @@ import javax.swing.JPanel;
 
 import client.editor.ActionEditor;
 import client.editor.Editor;
+import client.window.panels.PanEnvironment;
 import client.window.panels.editor.MenuHelp.Mark;
 import client.window.panels.editor.MenuHelp.TipCalk;
 import client.window.panels.menus.MenuCol;
@@ -15,7 +16,7 @@ import client.window.panels.menus.MenuGrid;
 public class PanEditor extends JPanel {
 	private static final long serialVersionUID = -7092208608285186782L;
 
-	Editor editor;
+	private PanEnvironment panel;
 
 	// ======================= Menu =========================
 	int menuWidth = 400;
@@ -50,13 +51,15 @@ public class PanEditor extends JPanel {
 	// =========================================================================================================================
 
 	public PanEditor(Editor editor) {
-		this.editor = editor;
-
 		this.setLayout(null);
 		this.setOpaque(false);
 
+		panel = editor.getPanel();
+		panel.setLocation(menuWidth, 0);
+		panel.setSize(getWidth() - menuWidth, getHeight());
+		add(panel);
+
 		help = new MenuHelp(Mark.INTERROGATION, 80, 10);
-		//help.setBackground(new Color(0xff4068c4));
 		help.setBounds(menuWidth + 25, 25, 500, 100);
 		this.add(help);
 
@@ -147,9 +150,11 @@ public class PanEditor extends JPanel {
 	// =========================================================================================================================
 
 	@Override
-	public void setBounds(int x, int y, int width, int height) {
-		super.setBounds(x, y, width, height);
-		menu.setBounds(x, y, menuWidth, height);
+	public void setSize(int width, int height) {
+		super.setSize(width, height);
+
+		menu.setSize(menuWidth, height);
+		panel.setSize(width - menuWidth, height);
 
 		helpTool.setLocation(menuWidth + 25, getHeight() - 26 - helpTool.getSize().height);
 	}

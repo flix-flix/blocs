@@ -1,6 +1,6 @@
 package client.main;
 
-import client.session.Session;
+import client.window.Fen;
 import data.id.ItemTableClient;
 
 public class Main {
@@ -11,6 +11,7 @@ public class Main {
 		ItemTableClient.init();
 
 		server.main.MainServer.main(args);
-		new Session();
+
+		new Fen();
 	}
 }

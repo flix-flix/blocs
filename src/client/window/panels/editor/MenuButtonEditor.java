@@ -69,7 +69,7 @@ public class MenuButtonEditor extends Menu {
 
 		if (hasImage())
 			img = FlixBlocksUtils
-					.getImage(editor.session.texturePack.getFolder() + "menu/editor/" + action.name().toLowerCase());
+					.getImage(editor.texturePack.getFolder() + "menu/editor/" + action.name().toLowerCase());
 		else
 			setMinimumSize(new Dimension(fm.stringWidth(getText()), 20));
 
@@ -84,9 +84,8 @@ public class MenuButtonEditor extends Menu {
 				itemID = ItemID.BORDER;
 				break;
 			}
-			engine = new Engine(ItemTableClient.getCamera(itemID),
-					new ModelCube(new Cube(itemID), editor.session.texturePack));
-			engine.background = Engine.NONE;
+			engine = new Engine(ItemTableClient.getCamera(itemID), new ModelCube(new Cube(itemID), editor.texturePack));
+			engine.setBackground(Engine.NONE);
 			update();
 		}
 

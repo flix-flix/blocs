@@ -7,7 +7,7 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.lang.Thread.State;
 
-import client.session.Session;
+import client.window.Game;
 import client.window.graphicEngine.calcul.Engine;
 import client.window.graphicEngine.extended.ModelMap;
 import client.window.panels.menus.ButtonContainer;
@@ -47,8 +47,8 @@ public class MenuInfosBuilding extends Menu implements ButtonContainer {
 
 	// =========================================================================================================================
 
-	public MenuInfosBuilding(Session session) {
-		super(session);
+	public MenuInfosBuilding(Game game) {
+		super(game);
 
 		stocks = new MenuGrid();
 		stocks.setCols(3);
@@ -57,11 +57,11 @@ public class MenuInfosBuilding extends Menu implements ButtonContainer {
 		stocks.setLocation(0, getHeight() - stocks.getHeight());
 		add(stocks);
 
-		spawn = new MenuButtonAction(session, Action.BUILDING_SPAWN, this);
+		spawn = new MenuButtonAction(game, Action.BUILDING_SPAWN, this);
 		spawn.setBounds(15, imgSize + 20, 75, 75);
 		add(spawn);
 
-		upgrade = new MenuButtonAction(session, Action.BUILDING_RESEARCH, this);
+		upgrade = new MenuButtonAction(game, Action.BUILDING_RESEARCH, this);
 		upgrade.setBounds(105, imgSize + 20, 75, 75);
 		add(upgrade);
 
@@ -121,18 +121,17 @@ public class MenuInfosBuilding extends Menu implements ButtonContainer {
 
 	public void update(Building build) {
 		this.build = build;
-		session.fen.gui.build = build;
 
 		if (update.getState() == State.WAITING)
 			synchronized (update) {
 				update.notify();
 			}
 
-		ModelMap map = new ModelMap(session.texturePack);
+		ModelMap map = new ModelMap(game.texturePack);
 		map.add(new Building(null, build.getItemID(), 0, 0, 0, true).getCube());
 
 		engine = new Engine(ItemTableClient.getCamera(build.getItemID()), map);
-		engine.background = Engine.NONE;
+		engine.setBackground(Engine.NONE);
 		img = engine.getImage(imgSize, imgSize);
 
 		stocks.clear();
@@ -148,8 +147,8 @@ public class MenuInfosBuilding extends Menu implements ButtonContainer {
 	}
 
 	private void _update() {
-		spawn.setVisible(build.isBuild() && build.getPlayer().equals(session.player));
-		upgrade.setVisible(build.isBuild() && build.getPlayer().equals(session.player));
+		spawn.setVisible(build.isBuild() && build.getPlayer().equals(game.player));
+		upgrade.setVisible(build.isBuild() && build.getPlayer().equals(game.player));
 
 		setVisible(true);
 		repaint();

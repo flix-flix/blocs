@@ -5,8 +5,8 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 
-import client.session.Session;
 import client.session.UserAction;
+import client.window.Game;
 import client.window.graphicEngine.calcul.Camera;
 import client.window.graphicEngine.calcul.Engine;
 import client.window.graphicEngine.calcul.Point3D;
@@ -25,16 +25,16 @@ public class MenuButtonUserAction extends Menu {
 
 	public boolean selected;
 
-	public MenuButtonUserAction(Session session, UserAction action) {
-		super(session);
+	public MenuButtonUserAction(Game game, UserAction action) {
+		super(game);
 		this.action = action;
 
-		img = FlixBlocksUtils.getImage(session.texturePack.getFolder() + "menu/" + action.name().toLowerCase());
+		img = FlixBlocksUtils.getImage(game.texturePack.getFolder() + "menu/" + action.name().toLowerCase());
 
 		if (action == UserAction.CREA_ADD) {
 			engine = new Engine(new Camera(new Point3D(-.4, 1.5, -1), 58, -35),
-					new ModelCube(new Cube(ItemID.GRASS), session.texturePack));
-			engine.background = Engine.NONE;
+					new ModelCube(new Cube(ItemID.GRASS), game.texturePack));
+			engine.setBackground(Engine.NONE);
 		}
 	}
 
@@ -65,6 +65,6 @@ public class MenuButtonUserAction extends Menu {
 
 	@Override
 	public void click(MouseEvent e) {
-		session.fen.setAction(action);
+		game.setAction(action);
 	}
 }

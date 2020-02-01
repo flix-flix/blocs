@@ -10,19 +10,16 @@ import java.awt.event.ComponentListener;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-import client.session.Session;
+import client.window.Game;
 
 public class PanPause extends JPanel {
 	private static final long serialVersionUID = 2735034739187347959L;
 
-	Session session;
-
-	public JButton resume, save, options, quit;
+	private JButton resume, save, options, quit;
 
 	// =========================================================================================================================
 
-	public PanPause(Session session) {
-		this.session = session;
+	public PanPause(Game game) {
 		this.setOpaque(false);
 		this.setLayout(null);
 		this.setVisible(false);
@@ -37,8 +34,8 @@ public class PanPause extends JPanel {
 
 		resume.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				session.keyboard.resume();
-				session.fen.requestFocusInWindow();
+				game.resume();
+				game.fen.requestFocusInWindow();
 			}
 		});
 		options.addActionListener(new ActionListener() {

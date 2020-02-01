@@ -6,7 +6,7 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 
-import client.session.Session;
+import client.window.Game;
 import client.window.graphicEngine.calcul.Camera;
 import client.window.graphicEngine.calcul.Engine;
 import client.window.graphicEngine.calcul.Point3D;
@@ -32,14 +32,14 @@ public class MenuRessources extends Menu {
 
 	// =========================================================================================================================
 
-	public MenuRessources(Session session) {
-		super(session);
+	public MenuRessources(Game game) {
+		super(game);
 
 		Cube unit = new Cube(ItemID.UNIT);
 		unit.orientation = Orientation.WEST;
 		Engine engine = new Engine(new Camera(new Point3D(-.4, 1.5, -1), 58, -35),
-				new ModelCube(unit, session.texturePack));
-		engine.background = Engine.NONE;
+				new ModelCube(unit, game.texturePack));
+		engine.setBackground(Engine.NONE);
 		units = engine.getImage(imgSize, imgSize);
 	}
 
@@ -58,13 +58,13 @@ public class MenuRessources extends Menu {
 		g.setColor(Color.WHITE);
 		g.setFont(font);
 
-		paintRess(0, 0, ResourceType.WOOD.getImage(), session.player.getWood());
-		paintRess(1, 0, ResourceType.STONE.getImage(), session.player.getStone());
-		paintRess(2, 0, ResourceType.WATER.getImage(), session.player.getWater());
+		paintRess(0, 0, ResourceType.WOOD.getImage(), game.player.getWood());
+		paintRess(1, 0, ResourceType.STONE.getImage(), game.player.getStone());
+		paintRess(2, 0, ResourceType.WATER.getImage(), game.player.getWater());
 
-		paintRess(0, 1, units, session.player.getWood());
-		paintRess(1, 1, units, session.player.getStone());
-		paintRess(2, 1, units, session.player.getNbUnits());
+		paintRess(0, 1, units, game.player.getWood());
+		paintRess(1, 1, units, game.player.getStone());
+		paintRess(2, 1, units, game.player.getNbUnits());
 	}
 
 	private void paintRess(int row, int col, Image img, int value) {

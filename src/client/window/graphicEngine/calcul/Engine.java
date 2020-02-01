@@ -19,7 +19,9 @@ public class Engine {
 	/** The point of view and inclinations */
 	private Camera camera;
 
+	/** Will replace the current model on the next getImage() call */
 	private Model newModel = null;
+	/** Will replace the current model on the next getImage() call */
 	private Camera newCamera = null;
 
 	/** View angles */
@@ -27,12 +29,12 @@ public class Engine {
 	private double vy = Math.tan(45 * toRadian);
 
 	// ================ Target =====================
-	public int cursorX = 100, cursorY = 100;
+	private int targetX = 100, targetY = 100;
 
-	public Draw drawTarget;
-	public Quadri quadriTarget;
+	private Draw drawTarget;
+	private Quadri quadriTarget;
 
-	// ================ Dev (F3) =====================
+	// ================ Processing time =====================
 	public long timeStart, timeMat, timeDraw, timeEnd;
 
 	// ================ Data =====================
@@ -41,13 +43,13 @@ public class Engine {
 	private BufferedImage bimg;
 	private DataBuffer dataBuffer;
 
-	public int imgWidth = 100, imgHeight = 100;
-	public int centerX, centerY;
+	private int imgWidth = 100, imgHeight = 100;
+	private int centerX, centerY;
 	/**
 	 * Width calculated from imgHeight to keep a good width/height ratio on drawed
 	 * cubes
 	 */
-	public int widthRatio;
+	private int widthRatio;
 
 	// ================ Background =====================
 	/** Leave the background transparent */
@@ -58,7 +60,7 @@ public class Engine {
 	public static final int SKY = 2;
 
 	/** State of the background */
-	public int background = SKY;
+	private int background = SKY;
 
 	// =========================================================================================================================
 
@@ -78,10 +80,14 @@ public class Engine {
 		if (w <= 0 || h <= 0)
 			return null;
 
-		if (newModel != null)
+		if (newModel != null) {
 			model = newModel;
-		if (newCamera != null)
+			newModel = null;
+		}
+		if (newCamera != null) {
 			camera = newCamera;
+			newCamera = null;
+		}
 
 		timeStart = System.currentTimeMillis();
 		init(w, h);
@@ -174,7 +180,7 @@ public class Engine {
 				if (poly.xpoints[index] < imgWidth && poly.xpoints[index] > 0 && poly.ypoints[index] < imgHeight
 						&& poly.ypoints[index] > 0) {
 					// Test if the target is in the polygon
-					if (drawTarget == null && poly.contains(cursorX, cursorY) && d.isTargetable()) {
+					if (drawTarget == null && poly.contains(targetX, targetY) && d.isTargetable()) {
 						targeted = true;
 						drawTarget = d;
 					}
@@ -185,7 +191,7 @@ public class Engine {
 					if (q.points[i].x < imgWidth && q.points[i].x > 0 && q.points[i].y < imgHeight
 							&& q.points[i].y > 0) {
 						if (targeted && quadriTarget == null && q.id != Quadri.NOT_NUMBERED
-								&& q.getPoly().contains(cursorX, cursorY))
+								&& q.getPoly().contains(targetX, targetY))
 							quadriTarget = q;
 						drawQuadri(q);
 						break;
@@ -342,5 +348,16 @@ public class Engine {
 
 	public Quadri getQuadriTarget() {
 		return quadriTarget;
+	}
+
+	// =========================================================================================================================
+
+	public void setBackground(int x) {
+		background = x;
+	}
+
+	public void setTarget(int x, int y) {
+		targetX = x;
+		targetY = y;
 	}
 }

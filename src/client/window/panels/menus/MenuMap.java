@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 
-import client.session.Session;
+import client.window.Game;
 import data.id.ItemTableClient;
 import data.map.Map;
 
@@ -15,8 +15,8 @@ public class MenuMap extends Menu {
 
 	// =========================================================================================================================
 
-	public MenuMap(Session session) {
-		super(session);
+	public MenuMap(Game game) {
+		super(game);
 
 		updateMap();
 	}
@@ -49,7 +49,7 @@ public class MenuMap extends Menu {
 	// =========================================================================================================================
 
 	public void updateMap() {
-		map = session.map;
+		map = game.getMap();
 	}
 
 	// =========================================================================================================================

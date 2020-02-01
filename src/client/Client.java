@@ -7,7 +7,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import client.session.Session;
+import client.window.Game;
 
 public class Client implements Runnable {
 
@@ -18,10 +18,12 @@ public class Client implements Runnable {
 	ObjectInputStream in;
 	public ObjectOutputStream out;
 
-	Session session;
+	Game game;
 
-	public Client(Session session) {
-		this.session = session;
+	// =========================================================================================================================
+
+	public Client(Game game) {
+		this.game = game;
 		try {
 			// TODO Other than LocalHost
 			serverAddress = InetAddress.getLocalHost();
@@ -44,11 +46,13 @@ public class Client implements Runnable {
 		t.start();
 	}
 
+	// =========================================================================================================================
+
 	@Override
 	public void run() {
 		while (true) {
 			try {
-				session.receive(in.readObject());
+				game.receive(in.readObject());
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -56,5 +60,4 @@ public class Client implements Runnable {
 			}
 		}
 	}
-
 }

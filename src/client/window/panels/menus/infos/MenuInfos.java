@@ -3,7 +3,7 @@ package client.window.panels.menus.infos;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
-import client.session.Session;
+import client.window.Game;
 import client.window.panels.menus.Menu;
 import client.window.panels.menus.MenuButtonCube;
 import client.window.panels.menus.MenuGrid;
@@ -28,12 +28,12 @@ public class MenuInfos extends Menu {
 
 	// =========================================================================================================================
 
-	public MenuInfos(Session session) {
-		super(session);
+	public MenuInfos(Game game) {
+		super(game);
 
-		resource = new MenuInfosResource(session);
-		unit = new MenuInfoUnit(session);
-		build = new MenuInfosBuilding(session);
+		resource = new MenuInfosResource(game);
+		unit = new MenuInfoUnit(game);
+		build = new MenuInfosBuilding(game);
 		gridCubes = new MenuGrid();
 
 		gridCubes.setSize(getSize());
@@ -50,6 +50,8 @@ public class MenuInfos extends Menu {
 		for (Cube cube : _cubes)
 			addCube(cube);
 
+		MenuButtonCube.group(cubes);
+
 		// =========================================================================================================================
 
 		add(resource);
@@ -63,7 +65,7 @@ public class MenuInfos extends Menu {
 	// =========================================================================================================================
 
 	public void addCube(Cube cube) {
-		MenuButtonCube button = new MenuButtonCube(session, cube);
+		MenuButtonCube button = new MenuButtonCube(game, cube);
 		cubes.add(button);
 		gridCubes.addMenu(button);
 	}

@@ -23,7 +23,7 @@ import java.util.stream.Stream;
 import javax.imageio.ImageIO;
 
 import client.textures.TextureFace;
-import client.window.panels.PanGame;
+import client.window.panels.PanEnvironment;
 
 public class FlixBlocksUtils {
 	public static final double toRadian = Math.PI / 180;
@@ -55,11 +55,11 @@ public class FlixBlocksUtils {
 	// Image
 
 	public static Image getImage(String path) {
-		URL url = PanGame.class.getResource("/" + path + ".png");
+		URL url = PanEnvironment.class.getResource("/" + path + ".png");
 
 		if (url == null) {
 			debugBefore("ERROR: can't read file: " + ("/" + path + ".png"));
-			url = PanGame.class.getResource("/textures/999.png");
+			url = PanEnvironment.class.getResource("/textures/999.png");
 		}
 
 		try {
