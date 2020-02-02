@@ -69,7 +69,7 @@ public class MenuButtonEditor extends Menu {
 
 		if (hasImage())
 			img = FlixBlocksUtils
-					.getImage(editor.texturePack.getFolder() + "menu/editor/" + action.name().toLowerCase());
+					.getImage(editor.getTexturePack().getFolder() + "menu/editor/" + action.name().toLowerCase());
 		else
 			setMinimumSize(new Dimension(fm.stringWidth(getText()), 20));
 
@@ -84,7 +84,8 @@ public class MenuButtonEditor extends Menu {
 				itemID = ItemID.BORDER;
 				break;
 			}
-			engine = new Engine(ItemTableClient.getCamera(itemID), new CubeClient(new Cube(itemID), editor.texturePack));
+			engine = new Engine(ItemTableClient.getCamera(itemID),
+					new CubeClient(new Cube(itemID), editor.getTexturePack()));
 			engine.setBackground(Engine.NONE);
 			update();
 		}
@@ -124,6 +125,8 @@ public class MenuButtonEditor extends Menu {
 						;
 				} else
 					editor.menuWheel(action);
+
+				repaint();
 			}
 		});
 	}
@@ -262,6 +265,7 @@ public class MenuButtonEditor extends Menu {
 
 	public void setString(String str) {
 		this.str = str;
+		repaint();
 	}
 
 	public void setBool(boolean bool) {
@@ -287,6 +291,7 @@ public class MenuButtonEditor extends Menu {
 
 	public void setSelected(boolean selected) {
 		this.selected = selected;
+		repaint();
 	}
 
 	public void setSelectable(boolean selectable) {
@@ -318,6 +323,7 @@ public class MenuButtonEditor extends Menu {
 
 		editor.menuClick(action);
 		e.consume();
+		repaint();
 	}
 
 	@Override

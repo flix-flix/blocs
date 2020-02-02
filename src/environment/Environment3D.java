@@ -43,7 +43,7 @@ public class Environment3D {
 	protected Camera camera;
 
 	// ============= Target ===================
-	public Target target;
+	public Target target = new Target();
 
 	// =========================================================================================================================
 
@@ -117,15 +117,15 @@ public class Environment3D {
 		// If different target
 		if (!sameTarget) {
 			// If it replace an existant one => Update
-			if (this.target != null && this.target.isValid())
+			if (this.target.isValid())
 				looseTarget();
+
+			this.target = target;
 
 			// If target isn't void => Update
 			if (target.isValid())
-				gainTarget(target);
+				gainTarget();
 		}
-
-		this.target = target;
 	}
 
 	// =========================================================================================================================
@@ -143,7 +143,7 @@ public class Environment3D {
 	// Interface
 
 	/** Called on new (non-null) target */
-	public void gainTarget(Target target) {
+	public void gainTarget() {
 	}
 
 	/** Called on new Target (if previous was non-null) */

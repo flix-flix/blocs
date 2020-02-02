@@ -219,10 +219,13 @@ public class MenuColor extends Menu {
 		lineSelectedColor = colorLine[lineSelector];
 		squareSelectedColor = addHue(addHue(lineSelectedColor, WHITE, squareSelectorY / 255.), BLACK,
 				(255. - squareSelectorX) / 255);
+
+		repaint();
 	}
 
 	public void selectColor() {
 		selectedColor = squareSelectedColor;
+		repaint();
 	}
 
 	// =========================================================================================================================
@@ -235,6 +238,7 @@ public class MenuColor extends Menu {
 
 	public void setColor(int color) {
 		selectedColor = color & 0xffffff;
+		repaint();
 	}
 
 	// =========================================================================================================================

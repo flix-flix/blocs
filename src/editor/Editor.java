@@ -2,7 +2,6 @@ package editor;
 
 import java.awt.Cursor;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
@@ -22,7 +21,6 @@ import editor.history.SizeHistory;
 import editor.panels.PanEditor;
 import environment.Environment3D;
 import environment.EnvironmentListener;
-import environment.Target;
 import environment.extendsData.CubeClient;
 import environment.extendsData.MapClient;
 import environment.extendsEngine.DrawLayer;
@@ -44,47 +42,47 @@ import window.KeyBoard;
 
 public class Editor extends Environment3D implements Displayable, EnvironmentListener {
 
-	public TexturePack texturePack;
+	private TexturePack texturePack;
 
-	public Fen fen;
+	Fen fen;
 	private PanEditor panel;
 
-	// ======================= World =========================
-	public TickClock clock;
+	// =============== World ===============
+	private TickClock clock;
 
 	private CubeClient cube;
 
-	// ======================= GameMode =========================
+	// =============== Rotation ===============
+	double rotateSpeed = .2;
+
+	// =============== GameMode ===============
 	// TODO [Change] Gamemode -> CameraMode/EditorMode
 	GameMode gamemode = GameMode.CLASSIC;
 
-	// ======================= Target =========================
-	private Target target;
-
-	// ======================= Cursor =========================
+	// =============== Cursor ===============
 	private Cursor cursorPaint;
 	private Cursor cursorFill;
 	private Cursor cursorSelectColor;
 	private Cursor cursorSquareSelection;
 	private Cursor cursorMoveSelection;
 
-	// ======================= Texture generation =========================
+	// =============== Texture generation ===============
 	private TextureCube textureCube;
 	private static final int MAX_SIZE = 16;
-	/** [Face][y][x] */
+	/** colors of the quadri [Face][y][x] */
 	private int[][][] texture = new int[6][MAX_SIZE][MAX_SIZE];
 	private int textureSize = 3;
 
-	// ======================= Buttons =========================
+	// =============== Buttons ===============
 	private ActionEditor action = null;
 	private ActionEditor buttonListeningKey = null;
 
-	// ======================= Memory =========================
+	// =============== Paint Line/Square ===============
 	private Face lastPaintFace = null;
 	private int lastPaintCol = -1;
 	private int lastPaintRow = -1;
 
-	// ======================= History =========================
+	// =============== History ===============
 	/** Store the modifications */
 	private ArrayList<History> history = new ArrayList<>();
 	/**
@@ -94,53 +92,39 @@ public class Editor extends Environment3D implements Displayable, EnvironmentLis
 	/** Index of the last modification (-1 means no previous modif) */
 	private int historyPosition = -1;
 
-	// ======================= Layer =========================
+	// =============== Layer ===============
 	private static final int lineSquareLayer = 12;
 	private static final int selectionLayer = 13;
 	private static final int calkLayer = 14;
 
-	// ======================= Rotation =========================
-	private int prevX, prevY;
-
-	// ======================= Keys =========================
+	// =============== Keys ===============
 	private KeyboardEditor keyboard;
-	private static final int ALT = 18;
-	private static final int SHIFT = 16;
 
-	private boolean controlDown = false;
-	private boolean shiftDown = false;
-	private boolean altDown = false;
-
-	// ======================= Write =========================
+	// =============== Write ===============
+	/** Store the value of the string being written */
 	private String writingString = "";
+	/** Store the value of the string before being modified (in case of undo) */
 	private String realString = "";
 
-	// ======================= Selection Square =========================
-	private Face selectionFace;
-	private int selectionStartX, selectionStartY;
-	private int selectionEndX, selectionEndY;
-
-	// ======================= Calk =========================
-	/** The selection copied */
+	// =============== Calk ===============
+	/** The full face copy of the copied face */
 	private int[][] calk = new int[MAX_SIZE][MAX_SIZE];
 	/** The mask of the copied pixels (true : copied | false : not) */
 	private boolean[][] calkMask = new boolean[MAX_SIZE][MAX_SIZE];
+	/** Coords of the bottom left corner */
 	private int calkStartX, calkStartY;
+	/** Size of the calk */
 	private int calkSizeX, calkSizeY;
 
+	/** Face on which the calk is */
 	private Face calkFace = null;
 	/** Location of the bottom left corner */
 	private int calkCornerX, calkCornerY;
 
-	private static final int VOID = -999;
-	private int calkMoveClickX = VOID, calkMoveClickY = VOID;
-
+	/** true : currently have a floating calk */
 	private boolean hasCalk = false;
+	/** true : the cursor is actually in the floating calk */
 	private boolean cursorInCalk = false;
-
-	private Face lastClickedFace = null;
-	private int lastClickedX = Quadri.NOT_NUMBERED;
-	private int lastClickedY = Quadri.NOT_NUMBERED;
 
 	// =========================================================================================================================
 
@@ -180,15 +164,13 @@ public class Editor extends Environment3D implements Displayable, EnvironmentLis
 
 		// ========================================================================================
 
-		// TODO [Improve] Layers handled in ModelCube
-		cube.layers = new ArrayList<>();
 		// 0-5 : grid
 		// 6 - 11: face name
 		// 12 : line/square
 		// 13 : selection
 		// 13 : calk
 		for (int i = 0; i <= 14; i++)
-			cube.layers.add(null);
+			cube.addLayer(null);
 
 		start();
 	}
@@ -196,7 +178,8 @@ public class Editor extends Environment3D implements Displayable, EnvironmentLis
 	// =========================================================================================================================
 	// History
 
-	private void undo() {
+	/** Cancel the previous action */
+	void undo() {
 		if (!historyPack.isEmpty())
 			historyPack();
 
@@ -206,14 +189,15 @@ public class Editor extends Environment3D implements Displayable, EnvironmentLis
 		history.get(historyPosition--).undo(this);
 	}
 
-	private void redo() {
+	/** Cancel the previous cancel */
+	void redo() {
 		if (historyPosition + 1 >= history.size())
 			return;
 
 		history.get(++historyPosition).redo(this);
 	}
 
-	private void historyPack() {
+	void historyPack() {
 		if (historyPack.isEmpty())
 			return;
 
@@ -228,7 +212,7 @@ public class Editor extends Environment3D implements Displayable, EnvironmentLis
 	// =========================================================================================================================
 	// Texture management
 
-	public void initTextureFrame() {
+	private void initTextureFrame() {
 		for (int face = 0; face < 6; face++)
 			for (int i = 0; i < MAX_SIZE; i++)
 				for (int j = 0; j < MAX_SIZE; j++)
@@ -237,7 +221,7 @@ public class Editor extends Environment3D implements Displayable, EnvironmentLis
 		updatePreviewTexture();
 	}
 
-	public TextureCube createTexture() {
+	private TextureCube createTexture() {
 		TextureFace[] tf = new TextureFace[6];
 
 		for (int face = 0; face < 6; face++) { // Generates faces
@@ -252,9 +236,11 @@ public class Editor extends Environment3D implements Displayable, EnvironmentLis
 
 	public void updatePreviewTexture() {
 		updatePreviewTexture(createTexture(), ItemID.EDITOR_PREVIEW);
+		// Repaint Miniature
+		panel.get(ActionEditor.MINIATURE).repaint();
 	}
 
-	public void updatePreviewTexture(TextureCube tc, int id) {
+	private void updatePreviewTexture(TextureCube tc, int id) {
 		// Update TexturePack
 		texturePack.setTextureCube(tc, id);
 		// Update miniature preview
@@ -267,11 +253,7 @@ public class Editor extends Environment3D implements Displayable, EnvironmentLis
 		this.textureSize = textureSize;
 	}
 
-	public int getTextureSize() {
-		return textureSize;
-	}
-
-	public void saveTexture() {
+	private void saveTexture() {
 		int id = panel.get(ActionEditor.ITEM_ID).getWheelStep();
 		String tag = panel.get(ActionEditor.ITEM_NAME).getString();
 		int color = panel.get(ActionEditor.ITEM_COLOR).getValue();
@@ -293,13 +275,13 @@ public class Editor extends Environment3D implements Displayable, EnvironmentLis
 	// =========================================================================================================================
 	// Painting
 
-	public void paintPixel() {
+	void paintPixel() {
 		drawPixel(target.face, getTargetedY(), getTargetedX(), panel.panColor.getColor());
 		updateLastPixel();
 		updatePreviewTexture();
 	}
 
-	public void paintLine() {
+	void paintLine() {
 		Line l = new Line(getTargetedX(), getTargetedY(), lastPaintCol, lastPaintRow);
 
 		for (int row = l.min; row <= l.max; row++)
@@ -311,7 +293,7 @@ public class Editor extends Environment3D implements Displayable, EnvironmentLis
 		historyPack();
 	}
 
-	public void paintSquare() {
+	void paintSquare() {
 		int col1 = Math.min(getTargetedX(), lastPaintCol);
 		int row1 = Math.min(getTargetedY(), lastPaintRow);
 		int col2 = Math.max(getTargetedX(), lastPaintCol);
@@ -326,7 +308,7 @@ public class Editor extends Environment3D implements Displayable, EnvironmentLis
 		historyPack();
 	}
 
-	public void drawPixel(Face face, int col, int row, int color) {
+	private void drawPixel(Face face, int col, int row, int color) {
 		// Pack the previous history action if different from PAINT
 		if (!historyPack.isEmpty() && !(historyPack.get(historyPack.size() - 1) instanceof PixelHistory))
 			historyPack();
@@ -343,36 +325,22 @@ public class Editor extends Environment3D implements Displayable, EnvironmentLis
 	}
 
 	// =========================================================================================================================
-	// Selection
+	// Calk
 
-	private void selectAll() {
-		selectionFace = getSelectedFace();
-		selectionStartX = 0;
-		selectionStartY = 0;
-		selectionEndX = textureSize - 1;
-		selectionEndY = textureSize - 1;
-	}
-
-	private void selectNothing() {
-		selectionFace = null;
-	}
-
-	private void copy() {
-		if (selectionFace == null)
-			return;
-
+	/** Copy the current selection */
+	void copy(Face face, int x1, int y1, int x2, int y2) {
 		// Apply previous calk
 		if (hasCalk)
 			applyCalk();
 
-		calkStartX = Math.min(selectionStartX, selectionEndX);
-		calkStartY = Math.min(selectionStartY, selectionEndY);
-		calkSizeX = Math.max(selectionStartX, selectionEndX) - calkStartX + 1;
-		calkSizeY = Math.max(selectionStartY, selectionEndY) - calkStartY + 1;
+		calkStartX = Math.min(x1, x2);
+		calkStartY = Math.min(y1, y2);
+		calkSizeX = Math.max(x1, x2) - calkStartX + 1;
+		calkSizeY = Math.max(y1, y2) - calkStartY + 1;
 
 		for (int x = 0; x < MAX_SIZE; x++)
 			for (int y = 0; y < MAX_SIZE; y++) {
-				calk[y][x] = texture[selectionFace.ordinal()][y][x];// Copy all the face
+				calk[y][x] = texture[face.ordinal()][y][x];// Copy all the face
 				calkMask[y][x] = false;// Reset mask
 			}
 
@@ -382,16 +350,19 @@ public class Editor extends Environment3D implements Displayable, EnvironmentLis
 				calkMask[calkStartY + y][calkStartX + x] = true;
 	}
 
-	private void paste() {
-		calkFace = getSelectedFace();
-		calkCornerX = Math.max(lastClickedX, 0);
-		calkCornerY = Math.max(lastClickedY, 0);
+	/** Add a floatting calk of the last copied selection */
+	void paste(Face face, int x, int y) {
+		calkFace = face;
+		calkCornerX = Math.max(x, 0);
+		calkCornerY = Math.max(y, 0);
 
 		hasCalk = true;
 		refreshLayerCalk();
+		keyboard.selectNothing();
 	}
 
-	private void applyCalk() {
+	/** Replace the color bellow the calk by the ones of the calk */
+	void applyCalk() {
 		if (calkCornerX < 0 || calkCornerY < 0 || calkCornerX + calkSizeX > textureSize
 				|| calkCornerY + calkSizeY > textureSize) {
 			System.err.println("OUT OF BOUNDS");
@@ -407,13 +378,13 @@ public class Editor extends Environment3D implements Displayable, EnvironmentLis
 		refreshLayerCalk();
 	}
 
-	private void deleteCalk() {
+	void deleteCalk() {
 		hasCalk = false;
 		refreshLayerCalk();
 	}
 
 	/** The upper part will be set on the right side */
-	public void rotateCalkRight() {
+	void rotateCalkRight() {
 		int sizeX = MAX_SIZE;
 		int sizeY = MAX_SIZE;
 		int[][] calk2 = new int[sizeY][sizeX];
@@ -434,26 +405,77 @@ public class Editor extends Environment3D implements Displayable, EnvironmentLis
 		refreshLayerCalk();
 	}
 
+	void moveCalk(int x, int y) {
+		calkCornerX += x;
+		calkCornerY += y;
+		refreshLayerCalk();
+		updateCursorInCalk();
+		fen.updateCursor();
+	}
+
+	void updateCursorInCalk() {
+		int x = getTargetedX();
+		int y = getTargetedY();
+		cursorInCalk = target.face == calkFace && calkCornerX <= x && x < calkCornerX + calkSizeX && calkCornerY <= y
+				&& y < calkCornerY + calkSizeY;
+	}
+
 	// =========================================================================================================================
 	// Other tools
 
-	private void selectColor() {
+	/** Set the paint color to the picked one */
+	void pickColor() {
 		panel.panColor.setColor(texture[target.face.ordinal()][getTargetedY()][getTargetedX()]);
+		// TODO [Improve] Update colorPan on color pick
 	}
 
-	private void fill(int erase, int face, int row, int col) {
+	/**
+	 * Replace the color of the continuous zone containing coord (row, col) by the
+	 * paint color
+	 * 
+	 * @param face
+	 *            - the face to modify
+	 * @param row
+	 *            - the coord of a point in the zone
+	 * @param col
+	 *            - the coord of a point in the zone
+	 */
+	void initFill(Face face, int row, int col) {
+		// New color must be different from the previous one
+		if (texture[face.ordinal()][row][col] == panel.panColor.getColor())
+			return;
+		_fill(face.ordinal(), row, col, texture[face.ordinal()][row][col], panel.panColor.getColor());
+	}
+
+	/**
+	 * Set the new color to the pixel [row, col] then call _fill(...) for the
+	 * adjacent pixels
+	 * 
+	 * @param erasedColor
+	 *            - the color to replace
+	 * @param newColor
+	 *            - the new color
+	 * @param face
+	 *            - the index of the face to modify
+	 * @param row
+	 *            - the coord of a point in the zone
+	 * @param col
+	 *            - the coord of a point in the zone
+	 */
+	private void _fill(int face, int row, int col, int erasedColor, int newColor) {
 		if (row < 0 || textureSize <= row || col < 0 || textureSize <= col)
 			return;
 
-		if (texture[face][row][col] != erase || erase == panel.panColor.getColor())
+		// Stop the propagation if the color doesn't match the one to replace
+		if (texture[face][row][col] != erasedColor)
 			return;
 
-		drawPixel(Face.faces[face], row, col, panel.panColor.getColor());
+		drawPixel(Face.faces[face], row, col, newColor);
 
-		fill(erase, face, row + 1, col);
-		fill(erase, face, row - 1, col);
-		fill(erase, face, row, col + 1);
-		fill(erase, face, row, col - 1);
+		_fill(face, row + 1, col, erasedColor, newColor);
+		_fill(face, row - 1, col, erasedColor, newColor);
+		_fill(face, row, col + 1, erasedColor, newColor);
+		_fill(face, row, col - 1, erasedColor, newColor);
 	}
 
 	// =========================================================================================================================
@@ -603,92 +625,9 @@ public class Editor extends Environment3D implements Displayable, EnvironmentLis
 	}
 
 	// =========================================================================================================================
-	// KeyEvent
-
-	public void keyPressed(KeyEvent e) {
-		updateControlShiftStatus(e);
-
-		int code = e.getKeyCode();
-
-		// Show face names
-		if (code == ALT)
-			refreshLayerFace();
-
-		// Undo/Redo
-		if (e.isControlDown())
-			if (code == 'Z') {
-				undo();
-				return;
-			} else if (code == 'Y') {
-				redo();
-				return;
-			}
-
-		// Selection
-		if (e.isControlDown())
-			if (code == 'A') {
-				if (e.isShiftDown())
-					selectNothing();
-				else
-					selectAll();
-				return;
-			} else if (code == 'C') {
-				copy();
-				return;
-			} else if (code == 'V') {
-				paste();
-				return;
-			}
-
-		// Calk
-		if (hasCalk) {
-			if (code == 10) {// Enter
-				applyCalk();
-				return;
-			} else if (code == 37) {// Left
-				rotateCalkRight();
-				rotateCalkRight();
-				rotateCalkRight();
-				return;
-			} else if (code == 39) {// Right
-				rotateCalkRight();
-				return;
-			} else if (code == 27)// Esc
-				deleteCalk();
-		}
-
-		// Consume SHIFT to allow line/square drawing
-		if (code == SHIFT && action == ActionEditor.PAINT)
-			return;
-
-		// Writing
-		if (buttonListeningKey == ActionEditor.ITEM_NAME) {
-			write(e);
-			return;
-		}
-	}
-
-	public boolean keyReleased(KeyEvent e) {
-		updateControlShiftStatus(e);
-
-		int code = e.getKeyCode();
-
-		if (code == ALT)
-			refreshLayerFace();
-
-		return false;
-	}
-
-	public void updateControlShiftStatus(KeyEvent e) {
-		controlDown = e.isControlDown();
-		shiftDown = e.isShiftDown();
-		altDown = e.isAltDown();
-	}
-
-	// =========================================================================================================================
 	// Write
 
-	private void write(KeyEvent e) {
+	void write(KeyEvent e) {
 		int code = e.getKeyCode();
 
 		if (code == 27)
@@ -746,7 +685,7 @@ public class Editor extends Environment3D implements Displayable, EnvironmentLis
 		writingString = panel.get(action).getString();
 	}
 
-	private void looseListeningKey() {
+	void looseListeningKey() {
 		if (buttonListeningKey == null)
 			return;
 
@@ -775,10 +714,8 @@ public class Editor extends Environment3D implements Displayable, EnvironmentLis
 	}
 
 	public void rotateCamera(int x, int y) {
-		double slow = .2;
-
 		double distY = camera.vue.dist(0.5, 0.5, 0.5);
-		double angleY = camera.getVy() + y * -slow;
+		double angleY = camera.getVy() + y * -rotateSpeed;
 
 		if (angleY >= 60)
 			angleY = 59.9;
@@ -788,7 +725,7 @@ public class Editor extends Environment3D implements Displayable, EnvironmentLis
 		camera.vue.y = .5 - Math.sin(FlixBlocksUtils.toRadian * angleY) * distY;
 		double distX = Math.cos(FlixBlocksUtils.toRadian * angleY) * distY;
 
-		double angleX = FlixBlocksUtils.toRadian * (camera.getVx() + x * slow);
+		double angleX = FlixBlocksUtils.toRadian * (camera.getVx() + x * rotateSpeed);
 
 		camera.vue.x = .5 - distX * Math.cos(angleX);
 		camera.vue.z = .5 - distX * Math.sin(angleX);
@@ -801,7 +738,7 @@ public class Editor extends Environment3D implements Displayable, EnvironmentLis
 		int speed = 15;
 
 		// Slow down with shift
-		if (shiftDown)
+		if (keyboard.shiftDown)
 			speed = 5;
 
 		if (right)
@@ -817,60 +754,6 @@ public class Editor extends Environment3D implements Displayable, EnvironmentLis
 		rotateCamera(x, y);
 	}
 
-	public void initDrag(int x, int y) {
-		prevX = x;
-		prevY = y;
-	}
-
-	// =========================================================================================================================
-	// Target
-
-	public void updateTarget() {
-		if (keyboard.pressR) {
-			looseTarget();
-			return;
-		}
-
-		// If no quadri targeted -> no update
-		if (target.quadri == Quadri.NOT_NUMBERED) {
-			cursorInCalk = false;
-			return;
-		}
-
-		int x = getTargetedX();
-		int y = getTargetedY();
-		cursorInCalk = calkCornerX <= x && x < calkCornerX + calkSizeX && calkCornerY <= y
-				&& y < calkCornerY + calkSizeY;
-
-		if (action == ActionEditor.PAINT) {
-			target.cube.setSelectedQuadri(target.face, target.quadri);
-
-			cube.removeLayer(lineSquareLayer);
-
-			if (keyboard.pressL) {
-				paintPixel();
-				return;
-			}
-
-			// Show Line/Square preview
-			if (shiftDown && hasLastPixel()) {
-				DrawLayer layer = new DrawLayer(cube, target.face);
-
-				int col1 = getTargetedX();
-				int row1 = getTargetedY();
-				int col2 = lastPaintCol;
-				int row2 = lastPaintRow;
-
-				if (controlDown) // Square
-					layer.drawSquareAndCross(col1, row1, col2, row2, 0xffdddddd, 0xff555555);
-				else // Line
-					layer.drawLineAndCross(col1, row1, col2, row2, 0xffdddddd, 0xff555555);
-
-				cube.layers.set(lineSquareLayer, layer);
-			}
-		}
-	}
-
 	// =========================================================================================================================
 	// Layers
 
@@ -879,32 +762,51 @@ public class Editor extends Environment3D implements Displayable, EnvironmentLis
 			if (panel.get(ActionEditor.GRID).isSelected()) {
 				DrawLayer layer = new DrawLayer(cube, face);
 				layer.drawGrid();
-				cube.layers.set(face.ordinal() + 6, layer);
+				cube.setLayer(face.ordinal() + 6, layer);
 			} else
 				cube.removeLayer(face.ordinal() + 6);
 	}
 
-	private void refreshLayerFace() {
+	void refreshLayerFace() {
 		for (Face face : Face.faces)
-			if (altDown) {
+			if (keyboard.altDown) {
 				DrawLayer layer = new DrawLayer(cube, face);
 				layer.drawFace();
-				cube.layers.set(face.ordinal(), layer);
+				cube.setLayer(face.ordinal(), layer);
 			} else
 				cube.removeLayer(face.ordinal());
 	}
 
-	private void refreshLayerSelection() {
-		if (action == ActionEditor.SQUARE_SELECTION && selectionFace != null) {
-			DrawLayer layer = new DrawLayer(cube, selectionFace);
-			layer.drawDottedSquare(selectionStartX, selectionStartY, selectionEndX, selectionEndY, 0xffffffff,
-					0xff000000, selectionFace);
-			cube.layers.set(selectionLayer, layer);
+	void refreshLineSquareLayer() {
+		if (keyboard.shiftDown && hasLastPixel()) {
+			DrawLayer layer = new DrawLayer(cube, target.face);
+
+			int col1 = getTargetedX();
+			int row1 = getTargetedY();
+			int col2 = lastPaintCol;
+			int row2 = lastPaintRow;
+
+			if (keyboard.controlDown) // Square
+				layer.drawSquareAndCross(col1, row1, col2, row2, 0xffdddddd, 0xff555555);
+			else // Line
+				layer.drawLineAndCross(col1, row1, col2, row2, 0xffdddddd, 0xff555555);
+
+			cube.setLayer(lineSquareLayer, layer);
 		} else
-			cube.removeLayer(selectionLayer);
+			cube.removeLayer(lineSquareLayer);
 	}
 
-	private void refreshLayerCalk() {
+	void refreshLayerSelection(Face face, int x1, int y1, int x2, int y2) {
+		DrawLayer layer = new DrawLayer(cube, face);
+		layer.drawDottedSquare(x1, y1, x2, y2, 0xffffffff, 0xff000000, face);
+		cube.setLayer(selectionLayer, layer);
+	}
+
+	void removeLayerSelection() {
+		cube.removeLayer(selectionLayer);
+	}
+
+	void refreshLayerCalk() {
 		if (hasCalk && calkFace != null) {
 			DrawLayer layer = new DrawLayer(cube, calkFace);
 
@@ -917,7 +819,7 @@ public class Editor extends Environment3D implements Displayable, EnvironmentLis
 							0);
 				}
 
-			cube.layers.set(calkLayer, layer);
+			cube.setLayer(calkLayer, layer);
 		} else
 			cube.removeLayer(calkLayer);
 	}
@@ -929,9 +831,10 @@ public class Editor extends Environment3D implements Displayable, EnvironmentLis
 		Cursor cursor = Cursor.getDefaultCursor();
 
 		if (getAction() == ActionEditor.PAINT)
-			cursor = (controlDown && (!shiftDown || !isPreviewCube())) ? cursorSelectColor : cursorPaint;
+			cursor = (keyboard.controlDown && (!keyboard.shiftDown || !isPreviewCube())) ? cursorSelectColor
+					: cursorPaint;
 		else if (getAction() == ActionEditor.FILL)
-			cursor = controlDown ? cursorSelectColor : cursorFill;
+			cursor = keyboard.controlDown ? cursorSelectColor : cursorFill;
 		else if (getAction() == ActionEditor.SQUARE_SELECTION)
 			if (hasCalk) {
 				if (cursorInCalk)
@@ -952,150 +855,6 @@ public class Editor extends Environment3D implements Displayable, EnvironmentLis
 	}
 
 	// =========================================================================================================================
-	// Mouse Event
-
-	/** Return true if the event is consumed */
-	public boolean leftClick() {
-		looseListeningKey();
-
-		lastClickedFace = target.face;
-		lastClickedX = getTargetedX();
-		lastClickedY = getTargetedY();
-
-		// Click in void
-		if (target.face == null || target.quadri == Quadri.NOT_NUMBERED) {
-			// Loose selection
-			if (action == ActionEditor.SQUARE_SELECTION) {
-				calkMoveClickX = VOID;
-				calkMoveClickY = VOID;
-				selectionFace = null;
-				refreshLayerSelection();
-			}
-			return false;
-		}
-
-		// Cancel action during rotation
-		if (keyboard.pressR)
-			return false;
-
-		if (action == null)
-			return false;
-
-		switch (action) {
-		case PAINT:
-			if (controlDown && (!shiftDown || !isPreviewCube()))
-				selectColor();
-			else {
-				if (!isPreviewCube())
-					return false;
-
-				if (shiftDown && hasLastPixel())
-					if (controlDown)
-						paintSquare();
-					else
-						paintLine();
-				else
-					paintPixel();
-			}
-			break;
-
-		case FILL:
-			if (controlDown)
-				selectColor();
-			else if (isPreviewCube()) {
-				int face = target.face.ordinal();
-				int col = getTargetedX();
-				int row = getTargetedY();
-
-				fill(texture[face][row][col], face, row, col);
-
-				updatePreviewTexture();
-				historyPack();
-			}
-			break;
-
-		case SQUARE_SELECTION:
-			int x = getTargetedX();
-			int y = getTargetedY();
-			// Init move
-			if (hasCalk) {
-				if (cursorInCalk) {
-					calkMoveClickX = x;
-					calkMoveClickY = y;
-				} else {
-					calkMoveClickX = VOID;
-					calkMoveClickY = VOID;
-				}
-				break;
-			}
-			// Init selection
-			selectionFace = target.face;
-			selectionStartX = x;
-			selectionStartY = y;
-			selectionEndX = selectionStartX;
-			selectionEndY = selectionStartY;
-			refreshLayerSelection();
-			break;
-
-		default:
-			break;
-		}
-		return false;
-	}
-
-	public void rightClick(MouseEvent e) {
-		looseListeningKey();
-
-		initDrag(e.getX(), e.getY());
-		lookCube();
-	}
-
-	public void leftClickEnd() {
-		// Save the current paint line (drag)
-		historyPack();
-	}
-
-	public void drag(MouseEvent e) {
-		// Rotate
-		if (keyboard.pressR) {
-			rotateCamera(e.getX() - prevX, e.getY() - prevY);
-			initDrag(e.getX(), e.getY());
-		} else if (keyboard.pressL) {
-			if (action == ActionEditor.SQUARE_SELECTION) {
-				int x = getTargetedX();
-				int y = getTargetedY();
-
-				// Calk deplacement
-				if (hasCalk) {
-					if (target.quadri == Quadri.NOT_NUMBERED || calkMoveClickX == VOID || calkMoveClickY == VOID
-							|| target.face != calkFace)
-						return;
-
-					calkCornerX += x - calkMoveClickX;
-					calkCornerY += y - calkMoveClickY;
-
-					calkMoveClickX = x;
-					calkMoveClickY = y;
-
-					refreshLayerCalk();
-					return;
-				}
-				// Resize selection
-				if (selectionFace != target.face)
-					return;
-				selectionEndX = x;
-				selectionEndY = y;
-				refreshLayerSelection();
-			}
-		}
-	}
-
-	public void cameraMoved() {
-		if (isRotateMode())
-			lookCube();
-	}
-
-	// =========================================================================================================================
 	// Mode getters
 
 	public boolean isRotateMode() {
@@ -1110,13 +869,7 @@ public class Editor extends Environment3D implements Displayable, EnvironmentLis
 
 	// =========================================================================================================================
 
-	private Face getSelectedFace() {
-		if (lastClickedFace == null)
-			return getFrontFace();
-		return lastClickedFace;
-	}
-
-	private Face getFrontFace() {
+	Face getFrontFace() {
 		if (camera.getVy() > 45)
 			return Face.DOWN;
 		if (camera.getVy() < -45)
@@ -1126,15 +879,16 @@ public class Editor extends Environment3D implements Displayable, EnvironmentLis
 
 	// =========================================================================================================================
 
-	private int getTargetedX() {
+	int getTargetedX() {
 		return target.quadri % textureSize;
 	}
 
-	private int getTargetedY() {
+	int getTargetedY() {
 		return target.quadri / textureSize;
 	}
 
 	// =========================================================================================================================
+	// Getters
 
 	public ActionEditor getAction() {
 		return action;
@@ -1145,13 +899,62 @@ public class Editor extends Environment3D implements Displayable, EnvironmentLis
 		fen.updateCursor();
 	}
 
+	public TexturePack getTexturePack() {
+		return texturePack;
+	}
+
+	public boolean hasCalk() {
+		return hasCalk;
+	}
+
+	public boolean isCursorInCalk() {
+		return cursorInCalk;
+	}
+
+	public ActionEditor getButtonListeningKey() {
+		return buttonListeningKey;
+	}
+
+	public Face getCalkFace() {
+		return calkFace;
+	}
+
+	public int getTextureSize() {
+		return textureSize;
+	}
+
 	// =========================================================================================================================
 	// Environment
 
 	@Override
-	public void gainTarget(Target target) {
-		this.target = target;
-		updateTarget();
+	public void gainTarget() {
+		if (keyboard.pressR) {
+			looseTarget();
+			return;
+		}
+
+		// If no quadri targeted -> no update
+		if (target.quadri == Quadri.NOT_NUMBERED) {
+			cursorInCalk = false;
+			return;
+		}
+
+		updateCursorInCalk();
+
+		if (action == ActionEditor.PAINT) {
+			target.cube.setSelectedQuadri(target.face, target.quadri);
+
+			cube.removeLayer(lineSquareLayer);
+
+			if (keyboard.pressL) {
+				paintPixel();
+				return;
+			}
+
+			refreshLineSquareLayer();
+		}
+
+		fen.updateCursor();
 	}
 
 	@Override
@@ -1160,6 +963,8 @@ public class Editor extends Environment3D implements Displayable, EnvironmentLis
 		target.cube.setSelectedQuadri(null, CubeClient.NO_QUADRI);
 		// Removes line/square preview
 		target.cube.removeLayer(lineSquareLayer);
+
+		cursorInCalk = false;
 	}
 
 	@Override

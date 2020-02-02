@@ -46,8 +46,8 @@ public class DrawCubeFace extends Drawable {
 	public ArrayList<Quadri> getQuadri(Engine engine) {
 		ArrayList<Quadri> quadri = new ArrayList<>();
 
-		if (cube.layers != null)
-			for (DrawLayer layer : cube.layers)
+		if (cube.hasLayer())
+			for (DrawLayer layer : cube.getLayers())
 				if (layer != null)
 					quadri.addAll(layer.getQuadri(this, engine));
 

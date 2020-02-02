@@ -1,3 +1,4 @@
+
 package environment.extendsData;
 
 import java.util.ArrayList;
@@ -55,7 +56,7 @@ public class CubeClient extends Cube implements Modelisable {
 	private boolean highlight;
 
 	// =================== Layer ===================
-	public ArrayList<DrawLayer> layers;
+	private ArrayList<DrawLayer> layers;
 
 	// =================== Quadri ===================
 	public Face selectedFace = null;
@@ -250,7 +251,40 @@ public class CubeClient extends Cube implements Modelisable {
 	}
 
 	// =========================================================================================================================
-	// Model
+	// Layers
+
+	public boolean hasLayer() {
+		return layers != null;
+	}
+
+	public ArrayList<DrawLayer> getLayers() {
+		return layers;
+	}
+
+	public void addLayer(DrawLayer layer) {
+		if (layers == null)
+			layers = new ArrayList<>();
+		layers.add(layer);
+	}
+
+	public void setLayer(int index, DrawLayer layer) {
+		layers.set(index, layer);
+	}
+
+	// =========================================================================================================================
+	// Getters
+
+	public void setTexturePack(TexturePack texturePack) {
+		this.texturePack = texturePack;
+
+	}
+
+	public TexturePack getTexturePack() {
+		return texturePack;
+	}
+
+	// =========================================================================================================================
+	// Modelisable
 
 	@Override
 	public void init(Camera camera, Matrix matrix) {
@@ -360,17 +394,6 @@ public class CubeClient extends Cube implements Modelisable {
 	@Override
 	public ArrayList<Drawable> getDraws(Camera camera) {
 		return draws;
-	}
-
-	// =========================================================================================================================
-
-	public void setTexturePack(TexturePack texturePack) {
-		this.texturePack = texturePack;
-
-	}
-
-	public TexturePack getTexturePack() {
-		return texturePack;
 	}
 
 	// =========================================================================================================================

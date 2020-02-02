@@ -53,8 +53,6 @@ public class Game extends Environment3D implements Displayable, EnvironmentListe
 	private UserAction action;
 	public GameMode gamemode = GameMode.CLASSIC;
 
-	private Target target;
-
 	// =============== Action ===============
 	public Unit selectedUnit;
 	public Building selectedBuilding;
@@ -194,74 +192,47 @@ public class Game extends Environment3D implements Displayable, EnvironmentListe
 		if (!cursorVisible)
 			return Fen.cursorInvisible;
 
-		Cursor cursor = Cursor.getDefaultCursor();
-
-		if (target == null)
-			return cursor;
+		if (!target.isValid())
+			return Cursor.getDefaultCursor();
 
 		Cube cube = target.cube;
-
-		unitAction = null;
 
 		if (getAction() == UserAction.MOUSE)
 
 			if (cube != null && selectedUnit != null && selectedUnit.getPlayer().equals(player))
 
-				// Harvestable
-				if (ItemTable.isResource(cube.getItemID()))
+				if (unitAction == Action.UNIT_HARVEST)
 					switch (ItemTable.getResourceType(cube.getItemID())) {
 					case WOOD:
-						cursor = cursorAxe;
-						unitAction = Action.UNIT_HARVEST;
-						break;
+						return cursorAxe;
 					case STONE:
-						cursor = cursorPickaxe;
-						unitAction = Action.UNIT_HARVEST;
-						break;
+						return cursorPickaxe;
 					case WATER:
-						cursor = cursorBucket;
-						unitAction = Action.UNIT_HARVEST;
-						break;
+						return cursorBucket;
 					}
-				// Building
-				else if (cube.build != null) {
-					if (cube.build.getPlayer().equals(player)) {
-						if (!cube.build.isBuild()) {
-							cursor = cursorBuild;
-							unitAction = Action.UNIT_BUILD;
-						} else if (selectedUnit.hasResource() && cube.build.canStock(selectedUnit.getResource())) {// Stock
-							cursor = cursorDrop;
-							unitAction = Action.UNIT_STORE;
 
-							switch (selectedUnit.getResource().getType()) {
-							case WOOD:
-								cursor = cursorDropWood;
-								break;
-							case STONE:
-								cursor = cursorDropStone;
-								break;
-							case WATER:
-								cursor = cursorDropWater;
-								break;
-							}
-						}
-					} else {// Opponent
-						cursor = cursorAttack;
-						unitAction = Action.UNIT_ATTACK;
+				else if (unitAction == Action.UNIT_BUILD)
+					return cursorBuild;
+
+				else if (unitAction == Action.UNIT_STORE)
+					switch (selectedUnit.getResource().getType()) {
+					case WOOD:
+						return cursorDropWood;
+					case STONE:
+						return cursorDropStone;
+					case WATER:
+						return cursorDropWater;
+					default:
+						return cursorDrop;
 					}
-				}
-				// Unit
-				else if (cube.unit != null) {
-					if (cube.unit.getPlayer().equals(player)) {// Own
-					} else {// Opponent
-						cursor = cursorAttack;
-						unitAction = Action.UNIT_ATTACK;
-					}
-				} else {
-					cursor = cursorGoto;
-					unitAction = Action.UNIT_GOTO;
-				}
-		return cursor;
+
+				else if (unitAction == Action.UNIT_ATTACK)
+					return cursorAttack;
+
+				else if (unitAction == Action.UNIT_GOTO)
+					return cursorGoto;
+
+		return Cursor.getDefaultCursor();
 	}
 
 	public void generateCursor() {
@@ -465,11 +436,13 @@ public class Game extends Environment3D implements Displayable, EnvironmentListe
 	// Environment3D
 
 	@Override
-	public void gainTarget(Target target) {
-		this.target = target;
-
+	public void targetUpdate() {
+		super.targetUpdate();
 		fen.updateCursor();
+	}
 
+	@Override
+	public void gainTarget() {
 		if (gamemode == GameMode.CLASSIC)
 			if (target.cube != null)
 				if (action == UserAction.CREA_ADD) {
@@ -491,10 +464,50 @@ public class Game extends Environment3D implements Displayable, EnvironmentListe
 					map.setPreview(previousPreview, true);
 					map.setTargetable(previousPreview, false);
 					map.setHighlight(previousPreview, true);
-				} else if (action == UserAction.CREA_DESTROY) {
+				}
+
+				else if (action == UserAction.CREA_DESTROY) {
 					map.setHighlight(target.cube, true);
-				} else if (action == UserAction.MOUSE) {
+				}
+
+				else if (action == UserAction.MOUSE) {
+					// Hilight the targeted cube
 					map.setHighlight(target.cube, true);
+
+					if (!target.isValid())
+						return;
+
+					Cube cube = target.cube;
+
+					if (cube == null || selectedUnit == null || !selectedUnit.getPlayer().equals(player))
+						return;
+
+					// Harvestable
+					if (ItemTable.isResource(cube.getItemID()))
+						unitAction = Action.UNIT_HARVEST;
+
+					// Building
+					else if (cube.build != null) {
+						if (cube.build.getPlayer().equals(player)) {
+							if (!cube.build.isBuild())
+								unitAction = Action.UNIT_BUILD;
+
+							else if (selectedUnit.hasResource() && cube.build.canStock(selectedUnit.getResource()))
+								unitAction = Action.UNIT_STORE;
+
+						} else // Opponent
+							unitAction = Action.UNIT_ATTACK;
+					}
+
+					// Unit
+					else if (cube.unit != null)
+						if (cube.unit.getPlayer().equals(player)) // Own
+							;
+						else // Opponent
+							unitAction = Action.UNIT_ATTACK;
+
+					else
+						unitAction = Action.UNIT_GOTO;
 				}
 	}
 
@@ -507,6 +520,8 @@ public class Game extends Environment3D implements Displayable, EnvironmentListe
 		// Removes preview cubes
 		if (map.gridContains(previousPreview) && map.gridGet(previousPreview).isPreview())
 			map.remove(previousPreview);
+
+		unitAction = null;
 	}
 
 	@Override

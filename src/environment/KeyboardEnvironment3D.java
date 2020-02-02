@@ -261,11 +261,12 @@ public abstract class KeyboardEnvironment3D extends KeyBoard {
 	 * replace the cursor in the middle of the screen
 	 * 
 	 * @param mouseX
-	 *            X location of the mouse in the frame
+	 *            X location of the mouse in the environment
 	 * @param mouseY
-	 *            Y location of the mouse in the frame
+	 *            Y location of the mouse in the environment
 	 */
 	public void rotateCamera(int mouseX, int mouseY) {
+		System.out.println(mouseX+" "+mouseY);
 		Point fenLocation = fen.getLocationOnScreen();
 		if (mouseFreeze) {
 			robot.mouseMove(fenLocation.x + fen.getWidth() / 2, fenLocation.y + fen.getHeight() / 2);

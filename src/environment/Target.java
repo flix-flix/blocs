@@ -14,6 +14,9 @@ public class Target {
 
 	// =========================================================================================================================
 
+	public Target() {
+	}
+
 	public Target(CubeClient cube, Face face, int quadri) {
 		this.cube = cube;
 		this.face = face;

@@ -19,34 +19,31 @@ public class PanEditor extends JPanel {
 	private PanEnvironment panel;
 
 	// ======================= Menu =========================
-	int menuWidth = 400;
+	private int menuWidth = 400;
 
-	MenuCol menu = new MenuCol();
+	private MenuCol menu = new MenuCol();
 
-	ActionEditor[] _buttonsTop = { ActionEditor.EDIT_CUBE, ActionEditor.EDIT_MULTI_CUBE,
+	private ActionEditor[] _buttonsTop = { ActionEditor.EDIT_CUBE, ActionEditor.EDIT_MULTI_CUBE,
 			ActionEditor.EDIT_MULTI_TEXTURE, ActionEditor.EDITOR };
-	HashMap<ActionEditor, MenuButtonEditor> buttonsTop = new HashMap<>();
-
-	ActionEditor[] _buttonsAction = {
+	private ActionEditor[] _buttonsAction = {
 			// Line 1
 			ActionEditor.ALONE, ActionEditor.DECOR, ActionEditor.PAINT, ActionEditor.FILL,
 			// Line 2
 			ActionEditor.SQUARE_SELECTION, ActionEditor.GRID, ActionEditor.MINIATURE, ActionEditor.SAVE,
 			// Line 3
 			ActionEditor.PLAYER_COLOR };
-	public HashMap<ActionEditor, MenuButtonEditor> buttonsAction = new HashMap<>();
-
-	ActionEditor[] _buttonsItemID = { ActionEditor.ITEM_NAME, ActionEditor.ITEM_ID, ActionEditor.ITEM_COLOR,
+	private ActionEditor[] _buttonsItemID = { ActionEditor.ITEM_NAME, ActionEditor.ITEM_ID, ActionEditor.ITEM_COLOR,
 			ActionEditor.ITEM_SAVE, ActionEditor.ITEM_NEW, ActionEditor.ITEM_CLEAR };
-	public HashMap<ActionEditor, MenuButtonEditor> buttonsItemID = new HashMap<>();
 
-	MenuGrid topActions;
-	MenuGrid gridActions;
-	MenuGrid gridItemID;
+	private HashMap<ActionEditor, MenuButtonEditor> buttonsTop = new HashMap<>(), buttonsAction = new HashMap<>(),
+			buttonsItemID = new HashMap<>();
+
+	private MenuGrid topActions, gridActions, gridItemID;
 
 	public MenuColor panColor;
 
-	public MenuHelp help, helpTool;
+	private MenuHelp help;
+	public MenuHelp helpTool;
 
 	// =========================================================================================================================
 
@@ -60,17 +57,15 @@ public class PanEditor extends JPanel {
 		add(panel);
 
 		help = new MenuHelp(Mark.INTERROGATION, 80, 10);
-		help.setBounds(menuWidth + 25, 25, 500, 100);
-		this.add(help);
+		help.setBounds(25, 25, 500, 100);
+		panel.add(help);
 
 		helpTool = new MenuHelp(Mark.EXCLAMATION, 60, 7);
 		helpTool.setBackground(new Color(0xff4068c4));
-		helpTool.setBounds(menuWidth + 25, 25, 450, 74);
+		helpTool.setBounds(25, 25, 450, 74);
 		helpTool.setTip(TipCalk.values()[0]);
 		helpTool.setVisible(false);
-		this.add(helpTool);
-
-		menu.setBounds(0, 0, menuWidth, getHeight());
+		panel.add(helpTool);
 
 		menu.setBounds(0, 0, menuWidth, getHeight());
 		this.add(menu);
@@ -156,6 +151,6 @@ public class PanEditor extends JPanel {
 		menu.setSize(menuWidth, height);
 		panel.setSize(width - menuWidth, height);
 
-		helpTool.setLocation(menuWidth + 25, getHeight() - 26 - helpTool.getSize().height);
+		helpTool.setLocation(25, getHeight() - 26 - helpTool.getSize().height);
 	}
 }
