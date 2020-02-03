@@ -196,7 +196,7 @@ public abstract class KeyboardEnvironment3D implements KeyBoard {
 			case DOWN:
 				sneakKeyEnabled = true;
 				break;
-			case SPRINT:
+			case SPEED_BOOST:
 				sprintKeyEnabled = true;
 				break;
 
@@ -231,7 +231,7 @@ public abstract class KeyboardEnvironment3D implements KeyBoard {
 			case DOWN:
 				sneakKeyEnabled = false;
 				break;
-			case SPRINT:
+			case SPEED_BOOST:
 				sprintKeyEnabled = false;
 				break;
 			default:

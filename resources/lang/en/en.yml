@@ -23,6 +23,22 @@ items:
     preview: Preveiw
     test: Test
 
+keys:
+    forward: Forward
+    backward: Backward
+    right: Right
+    left: Left
+    up: Up
+    down: Down
+    speed_boost: Increase the speed
+    
+    devlop: Graphic engine infos
+    
+    dialog: Open the chat
+    
+    acces_1: (Camera mode) 1st person
+    acces_2: (Camera mode) Classic
+
 tips:
     editor:
         global:

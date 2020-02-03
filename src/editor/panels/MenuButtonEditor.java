@@ -31,6 +31,14 @@ public class MenuButtonEditor extends Menu {
 
 	private Engine engine;
 
+	// ======================= WIP =========================
+	private static Image wipImg;
+	private boolean wip = false;
+
+	static {
+		wipImg = FlixBlocksUtils.getImage("static/WIP");
+	}
+
 	// ======================= Decor =========================
 	private Font font = new Font("monospace", Font.BOLD, 14);
 	private FontMetrics fm = getFontMetrics(font);
@@ -171,6 +179,9 @@ public class MenuButtonEditor extends Menu {
 
 			g.drawString(text, getWidth() / 2 - fm.stringWidth(text) / 2, y);
 		}
+
+		if (wip)
+			g.drawImage(wipImg, 0, 0, getWidth() - 1, getHeight() - 1, null);
 	}
 
 	// =========================================================================================================================
@@ -284,6 +295,10 @@ public class MenuButtonEditor extends Menu {
 	}
 
 	// =========================================================================================================================
+
+	public void setWIP() {
+		wip = true;
+	}
 
 	public boolean isSelected() {
 		return selected;

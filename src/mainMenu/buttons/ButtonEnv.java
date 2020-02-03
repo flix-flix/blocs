@@ -25,13 +25,14 @@ import graphicEngine.calcul.Camera;
 import graphicEngine.calcul.Engine;
 import graphicEngine.calcul.Point3D;
 import mainMenu.MainMenu;
-import mainMenu.MainMenu.ButtonAction;
+import mainMenu.MainMenu.MainMenuAction;
 import server.game.Player;
 
 public class ButtonEnv extends PanEnvironment {
 	private static final long serialVersionUID = -7013365965777831831L;
 
-	ButtonAction action;
+	MainMenu main;
+	MainMenuAction action;
 
 	// =============== Text ===============
 	private String text;
@@ -40,11 +41,12 @@ public class ButtonEnv extends PanEnvironment {
 
 	// =========================================================================================================================
 
-	public ButtonEnv(MainMenu main, Environment3D env, ButtonAction action) {
+	public ButtonEnv(MainMenu main, Environment3D env, MainMenuAction action) {
 		super(env);
+		this.main = main;
 		this.action = action;
 
-		font = new Font("arial", Font.BOLD, action == ButtonAction.PLAY ? 100 : 50);
+		font = new Font("arial", Font.BOLD, action == MainMenuAction.PLAY ? 100 : 50);
 		fm = getFontMetrics(font);
 
 		refreshLang();
@@ -80,7 +82,7 @@ public class ButtonEnv extends PanEnvironment {
 		super.paintComponent(g);
 
 		g.setFont(font);
-		g.setColor(action == ButtonAction.PLAY ? Color.BLACK : Color.LIGHT_GRAY);
+		g.setColor(action == MainMenuAction.PLAY ? Color.BLACK : Color.LIGHT_GRAY);
 		g.drawString(text, getWidth() / 2 - fm.stringWidth(text) / 2, getHeight() - 25);
 
 		g.setColor(Color.WHITE);
@@ -89,6 +91,13 @@ public class ButtonEnv extends PanEnvironment {
 		g.setColor(Color.DARK_GRAY);
 		for (int i = 1; i < 8; i++)
 			g.drawRect(i, i, getWidth() - 1 - 2 * i, getHeight() - 1 - 2 * i);
+	}
+
+	@Override
+	public void repaint() {
+		super.repaint();
+		if (main != null)
+			main.repaint();
 	}
 
 	// =========================================================================================================================
@@ -105,8 +114,8 @@ public class ButtonEnv extends PanEnvironment {
 
 	// =========================================================================================================================
 
-	public static ButtonEnv generateButton(MainMenu main, ButtonAction action) {
-		if (action == ButtonAction.PLAY)
+	public static ButtonEnv generateButton(MainMenu main, MainMenuAction action) {
+		if (action == MainMenuAction.PLAY)
 			return generateEnvPlay(main).getPanel();
 
 		return generateEnvEditor(main).getPanel();
@@ -188,7 +197,7 @@ public class ButtonEnv extends PanEnvironment {
 
 		map.addBuilding(new Building(felix, ItemID.CASTLE, 26, ground, 8, true));
 
-		return new Env(main, map, new Camera(new Point3D(28, ground + 3.1, 16), 238, -30), ButtonAction.PLAY);
+		return new Env(main, map, new Camera(new Point3D(28, ground + 3.1, 16), 238, -30), MainMenuAction.PLAY);
 	}
 
 	private static Env generateEnvEditor(MainMenu main) {
@@ -202,7 +211,7 @@ public class ButtonEnv extends PanEnvironment {
 			map.gridGet(0, 0, 0).addLayer(layer);
 		}
 
-		return new Env(main, map, new Camera(new Point3D(-2, 1.5, 1.5), -22, -22), ButtonAction.EDITOR);
+		return new Env(main, map, new Camera(new Point3D(-2, 1.5, 1.5), -22, -22), MainMenuAction.EDITOR);
 	}
 }
 
@@ -211,10 +220,10 @@ public class ButtonEnv extends PanEnvironment {
 class Env extends Environment3D {
 	ButtonEnv panel;
 
-	public Env(MainMenu main, MapClient map, Camera camera, ButtonAction action) {
+	public Env(MainMenu main, MapClient map, Camera camera, MainMenuAction action) {
 		super(map, camera);
 
-		if (action == ButtonAction.EDITOR)
+		if (action == MainMenuAction.EDITOR)
 			engine.setBackground(Engine.FILL);
 
 		panel = new ButtonEnv(main, this, action);

@@ -7,9 +7,9 @@ import javax.swing.JPanel;
 
 import editor.Editor;
 import game.Game;
+import mainMenu.buttons.ButtonAction;
 import mainMenu.buttons.ButtonEnv;
 import mainMenu.buttons.ButtonLang;
-import mainMenu.buttons.ButtonQuit;
 import mainMenu.buttons.PanFelix;
 import window.Displayable;
 import window.Fen;
@@ -24,9 +24,13 @@ public class MainMenu extends JPanel implements Displayable {
 
 	private PanFelix felix;
 	private ButtonLang lang;
-	private ButtonQuit quit;
+	private ButtonAction options, quit;
 
-	private KeyBoardMainMenu keyboard = new KeyBoardMainMenu();
+	PanKeys keys;
+
+	private KeyBoardMainMenu keyboard = new KeyBoardMainMenu(this);
+
+	private int margin = 10;
 
 	// =========================================================================================================================
 
@@ -34,8 +38,17 @@ public class MainMenu extends JPanel implements Displayable {
 		this.fen = fen;
 		this.setLayout(null);
 
-		add(game = ButtonEnv.generateButton(this, ButtonAction.PLAY));
-		add(editor = ButtonEnv.generateButton(this, ButtonAction.EDITOR));
+		// ========================================================================================
+
+		keys = new PanKeys();
+		keys.setSize(400, getHeight() * 3 / 4);
+		keys.setLocation(getWidth() / 2 - keys.getWidth() / 2, getHeight() / 2 - keys.getHeight() / 2);
+		add(keys);
+
+		// ========================================================================================
+
+		add(game = ButtonEnv.generateButton(this, MainMenuAction.PLAY));
+		add(editor = ButtonEnv.generateButton(this, MainMenuAction.EDITOR));
 
 		game.setSize(750, 500);
 		editor.setSize(300, 300);
@@ -50,22 +63,31 @@ public class MainMenu extends JPanel implements Displayable {
 		lang.setSize(100, 80);
 		add(lang);
 
-		quit = new ButtonQuit(this);
+		options = new ButtonAction(this, MainMenuAction.OPTIONS);
+		options.setSize(100, 100);
+		add(options);
+
+		quit = new ButtonAction(this, MainMenuAction.QUIT);
 		quit.setSize(100, 100);
 		add(quit);
+
+		// ========================================================================================
 
 		setBackground(Color.LIGHT_GRAY);
 	}
 
 	// =========================================================================================================================
 
-	public void click(ButtonAction action) {
+	public void click(MainMenuAction action) {
 		switch (action) {
 		case PLAY:
 			fen.setDisplay(new Game(fen));
 			break;
 		case EDITOR:
 			fen.setDisplay(new Editor(fen));
+			break;
+		case OPTIONS:
+			keys.setVisible(!keys.isVisible());
 			break;
 		case QUIT:
 			System.exit(0);
@@ -103,10 +125,15 @@ public class MainMenu extends JPanel implements Displayable {
 		editor.setSize((int) (getHeight() / 3), getHeight() / 3);
 		editor.setLocation(getWidth() / 10, game.getLocation().y + game.getHeight() + (int) (getHeight() * .05));
 
-		felix.setBottomRightCorner(getWidth() - quit.getWidth() - 10 - 10, getHeight() - 10);
-		lang.setLocation(getWidth() - lang.getWidth() - 10,
-				getHeight() - lang.getHeight() - 10 - quit.getHeight() - 10);
-		quit.setLocation(getWidth() - quit.getWidth() - 10, getHeight() - quit.getHeight() - 10);
+		felix.setBottomRightCorner(getWidth() - quit.getWidth() - 2 * margin, getHeight() - margin);
+
+		lang.setBottomRightCorner(getWidth() - margin,
+				getHeight() - options.getHeight() - quit.getHeight() - 3 * margin);
+		options.setBottomRightCorner(getWidth() - margin, getHeight() - quit.getHeight() - 2 * margin);
+		quit.setBottomRightCorner(getWidth() - margin, getHeight() - margin);
+
+		keys.setSize(Math.min(500, getWidth()/2), getHeight() * 3 / 4);
+		keys.setLocation(getWidth() / 2 - keys.getWidth() / 2, getHeight() / 2 - keys.getHeight() / 2);
 	}
 
 	@Override
@@ -127,7 +154,7 @@ public class MainMenu extends JPanel implements Displayable {
 
 	// =========================================================================================================================
 
-	public enum ButtonAction {
-		PLAY, EDITOR, QUIT;
+	public enum MainMenuAction {
+		PLAY, EDITOR, OPTIONS, QUIT;
 	}
 }

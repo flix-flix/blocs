@@ -6,17 +6,19 @@ import environment.textures.TexturePack;
 import graphicEngine.calcul.Camera;
 import utils.panels.help.Tip;
 import utils.yaml.YAML;
+import window.Key;
 
 public class ItemTableClient extends ItemTable {
 
 	static YAML lang;
+	static String LANGUAGE;
 
 	// =========================================================================================================================
 
 	public static void init() {
 		ItemTable.init();
 
-		setLanguage(Locale.FRENCH.getLanguage());
+		setLanguage(Locale.getDefault().getLanguage());
 	}
 
 	public static void setTexturePack(TexturePack texturePack) {
@@ -53,14 +55,26 @@ public class ItemTableClient extends ItemTable {
 	// Language
 
 	public static void setLanguage(String language) {
-		if (language.equals(Locale.FRENCH.getLanguage()) || language.equals(Locale.CANADA_FRENCH.getLanguage()))
+		LANGUAGE = language;
+
+		if (language.equals(Locale.FRENCH.getLanguage()) || language.equals(Locale.CANADA_FRENCH.getLanguage())) {
 			lang = YAML.parseFile("resources/lang/fr/fr.yml");
-		else
+			Locale.setDefault(Locale.FRENCH);
+		} else {
 			lang = YAML.parseFile("resources/lang/en/en.yml");
+			Locale.setDefault(Locale.ENGLISH);
+		}
 
 		for (Item item : items.values())
 			item.setLanguage(lang);
 	}
+
+	public static String getLanguage() {
+		return LANGUAGE;
+	}
+
+	// =========================================================================================================================
+	// Text
 
 	public static String getName(int itemID) {
 		return get(itemID).name;
@@ -68,6 +82,10 @@ public class ItemTableClient extends ItemTable {
 
 	public static String getTip(Tip tip) {
 		return lang.getString(tip.getPath() + ((Enum<?>) tip).name().toLowerCase());
+	}
+
+	public static String getKey(Key key) {
+		return lang.getString("keys." + key.name().toLowerCase());
 	}
 
 	public static String getText(String path) {

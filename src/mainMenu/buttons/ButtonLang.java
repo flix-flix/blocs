@@ -30,7 +30,8 @@ public class ButtonLang extends Menu {
 
 	public ButtonLang(MainMenu main) {
 		this.main = main;
-		lang = getLocale().getLanguage();
+		lang = ItemTableClient.getLanguage();
+		french = lang.equals(Locale.FRENCH.getLanguage()) || lang.equals(Locale.CANADA_FRENCH.getLanguage());
 	}
 
 	// =========================================================================================================================

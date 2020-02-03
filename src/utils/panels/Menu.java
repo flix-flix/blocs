@@ -9,7 +9,7 @@ import javax.swing.JPanel;
 
 import game.Game;
 
-public abstract class Menu extends JPanel {
+public class Menu extends JPanel {
 	private static final long serialVersionUID = -5458848328043427804L;
 
 	protected Game game;
@@ -66,6 +66,12 @@ public abstract class Menu extends JPanel {
 	public Menu(Game game) {
 		this();
 		this.game = game;
+	}
+
+	// =========================================================================================================================
+
+	public void setBottomRightCorner(int x, int y) {
+		setLocation(x - getWidth(), y - getHeight());
 	}
 
 	// =========================================================================================================================

@@ -128,43 +128,43 @@ public class KeyboardGame extends KeyboardEnvironment3D {
 					game.messages.clearLine();
 					game.resume();
 					break;
-				case KEY_ENTER:
+				case VALID:
 					game.messages.send();
 					game.keyboard.mouseToCenter();
 					game.stateHUD = StateHUD.GAME;
 					break;
-				case KEY_DEL:
+				case DEL:
 					game.messages.deletePrevious();
 					break;
-				case KEY_SUPPR:
+				case SUPPR:
 					game.messages.deleteNext();
 					break;
 
-				case KEY_UP:
+				case ARROW_UP:
 					game.messages.historyPrevious();
 					break;
-				case KEY_DOWN:
+				case ARROW_DOWN:
 					game.messages.historyNext();
 					break;
-				case KEY_RIGHT:
+				case ARROW_RIGHT:
 					game.messages.cursorMoveRight();
 					break;
-				case KEY_LEFT:
+				case ARROW_LEFT:
 					game.messages.cursorMoveLeft();
 					break;
 
-				case KEY_PAGE_UP:
+				case PAGE_UP:
 					game.messages.pageUp();
 					break;
-				case KEY_PAGE_DOWN:
+				case PAGE_DOWN:
 					game.messages.pageDown();
 					break;
 				case KEY_TAB:
 					break;
-				case KEY_END:
+				case END:
 					game.messages.end();
 					break;
-				case KEY_START:
+				case START:
 					game.messages.start();
 					break;
 
@@ -206,7 +206,7 @@ public class KeyboardGame extends KeyboardEnvironment3D {
 
 				// =====================================================
 
-				case KEY_EXCLAMATION:
+				case DIALOG:
 					dialog();
 					break;
 

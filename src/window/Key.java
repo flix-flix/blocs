@@ -2,20 +2,22 @@ package window;
 
 import java.util.EnumSet;
 
+import data.id.ItemTableClient;
+
 public enum Key {
 
-	FORWARD(90), BACKWARD(83), RIGHT(68), LEFT(81), UP(32), DOWN(16), SPRINT(17),
+	FORWARD(90), BACKWARD(83), RIGHT(68), LEFT(81), UP(32), DOWN(16), SPEED_BOOST(17),
 
 	PAUSE(27), DEVLOP(114),
 
 	// =========================================================================================================================
 	// Dialog
 
-	KEY_EXCLAMATION(517),
+	DIALOG(517),
 
-	KEY_ENTER(10), KEY_DEL(8), KEY_SUPPR(127), KEY_LEFT(37), KEY_UP(38), KEY_RIGHT(39), KEY_DOWN(40),
+	VALID(10), DEL(8), SUPPR(127), ARROW_LEFT(37), ARROW_UP(38), ARROW_RIGHT(39), ARROW_DOWN(40),
 
-	KEY_END(35), KEY_START(36), KEY_PAGE_UP(33), KEY_PAGE_DOWN(34),
+	END(35), START(36), PAGE_UP(33), PAGE_DOWN(34),
 
 	// =========================================================================================================================
 
@@ -44,5 +46,12 @@ public enum Key {
 			if (key.code == code)
 				return key;
 		return null;
+	}
+
+	// =========================================================================================================================
+
+	@Override
+	public String toString() {
+		return ItemTableClient.getKey(this);
 	}
 }

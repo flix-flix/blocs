@@ -122,6 +122,8 @@ public class PanGame extends PanEnvironment {
 		menu.addBottom(ress = new MenuRessources(game), 130);
 		ress.setVisible(true);
 
+		// ========================================================================================
+
 		menu.addTop(infos = new MenuInfos(game), MenuCol.REMAINING);
 
 		refreshLang();

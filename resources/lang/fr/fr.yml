@@ -23,6 +23,22 @@ items:
     preview: Prévisualisation
     test: Test
 
+keys:
+    forward: Avancer
+    backward: Reculer
+    right: Droite
+    left: Gauche
+    up: Monter
+    down: Descendre
+    speed_boost: Augmente la vitesse
+    
+    devlop: Infos du moteur graphique
+    
+    dialog: Ouvre le chat
+    
+    acces_1: (Mode camera) 1ère personne
+    acces_2: (Mode camera) Classique
+
 tips:
     editor:
         global:

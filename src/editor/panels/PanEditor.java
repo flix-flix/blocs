@@ -80,6 +80,10 @@ public class PanEditor extends JPanel {
 			buttonsTop.put(action, new MenuButtonEditor(editor, action));
 			topActions.addMenu(buttonsTop.get(action));
 		}
+		
+		get(ActionEditor.EDIT_CUBE).setWIP();
+		get(ActionEditor.EDIT_MULTI_CUBE).setWIP();
+		get(ActionEditor.EDIT_MULTI_TEXTURE).setWIP();
 
 		// ========================================================================================
 		// Color
@@ -127,6 +131,11 @@ public class PanEditor extends JPanel {
 		get(ActionEditor.PLAYER_COLOR).setSelectable(true);
 		MenuButtonEditor.group(get(ActionEditor.SQUARE_SELECTION), get(ActionEditor.FILL), get(ActionEditor.PAINT),
 				get(ActionEditor.PLAYER_COLOR));
+
+		get(ActionEditor.ALONE).setWIP();
+		get(ActionEditor.DECOR).setWIP();
+		get(ActionEditor.SAVE).setWIP();
+		get(ActionEditor.PLAYER_COLOR).setWIP();
 	}
 
 	// =========================================================================================================================

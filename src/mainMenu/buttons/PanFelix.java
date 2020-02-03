@@ -54,12 +54,6 @@ public class PanFelix extends Menu {
 
 	// =========================================================================================================================
 
-	public void setBottomRightCorner(int x, int y) {
-		setLocation(x - getWidth(), y - getHeight());
-	}
-
-	// =========================================================================================================================
-
 	@Override
 	public void click(MouseEvent e) {
 		face.rotation += 3;
