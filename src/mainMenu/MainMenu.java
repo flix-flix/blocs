@@ -1,6 +1,7 @@
 package mainMenu;
 
 import java.awt.Color;
+import java.awt.Cursor;
 
 import javax.swing.JPanel;
 
@@ -61,13 +62,9 @@ public class MainMenu extends JPanel implements Displayable {
 	public void click(ButtonAction action) {
 		switch (action) {
 		case PLAY:
-			game.stop();
-			editor.stop();
 			fen.setDisplay(new Game(fen));
 			break;
 		case EDITOR:
-			game.stop();
-			editor.stop();
 			fen.setDisplay(new Editor(fen));
 			break;
 		case QUIT:
@@ -89,6 +86,7 @@ public class MainMenu extends JPanel implements Displayable {
 	}
 
 	// =========================================================================================================================
+	// Displayable
 
 	@Override
 	public JPanel getContentPane() {
@@ -112,9 +110,21 @@ public class MainMenu extends JPanel implements Displayable {
 	}
 
 	@Override
+	public Cursor getCursor() {
+		return Cursor.getDefaultCursor();
+	}
+
+	@Override
 	public KeyBoard getKeyBoard() {
 		return keyboard;
 	}
+
+	@Override
+	public void stop() {
+		game.stop();
+		editor.stop();
+	}
+
 	// =========================================================================================================================
 
 	public enum ButtonAction {

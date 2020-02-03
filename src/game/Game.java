@@ -130,6 +130,14 @@ public class Game extends Environment3D implements Displayable, EnvironmentListe
 		keyboard.start();
 	}
 
+	@Override
+	public void stop() {
+		super.stop();
+
+		keyboard.stop();
+		clock.stop();
+	}
+
 	// =========================================================================================================================
 
 	public void setMap(MapClient map) {

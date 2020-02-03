@@ -26,7 +26,7 @@ public class PanEditor extends JPanel {
 	private MenuCol menu = new MenuCol();
 
 	private ActionEditor[] _buttonsTop = { ActionEditor.EDIT_CUBE, ActionEditor.EDIT_MULTI_CUBE,
-			ActionEditor.EDIT_MULTI_TEXTURE, ActionEditor.EDITOR };
+			ActionEditor.EDIT_MULTI_TEXTURE, ActionEditor.QUIT };
 	private ActionEditor[] _buttonsAction = {
 			// Line 1
 			ActionEditor.ALONE, ActionEditor.DECOR, ActionEditor.PAINT, ActionEditor.FILL,
@@ -80,8 +80,6 @@ public class PanEditor extends JPanel {
 			buttonsTop.put(action, new MenuButtonEditor(editor, action));
 			topActions.addMenu(buttonsTop.get(action));
 		}
-
-		get(ActionEditor.EDITOR).setSelected(true);
 
 		// ========================================================================================
 		// Color

@@ -28,7 +28,6 @@ public class Fen extends JFrame {
 
 	// ============= Display ===================
 	private Displayable display;
-	private MainMenu mainMenu;
 
 	// =========================================================================================================================
 
@@ -46,7 +45,7 @@ public class Fen extends JFrame {
 		KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
 		manager.addKeyEventDispatcher(new MyDispatcher());
 
-		setDisplay(mainMenu = new MainMenu(this));
+		setDisplay(new MainMenu(this));
 
 		// =========================================================================================================================
 
@@ -136,11 +135,15 @@ public class Fen extends JFrame {
 
 	// =========================================================================================================================
 
-	public void returnToLauncher() {
-		setDisplay(mainMenu);
+	public void returnToMainMenu() {
+		setDisplay(new MainMenu(this));
+		updateCursor();
 	}
 
 	public void setDisplay(Displayable display) {
+		if (this.display != null)
+			this.display.stop();
+
 		this.display = display;
 		display.updateSize(getContentPane().getWidth(), getContentPane().getHeight());
 		this.setContentPane(display.getContentPane());

@@ -1,6 +1,9 @@
 package editor;
 
 public enum ActionEditor {
+
+	QUIT,
+
 	EDITOR, EDIT_CUBE, EDIT_MULTI_CUBE, EDIT_MULTI_TEXTURE,
 
 	ALONE, DECOR,
@@ -9,7 +12,7 @@ public enum ActionEditor {
 
 	SQUARE_SELECTION, GRID, PAINT, FILL, PLAYER_COLOR, ROTATE,
 
-	QUIT, SAVE,
+	CANCEL, SAVE,
 
 	// No image
 	VALID_COLOR, SELECT_ALPHA,

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 public class TickClock implements Runnable {
 
+	boolean run = true;
+
 	public int ticks;
 
 	private long lastTime;
@@ -29,7 +31,7 @@ public class TickClock implements Runnable {
 	@Override
 	public void run() {
 		lastTime = System.currentTimeMillis();
-		while (true) {
+		while (run) {
 			if (System.currentTimeMillis() - lastTime < 50) {
 				try {
 					Thread.sleep(1);
@@ -57,6 +59,10 @@ public class TickClock implements Runnable {
 		Thread t = new Thread(this);
 		t.setName(threadName);
 		t.start();
+	}
+
+	public void stop() {
+		run = false;
 	}
 
 	// =========================================================================================================================

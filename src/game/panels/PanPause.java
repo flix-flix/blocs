@@ -72,7 +72,7 @@ public class PanPause extends JPanel {
 		});
 		saveQuit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.exit(0);
+				game.fen.returnToMainMenu();
 			}
 		});
 	}

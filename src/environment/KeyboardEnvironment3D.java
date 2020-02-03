@@ -55,6 +55,8 @@ public abstract class KeyboardEnvironment3D implements KeyBoard {
 	protected Cube targetedCube;
 	protected Face targetedFace;
 
+	private ThreadCameraMovements cameraMov;
+
 	// =========================================================================================================================
 
 	public KeyboardEnvironment3D(Fen fen, Environment3D env) {
@@ -74,9 +76,13 @@ public abstract class KeyboardEnvironment3D implements KeyBoard {
 		map = env.getMap();
 		camera = env.getCamera();
 
-		Thread cameraMovements = new Thread(new ThreadCameraMovements());
-		cameraMovements.setName("Camera Movements");
-		cameraMovements.start();
+		Thread t = new Thread(cameraMov = new ThreadCameraMovements());
+		t.setName("Camera Movements");
+		t.start();
+	}
+
+	public void stop() {
+		cameraMov.stop();
 	}
 
 	// =========================================================================================================================
@@ -367,8 +373,10 @@ public abstract class KeyboardEnvironment3D implements KeyBoard {
 	// =========================================================================================================================
 
 	class ThreadCameraMovements implements Runnable {
+		boolean run = true;
+
 		public void run() {
-			while (true) {
+			while (run) {
 				ticks++;
 
 				if (!paused)
@@ -380,6 +388,10 @@ public abstract class KeyboardEnvironment3D implements KeyBoard {
 					e.printStackTrace();
 				}
 			}
+		}
+
+		public void stop() {
+			run = false;
 		}
 	}
 }

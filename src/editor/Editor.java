@@ -176,6 +176,16 @@ public class Editor extends Environment3D implements Displayable, EnvironmentLis
 	}
 
 	// =========================================================================================================================
+
+	@Override
+	public void stop() {
+		super.stop();
+
+		keyboard.stop();
+		clock.stop();
+	}
+
+	// =========================================================================================================================
 	// History
 
 	/** Cancel the previous action */
@@ -505,9 +515,8 @@ public class Editor extends Environment3D implements Displayable, EnvironmentLis
 		panel.helpTool.setVisible(false);
 
 		switch (action) {
-		case EDITOR:// Close Editor
-			setAction(null);
-			fen.returnToLauncher();
+		case QUIT:// Close Editor
+			fen.returnToMainMenu();
 			break;
 
 		// ================== EDIT TYPE ======================
@@ -542,7 +551,7 @@ public class Editor extends Environment3D implements Displayable, EnvironmentLis
 			break;
 		case MINIATURE:
 			break;
-		case QUIT:
+		case CANCEL:
 			break;
 
 		// ================== PanColor ======================
