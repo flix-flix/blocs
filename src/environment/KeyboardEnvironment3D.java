@@ -18,7 +18,7 @@ import window.Fen;
 import window.Key;
 import window.KeyBoard;
 
-public abstract class KeyboardEnvironment3D extends KeyBoard {
+public abstract class KeyboardEnvironment3D implements KeyBoard {
 
 	// ================== Mouse ===========================
 	/** Keep the mouse cursor in the center of the component */
@@ -266,7 +266,6 @@ public abstract class KeyboardEnvironment3D extends KeyBoard {
 	 *            Y location of the mouse in the environment
 	 */
 	public void rotateCamera(int mouseX, int mouseY) {
-		System.out.println(mouseX+" "+mouseY);
 		Point fenLocation = fen.getLocationOnScreen();
 		if (mouseFreeze) {
 			robot.mouseMove(fenLocation.x + fen.getWidth() / 2, fenLocation.y + fen.getHeight() / 2);

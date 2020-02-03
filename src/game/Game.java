@@ -162,12 +162,14 @@ public class Game extends Environment3D implements Displayable, EnvironmentListe
 
 			keyboard.setTargetOnMouse();
 
+			panel.help.setVisible(true);
 			setCursorVisible(true);
 			break;
 		case CREATIVE:
 			keyboard.mouseToCenter();
 			panel.setStartXPanel(0);
 
+			panel.help.setVisible(false);
 			setCursorVisible(false);
 			break;
 		case SPECTATOR:

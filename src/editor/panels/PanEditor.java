@@ -7,11 +7,13 @@ import javax.swing.JPanel;
 
 import editor.ActionEditor;
 import editor.Editor;
-import editor.panels.MenuHelp.Mark;
-import editor.panels.MenuHelp.TipCalk;
+import editor.tips.TipCalk;
+import editor.tips.TipEditor;
 import environment.PanEnvironment;
 import utils.panels.MenuCol;
 import utils.panels.MenuGrid;
+import utils.panels.help.MenuHelp;
+import utils.panels.help.MenuHelp.Mark;
 
 public class PanEditor extends JPanel {
 	private static final long serialVersionUID = -7092208608285186782L;
@@ -56,14 +58,13 @@ public class PanEditor extends JPanel {
 		panel.setSize(getWidth() - menuWidth, getHeight());
 		add(panel);
 
-		help = new MenuHelp(Mark.INTERROGATION, 80, 10);
+		help = new MenuHelp(Mark.INTERROGATION, 80, 10, TipEditor.ZOOM);
 		help.setBounds(25, 25, 500, 100);
 		panel.add(help);
 
-		helpTool = new MenuHelp(Mark.EXCLAMATION, 60, 7);
+		helpTool = new MenuHelp(Mark.EXCLAMATION, 60, 7, TipCalk.values()[0]);
 		helpTool.setBackground(new Color(0xff4068c4));
 		helpTool.setBounds(25, 25, 450, 74);
-		helpTool.setTip(TipCalk.values()[0]);
 		helpTool.setVisible(false);
 		panel.add(helpTool);
 
@@ -151,6 +152,7 @@ public class PanEditor extends JPanel {
 		menu.setSize(menuWidth, height);
 		panel.setSize(width - menuWidth, height);
 
-		helpTool.setLocation(25, getHeight() - 26 - helpTool.getSize().height);
+		helpTool.setLocation(25, getHeight() - 26 - helpTool.getSize().height - help.getSize().height - 25);
+		help.setLocation(25, getHeight() - 26 - help.getSize().height);
 	}
 }

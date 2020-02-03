@@ -1,4 +1,4 @@
-package editor.panels;
+package utils.panels.help;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -31,7 +31,7 @@ public class MenuHelp extends Menu {
 	private Ellipse2D ellipse;
 
 	// ========== Tip ==========
-	private Tip tip = TipGlobal.ZOOM;
+	private Tip tip;
 	private String tipText;
 	private ArrayList<String> tipLines = null;
 
@@ -40,11 +40,14 @@ public class MenuHelp extends Menu {
 
 	// =========================================================================================================================
 
-	MenuHelp(Mark mark, int size, int border) {
+	public MenuHelp(Mark mark, int size, int border, Tip tip) {
 		this.mark = mark;
-		this.border = border;
 		this.size = size;
+		this.border = border;
+		this.tip = tip;
+
 		this.total = size + border * 2;
+
 		ellipse = new Ellipse2D.Double(border, border, size, size);
 		updateTip();
 
@@ -130,47 +133,7 @@ public class MenuHelp extends Menu {
 
 	// =========================================================================================================================
 
-	public interface Tip {
-		Tip next();
-
-		Tip previous();
-
-		String getPath();
-	}
-
-	public enum TipGlobal implements Tip {
-		ZOOM, ROTATE, GRID, PICK_COLOR, FACE_NAME, LINE_SQUARE;
-
-		public TipGlobal next() {
-			return values()[(ordinal() + 1) % values().length];
-		}
-
-		public TipGlobal previous() {
-			return values()[(ordinal() + values().length - 1) % values().length];
-		}
-
-		public String getPath() {
-			return "tips.global.";
-		}
-	}
-
-	public enum TipCalk implements Tip {
-		APPLY, DELETE, ROTATE;
-
-		public TipCalk next() {
-			return values()[(ordinal() + 1) % values().length];
-		}
-
-		public TipCalk previous() {
-			return values()[(ordinal() + values().length - 1) % values().length];
-		}
-
-		public String getPath() {
-			return "tips.calk.";
-		}
-	}
-
-	enum Mark {
+	public enum Mark {
 		INTERROGATION, EXCLAMATION;
 	}
 }

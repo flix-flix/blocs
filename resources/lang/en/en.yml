@@ -24,17 +24,26 @@ items:
     test: Test
 
 tips:
-    global:
-        face_name: Maintain "Alt" to see the direction of each face
-        rotate: Maintain the right click to rotate the cube
-        grid: Use the mouse wheel on the "Grid" button to increase/decrease the resolution of the face
-        pick_color: With the pencil, maintain "Ctrl" to pick up tje color of the selected case
-        zoom: Use the mouse wheel to zoom in/zoom out
-        line_square: With the pencil, maintain "Shift" to draw a line. "Shift + Ctrl" to fill a square
-    calk:
-        apply: Press "Enter" to apply the calk
-        delete: Press "Esc" to delete the calk
-        rotate: Press "◄" or "►" to rotate the calk
+    editor:
+        global:
+            face_name: Maintain "Alt" to see the direction of each face
+            rotate: Maintain the right click to rotate the cube
+            grid: Use the mouse wheel on the "Grid" button to increase/decrease the resolution of the face
+            pick_color: With the pencil, maintain "Ctrl" to pick up the color of the selected case
+            zoom: Use the mouse wheel to zoom in/zoom out
+            line_square: With the pencil, maintain "Shift" to draw a line. "Shift + Ctrl" to fill a square
+        calk:
+            apply: Press "Enter" to apply the calk
+            delete: Press "Esc" to delete the calk
+            rotate: Press "◄" or "►" to rotate the calk
+    game:
+        global:
+            camera: Use Z,Q,S,D to move the point of view and use the mouse wheel to modify the altitude
+            user_action: In the top left corner there are 3 buttons allowing to select the wanted action (Select, Add, Remove)
+            mouse: The cursor allow to select a resource, a building or an unit. If an unit is selected it's possible to make it move with a right click at the desired destination
+            add: The cube allow to add the selected cube or structure with a right click at the desired location
+            remove: The red cross allow to remove cube or structure with a left click on it
+            f3: Press "F3" to display the graphic engine infos
 
 text:
     game:
@@ -50,3 +59,8 @@ text:
         infos:
             build:
                 construction: In construction
+
+    
+    main_menu:
+        play: Play
+        editor: Editor

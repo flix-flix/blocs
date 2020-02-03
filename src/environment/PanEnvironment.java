@@ -15,7 +15,7 @@ public class PanEnvironment extends JPanel {
 
 	private static final long serialVersionUID = -8972445552589270416L;
 
-	Environment3D env;
+	protected Environment3D env;
 
 	protected BufferedImage img = null;
 
@@ -44,7 +44,7 @@ public class PanEnvironment extends JPanel {
 
 	public PanEnvironment(Environment3D env) {
 		this.env = env;
-		setLayout(null);
+		this.setLayout(null);
 	}
 
 	// =========================================================================================================================
@@ -90,17 +90,22 @@ public class PanEnvironment extends JPanel {
 			// ======================= Target =========================
 			String strBloc = "Bloc: ";
 			String strFace = "Face: ";
+			String strQuadri = "Quadri: ";
 
 			if (env.target.cube != null) {
 				strBloc += env.target.cube.toString();
 				strFace += env.target.face.toString();
+				strQuadri += env.target.quadri;
 			} else {
 				strBloc += "None";
 				strFace += "None";
+				strQuadri += "None";
 			}
 
 			writeLeft(strBloc);
 			writeLeft(strFace);
+			if (env.isNeededQuadriPrecision())
+				writeLeft(strQuadri);
 
 			// ======================= Engine =========================
 

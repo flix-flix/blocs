@@ -266,6 +266,11 @@ public class KeyboardEditor extends KeyboardEnvironment3D {
 	public void wheelRotation(MouseWheelEvent e) {
 		int wheelRotation = e.getWheelRotation();
 		if (editor.isRotateMode()) {
+			// Don't go too close or too far away from the cube
+			if ((wheelRotation > 0 && camera.vue.dist(.5, .5, .5) < 3)
+					|| (wheelRotation < 0 && camera.vue.dist(.5, .5, .5) > 20))
+				return;
+
 			camera.move(cameraMovementX(camera.getVx(), wheelRotation > 0, wheelRotation < 0, false, false),
 					cameraMovementZ(camera.getVx(), wheelRotation > 0, wheelRotation < 0, false, false));
 

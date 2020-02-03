@@ -371,8 +371,9 @@ public class Editor extends Environment3D implements Displayable, EnvironmentLis
 
 		for (int x = 0; x < calkSizeX; x++)
 			for (int y = 0; y < calkSizeY; y++)
-				texture[calkFace.ordinal()][calkCornerY + y][calkCornerX + x] = calk[calkStartY + y][calkStartX + x];
+				drawPixel(calkFace, calkCornerY + y, calkCornerX + x, calk[calkStartY + y][calkStartX + x]);
 
+		historyPack();
 		updatePreviewTexture();
 		hasCalk = false;
 		refreshLayerCalk();

@@ -24,17 +24,26 @@ items:
     test: Test
 
 tips:
-    global:
-        face_name: Maintenez "Alt" pour voir l'orientation de chaque face
-        rotate: Maintenez le clic droit enfoncé pour faire tourner le cube
-        grid: Utilisez la molette sur le bouton "Grille" pour augmenter/diminuer la résolution de la face
-        pick_color: Avec le pinceau, maintenez "Ctrl" pour récuperer la couleur de la case ciblée
-        zoom: Utilisez la molette pour zoomer/dézoomer
-        line_square: Avec le pinceau, maintenez "Maj" pour dessiner une ligne. "Maj + Ctrl" pour remplir un carré
-    calk:
-        apply: Appuyez sur "Entrée" pour appliquer le calque
-        delete: Appuyez sur "Esc" pour supprimer le calque
-        rotate: Appuyez sur "◄" ou "►" pour tourner le calque
+    editor:
+        global:
+            face_name: Maintenez "Alt" pour voir l'orientation de chaque face
+            rotate: Maintenez le clic droit enfoncé pour faire tourner le cube
+            grid: Utilisez la molette sur le bouton "Grille" pour augmenter/diminuer la résolution de la face
+            pick_color: Avec le pinceau, maintenez "Ctrl" pour récuperer la couleur de la case ciblée
+            zoom: Utilisez la molette pour zoomer/dézoomer
+            line_square: Avec le pinceau, maintenez "Maj" pour dessiner une ligne. "Maj + Ctrl" pour remplir un carré
+        calk:
+            apply: Appuyez sur "Entrée" pour appliquer le calque
+            delete: Appuyez sur "Esc" pour supprimer le calque
+            rotate: Appuyez sur "◄" ou "►" pour tourner le calque
+    game:
+        global:
+            camera: Utilisez Z,Q,S,D pour deplacer le point de vue et la molette pour modifier l'altitude
+            user_action: En haut a gauche de l'écran se trouve 3 boutons permettant de selectionner l'action souhaitée (Selectionner, Ajouter, Detruire)
+            mouse: Le curseur permet de selectionner une ressource, un batiment ou une unitée. Si une unitée est selectionnée, il est possible de la déplacer en effectuant un clic droit sur la destination souhaitée
+            add: Le bloc permet d'ajouter le bloc ou structure selectionné en effectuant un clic droit a l'emplacement souhaité
+            remove: La croix rouge permet de detruire un cube ou une structure en effectuant un clic gauche dessus
+            f3: Appuyez sur "F3" pour afficher les informations du moteur graphique
 
 text:
     game:
@@ -50,3 +59,7 @@ text:
         infos:
             build:
                 construction: En construction
+    
+    main_menu:
+        play: Jouer
+        editor: Editeur

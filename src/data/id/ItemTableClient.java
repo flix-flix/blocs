@@ -1,8 +1,10 @@
 package data.id;
 
-import editor.panels.MenuHelp.Tip;
+import java.util.Locale;
+
 import environment.textures.TexturePack;
 import graphicEngine.calcul.Camera;
+import utils.panels.help.Tip;
 import utils.yaml.YAML;
 
 public class ItemTableClient extends ItemTable {
@@ -14,10 +16,7 @@ public class ItemTableClient extends ItemTable {
 	public static void init() {
 		ItemTable.init();
 
-		lang = YAML.parseFile("resources/lang/fr/fr.yml");
-
-		for (Item item : items.values())
-			item.setLanguage(lang);
+		setLanguage(Locale.FRENCH.getLanguage());
 	}
 
 	public static void setTexturePack(TexturePack texturePack) {
@@ -52,6 +51,16 @@ public class ItemTableClient extends ItemTable {
 
 	// =========================================================================================================================
 	// Language
+
+	public static void setLanguage(String language) {
+		if (language.equals(Locale.FRENCH.getLanguage()) || language.equals(Locale.CANADA_FRENCH.getLanguage()))
+			lang = YAML.parseFile("resources/lang/fr/fr.yml");
+		else
+			lang = YAML.parseFile("resources/lang/en/en.yml");
+
+		for (Item item : items.values())
+			item.setLanguage(lang);
+	}
 
 	public static String getName(int itemID) {
 		return get(itemID).name;

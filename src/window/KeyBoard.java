@@ -4,38 +4,38 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 
-public abstract class KeyBoard {
+public interface KeyBoard {
 
-	public void keyPressed(KeyEvent e) {
+	public default void keyPressed(KeyEvent e) {
 	}
 
-	public void keyReleased(KeyEvent e) {
-	}
-
-	// =========================================================================================================================
-
-	public void wheelRotation(MouseWheelEvent e) {
+	public default void keyReleased(KeyEvent e) {
 	}
 
 	// =========================================================================================================================
 
-	public void leftClickPressed(MouseEvent e) {
-	}
-
-	public void rightClickPressed(MouseEvent e) {
-	}
-
-	public void leftClickReleased() {
-	}
-
-	public void rightClickReleased() {
+	public default void wheelRotation(MouseWheelEvent e) {
 	}
 
 	// =========================================================================================================================
 
-	public void mouseMoved(MouseEvent e) {
+	public default void leftClickPressed(MouseEvent e) {
 	}
 
-	public void mouseDraged(MouseEvent e) {
+	public default void rightClickPressed(MouseEvent e) {
+	}
+
+	public default void leftClickReleased() {
+	}
+
+	public default void rightClickReleased() {
+	}
+
+	// =========================================================================================================================
+
+	public default void mouseMoved(MouseEvent e) {
+	}
+
+	public default void mouseDraged(MouseEvent e) {
 	}
 }

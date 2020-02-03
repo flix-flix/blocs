@@ -28,9 +28,10 @@ public class Environment3D {
 
 	// =============== Thread ===============
 	/** Refresh the image */
-	private Thread threadActu;
+	private Actu actu;
 	/** Processing the next image doesn't affect the others tasks */
-	private Thread threadImage;
+	private GetImg getImg;
+	private Thread threadActu, threadImage;
 	/** true : currently generating an image */
 	public boolean processing = false;
 
@@ -50,8 +51,8 @@ public class Environment3D {
 	public Environment3D() {
 		panel = new PanEnvironment(this);
 
-		threadActu = new Thread(new Actu());
-		threadImage = new Thread(new GetImg());
+		threadActu = new Thread(actu = new Actu());
+		threadImage = new Thread(getImg = new GetImg());
 
 		threadActu.setName("Max fps counter");
 		threadImage.setName("Image generator");
@@ -74,6 +75,11 @@ public class Environment3D {
 
 		threadActu.start();
 		threadImage.start();
+	}
+
+	public void stop() {
+		actu.stop();
+		getImg.stop();
 	}
 
 	// =========================================================================================================================
@@ -190,6 +196,8 @@ public class Environment3D {
 
 	/** Set "repaint" to true when it need a new image */
 	class Actu implements Runnable {
+		boolean run = true;
+
 		public void run() {
 			// Count the number of frames displayed since the last "second timer" restart
 			int fps = 0;
@@ -197,7 +205,7 @@ public class Environment3D {
 			long wait = 0;
 			// Store the time which the last second starts
 			long time = System.currentTimeMillis();
-			while (true) {
+			while (run) {
 				if (System.currentTimeMillis() - time >= 1000) {// Update FPS infos
 					time = System.currentTimeMillis();
 
@@ -222,12 +230,18 @@ public class Environment3D {
 				}
 			}
 		}
+
+		public void stop() {
+			run = false;
+		}
 	}
 
 	/** Generates a new image if needed */
 	class GetImg implements Runnable {
+		boolean run = true;
+
 		public void run() {
-			while (true) {
+			while (run) {
 				if (repaint) {
 					repaint = false;
 
@@ -246,6 +260,10 @@ public class Environment3D {
 				}
 				processing = false;
 			}
+		}
+
+		public void stop() {
+			run = false;
 		}
 	}
 }

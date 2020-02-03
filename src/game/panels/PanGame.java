@@ -18,10 +18,13 @@ import game.panels.menus.MenuButtonUserAction;
 import game.panels.menus.MenuMap;
 import game.panels.menus.MenuRessources;
 import game.panels.menus.infos.MenuInfos;
+import game.tips.TipGame;
 import server.game.GameMode;
 import server.game.messages.Message;
 import utils.panels.MenuCol;
 import utils.panels.MenuGrid;
+import utils.panels.help.MenuHelp;
+import utils.panels.help.MenuHelp.Mark;
 
 public class PanGame extends PanEnvironment {
 	private static final long serialVersionUID = -4495593129648278069L;
@@ -63,6 +66,9 @@ public class PanGame extends PanEnvironment {
 	private AffineTransform affinetransform = new AffineTransform();
 	private FontRenderContext frc = new FontRenderContext(affinetransform, true, true);
 
+	private Font fontError = new Font("arial", Font.BOLD, 10);
+	private FontMetrics fmError = getFontMetrics(fontError);
+
 	private String loadingText;
 	private String loadingTextError;
 
@@ -84,16 +90,23 @@ public class PanGame extends PanEnvironment {
 	private MenuRessources ress;
 	private MenuInfos infos;
 
+	public MenuHelp help;
+
 	// =========================================================================================================================
 
 	public PanGame(Game game) {
 		super(game);
 		this.game = game;
 
-		this.setLayout(null);
-
 		pause = new PanPause(game);
-		add(pause);
+		this.add(pause);
+
+		// ========================================================================================
+
+		help = new MenuHelp(Mark.INTERROGATION, 80, 10, TipGame.values()[0]);
+		help.setBackground(new Color(0xff4068c4));
+		help.setBounds(menuWidth + 25, getHeight() - 25, 700, 100);
+		this.add(help);
 
 		// ========================================================================================
 
@@ -107,6 +120,7 @@ public class PanGame extends PanEnvironment {
 
 		menu.addBottom(map = new MenuMap(game), MenuCol.WIDTH);
 		menu.addBottom(ress = new MenuRessources(game), 130);
+		ress.setVisible(true);
 
 		menu.addTop(infos = new MenuInfos(game), MenuCol.REMAINING);
 
@@ -136,9 +150,10 @@ public class PanGame extends PanEnvironment {
 
 			g.setColor(Color.LIGHT_GRAY);
 			g.setFont(font);
-			g.drawString(loadingText, centerW - textW / 2 + 10, centerH + textH / 2 - 20);
-			g.setFont(new Font("arial", Font.BOLD, 10));
-			g.drawString(loadingTextError, centerW - 200 / 2 + 10, centerH + textH / 2 + 20);
+			g.drawString(loadingText, centerW + 200 - textW / 2 + 10, centerH + textH / 2 - 20);
+			g.setFont(fontError);
+			g.drawString(loadingTextError, centerW + 200 - fmError.stringWidth(loadingTextError) / 2,
+					centerH + textH / 2 + 20);
 
 		}
 
@@ -266,5 +281,6 @@ public class PanGame extends PanEnvironment {
 
 		pause.setSize(width, height);
 		menu.setSize(menuWidth, height);
+		help.setLocation(menuWidth + 25, getHeight() - help.getHeight() - 35);
 	}
 }
