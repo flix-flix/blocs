@@ -110,6 +110,17 @@ public class DrawLayer {
 
 	// =========================================================================================================================
 
+	public void drawContour(int size, int color) {
+		for (int i = 0; i < size; i++) {
+			drawLine(i, 0, i + 1, 0, color);
+			drawLine(0, i, 0, i + 1, color);
+			drawLine(i, size, i + 1, size, color);
+			drawLine(size, i, size, i + 1, color);
+		}
+	}
+
+	// =========================================================================================================================
+
 	public void drawDottedLinePixel(int col1, int row1, boolean verti, int color1, int color2, Face face) {
 		col1 = col1 * 2;
 		row1 = row1 * 2;

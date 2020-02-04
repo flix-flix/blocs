@@ -12,8 +12,10 @@ import window.Key;
 
 public class ItemTableClient extends ItemTable {
 
-	static YAML lang;
-	static String LANGUAGE;
+	private static YAML lang;
+	private static String LANGUAGE;
+
+	private static TexturePack texturePack;
 
 	// =========================================================================================================================
 
@@ -24,9 +26,15 @@ public class ItemTableClient extends ItemTable {
 	}
 
 	public static void setTexturePack(TexturePack texturePack) {
+		ItemTableClient.texturePack = texturePack;
+
 		for (int i : items.keySet())
 			if (texturePack.yamls.get(i) != null)
 				items.get(i).setTexture(texturePack.yamls.get(i));
+	}
+
+	public static TexturePack getTexturePack() {
+		return texturePack;
 	}
 
 	// =========================================================================================================================

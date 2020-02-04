@@ -126,8 +126,7 @@ public class Editor extends Environment3D implements Displayable, EnvironmentLis
 	public Editor(Fen fen) {
 		this.fen = fen;
 
-		texturePack = new TexturePack("classic");
-		ItemTableClient.setTexturePack(texturePack);
+		texturePack = ItemTableClient.getTexturePack();
 
 		ResourceType.setTextureFolder(texturePack.getFolder());
 

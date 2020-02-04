@@ -88,8 +88,7 @@ public class Game extends Environment3D implements Displayable, EnvironmentListe
 
 	public Game(Fen fen) {
 		this.fen = fen;
-		texturePack = new TexturePack("classic");
-		ItemTableClient.setTexturePack(texturePack);
+		texturePack = ItemTableClient.getTexturePack();
 
 		ResourceType.setTextureFolder(texturePack.getFolder());
 

@@ -51,10 +51,10 @@ public class DrawCubeFace extends Drawable {
 				if (layer != null)
 					quadri.addAll(layer.getQuadri(this, engine));
 
-		// Draw the black contour of the face
 		if (ItemTableClient.drawContour(cube.getItemID())) {
-			Point[] points2D = generate2D(engine, 1, 1);
-			quadri.add(new Quadri(points2D[0], points2D[1], points2D[3], points2D[2], 0xff000000, false));
+			DrawLayer contour = new DrawLayer(cube, face);
+			contour.drawContour(cube.texturePack.getFace(cube, face).width, 0xff000000);
+			quadri.addAll(contour.getQuadri(this, engine));
 		}
 
 		// Draw the mining animation

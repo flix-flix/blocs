@@ -5,7 +5,9 @@ import java.awt.Cursor;
 
 import javax.swing.JPanel;
 
+import data.id.ItemTableClient;
 import editor.Editor;
+import environment.textures.TexturePack;
 import game.Game;
 import mainMenu.buttons.ButtonAction;
 import mainMenu.buttons.ButtonEnv;
@@ -37,6 +39,8 @@ public class MainMenu extends JPanel implements Displayable {
 	public MainMenu(Fen fen) {
 		this.fen = fen;
 		this.setLayout(null);
+
+		ItemTableClient.setTexturePack(new TexturePack("classic"));
 
 		// ========================================================================================
 
@@ -132,7 +136,7 @@ public class MainMenu extends JPanel implements Displayable {
 		options.setBottomRightCorner(getWidth() - margin, getHeight() - quit.getHeight() - 2 * margin);
 		quit.setBottomRightCorner(getWidth() - margin, getHeight() - margin);
 
-		keys.setSize(Math.min(500, getWidth()/2), getHeight() * 3 / 4);
+		keys.setSize(Math.min(500, getWidth() / 2), getHeight() * 3 / 4);
 		keys.setLocation(getWidth() / 2 - keys.getWidth() / 2, getHeight() / 2 - keys.getHeight() / 2);
 	}
 

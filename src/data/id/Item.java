@@ -46,7 +46,7 @@ public class Item {
 		this.id = id;
 		this.tag = tag;
 	}
-	
+
 	public Item(YAML yaml) {
 		id = yaml.getInt("id");
 		tag = yaml.getString("tag");
