@@ -1,5 +1,7 @@
 package data.id;
 
+import java.awt.event.KeyEvent;
+import java.io.StringWriter;
 import java.util.Locale;
 
 import environment.textures.TexturePack;
@@ -81,7 +83,7 @@ public class ItemTableClient extends ItemTable {
 	}
 
 	public static String getTip(Tip tip) {
-		return lang.getString(tip.getPath() + ((Enum<?>) tip).name().toLowerCase());
+		return modifyKey(lang.getString(tip.getPath() + ((Enum<?>) tip).name().toLowerCase()));
 	}
 
 	public static String getKey(Key key) {
@@ -90,5 +92,31 @@ public class ItemTableClient extends ItemTable {
 
 	public static String getText(String path) {
 		return lang.getString("text." + path);
+	}
+
+	// =========================================================================================================================
+	// Text (modification)
+
+	public static String modifyKey(String str) {
+		StringWriter sw = new StringWriter();
+		int start = 0, index = 0, temp;
+
+		while ((index = str.indexOf('~', start)) != -1) {
+			sw.write(str.substring(start, index));
+
+			int space = str.indexOf(' ', index);
+			if ((temp = str.indexOf(',', index)) != -1 && temp < space)
+				space = temp;
+			if (space == -1)
+				space = str.length();
+
+			sw.write(KeyEvent.getKeyText(Key.valueOf(str.substring(index + 1, space)).code));
+
+			start = space;
+		}
+
+		sw.write(str.substring(start));
+
+		return sw.toString();
 	}
 }

@@ -33,11 +33,10 @@ keys:
     speed_boost: Augmente la vitesse
     
     devlop: Infos du moteur graphique
-    
     dialog: Ouvre le chat
     
-    acces_1: (Mode camera) 1ère personne
-    acces_2: (Mode camera) Classique
+    access_1: (Mode camera) 1ère personne
+    access_2: (Mode camera) Classique
 
 tips:
     editor:
@@ -54,12 +53,12 @@ tips:
             rotate: Appuyez sur "◄" ou "►" pour tourner le calque
     game:
         global:
-            camera: Utilisez Z,Q,S,D pour deplacer le point de vue et la molette pour modifier l'altitude
+            camera: Utilisez ~FORWARD, ~LEFT, ~BACKWARD, ~RIGHT pour deplacer le point de vue et la molette pour modifier l'altitude
             user_action: En haut a gauche de l'écran se trouve 3 boutons permettant de selectionner l'action souhaitée (Selectionner, Ajouter, Detruire)
             mouse: Le curseur permet de selectionner une ressource, un batiment ou une unitée. Si une unitée est selectionnée, il est possible de la déplacer en effectuant un clic droit sur la destination souhaitée
             add: Le bloc permet d'ajouter le bloc ou structure selectionné en effectuant un clic droit a l'emplacement souhaité
             remove: La croix rouge permet de detruire un cube ou une structure en effectuant un clic gauche dessus
-            f3: Appuyez sur "F3" pour afficher les informations du moteur graphique
+            f3: Appuyez sur ~DEVLOP pour afficher les informations du moteur graphique
 
 text:
     game:
