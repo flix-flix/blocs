@@ -65,4 +65,14 @@ public class Line {
 			return prevLeft;
 		return prevLeft - 1;
 	}
+
+	// =========================================================================================================================
+
+	public boolean appearIn(int imgWidth, int imgHeight) {
+		return pointIn(p1, imgWidth, imgHeight) && pointIn(p2, imgWidth, imgHeight);
+	}
+
+	public boolean pointIn(Point p, int imgWidth, int imgHeight) {
+		return 0 <= p.x && p.x < imgWidth && 0 <= p.y && p.y < imgHeight;
+	}
 }

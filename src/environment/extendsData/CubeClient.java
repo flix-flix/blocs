@@ -3,6 +3,7 @@ package environment.extendsData;
 
 import java.util.ArrayList;
 
+import data.id.ItemID;
 import data.map.Cube;
 import data.map.enumerations.Face;
 import environment.extendsEngine.DrawCubeFace;
@@ -64,6 +65,10 @@ public class CubeClient extends Cube implements Modelisable {
 	public int selectedQuadri = NO_QUADRI;
 
 	// =================== Model ===================
+	/**
+	 * false: the cube won't be displayed<br>
+	 * (Will be set to false only if the 6 adjacent blocs are opaque)
+	 */
 	private boolean visible = true;
 	private ArrayList<Drawable> draws = new ArrayList<>();
 
@@ -358,18 +363,25 @@ public class CubeClient extends Cube implements Modelisable {
 			}
 			lala--;
 		}
-
 		draws.clear();
 
-		if (unit == null)// Only draw the 3 visible faces of the cube
-			drawFaces(3, faces);
-		else// Draw the 6 faces (e.g. cause the unit cube can be rolling)
-			drawFaces(6, faces);
+		// Only draw the 3 visible faces of the cube (except exception)
+		// 2 is for 3 faces (faces[] values: 0,1,2,X,4,5,6)
+		drawFaces(drawAllFaces() ? 6 : 2, faces);
+	}
 
+	private boolean drawAllFaces() {
+		// If it's an unit the cube can be rolling
+		if (unit != null)
+			return true;
+		//
+		if (getItemID() == ItemID.EDITOR_PREVIEW)
+			return true;
+		return false;
 	}
 
 	private void drawFaces(int nb, int[] faces) {
-		for (int j = 6; j > 6 - nb; j--)
+		for (int j = 6; j >= 6 - nb; j--)
 			// Draw the faces from the closest to the farthest
 			for (int i = 0; i < 6; i++)
 				if (faces[i] == j)

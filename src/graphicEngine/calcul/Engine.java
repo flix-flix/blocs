@@ -1,14 +1,12 @@
 package graphicEngine.calcul;
 
 import java.awt.Point;
-import java.awt.Polygon;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.util.ArrayList;
 
 import graphicEngine.structures.Drawable;
 import graphicEngine.structures.Modelisable;
-import graphicEngine.structures.Quadri;
 
 public class Engine {
 
@@ -172,32 +170,26 @@ public class Engine {
 		timeDraw = System.currentTimeMillis();
 
 		for (Drawable d : draws) {
-			Polygon poly = d.getPoly(this);
 			boolean targeted = false;
 
-			// Test if at least one of the points appear on the screen
-			for (int index = 0; index < 4; index++)
-				if (poly.xpoints[index] < imgWidth && poly.xpoints[index] > 0 && poly.ypoints[index] < imgHeight
-						&& poly.ypoints[index] > 0) {
-					// Test if the target is in the polygon
-					if (drawTarget == null && poly.contains(targetX, targetY) && d.isTargetable()) {
-						targeted = true;
-						drawTarget = d;
-					}
+			if (d.appearIn(this, imgWidth, imgHeight)) {
+				// Test if the target is in the draw
+				if (drawTarget == null && d.getPoly(this).contains(targetX, targetY) && d.isTargetable()) {
+					targeted = true;
+					drawTarget = d;
 				}
-			for (Quadri q : d.getQuadri(this))
-				// Test if at least one of the points appear on the screen
-				for (int i = 0; i < 4; i++)
-					if (q.points[i].x < imgWidth && q.points[i].x > 0 && q.points[i].y < imgHeight
-							&& q.points[i].y > 0) {
-						if (targeted && quadriTarget == null && q.id != Quadri.NOT_NUMBERED
-								&& q.getPoly().contains(targetX, targetY))
-							quadriTarget = q;
-						drawQuadri(q);
-						break;
-					}
-		}
+			}
 
+			for (Quadri q : d.getQuadri(this))
+				if (q.appearOn(imgWidth, imgHeight)) {
+					// Test if the target is in the quadri
+					if (targeted && quadriTarget == null && q.id != Quadri.NOT_NUMBERED
+							&& q.getPoly().contains(targetX, targetY))
+						quadriTarget = q;
+
+					drawQuadri(q);
+				}
+		}
 	}
 
 	// =========================================================================================================================
@@ -221,20 +213,26 @@ public class Engine {
 	// =========================================================================================================================
 
 	private void drawQuadri(Quadri q) {
-		if (q.fill)
+		if (q.isLine())
+			drawLine(q.line, q.color);
+
+		else if (q.fill)
 			for (int row = yInScreen(q.getTop()); row <= yInScreen(q.getBottom()); row++)
 				for (int col = xInScreen(q.getLeft(row)); col <= xInScreen(q.getRight(row)); col++)
 					setPixel(col, row, q.color);
 
 		else
-			for (Line l : q.lines) {
-				if (l.max < 0 || l.min >= imgHeight)
-					return;
+			for (Line l : q.lines)
+				drawLine(l, q.color);
+	}
 
-				for (int row = yInScreen(l.min); row <= yInScreen(l.max); row++)
-					for (int col = xInScreen(l.getLeft(row)); col <= xInScreen(l.getRight(row)); col++)
-						setPixel(col, row, q.color);
-			}
+	private void drawLine(Line l, int color) {
+		if (l.max < 0 || l.min >= imgHeight)
+			return;
+
+		for (int row = yInScreen(l.min); row <= yInScreen(l.max); row++)
+			for (int col = xInScreen(l.getLeft(row)); col <= xInScreen(l.getRight(row)); col++)
+				setPixel(col, row, color);
 	}
 
 	// =========================================================================================================================

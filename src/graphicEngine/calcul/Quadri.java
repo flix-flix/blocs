@@ -1,9 +1,7 @@
-package graphicEngine.structures;
+package graphicEngine.calcul;
 
 import java.awt.Point;
 import java.awt.Polygon;
-
-import graphicEngine.calcul.Line;
 
 public class Quadri {
 
@@ -16,6 +14,9 @@ public class Quadri {
 	public final static int NOT_NUMBERED = -1;
 	/** Order of drawing in the Draw */
 	public int id = NOT_NUMBERED;
+
+	/** If not null : the Quadri is this line */
+	Line line;
 
 	// =========================================================================================================================
 
@@ -33,6 +34,11 @@ public class Quadri {
 	public Quadri(Point p0, Point p1, Point p2, Point p3, int color, boolean fill, int id) {
 		this(p0, p1, p2, p3, color, fill);
 		this.id = id;
+	}
+
+	public Quadri(Point p0, Point p1, int color) {
+		line = new Line(p0, p1);
+		this.color = color;
 	}
 
 	// =========================================================================================================================
@@ -73,6 +79,24 @@ public class Quadri {
 			row = Math.max(row, p.y);
 
 		return row;
+	}
+
+	// =========================================================================================================================
+
+	public boolean isLine() {
+		return line != null;
+	}
+
+	// =========================================================================================================================
+
+	public boolean appearOn(int imgWidth, int imgHeight) {
+		if (isLine())
+			return line.appearIn(imgWidth, imgHeight);
+
+		for (int i = 0; i < 4; i++)
+			if (points[i].x < imgWidth && points[i].x > 0 && points[i].y < imgHeight && points[i].y > 0)
+				return true;
+		return false;
 	}
 
 	// =========================================================================================================================

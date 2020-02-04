@@ -11,9 +11,9 @@ import environment.extendsData.CubeClient;
 import environment.textures.TextureSquare;
 import graphicEngine.calcul.Engine;
 import graphicEngine.calcul.Point3D;
+import graphicEngine.calcul.Quadri;
 import graphicEngine.calcul.Vector;
 import graphicEngine.structures.Drawable;
-import graphicEngine.structures.Quadri;
 
 public class DrawCubeFace extends Drawable {
 
@@ -167,6 +167,16 @@ public class DrawCubeFace extends Drawable {
 		Point[] points = generate2D(engine, 1, 1);
 		return new Polygon(new int[] { points[0].x, points[1].x, points[3].x, points[2].x },
 				new int[] { points[0].y, points[1].y, points[3].y, points[2].y }, 4);
+	}
+
+	@Override
+	public boolean appearIn(Engine engine, int imgWidth, int imgHeight) {
+		Polygon poly = getPoly(engine);
+		for (int index = 0; index < 4; index++)
+			if (poly.xpoints[index] < imgWidth && poly.xpoints[index] > 0 && poly.ypoints[index] < imgHeight
+					&& poly.ypoints[index] > 0)
+				return true;
+		return false;
 	}
 
 	@Override

@@ -172,6 +172,7 @@ public class Game extends Environment3D implements Displayable, EnvironmentListe
 			keyboard.setTargetOnMouse();
 
 			panel.help.setVisible(true);
+			panel.menu.setVisible(true);
 			setCursorVisible(true);
 			break;
 		case CREATIVE:
@@ -180,6 +181,7 @@ public class Game extends Environment3D implements Displayable, EnvironmentListe
 			panel.setStartXPanel(0);
 
 			panel.help.setVisible(false);
+			panel.menu.setVisible(false);
 			setCursorVisible(false);
 			break;
 		case SPECTATOR:

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import graphicEngine.calcul.Engine;
 import graphicEngine.calcul.Point3D;
+import graphicEngine.calcul.Quadri;
 
 public abstract class Drawable implements Comparable<Drawable> {
 
@@ -23,6 +24,9 @@ public abstract class Drawable implements Comparable<Drawable> {
 
 	/** Returns the on-screen polygon representative of this draw */
 	public abstract Polygon getPoly(Engine engine);
+
+	/** Returns true if at least one point appear on the screen */
+	public abstract boolean appearIn(Engine engine, int imgWidth, int imgHeight);
 
 	/** Returns true if the Draw can be targeted */
 	public abstract boolean isTargetable();

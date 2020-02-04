@@ -8,7 +8,7 @@ import data.map.Cube;
 import data.map.enumerations.Face;
 import environment.Environment3D;
 import environment.KeyboardEnvironment3D;
-import graphicEngine.structures.Quadri;
+import graphicEngine.calcul.Quadri;
 import utils.FlixBlocksUtils;
 
 public class KeyboardEditor extends KeyboardEnvironment3D {

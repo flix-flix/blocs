@@ -8,8 +8,8 @@ import environment.extendsData.CubeClient;
 import environment.textures.TextureSquare;
 import graphicEngine.calcul.Engine;
 import graphicEngine.calcul.Point3D;
+import graphicEngine.calcul.Quadri;
 import graphicEngine.calcul.Vector;
-import graphicEngine.structures.Quadri;
 
 public class DrawLayer {
 
@@ -182,7 +182,7 @@ public class DrawLayer {
 			for (int col = 0; col < letter.width; col++)
 				for (int row = 0; row < letter.height; row++)
 					if (letter.getColor(row, col) == 0xff000000)
-						fillSquare(start + col, size / 2 - 3 + row, 0xffc86400, false, size, 2);
+						fillSquare(start + col, size / 2 - 3 + row, 0xffc86400, false, size, size/5);
 			start += 1 + letter.width;
 		}
 	}
@@ -211,9 +211,7 @@ public class DrawLayer {
 					break;
 				case LINE:
 					quadris.add(new Quadri(getPoint2D(engine, size, data.col1, data.row1, data.fly),
-							getPoint2D(engine, size, data.col2, data.row2, data.fly),
-							getPoint2D(engine, size, data.col2, data.row2, data.fly),
-							getPoint2D(engine, size, data.col1, data.row1, data.fly), data.color, false));
+							getPoint2D(engine, size, data.col2, data.row2, data.fly), data.color));
 					break;
 				case CUBE:
 					break;

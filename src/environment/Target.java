@@ -4,7 +4,7 @@ import data.map.enumerations.Face;
 import environment.extendsData.CubeClient;
 import environment.extendsEngine.DrawCubeFace;
 import graphicEngine.calcul.Engine;
-import graphicEngine.structures.Quadri;
+import graphicEngine.calcul.Quadri;
 
 public class Target {
 

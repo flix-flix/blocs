@@ -79,7 +79,7 @@ public class PanGame extends PanEnvironment {
 	// =============== Menu ===============
 	private int menuWidth = 400;
 
-	private MenuCol menu = new MenuCol();
+	public MenuCol menu = new MenuCol();
 
 	private UserAction[] _userActions = { UserAction.MOUSE, UserAction.CREA_ADD, UserAction.CREA_DESTROY };
 	private MenuButtonUserAction[] userActions = new MenuButtonUserAction[_userActions.length];

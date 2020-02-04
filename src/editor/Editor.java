@@ -32,7 +32,7 @@ import graphicEngine.calcul.Camera;
 import graphicEngine.calcul.Engine;
 import graphicEngine.calcul.Line;
 import graphicEngine.calcul.Point3D;
-import graphicEngine.structures.Quadri;
+import graphicEngine.calcul.Quadri;
 import utils.FlixBlocksUtils;
 import utils.yaml.YAML;
 import window.Displayable;
