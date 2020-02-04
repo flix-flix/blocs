@@ -9,7 +9,7 @@ import data.map.enumerations.Face;
 import environment.Environment3D;
 import environment.KeyboardEnvironment3D;
 import graphicEngine.structures.Quadri;
-import server.game.GameMode;
+import utils.FlixBlocksUtils;
 
 public class KeyboardEditor extends KeyboardEnvironment3D {
 
@@ -286,10 +286,11 @@ public class KeyboardEditor extends KeyboardEnvironment3D {
 	public void mouseMoved(MouseEvent e) {
 		int startW = 400;
 
-		if (editor.gamemode == GameMode.CLASSIC)
+		if (editor.isRotateMode())
 			getEnvironment().setTarget(e.getX() - 8 - startW, e.getY() - 32);
-		else if (editor.gamemode == GameMode.CREATIVE)
-			getEnvironment().setTargetCenter();
+		else
+			FlixBlocksUtils.debug("Only Rotate-Mode is available");
+		// getEnvironment().setTargetCenter();
 	}
 
 	@Override

@@ -33,7 +33,6 @@ import graphicEngine.calcul.Engine;
 import graphicEngine.calcul.Line;
 import graphicEngine.calcul.Point3D;
 import graphicEngine.structures.Quadri;
-import server.game.GameMode;
 import utils.FlixBlocksUtils;
 import utils.yaml.YAML;
 import window.Displayable;
@@ -54,10 +53,6 @@ public class Editor extends Environment3D implements Displayable, EnvironmentLis
 
 	// =============== Rotation ===============
 	double rotateSpeed = .2;
-
-	// =============== GameMode ===============
-	// TODO [Change] Gamemode -> CameraMode/EditorMode
-	GameMode gamemode = GameMode.CLASSIC;
 
 	// =============== Cursor ===============
 	private Cursor cursorPaint;

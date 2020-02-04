@@ -10,6 +10,7 @@ import java.awt.geom.AffineTransform;
 import data.id.ItemTableClient;
 import data.map.Cube;
 import environment.PanEnvironment;
+import game.CameraMode;
 import game.Game;
 import game.StateHUD;
 import game.UserAction;
@@ -19,7 +20,6 @@ import game.panels.menus.MenuMap;
 import game.panels.menus.MenuRessources;
 import game.panels.menus.infos.MenuInfos;
 import game.tips.TipGame;
-import server.game.GameMode;
 import server.game.messages.Message;
 import utils.panels.MenuCol;
 import utils.panels.MenuGrid;
@@ -162,7 +162,7 @@ public class PanGame extends PanEnvironment {
 		// =========================================================================================================================
 
 		else {
-			if (game.gamemode == GameMode.CREATIVE) {
+			if (game.cameraMode == CameraMode.FIRST_PERSON) {
 				// Middle indicator : cross
 				g.setColor(Color.WHITE);
 				g.drawLine(centerW - crossSize, centerH - 1, centerW + crossSize - 1, centerH - 1);
@@ -231,7 +231,7 @@ public class PanGame extends PanEnvironment {
 	}
 
 	public void refreshGUI() {
-		menu.setVisible(game.gamemode == GameMode.CLASSIC);
+		menu.setVisible(game.cameraMode == CameraMode.CLASSIC);
 
 		game.clearSelected();
 

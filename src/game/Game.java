@@ -51,7 +51,8 @@ public class Game extends Environment3D implements Displayable, EnvironmentListe
 	// =============== Data ===============
 	public Player player = new Player("Felix");
 	private UserAction action;
-	public GameMode gamemode = GameMode.CLASSIC;
+	public CameraMode cameraMode = CameraMode.CLASSIC;
+	public GameMode gameMode = GameMode.CLASSIC;
 
 	// =============== Action ===============
 	public Unit selectedUnit;
@@ -151,12 +152,13 @@ public class Game extends Environment3D implements Displayable, EnvironmentListe
 	// =========================================================================================================================
 
 	public void setGameMode(GameMode gameMode) {
-		this.gamemode = gameMode;
+		this.gameMode = gameMode;
 
 		panel.refreshGUI();
 
 		switch (gameMode) {
 		case CLASSIC:
+			cameraMode = CameraMode.CLASSIC;
 			// Realign the camera with the grid
 			camera.setVx(90);
 			camera.setVy(-65);
@@ -174,6 +176,7 @@ public class Game extends Environment3D implements Displayable, EnvironmentListe
 			setCursorVisible(true);
 			break;
 		case CREATIVE:
+			cameraMode = CameraMode.FIRST_PERSON;
 			keyboard.mouseToCenter();
 			panel.setStartXPanel(0);
 
@@ -280,7 +283,7 @@ public class Game extends Environment3D implements Displayable, EnvironmentListe
 		stateHUD = StateHUD.GAME;
 		keyboard.setPaused(false);
 
-		if (gamemode == GameMode.CREATIVE) {
+		if (cameraMode == CameraMode.FIRST_PERSON) {
 			setCursorVisible(false);
 			keyboard.mouseToCenter();
 		}
@@ -453,7 +456,7 @@ public class Game extends Environment3D implements Displayable, EnvironmentListe
 
 	@Override
 	public void gainTarget() {
-		if (gamemode == GameMode.CLASSIC)
+		if (cameraMode == CameraMode.CLASSIC)
 			if (target.cube != null)
 				if (action == UserAction.CREA_ADD) {
 

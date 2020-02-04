@@ -27,7 +27,7 @@ public class KeyboardGame extends KeyboardEnvironment3D {
 
 	@Override
 	public boolean isDestroying() {
-		return game.getAction() == UserAction.CREA_DESTROY || game.gamemode == GameMode.CREATIVE;
+		return game.getAction() == UserAction.CREA_DESTROY || game.gameMode == GameMode.CREATIVE;
 	}
 
 	@Override
@@ -42,7 +42,7 @@ public class KeyboardGame extends KeyboardEnvironment3D {
 
 	@Override
 	public boolean isForceAdding() {
-		return game.gamemode == GameMode.CREATIVE;
+		return game.gameMode == GameMode.CREATIVE;
 	}
 
 	@Override
@@ -79,7 +79,7 @@ public class KeyboardGame extends KeyboardEnvironment3D {
 	@Override
 	public void wheelRotation(MouseWheelEvent e) {
 		if (!paused)
-			if (game.gamemode == GameMode.CLASSIC)
+			if (game.cameraMode == CameraMode.CLASSIC)
 				camera.moveY(e.getWheelRotation() * 10);
 	}
 
@@ -90,9 +90,9 @@ public class KeyboardGame extends KeyboardEnvironment3D {
 		if (getEnvironment() == null)
 			return;
 
-		if (game.gamemode == GameMode.CLASSIC)
+		if (game.cameraMode == CameraMode.CLASSIC)
 			setTarget(e.getX(), e.getY());
-		else if (game.gamemode == GameMode.CREATIVE) {
+		else if (game.cameraMode == CameraMode.FIRST_PERSON) {
 			rotateCamera(e.getX(), e.getY());
 			getEnvironment().setTargetCenter();
 		}
@@ -104,7 +104,7 @@ public class KeyboardGame extends KeyboardEnvironment3D {
 	}
 
 	public void setTarget(int x, int y) {
-		int startW = game.gamemode == GameMode.CLASSIC ? 400 : 0;
+		int startW = game.cameraMode == CameraMode.CLASSIC ? 400 : 0;
 		getEnvironment().setTarget(x - 8 - startW, y - 32);
 	}
 
