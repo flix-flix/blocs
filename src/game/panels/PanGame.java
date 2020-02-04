@@ -103,9 +103,9 @@ public class PanGame extends PanEnvironment {
 
 		// ========================================================================================
 
-		help = new MenuHelp(Mark.INTERROGATION, 80, 10, TipGame.values()[0]);
+		help = new MenuHelp(Mark.INTERROGATION, 700, 80, 10, TipGame.values()[0]);
 		help.setBackground(new Color(0xff4068c4));
-		help.setBounds(menuWidth + 25, getHeight() - 25, 700, 100);
+		help.setLocation(menuWidth + 25, getHeight() - 25);
 		this.add(help);
 
 		// ========================================================================================

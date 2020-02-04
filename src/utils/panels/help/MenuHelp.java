@@ -21,14 +21,14 @@ public class MenuHelp extends Menu {
 
 	// ========== Data ==========
 	Mark mark;
-	private int size, border, total;
+	private int width, circleSize, border, total;
 
 	// ========== ==========
 	private Image img;
 
 	private boolean active = false;
 
-	private Ellipse2D ellipse;
+	private Ellipse2D circle;
 
 	// ========== Tip ==========
 	private Tip tip;
@@ -40,21 +40,24 @@ public class MenuHelp extends Menu {
 
 	// =========================================================================================================================
 
-	public MenuHelp(Mark mark, int size, int border, Tip tip) {
+	public MenuHelp(Mark mark, int width, int circleSize, int border, Tip tip) {
 		this.mark = mark;
-		this.size = size;
+		this.width = width;
+		this.circleSize = circleSize;
 		this.border = border;
 		this.tip = tip;
 
-		this.total = size + border * 2;
+		this.total = circleSize + border * 2;
 
-		ellipse = new Ellipse2D.Double(border, border, size, size);
+		circle = new Ellipse2D.Double(border, border, circleSize, circleSize);
 		updateTip();
 
 		img = FlixBlocksUtils
 				.getImage("static/" + (mark == Mark.INTERROGATION ? "interrogationMark" : "exclamationMark"));
 
 		setBackground(Color.LIGHT_GRAY);
+
+		setSize(total, total);
 	}
 
 	// =========================================================================================================================
@@ -105,17 +108,19 @@ public class MenuHelp extends Menu {
 
 		// ========== Mark ==========
 		g.setColor(getBackground());
-		g.fillOval(border, border, size, size);
+		g.fillOval(border, border, circleSize, circleSize);
 
-		g.drawImage(img, border * 2, border * 2, size - border * 2, size - border * 2, null);
+		g.drawImage(img, border * 2, border * 2, circleSize - border * 2, circleSize - border * 2, null);
 	}
 
 	// =========================================================================================================================
 
 	@Override
 	public void click(MouseEvent e) {
-		if (ellipse.contains(e.getPoint()))
+		if (circle.contains(e.getPoint()))
 			active = !active;
+
+		setSize(active ? width : total, total);
 
 		if (e.getX() > getWidth() - widthArrow - 20) {
 			if (e.getY() > getHeight() / 2)

@@ -58,13 +58,13 @@ public class PanEditor extends JPanel {
 		panel.setSize(getWidth() - menuWidth, getHeight());
 		add(panel);
 
-		help = new MenuHelp(Mark.INTERROGATION, 80, 10, TipEditor.ZOOM);
-		help.setBounds(25, 25, 500, 100);
+		help = new MenuHelp(Mark.INTERROGATION, 500, 80, 10, TipEditor.ZOOM);
+		help.setLocation(25, 25);
 		panel.add(help);
 
-		helpTool = new MenuHelp(Mark.EXCLAMATION, 60, 7, TipCalk.values()[0]);
+		helpTool = new MenuHelp(Mark.EXCLAMATION, 450, 60, 7, TipCalk.values()[0]);
 		helpTool.setBackground(new Color(0xff4068c4));
-		helpTool.setBounds(25, 25, 450, 74);
+		helpTool.setLocation(25, 25);
 		helpTool.setVisible(false);
 		panel.add(helpTool);
 
@@ -80,7 +80,7 @@ public class PanEditor extends JPanel {
 			buttonsTop.put(action, new MenuButtonEditor(editor, action));
 			topActions.addMenu(buttonsTop.get(action));
 		}
-		
+
 		get(ActionEditor.EDIT_CUBE).setWIP();
 		get(ActionEditor.EDIT_MULTI_CUBE).setWIP();
 		get(ActionEditor.EDIT_MULTI_TEXTURE).setWIP();
