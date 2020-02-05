@@ -5,12 +5,15 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
+import java.net.SocketException;
+
+import data.id.ItemTableClient;
 
 public class Client implements Runnable {
 
 	public static final int port = 1212;
-	InetAddress serverAddress;
+
+	private boolean run = true;
 
 	Socket server;
 	ObjectInputStream in;
@@ -20,20 +23,13 @@ public class Client implements Runnable {
 
 	// =========================================================================================================================
 
-	public Client(Game game) {
+	public Client(Game game, InetAddress inetAdr) {
 		this.game = game;
-		try {
-			// TODO Other than LocalHost
-			serverAddress = InetAddress.getLocalHost();
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		}
 
 		try {
-			server = new Socket(serverAddress, port);
+			server = new Socket(inetAdr, port);
 
 			out = new ObjectOutputStream(server.getOutputStream());
-
 			in = new ObjectInputStream(server.getInputStream());
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -48,14 +44,24 @@ public class Client implements Runnable {
 
 	@Override
 	public void run() {
-		while (true) {
+		while (run) {
 			try {
 				game.receive(in.readObject());
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
+				if (e instanceof SocketException) {
+					game.connexionLost(ItemTableClient.getText("game.error.connexionLost"));
+					break;
+				}
 				e.printStackTrace();
 			}
 		}
+	}
+
+	// =========================================================================================================================
+
+	public void stop() {
+		run = false;
 	}
 }

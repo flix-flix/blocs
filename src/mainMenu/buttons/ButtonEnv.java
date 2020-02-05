@@ -18,6 +18,7 @@ import data.map.multiblocs.Tree;
 import data.map.units.Unit;
 import environment.Environment3D;
 import environment.PanEnvironment;
+import environment.extendsData.CubeClient;
 import environment.extendsData.MapClient;
 import environment.extendsEngine.DrawLayer;
 import environment.textures.TexturePack;
@@ -174,23 +175,32 @@ public class ButtonEnv extends PanEnvironment {
 			for (int j = 6; j < 15; j++)
 				map.remove(i, 1, j);
 
-		Unit u1, u2, u3, u4;
 		// Add Units
-		map.addUnit(u1 = new Unit(ItemID.UNIT, felix, 27, ground, 11));
-		map.addUnit(u2 = new Unit(ItemID.UNIT, felix, 25, ground, 13));
-		map.addUnit(u3 = new Unit(ItemID.UNIT, felix, 23, ground, 11));
-		map.addUnit(u4 = new Unit(ItemID.UNIT, felix, 21, ground, 12));
+		map.addUnit(new Unit(ItemID.UNIT, felix, 27, ground, 11));
+		map.addUnit(new Unit(ItemID.UNIT, felix, 25, ground, 13));
+		map.addUnit(new Unit(ItemID.UNIT, felix, 23, ground, 11));
+		map.addUnit(new Unit(ItemID.UNIT, felix, 21, ground, 12));
 
-		u1.orientation = Orientation.EAST;
-		u2.orientation = Orientation.EAST;
-		u3.orientation = Orientation.EAST;
+		CubeClient c1, c2, c3, c4;
 
-		u1.rotation = Rotation.UPSIDE_DOWN_Z;
-		u2.rotation = Rotation.RIGHT;
-		u3.rotation = Rotation.RIGHT;
-		u4.rotation = Rotation.RIGHT;
+		c1 = map.gridGet(27, ground, 11);
+		c2 = map.gridGet(25, ground, 13);
+		c3 = map.gridGet(23, ground, 11);
+		c4 = map.gridGet(21, ground, 12);
 
-		map.gridGet(27, ground, 11).updateFromUnit();
+		c1.unit.orientation = Orientation.EAST;
+		c2.unit.orientation = Orientation.EAST;
+		c3.unit.orientation = Orientation.EAST;
+		c4.unit.orientation = Orientation.NORTH;
+
+		c1.unit.rotation = Rotation.UPSIDE_DOWN_X;
+		c2.unit.rotation = Rotation.RIGHT;
+		c4.unit.rotation = Rotation.RIGHT;
+
+		c1.updateFromUnit();
+		c2.updateFromUnit();
+		c3.updateFromUnit();
+		c4.updateFromUnit();
 
 		// =========================================================================================================================
 		// Buildings

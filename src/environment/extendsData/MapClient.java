@@ -131,6 +131,11 @@ public class MapClient extends Map implements Modelisable {
 	@Override
 	protected boolean addMulti(MultiBloc multi, boolean full) {
 		super.addMulti(multi, full);
+
+		// If all the cubes are out of bounds
+		if (!multi.exist())
+			return false;
+
 		update(multi.getCube().coords());
 		// Cubes are always displayed (in red if errors)
 		return true;

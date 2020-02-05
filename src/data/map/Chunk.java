@@ -68,10 +68,12 @@ public class Chunk implements Serializable {
 		return _gridGet(toInChunkCoord(x), y, toInChunkCoord(z));
 	}
 
-	public void gridSet(Cube cube) {
+	/** Returns true if the blocs has been added, false otherwise */
+	public boolean gridSet(Cube cube) {
 		if (wrongY(cube.gridCoord.y))
-			return;
+			return false;
 		_gridSet(toInChunkCoord(cube.x), cube.gridCoord.y, toInChunkCoord(cube.z), cube);
+		return true;
 	}
 
 	public void gridRemove(int x, int y, int z) {

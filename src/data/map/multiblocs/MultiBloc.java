@@ -21,6 +21,8 @@ public class MultiBloc implements Serializable {
 
 	public boolean valid = true;
 
+	// =========================================================================================================================
+
 	public MultiBloc(int itemID, int x, int y, int z) {
 		id = nextID++;
 		this.itemID = itemID;
@@ -34,6 +36,10 @@ public class MultiBloc implements Serializable {
 	}
 
 	// =========================================================================================================================
+
+	public boolean exist() {
+		return !list.isEmpty();
+	}
 
 	public Cube getCube() {
 		return list.getFirst();

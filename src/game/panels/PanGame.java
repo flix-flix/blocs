@@ -61,16 +61,22 @@ public class PanGame extends PanEnvironment {
 	// =============== Size ===============
 	private int startXPanel;
 
-	// =============== Font ===============
-	private Font font = new Font("arial", Font.BOLD, 100);
+	// =============== Loading ===============
+	private Font fontLoading = new Font("arial", Font.BOLD, 100);
 	private AffineTransform affinetransform = new AffineTransform();
 	private FontRenderContext frc = new FontRenderContext(affinetransform, true, true);
 
-	private Font fontError = new Font("arial", Font.BOLD, 10);
-	private FontMetrics fmError = getFontMetrics(fontError);
+	private Font fontLoadingError = new Font("arial", Font.BOLD, 10);
+	private FontMetrics fmLoadingError = getFontMetrics(fontLoadingError);
 
 	private String loadingText;
 	private String loadingTextError;
+
+	// =============== Error ===============
+	private Font fontError = new Font("arial", Font.BOLD, 30);
+	private FontMetrics fmError = getFontMetrics(fontError);
+
+	private Button quitButton;
 
 	// =============== Cross ===============
 	/** Size of the central indicator (creative mode) */
@@ -126,7 +132,18 @@ public class PanGame extends PanEnvironment {
 
 		menu.addTop(infos = new MenuInfos(game), MenuCol.REMAINING);
 
+		// ========================================================================================
+
+		quitButton = new Button(game.fen, ItemTableClient.getText("game.error.buttonQuit"));
+		quitButton.setSize(300, 75);
+		quitButton.setVisible(false);
+		add(quitButton);
+
+		// ========================================================================================
+
 		refreshLang();
+
+		setGUIVisible(false);
 	}
 
 	// =========================================================================================================================
@@ -139,6 +156,21 @@ public class PanGame extends PanEnvironment {
 		int centerW = width / 2;
 		int centerH = height / 2;
 
+		if (game.stateHUD == StateHUD.ERROR) {
+			g.setColor(new Color(236, 135, 15)); // Orange
+			g.fillRect(0, 0, width, height);
+
+			g.setColor(Color.LIGHT_GRAY);
+			g.setFont(fontError);
+
+			int textW = fmError.stringWidth(game.errorMsg);
+			int textH = (int) fm.getStringBounds(game.errorMsg, g).getHeight();
+
+			g.drawString(game.errorMsg, centerW - textW / 2 + 10, centerH + textH / 2 - 20);
+
+			return;
+		}
+
 		// Draw Environment
 		super.paintComponent(g.create(startXPanel, 0, width - startXPanel, height));
 
@@ -147,14 +179,14 @@ public class PanGame extends PanEnvironment {
 			g.setColor(new Color(236, 135, 15)); // Orange
 			g.fillRect(0, 0, width, height);
 
-			int textW = (int) (font.getStringBounds(loadingText, frc).getWidth());
-			int textH = (int) (font.getStringBounds(loadingText, frc).getHeight());
+			int textW = (int) (fontLoading.getStringBounds(loadingText, frc).getWidth());
+			int textH = (int) (fontLoading.getStringBounds(loadingText, frc).getHeight());
 
 			g.setColor(Color.LIGHT_GRAY);
-			g.setFont(font);
-			g.drawString(loadingText, centerW + 200 - textW / 2 + 10, centerH + textH / 2 - 20);
-			g.setFont(fontError);
-			g.drawString(loadingTextError, centerW + 200 - fmError.stringWidth(loadingTextError) / 2,
+			g.setFont(fontLoading);
+			g.drawString(loadingText, centerW + menuWidth / 2 - textW / 2 + 10, centerH + textH / 2 - 20);
+			g.setFont(fontLoadingError);
+			g.drawString(loadingTextError, centerW + menuWidth / 2 - fmLoadingError.stringWidth(loadingTextError) / 2,
 					centerH + textH / 2 + 20);
 
 		}
@@ -259,9 +291,19 @@ public class PanGame extends PanEnvironment {
 
 	// =========================================================================================================================
 
-	public void setStartXPanel(int x) {
-		startXPanel = x;
+	public void error() {
+		setGUIVisible(false);
+		System.out.println(quitButton.getBounds());
+		quitButton.setVisible(true);
+
+		repaint();
+	}
+
+	public void setGUIVisible(boolean visible) {
+		startXPanel = visible ? menuWidth : 0;
 		updateEnvironmentSize(getWidth(), getHeight());
+		help.setVisible(visible);
+		menu.setVisible(visible);
 	}
 
 	// =========================================================================================================================
@@ -284,5 +326,7 @@ public class PanGame extends PanEnvironment {
 		pause.setSize(width, height);
 		menu.setSize(menuWidth, height);
 		help.setLocation(menuWidth + 25, getHeight() - help.getHeight() - 35);
+
+		quitButton.setLocation(getWidth() / 2 - quitButton.getWidth() / 2, getHeight() / 2 + 75);
 	}
 }

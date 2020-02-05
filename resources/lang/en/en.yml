@@ -64,7 +64,11 @@ tips:
 text:
     game:
         loading: Loading...
-        loadingError: (If too long it probably crashed ;p)
+        loadingError: (If you can read it, the game probably crashed ;p)
+        
+        error:
+            connexionLost: Server connexion lost
+            buttonQuit: Return to main menu
         
         pause:
             buttons: 

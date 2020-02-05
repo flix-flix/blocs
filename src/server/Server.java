@@ -1,10 +1,10 @@
 package server;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
+import java.util.TreeMap;
 
 import data.dynamic.TickClock;
 import data.generation.WorldGeneration;
@@ -20,14 +20,12 @@ import server.send.SendAction;
 
 public class Server implements Runnable {
 
-	public static final int port = 1212;
+	public static final int defaultPort = 1212;
 
 	ServerSocket server;
-	boolean running = true;
+	boolean run = true;
 
-	Socket client;
-	ObjectInputStream in;
-	ObjectOutputStream out;
+	TreeMap<Integer, ClientListener> clients = new TreeMap<>();
 
 	// =========================================================================================================================
 
@@ -35,7 +33,7 @@ public class Server implements Runnable {
 
 	// =========================================================================================================================
 
-	public Server() {
+	public Server(int port) {
 		try {
 			server = new ServerSocket(port);
 		} catch (IOException e) {
@@ -50,36 +48,43 @@ public class Server implements Runnable {
 		clock.start();
 	}
 
+	public Server() {
+		this(defaultPort);
+	}
+
 	// =========================================================================================================================
 
 	@Override
 	public void run() {
 		try {
-			while (running) {
+			while (run) {
 				// New client
-				client = server.accept();
-
-				if (!running)
-					break;
-
-				in = new ObjectInputStream(client.getInputStream());
-				out = new ObjectOutputStream(client.getOutputStream());
-
+				Socket socket;
 				try {
-					while (true) {
-						receive(in.readObject());
-					}
-				} catch (ClassNotFoundException e) {
-					e.printStackTrace();
+					socket = server.accept();
+				} catch (SocketException e) {
+					break;
 				}
+
+				ClientListener client = new ClientListener(this, socket);
+				clients.put(client.getID(), client);
+				client.start();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
+	public void start() {
+		System.out.println("===== SERVER [START] =====");
+		Thread serverThread = new Thread(this);
+		serverThread.setName("Server");
+		serverThread.start();
+	}
+
 	public void stop() {
-		running = false;
+		System.out.println("===== SERVER [CLOSE] =====");
+		run = false;
 
 		try {
 			server.close();
@@ -90,31 +95,31 @@ public class Server implements Runnable {
 
 	// =========================================================================================================================
 
-	public void send(Object obj) {
-		try {
-			out.writeObject(obj);
-			out.flush();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	public void sendToAll(Object obj) {
+		for (ClientListener client : clients.values())
+			client.send(obj);
+	}
+
+	public void sendToPlayer(Object obj, int id) {
+		clients.get(id).send(obj);
 	}
 
 	// =========================================================================================================================
 
-	public void receive(Object obj) {
+	public void receive(Object obj, int id) {
 		if (obj instanceof Player)
-			receivePlayer((Player) obj);
+			receivePlayer((Player) obj, id);
 		else if (obj instanceof Message)
 			receiveMessage((Message) obj);
 		else if (obj instanceof SendAction)
-			receiveSend((SendAction) obj);
+			receiveSend((SendAction) obj, id);
 		else
 			System.err.println("UNKNOWN OBJECT");
 	}
 
 	// =========================================================================================================================
 
-	public void receiveSend(SendAction send) {
+	public void receiveSend(SendAction send, int id) {
 		System.out.println(send.action);
 		switch (send.action) {
 		case UNIT_GOTO:
@@ -132,46 +137,46 @@ public class Server implements Runnable {
 		default:
 			break;
 		}
-		send(send);
+		sendToAll(send);
 	}
 
 	// =========================================================================================================================
 
-	public void receivePlayer(Player player) {
-		send(map);
+	public void receivePlayer(Player player, int id) {
+		sendToPlayer(map, id);
 	}
 
 	public void receiveMessage(Message msg) {
 		if (!msg.getText().isEmpty() && msg.getText().charAt(0) == '!')
-			send(new Message("COMMAND", TypeMessage.CONSOLE));
+			sendToAll(new Message("COMMAND", TypeMessage.CONSOLE));
 		else
-			send(msg);
+			sendToAll(msg);
 	}
 
 	// =========================================================================================================================
 
 	public void addCube(Cube c) {
 		System.out.println("[SERVER] Add : " + c.toString());
-		send(SendAction.add(c));
+		sendToAll(SendAction.add(c));
 	}
 
 	public void removeCube(int x, int y, int z) {
 		System.out.println("[SERVER] Remove : " + new Coord(x, y, z).toString());
 		new Coord(x, y, z);
-		send(SendAction.remove(new Coord(x, y, z)));
+		sendToAll(SendAction.remove(new Coord(x, y, z)));
 	}
 
 	// =========================================================================================================================
 
 	public void unitArrive(Unit unit) {
-		send(SendAction.arrive(unit));
+		sendToAll(SendAction.arrive(unit));
 	}
 
 	public void unitHarvest(Unit unit, Coord coord) {
-		send(SendAction.harvest(unit, coord).finished());
+		sendToAll(SendAction.harvest(unit, coord).finished());
 	}
 
 	public void unitStore(Unit unit, Building build) {
-		send(SendAction.store(unit, build).finished());
+		sendToAll(SendAction.store(unit, build).finished());
 	}
 }

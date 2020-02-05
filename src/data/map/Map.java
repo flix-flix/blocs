@@ -249,14 +249,17 @@ public class Map implements Tickable, Serializable {
 		return getChunkAtCoord(x, z).gridGet(x, y, z);
 	}
 
+	/** Retruns the added cube or null if it can't be added */
 	protected Cube gridAdd(Cube cube) {
 		if (gridContains(cube.gridCoord))
 			return null;
 
 		Cube c = createCube(cube);
-		getChunkAtCoord(cube).gridSet(c);
 
-		return c;
+		if (getChunkAtCoord(cube).gridSet(c))
+			return c;
+
+		return null;
 	}
 
 	protected void gridRemove(int x, int y, int z) {
@@ -368,7 +371,7 @@ public class Map implements Tickable, Serializable {
 
 	@Override
 	public void tick() {
-		for (int i = 0; i < units.size(); i++)
+		for (int i : units.keySet())
 			units.get(i).unit.tick(this);
 	}
 

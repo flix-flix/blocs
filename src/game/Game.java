@@ -2,6 +2,8 @@ package game;
 
 import java.awt.Cursor;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 import javax.swing.JPanel;
 
@@ -22,6 +24,7 @@ import environment.textures.TexturePack;
 import game.panels.PanGame;
 import graphicEngine.calcul.Camera;
 import graphicEngine.calcul.Point3D;
+import server.Server;
 import server.game.GameMode;
 import server.game.Player;
 import server.game.messages.Message;
@@ -47,9 +50,12 @@ public class Game extends Environment3D implements Displayable, EnvironmentListe
 
 	// =============== Server ===============
 	private Client client;
+	/** Local server if not online play */
+	private Server server;
 
 	// =============== Data ===============
-	public Player player = new Player("Felix");
+	 public Player player = new Player("Felix");
+//	public Player player = new Player("IA");
 	private UserAction action;
 	public CameraMode cameraMode = CameraMode.CLASSIC;
 	public GameMode gameMode = GameMode.CLASSIC;
@@ -76,6 +82,9 @@ public class Game extends Environment3D implements Displayable, EnvironmentListe
 	public StateHUD stateHUD = StateHUD.GAME;
 
 	// =============== Adding ===============
+	public String errorMsg = "UNKNOWN";
+
+	// =============== Adding ===============
 	/** Next cube to add (its coords aren't valid) */
 	private Cube nextCube;
 	/** Coord of the preview cube */
@@ -86,24 +95,21 @@ public class Game extends Environment3D implements Displayable, EnvironmentListe
 
 	// =========================================================================================================================
 
-	public Game(Fen fen) {
+	public Game(Fen fen, InetAddress inetAdr) {
 		this.fen = fen;
-		texturePack = ItemTableClient.getTexturePack();
+		client = new Client(this, inetAdr);
 
+		// ======================================
+
+		texturePack = ItemTableClient.getTexturePack();
 		ResourceType.setTextureFolder(texturePack.getFolder());
 
 		generateCursor();
 
 		// ======================================
 
-		client = new Client(this);
-
-		// ======================================
-
 		camera = new Camera(new Point3D(15, 35, 0), 90, -65);
-
 		keyboard = new KeyboardGame(this);
-
 		clock = new TickClock("Game (Client) Clock");
 
 		// ======================================
@@ -121,7 +127,33 @@ public class Game extends Environment3D implements Displayable, EnvironmentListe
 
 	// =========================================================================================================================
 
+	public static Game startLocalServer(Fen fen) {
+		try {
+			Server server = new Server();
+			server.start();
+			// Game game = new Game(fen, InetAddress.getLocalHost());
+			Game game = new Game(fen, InetAddress.getByAddress(new byte[] { 0, 0, 0, 0 }));
+			game.server = server;
+			return game;
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public void connexionLost(String errorMsg) {
+		stateHUD = StateHUD.ERROR;
+		this.errorMsg = errorMsg;
+		stop();
+
+		panel.error();
+		fen.updateCursor();
+	}
+
+	// =========================================================================================================================
+
 	public void start() {
+		panel.setGUIVisible(true);
 		messages = new MessageManager(this);
 
 		super.start();
@@ -136,6 +168,9 @@ public class Game extends Environment3D implements Displayable, EnvironmentListe
 
 		keyboard.stop();
 		clock.stop();
+
+		if (server != null)
+			server.stop();
 	}
 
 	// =========================================================================================================================
@@ -164,25 +199,20 @@ public class Game extends Environment3D implements Displayable, EnvironmentListe
 			// Replace the camera at the correct altitude
 			camera.vue.y = 35;
 
-			panel.setStartXPanel(400);
-
 			// Deselect
 			clearSelected();
 
 			keyboard.setTargetOnMouse();
 
-			panel.help.setVisible(true);
-			panel.menu.setVisible(true);
+			panel.setGUIVisible(true);
 			setCursorVisible(true);
 			break;
 		case CREATIVE:
 			cameraMode = CameraMode.FIRST_PERSON;
 			keyboard.mouseToCenter();
-			panel.setStartXPanel(0);
 
-			panel.help.setVisible(false);
-			panel.menu.setVisible(false);
 			setCursorVisible(false);
+			panel.setGUIVisible(false);
 			break;
 		case SPECTATOR:
 			break;
@@ -205,6 +235,9 @@ public class Game extends Environment3D implements Displayable, EnvironmentListe
 	public Cursor getCursor() {
 		if (!cursorVisible)
 			return Fen.cursorInvisible;
+
+		if (stateHUD == StateHUD.ERROR)
+			return Cursor.getDefaultCursor();
 
 		if (!target.isValid())
 			return Cursor.getDefaultCursor();

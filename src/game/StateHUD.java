@@ -1,5 +1,5 @@
 package game;
 
 public enum StateHUD {
-	GAME, PAUSE, DIALOG;
+	GAME, PAUSE, DIALOG, ERROR;
 }

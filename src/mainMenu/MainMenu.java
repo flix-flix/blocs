@@ -2,6 +2,8 @@ package mainMenu;
 
 import java.awt.Color;
 import java.awt.Cursor;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 import javax.swing.JPanel;
 
@@ -85,7 +87,14 @@ public class MainMenu extends JPanel implements Displayable {
 	public void click(MainMenuAction action) {
 		switch (action) {
 		case PLAY:
-			fen.setDisplay(new Game(fen));
+			if (false)
+				try {
+					fen.setDisplay(new Game(fen, InetAddress.getLocalHost()));
+				} catch (UnknownHostException e) {
+					e.printStackTrace();
+				}
+			else
+				fen.setDisplay(Game.startLocalServer(fen));
 			break;
 		case EDITOR:
 			fen.setDisplay(new Editor(fen));

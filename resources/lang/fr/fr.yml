@@ -65,6 +65,10 @@ text:
         loading: Chargement...
         loadingError: (Si tu peux lire ce message, le jeu a probablement planté ^^)
         
+        error:
+            connexionLost: Perte de connexion avec le server
+            buttonQuit: Retour au menu principal
+        
         pause:
             buttons: 
                 resume: Reprendre
