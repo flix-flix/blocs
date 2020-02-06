@@ -75,6 +75,8 @@ public class Server implements Runnable {
 		}
 	}
 
+	// =========================================================================================================================
+
 	public void start() {
 		System.out.println("===== SERVER [START] =====");
 		Thread serverThread = new Thread(this);
@@ -91,6 +93,12 @@ public class Server implements Runnable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	// =========================================================================================================================
+
+	public void stop(int id) {
+		clients.remove(id);
 	}
 
 	// =========================================================================================================================

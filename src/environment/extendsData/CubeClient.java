@@ -8,7 +8,6 @@ import data.map.Cube;
 import data.map.enumerations.Face;
 import environment.extendsEngine.DrawCubeFace;
 import environment.extendsEngine.DrawLayer;
-import environment.textures.TexturePack;
 import graphicEngine.calcul.Camera;
 import graphicEngine.calcul.Matrix;
 import graphicEngine.calcul.Point3D;
@@ -20,8 +19,6 @@ public class CubeClient extends Cube implements Modelisable {
 	private static final long serialVersionUID = -780214253477663150L;
 
 	private static final double toRadian = Math.PI / 180;
-
-	public TexturePack texturePack;
 
 	/** center after map rotation */
 	public Point3D centerDecal;
@@ -37,9 +34,6 @@ public class CubeClient extends Cube implements Modelisable {
 	 * 0 (0,0,0) 1 (0,0,1) 2 (1,0,1) 3 (1,0,0) | 4,5,6,7 => y+1
 	 */
 	public Point3D[] points = new Point3D[8];
-
-	/** Cube resolution (pixels) */
-	public int resoX, resoY, resoZ;
 
 	/** Index of the cube (used to sort when centers are at the same location) */
 	int index;
@@ -74,20 +68,15 @@ public class CubeClient extends Cube implements Modelisable {
 
 	// =========================================================================================================================
 
-	public CubeClient(TexturePack texturePack, double x, double y, double z, double rotaX, double rotaY, double rotaZ,
-			double sizeX, double sizeY, double sizeZ, int itemID) {
+	public CubeClient(double x, double y, double z, double rotaX, double rotaY, double rotaZ, double sizeX,
+			double sizeY, double sizeZ, int itemID) {
 		super(x, y, z, rotaX, rotaY, rotaZ, sizeX, sizeY, sizeZ, itemID);
 
 		centerDecal = new Point3D(x, y, z);
-
-		this.texturePack = texturePack;
-		this.resoX = texturePack.getFace(itemID, Face.EAST).width;
-		this.resoY = texturePack.getFace(itemID, Face.NORTH).height;
-		this.resoZ = texturePack.getFace(itemID, Face.NORTH).width;
 	}
 
-	public CubeClient(Cube c, TexturePack texturePack) {
-		this(texturePack, c.x, c.y, c.z, c.rotaX, c.rotaY, c.rotaZ, c.sizeX, c.sizeY, c.sizeZ, c.getItemID());
+	public CubeClient(Cube c) {
+		this(c.x, c.y, c.z, c.rotaX, c.rotaY, c.rotaZ, c.sizeX, c.sizeY, c.sizeZ, c.getItemID());
 
 		this.shiftX = c.shiftX;
 		this.shiftY = c.shiftY;
@@ -274,18 +263,6 @@ public class CubeClient extends Cube implements Modelisable {
 
 	public void setLayer(int index, DrawLayer layer) {
 		layers.set(index, layer);
-	}
-
-	// =========================================================================================================================
-	// Getters
-
-	public void setTexturePack(TexturePack texturePack) {
-		this.texturePack = texturePack;
-
-	}
-
-	public TexturePack getTexturePack() {
-		return texturePack;
 	}
 
 	// =========================================================================================================================

@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
-public class MenuGrid extends Menu {
+public class PanGrid extends FPanel {
 	private static final long serialVersionUID = 1941339088614372748L;
 
 	// ======================= Grid size =========================
@@ -49,11 +49,11 @@ public class MenuGrid extends Menu {
 
 	// ======================= Menus =========================
 	/** List of the panels in the grid */
-	private ArrayList<Menu> list = new ArrayList<>();
+	private ArrayList<FPanel> list = new ArrayList<>();
 
 	// =========================================================================================================================
 
-	public MenuGrid() {
+	public PanGrid() {
 		scrollBar = new JPanel();
 		scrollBar.setBackground(Color.DARK_GRAY);
 		scrollBar.setVisible(false);
@@ -128,7 +128,7 @@ public class MenuGrid extends Menu {
 
 	// =========================================================================================================================
 
-	public void addMenu(Menu menu) {
+	public void addMenu(FPanel menu) {
 		setMenu(menu, list.size() / cols, list.size() % cols);
 
 		list.add(menu);
@@ -138,7 +138,7 @@ public class MenuGrid extends Menu {
 		updateScroll();
 	}
 
-	private void setMenu(Menu menu, int row, int col) {
+	private void setMenu(FPanel menu, int row, int col) {
 		int padding = this.padding == GRID_SPACE ? gridSpace : this.padding;
 
 		int width = getWidth() - (visibleHeight < getHeight() ? scrollWidth + gridSpace : 0);

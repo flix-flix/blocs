@@ -4,20 +4,20 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.util.TreeMap;
 
-import utils.panels.Menu;
-import utils.panels.MenuGrid;
+import utils.panels.FPanel;
+import utils.panels.PanGrid;
 import window.Key;
 
-public class PanKeys extends Menu {
+public class PanKeys extends FPanel {
 	private static final long serialVersionUID = 7036782098855756010L;
 
 	private TreeMap<Key, PanKey> panels = new TreeMap<>();
 
-	private MenuGrid grid = new MenuGrid();
+	private PanGrid grid = new PanGrid();
 
 	private int margin = 50;
 
-	Menu menu;
+	FPanel menu;
 
 	Key clicked = null;
 
@@ -36,7 +36,7 @@ public class PanKeys extends Menu {
 			grid.addMenu(p);
 		}
 
-		menu = new Menu();
+		menu = new FPanel();
 		menu.add(grid);
 		menu.setLocation(margin, margin);
 

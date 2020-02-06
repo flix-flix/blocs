@@ -7,10 +7,10 @@ import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
-import utils.panels.Menu;
+import utils.panels.FPanel;
 import window.Key;
 
-public class PanKey extends Menu {
+public class PanKey extends FPanel {
 	private static final long serialVersionUID = -4605592917510364091L;
 
 	PanKeys pan;

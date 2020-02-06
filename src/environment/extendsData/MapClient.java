@@ -10,7 +10,6 @@ import data.map.Map;
 import data.map.enumerations.Face;
 import data.map.multiblocs.MultiBloc;
 import data.map.units.Unit;
-import environment.textures.TexturePack;
 import graphicEngine.calcul.Camera;
 import graphicEngine.calcul.Matrix;
 import graphicEngine.structures.Drawable;
@@ -18,9 +17,6 @@ import graphicEngine.structures.Modelisable;
 
 public class MapClient extends Map implements Modelisable {
 	private static final long serialVersionUID = 1111592162081077768L;
-
-	// ===== Texture =====
-	TexturePack texturePack;
 
 	// ===== Model =====
 	public boolean visible = true;
@@ -35,14 +31,10 @@ public class MapClient extends Map implements Modelisable {
 
 	// =========================================================================================================================
 
-	public MapClient(TexturePack texturePack) {
-		super();
-		this.texturePack = texturePack;
+	public MapClient() {
 	}
 
-	public MapClient(Map map, TexturePack texturePack) {
-		this(texturePack);
-
+	public MapClient(Map map) {
 		copyFromMap(map);
 
 		for (int index : map.getChunks().keySet())
@@ -66,19 +58,19 @@ public class MapClient extends Map implements Modelisable {
 
 	@Override
 	public ChunkClient createChunk(Chunk chunk) {
-		return new ChunkClient(chunk, texturePack);
+		return new ChunkClient(chunk);
 	}
 
 	@Override
 	protected CubeClient createCube(Cube c) {
-		return new CubeClient(c, texturePack);
+		return new CubeClient(c);
 	}
 
 	@Override
 	protected CubeClient createUnit(Unit unit) {
 		if (unit instanceof UnitClient)
-			return new CubeClient(new Cube(unit), texturePack);
-		return new CubeClient(new Cube(new UnitClient(unit)), texturePack);
+			return new CubeClient(new Cube(unit));
+		return new CubeClient(new Cube(new UnitClient(unit)));
 	}
 
 	// =========================================================================================================================

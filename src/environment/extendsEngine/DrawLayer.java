@@ -3,6 +3,7 @@ package environment.extendsEngine;
 import java.awt.Point;
 import java.util.ArrayList;
 
+import data.id.ItemTableClient;
 import data.map.enumerations.Face;
 import environment.extendsData.CubeClient;
 import environment.textures.TextureSquare;
@@ -159,7 +160,7 @@ public class DrawLayer {
 	// =========================================================================================================================
 
 	public void drawGrid() {
-		TextureSquare texture = cube.texturePack.getFace(cube.getItemID(), face);
+		TextureSquare texture = ItemTableClient.getTexturePack().getFace(cube.getItemID(), face);
 
 		for (int row = 0; row <= texture.height; row++)
 			drawLine(0, row, texture.width, row, 0xffffffff, face);
@@ -182,7 +183,7 @@ public class DrawLayer {
 			for (int col = 0; col < letter.width; col++)
 				for (int row = 0; row < letter.height; row++)
 					if (letter.getColor(row, col) == 0xff000000)
-						fillSquare(start + col, size / 2 - 3 + row, 0xffc86400, false, size, size/5);
+						fillSquare(start + col, size / 2 - 3 + row, 0xffc86400, false, size, size / 5);
 			start += 1 + letter.width;
 		}
 	}
@@ -196,7 +197,7 @@ public class DrawLayer {
 	public ArrayList<Quadri> getQuadri(DrawCubeFace draw, Engine engine) {
 		ArrayList<Quadri> quadris = new ArrayList<>();
 
-		TextureSquare texture = cube.texturePack.getFace(cube, face);
+		TextureSquare texture = ItemTableClient.getTexturePack().getFace(cube, face);
 
 		for (Data data : dataList) {
 			int size = data.sizeRelative ? texture.width * data.size : data.size;

@@ -89,7 +89,7 @@ public class MainMenu extends JPanel implements Displayable {
 		case PLAY:
 			if (false)
 				try {
-					fen.setDisplay(new Game(fen, InetAddress.getLocalHost()));
+					fen.setDisplay(new Game(fen, InetAddress.getByName("0.0.0.0")));
 				} catch (UnknownHostException e) {
 					e.printStackTrace();
 				}

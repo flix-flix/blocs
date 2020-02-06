@@ -21,7 +21,6 @@ import environment.PanEnvironment;
 import environment.extendsData.CubeClient;
 import environment.extendsData.MapClient;
 import environment.extendsEngine.DrawLayer;
-import environment.textures.TexturePack;
 import graphicEngine.calcul.Camera;
 import graphicEngine.calcul.Engine;
 import graphicEngine.calcul.Point3D;
@@ -125,7 +124,7 @@ public class ButtonEnv extends PanEnvironment {
 	// =========================================================================================================================
 
 	private static Env generateEnvPlay(MainMenu main) {
-		MapClient map = new MapClient(new TexturePack("classic"));
+		MapClient map = new MapClient();
 		Player felix = new Player("");
 
 		int ground = 2;
@@ -211,7 +210,7 @@ public class ButtonEnv extends PanEnvironment {
 	}
 
 	private static Env generateEnvEditor(MainMenu main) {
-		MapClient map = new MapClient(new TexturePack("classic"));
+		MapClient map = new MapClient();
 
 		map.add(new Cube(0, 0, 0, ItemID.BORDER));
 

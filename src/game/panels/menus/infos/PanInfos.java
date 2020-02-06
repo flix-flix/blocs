@@ -1,40 +1,47 @@
 package game.panels.menus.infos;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import data.id.ItemID;
 import data.id.ItemTable;
+import data.id.ItemTableClient;
 import data.map.Cube;
 import data.map.buildings.Building;
 import data.map.multiblocs.E;
 import data.map.multiblocs.Tree;
+import environment.extendsData.CubeClient;
 import game.Game;
-import game.panels.menus.MenuButtonCube;
-import utils.panels.Menu;
-import utils.panels.MenuGrid;
+import utils.panels.ClickListener;
+import utils.panels.FPanel;
+import utils.panels.PanGrid;
+import utilsBlocks.ButtonBlocks;
 
-public class MenuInfos extends Menu {
+public class PanInfos extends FPanel {
 	private static final long serialVersionUID = -7621681231232278749L;
 
-	public MenuInfosResource resource;
-	public MenuInfoUnit unit;
-	public MenuInfosBuilding build;
+	private Game game;
 
-	public MenuGrid gridCubes;
+	public PanInfosResource resource;
+	public PanInfosUnit unit;
+	public PanInfosBuilding build;
+
+	public PanGrid gridCubes;
 
 	private ArrayList<Cube> _cubes = new ArrayList<>();
-	public ArrayList<MenuButtonCube> cubes = new ArrayList<>();
+	public ArrayList<ButtonBlocks> cubes = new ArrayList<>();
 
 	// =========================================================================================================================
 
-	public MenuInfos(Game game) {
-		super(game);
+	public PanInfos(Game game) {
+		this.game = game;
 
-		resource = new MenuInfosResource(game);
-		unit = new MenuInfoUnit(game);
-		build = new MenuInfosBuilding(game);
-		gridCubes = new MenuGrid();
+		resource = new PanInfosResource();
+		unit = new PanInfosUnit(game);
+		build = new PanInfosBuilding(game);
+		gridCubes = new PanGrid();
 
 		gridCubes.setSize(getSize());
 
@@ -47,10 +54,13 @@ public class MenuInfos extends Menu {
 		_cubes.add(new E().getCube());
 		_cubes.add(ItemTable.createBuilding(new Building(null, ItemID.CASTLE, 0, 0, 0, true)).getCube());
 
-		for (Cube cube : _cubes)
-			addCube(cube);
+		for (Cube cube : _cubes) {
+			ButtonBlocks button = createButtonCube(cube);
+			cubes.add(button);
+			gridCubes.addMenu(button);
+		}
 
-		MenuButtonCube.group(cubes);
+		ButtonBlocks.group(cubes);
 
 		// =========================================================================================================================
 
@@ -64,10 +74,33 @@ public class MenuInfos extends Menu {
 
 	// =========================================================================================================================
 
-	public void addCube(Cube cube) {
-		MenuButtonCube button = new MenuButtonCube(game, cube);
-		cubes.add(button);
-		gridCubes.addMenu(button);
+	public ButtonBlocks createButtonCube(Cube cube) {
+		ButtonBlocks button = new ButtonBlocks();
+
+		button.setSelectable(true);
+		button.setBackground(Color.GRAY);
+		button.setForeground(Color.WHITE);
+		button.setTextBackground(new Color(75, 75, 75));
+		button.setTextYLocation(5, ButtonBlocks.BOTTOM);
+
+		button.setModel(new CubeClient(cube));
+
+		// TODO [Improve] getName(itemID)
+		String name = ItemTableClient.getName(cube.multibloc == null ? cube.getItemID() : cube.multibloc.itemID);
+		if (name == null)
+			name = "NULL";
+
+		button.setFont(new Font("monospace", Font.PLAIN, 12));
+		button.setText(name);
+
+		button.setClickListener(new ClickListener() {
+			@Override
+			public void leftClick() {
+				game.setNextCube(cube);
+			}
+		});
+
+		return button;
 	}
 
 	// =========================================================================================================================

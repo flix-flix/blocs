@@ -1,16 +1,12 @@
 package editor.panels;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 import data.id.ItemID;
 import data.id.ItemTableClient;
@@ -18,18 +14,14 @@ import data.map.Cube;
 import editor.ActionEditor;
 import editor.Editor;
 import environment.extendsData.CubeClient;
-import graphicEngine.calcul.Engine;
 import utils.FlixBlocksUtils;
-import utils.panels.Menu;
+import utilsBlocks.ButtonBlocks;
 
-public class MenuButtonEditor extends Menu {
+public class MenuButtonEditor extends ButtonBlocks {
 	private static final long serialVersionUID = 8368480819248766526L;
 
 	private Editor editor;
 	private ActionEditor action;
-	private Image img;
-
-	private Engine engine;
 
 	// ======================= WIP =========================
 	private static Image wipImg;
@@ -38,12 +30,6 @@ public class MenuButtonEditor extends Menu {
 	static {
 		wipImg = FlixBlocksUtils.getImage("static/WIP");
 	}
-
-	// ======================= Decor =========================
-	private Font font = new Font("monospace", Font.BOLD, 14);
-	private FontMetrics fm = getFontMetrics(font);
-
-	private int borderSize = 5;
 
 	// ======================= Wheel =========================
 	private final static int NULL = -1;
@@ -64,11 +50,6 @@ public class MenuButtonEditor extends Menu {
 	 */
 	private boolean bool = true;
 
-	// ======================= Select =========================
-	private boolean selectable = false;
-	private boolean selected = false;
-	private ArrayList<MenuButtonEditor> group;
-
 	// =========================================================================================================================
 
 	public MenuButtonEditor(Editor editor, ActionEditor action) {
@@ -76,12 +57,10 @@ public class MenuButtonEditor extends Menu {
 		this.action = action;
 
 		if (hasImage())
-			img = FlixBlocksUtils
-					.getImage(editor.getTexturePack().getFolder() + "menu/editor/" + action.name().toLowerCase());
-		else
-			setMinimumSize(new Dimension(fm.stringWidth(getText()), 20));
+			setImage(FlixBlocksUtils.getImage(
+					ItemTableClient.getTexturePack().getFolder() + "menu/editor/" + action.name().toLowerCase()));
 
-		if (hasEngine()) {
+		else if (hasEngine()) {
 			int itemID;
 			switch (action) {
 			case MINIATURE:
@@ -92,10 +71,34 @@ public class MenuButtonEditor extends Menu {
 				itemID = ItemID.BORDER;
 				break;
 			}
-			engine = new Engine(ItemTableClient.getCamera(itemID),
-					new CubeClient(new Cube(itemID), editor.getTexturePack()));
-			engine.setBackground(Engine.NONE);
-			update();
+			setModel(new CubeClient(new Cube(itemID)));
+		}
+
+		else {
+			switch (action) {
+			case ITEM_TAG:
+			case ITEM_ID:
+
+			case ITEM_SAVE:
+			case ITEM_NEW:
+			case ITEM_CLEAR:
+
+			case VALID_COLOR:
+				setText(ItemTableClient.getText("editor.buttons." + action.name().toLowerCase()));
+				break;
+
+			case SELECT_ALPHA:
+				setText(wheelStep * 5 + "%");
+				break;
+
+			case ITEM_COLOR:
+				break;
+
+			default:
+				FlixBlocksUtils.debug("Missing " + action.name());
+			}
+			setFont(new Font("monospace", Font.BOLD, 14));
+			setBackground(Color.DARK_GRAY);
 		}
 
 		if (action == ActionEditor.ITEM_ID)
@@ -126,6 +129,8 @@ public class MenuButtonEditor extends Menu {
 				if (wheelStep < wheelMin)
 					wheelStep = wheelMin;
 
+				updateData();
+
 				if (wheelStep == prev) {
 					if (prev == wheelMax)
 						;
@@ -142,53 +147,21 @@ public class MenuButtonEditor extends Menu {
 	// =========================================================================================================================
 
 	@Override
-	public void paintComponent(Graphics g) {
-		// ===== Background =====
-		g.setColor(hasImage() ? (selected ? Color.LIGHT_GRAY : Color.GRAY) : (selected ? Color.GRAY : Color.DARK_GRAY));
-		g.fillRect(0, 0, getWidth() - 1, getHeight() - 1);
+	protected void paintCenter(Graphics g) {
+		super.paintCenter(g);
 
-		// ===== Border =====
-		g.setColor(hasImage() ? Color.GRAY : Color.DARK_GRAY);
-		for (int i = 0; i < borderSize; i++)
-			g.drawRect(i, i, getWidth() - 1 - 2 * i, getHeight() - 1 - 2 * i);
-
-		// ===== Content =====
-		if (hasImage())
-			g.drawImage(img, 0, 0, getWidth(), getHeight(), null);
-
-		else if (action == ActionEditor.ITEM_COLOR) {
+		if (action == ActionEditor.ITEM_COLOR) {
 			int x = 40;
 			int y = 25;
 
 			g.setColor(Color.LIGHT_GRAY);
-			g.drawRect(getWidth() / 2 - x / 2 - 1, getHeight() / 2 - y / 2 - 1, x + 1, y + 1);
+			g.drawRect(getContentWidth() / 2 - x / 2 - 1, getContentHeight() / 2 - y / 2 - 1, x + 1, y + 1);
 			g.setColor(new Color(value & 0xffffff));
-			g.fillRect(getWidth() / 2 - x / 2, getHeight() / 2 - y / 2, x, y);
-
-		} else { // Text
-			g.setColor(Color.LIGHT_GRAY);
-			if (action == ActionEditor.ITEM_ID || action == ActionEditor.ITEM_NAME)
-				if (!bool)
-					g.setColor(Color.RED);
-
-			g.setFont(font);
-
-			String text = str.isEmpty() ? getText() : str;
-
-			int y = getHeight() / 2 + (int) (fm.getStringBounds(text, g).getHeight() / 2) - 3;
-
-			g.drawString(text, getWidth() / 2 - fm.stringWidth(text) / 2, y);
+			g.fillRect(getContentWidth() / 2 - x / 2, getContentHeight() / 2 - y / 2, x, y);
 		}
 
 		if (wip)
-			g.drawImage(wipImg, 0, 0, getWidth() - 1, getHeight() - 1, null);
-	}
-
-	// =========================================================================================================================
-
-	public void update() {
-		if (hasEngine())
-			img = engine.getImage(getWidth(), getHeight());
+			g.drawImage(wipImg, 0, 0, getContentWidth() - 1, getContentHeight() - 1, null);
 	}
 
 	// =========================================================================================================================
@@ -198,11 +171,13 @@ public class MenuButtonEditor extends Menu {
 		case ITEM_CLEAR:
 		case ITEM_COLOR:
 		case ITEM_ID:
-		case ITEM_NAME:
+		case ITEM_TAG:
 		case ITEM_NEW:
 		case ITEM_SAVE:
 		case SELECT_ALPHA:
 		case VALID_COLOR:
+
+		case MINIATURE:
 			return false;
 		default:
 			return true;
@@ -226,7 +201,7 @@ public class MenuButtonEditor extends Menu {
 			return "COLOR";
 		case ITEM_ID:
 			return wheelStep == NULL ? "ID" : ("" + wheelStep);
-		case ITEM_NAME:
+		case ITEM_TAG:
 			return "ItemID";
 
 		case ITEM_SAVE:
@@ -246,6 +221,7 @@ public class MenuButtonEditor extends Menu {
 	}
 
 	// =========================================================================================================================
+	// Wheel
 
 	public int getWheelStep() {
 		return wheelStep;
@@ -253,6 +229,7 @@ public class MenuButtonEditor extends Menu {
 
 	public void setWheelStep(int x) {
 		wheelStep = x;
+		updateData();
 	}
 
 	public void setWheelMinMax(int min, int max) {
@@ -261,6 +238,7 @@ public class MenuButtonEditor extends Menu {
 	}
 
 	// =========================================================================================================================
+	// Data
 
 	public int getValue() {
 		return value;
@@ -276,6 +254,8 @@ public class MenuButtonEditor extends Menu {
 
 	public void setString(String str) {
 		this.str = str;
+		if (action == ActionEditor.ITEM_TAG)
+			setText(str.equals("") ? ItemTableClient.getText("editor.buttons.item_tag") : str);
 		repaint();
 	}
 
@@ -296,28 +276,28 @@ public class MenuButtonEditor extends Menu {
 
 	// =========================================================================================================================
 
-	public void setWIP() {
-		wip = true;
-	}
+	public void updateData() {
+		switch (action) {
+		case ITEM_ID:
+		case ITEM_TAG:
+			setForeground(bool ? Color.WHITE : Color.RED);
+			break;
 
-	public boolean isSelected() {
-		return selected;
-	}
+		default:
+			setForeground(Color.WHITE);
+			break;
+		}
+		if (action == ActionEditor.SELECT_ALPHA)
+			setText((wheelStep * 5) + " %");
 
-	public void setSelected(boolean selected) {
-		this.selected = selected;
+		if (action == ActionEditor.ITEM_ID)
+			setText("" + wheelStep);
+
 		repaint();
 	}
 
-	public void setSelectable(boolean selectable) {
-		this.selectable = selectable;
-	}
-
-	public static void group(MenuButtonEditor... buttons) {
-		ArrayList<MenuButtonEditor> list = new ArrayList<>(Arrays.asList(buttons));
-
-		for (MenuButtonEditor button : buttons)
-			button.group = list;
+	public void setWIP() {
+		wip = true;
 	}
 
 	// =========================================================================================================================
@@ -325,24 +305,10 @@ public class MenuButtonEditor extends Menu {
 
 	@Override
 	public void click(MouseEvent e) {
-		if (selectable) {
-			if (selected)
-				setSelected(false);
-			else {
-				if (group != null)
-					for (MenuButtonEditor button : group)
-						button.setSelected(false);
-				setSelected(true);
-			}
-		}
+		super.click(e);
 
 		editor.menuClick(action);
 		e.consume();
 		repaint();
-	}
-
-	@Override
-	public void resize() {
-		update();
 	}
 }

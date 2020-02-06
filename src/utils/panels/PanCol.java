@@ -5,7 +5,7 @@ import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
-public class MenuCol extends Menu {
+public class PanCol extends FPanel {
 	private static final long serialVersionUID = 7065545494775980118L;
 
 	/** Don't change the height of the component */
@@ -19,14 +19,14 @@ public class MenuCol extends Menu {
 	int padding = 10;
 
 	/** List of the panels at the top of the column */
-	ArrayList<Menu> top = new ArrayList<>();
+	ArrayList<FPanel> top = new ArrayList<>();
 	/** List of the panels at the bottom of the column */
-	ArrayList<Menu> bottom = new ArrayList<>();
+	ArrayList<FPanel> bottom = new ArrayList<>();
 
 	/**
 	 * Panel adapting his size to the remaining place in the center of the column
 	 */
-	Menu remaining;
+	FPanel remaining;
 
 	// =========================================================================================================================
 
@@ -40,15 +40,15 @@ public class MenuCol extends Menu {
 
 	// =========================================================================================================================
 
-	public void addTop(Menu menu, int height) {
+	public void addTop(FPanel menu, int height) {
 		addTo(menu, height, top);
 	}
 
-	public void addBottom(Menu menu, int height) {
+	public void addBottom(FPanel menu, int height) {
 		addTo(menu, height, bottom);
 	}
 
-	private void addTo(Menu menu, int height, ArrayList<Menu> menus) {
+	private void addTo(FPanel menu, int height, ArrayList<FPanel> menus) {
 		height = getHeight(menu, height);
 		int y = 0;
 		for (int i = 0; i < menus.size(); i++)
@@ -63,7 +63,7 @@ public class MenuCol extends Menu {
 		this.add(menu);
 	}
 
-	private int getHeight(Menu menu, int height) {
+	private int getHeight(FPanel menu, int height) {
 		if (height == CURRENT)
 			return menu.getHeight();
 		if (height == WIDTH)
@@ -78,10 +78,10 @@ public class MenuCol extends Menu {
 
 	private int getRemainingHeight() {
 		int x = 0;
-		for (Menu m : top)
+		for (FPanel m : top)
 			if (m != remaining)
 				x += m.getHeight();
-		for (Menu m : bottom)
+		for (FPanel m : bottom)
 			x += m.getHeight();
 
 		return getHeight() - x - 2 * border - padding * (1 + top.size() + bottom.size());

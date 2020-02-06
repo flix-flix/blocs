@@ -12,17 +12,18 @@ import data.map.enumerations.Orientation;
 import data.map.units.Unit;
 import environment.extendsData.CubeClient;
 import game.Game;
-import game.panels.menus.MenuButtonAction;
+import game.panels.menus.ButtonGameAction;
 import game.panels.menus.MenuResource;
 import graphicEngine.calcul.Camera;
 import graphicEngine.calcul.Engine;
 import graphicEngine.calcul.Point3D;
 import server.send.Action;
-import utils.panels.ButtonContainer;
-import utils.panels.Menu;
+import utils.panels.FPanel;
 
-public class MenuInfoUnit extends Menu implements ButtonContainer {
+public class PanInfosUnit extends FPanel {
 	private static final long serialVersionUID = -5061597857247176796L;
+
+	private Game game;
 
 	private Thread update;
 
@@ -37,13 +38,12 @@ public class MenuInfoUnit extends Menu implements ButtonContainer {
 
 	// =============== Panels ===============
 	private MenuResource res;
-	private MenuButtonAction destroy, harvest;
-	private MenuButtonAction[] buttons;
+	private ButtonGameAction destroy, harvest;
 
 	// =========================================================================================================================
 
-	public MenuInfoUnit(Game game) {
-		super(game);
+	public PanInfosUnit(Game game) {
+		this.game = game;
 
 		update = new Thread(new Update());
 		update.setName("Update Unit infos");
@@ -54,15 +54,15 @@ public class MenuInfoUnit extends Menu implements ButtonContainer {
 		res.setLocation(getWidth() / 2 - res.getWidth() / 2, 180);
 		add(res);
 
-		destroy = new MenuButtonAction(game, Action.UNIT_DESTROY, this);
+		destroy = new ButtonGameAction(game, Action.UNIT_DESTROY);
 		destroy.setBounds(280, 90, 75, 75);
 		add(destroy);
 
-		harvest = new MenuButtonAction(game, Action.UNIT_HARVEST, this);
+		harvest = new ButtonGameAction(game, Action.UNIT_HARVEST);
 		harvest.setBounds(190, 90, 75, 75);
 		add(harvest);
 
-		buttons = new MenuButtonAction[] { destroy, harvest };
+		ButtonGameAction.group(destroy, harvest);
 	}
 
 	// =========================================================================================================================
@@ -97,7 +97,7 @@ public class MenuInfoUnit extends Menu implements ButtonContainer {
 		Cube cube = new Cube(unit.getItemID());
 		cube.orientation = Orientation.WEST;
 
-		engine = new Engine(new Camera(new Point3D(-.4, 1.5, -1), 58, -35), new CubeClient(cube, game.texturePack));
+		engine = new Engine(new Camera(new Point3D(-.4, 1.5, -1), 58, -35), new CubeClient(cube));
 		engine.setBackground(Engine.NONE);
 		img = engine.getImage(75, 75);
 
@@ -117,7 +117,7 @@ public class MenuInfoUnit extends Menu implements ButtonContainer {
 	public void clear() {
 		unit = null;
 		setVisible(false);
-		releaseButtons();
+		destroy.unselectAll();
 	}
 
 	// =========================================================================================================================
@@ -155,13 +155,5 @@ public class MenuInfoUnit extends Menu implements ButtonContainer {
 				}
 			}
 		}
-	}
-
-	// =========================================================================================================================
-
-	@Override
-	public void releaseButtons() {
-		for (MenuButtonAction b : buttons)
-			b.selected = false;
 	}
 }

@@ -15,10 +15,12 @@ import game.Game;
 import graphicEngine.calcul.Camera;
 import graphicEngine.calcul.Engine;
 import graphicEngine.calcul.Point3D;
-import utils.panels.Menu;
+import utils.panels.FPanel;
 
-public class MenuRessources extends Menu {
+public class MenuRessources extends FPanel {
 	private static final long serialVersionUID = 7179773919376958365L;
+
+	private Game game;
 
 	private Graphics g;
 
@@ -34,12 +36,11 @@ public class MenuRessources extends Menu {
 	// =========================================================================================================================
 
 	public MenuRessources(Game game) {
-		super(game);
+		this.game = game;
 
 		Cube unit = new Cube(ItemID.UNIT);
 		unit.orientation = Orientation.WEST;
-		Engine engine = new Engine(new Camera(new Point3D(-.4, 1.5, -1), 58, -35),
-				new CubeClient(unit, game.texturePack));
+		Engine engine = new Engine(new Camera(new Point3D(-.4, 1.5, -1), 58, -35), new CubeClient(unit));
 		engine.setBackground(Engine.NONE);
 		units = engine.getImage(imgSize, imgSize);
 	}

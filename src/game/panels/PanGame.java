@@ -6,25 +6,30 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
+import java.util.TreeMap;
 
+import data.id.ItemID;
 import data.id.ItemTableClient;
 import data.map.Cube;
 import environment.PanEnvironment;
+import environment.extendsData.CubeClient;
 import game.CameraMode;
 import game.Game;
 import game.StateHUD;
 import game.UserAction;
-import game.panels.menus.MenuButtonCube;
-import game.panels.menus.MenuButtonUserAction;
-import game.panels.menus.MenuMap;
+import game.panels.menus.PanMap;
 import game.panels.menus.MenuRessources;
-import game.panels.menus.infos.MenuInfos;
+import game.panels.menus.infos.PanInfos;
 import game.tips.TipGame;
 import server.game.messages.Message;
-import utils.panels.MenuCol;
-import utils.panels.MenuGrid;
-import utils.panels.help.MenuHelp;
-import utils.panels.help.MenuHelp.Mark;
+import utils.FlixBlocksUtils;
+import utils.panels.ClickListener;
+import utils.panels.FButton;
+import utils.panels.PanCol;
+import utils.panels.PanGrid;
+import utils.panels.help.PanHelp;
+import utils.panels.help.PanHelp.Mark;
+import utilsBlocks.ButtonBlocks;
 
 public class PanGame extends PanEnvironment {
 	private static final long serialVersionUID = -4495593129648278069L;
@@ -76,7 +81,7 @@ public class PanGame extends PanEnvironment {
 	private Font fontError = new Font("arial", Font.BOLD, 30);
 	private FontMetrics fmError = getFontMetrics(fontError);
 
-	private Button quitButton;
+	private FButton quitButton;
 
 	// =============== Cross ===============
 	/** Size of the central indicator (creative mode) */
@@ -85,18 +90,20 @@ public class PanGame extends PanEnvironment {
 	// =============== Menu ===============
 	private int menuWidth = 400;
 
-	public MenuCol menu = new MenuCol();
+	public PanCol menu = new PanCol();
 
 	private UserAction[] _userActions = { UserAction.MOUSE, UserAction.CREA_ADD, UserAction.CREA_DESTROY };
-	private MenuButtonUserAction[] userActions = new MenuButtonUserAction[_userActions.length];
+	// private MenuButtonUserAction[] userActions = new
+	// MenuButtonUserAction[_userActions.length];
+	private TreeMap<UserAction, ButtonBlocks> userActions = new TreeMap<>();
 
-	private MenuGrid gridActions;
+	private PanGrid gridActions;
 
-	private MenuMap map;
+	private PanMap map;
 	private MenuRessources ress;
-	private MenuInfos infos;
+	private PanInfos infos;
 
-	public MenuHelp help;
+	public PanHelp help;
 
 	// =========================================================================================================================
 
@@ -109,7 +116,7 @@ public class PanGame extends PanEnvironment {
 
 		// ========================================================================================
 
-		help = new MenuHelp(Mark.INTERROGATION, 700, 80, 10, TipGame.values()[0]);
+		help = new PanHelp(Mark.INTERROGATION, 700, 80, 10, TipGame.values()[0]);
 		help.setBackground(new Color(0xff4068c4));
 		help.setLocation(menuWidth + 25, getHeight() - 25);
 		this.add(help);
@@ -119,22 +126,34 @@ public class PanGame extends PanEnvironment {
 		menu.setBounds(0, 0, menuWidth, getHeight());
 		this.add(menu);
 
-		menu.addTop(gridActions = new MenuGrid(), 100);
+		menu.addTop(gridActions = new PanGrid(), 100);
 
-		for (int i = 0; i < _userActions.length; i++)
-			gridActions.addMenu(userActions[i] = new MenuButtonUserAction(game, _userActions[i]));
+		for (UserAction action : _userActions) {
+			userActions.put(action, createButton(action));
+			gridActions.addMenu(userActions.get(action));
+		}
 
-		menu.addBottom(map = new MenuMap(game), MenuCol.WIDTH);
+		ButtonBlocks.group(userActions.values());
+
+		menu.addBottom(map = new PanMap(game), PanCol.WIDTH);
 		menu.addBottom(ress = new MenuRessources(game), 130);
 		ress.setVisible(true);
 
 		// ========================================================================================
 
-		menu.addTop(infos = new MenuInfos(game), MenuCol.REMAINING);
+		menu.addTop(infos = new PanInfos(game), PanCol.REMAINING);
 
 		// ========================================================================================
 
-		quitButton = new Button(game.fen, ItemTableClient.getText("game.error.buttonQuit"));
+		quitButton = new FButton();
+		quitButton.setClickListener(new ClickListener() {
+			@Override
+			public void leftClick() {
+				game.fen.returnToMainMenu();
+			}
+		});
+		quitButton.setText(ItemTableClient.getText("game.error.buttonQuit"));
+		quitButton.setBorder(2, Color.BLACK);
 		quitButton.setSize(300, 75);
 		quitButton.setVisible(false);
 		add(quitButton);
@@ -258,6 +277,30 @@ public class PanGame extends PanEnvironment {
 
 	// =========================================================================================================================
 
+	public ButtonBlocks createButton(UserAction action) {
+		ButtonBlocks button = new ButtonBlocks();
+
+		button.setSelectable(true);
+
+		if (action == UserAction.CREA_ADD)
+			button.setModel(new CubeClient(new Cube(ItemID.GRASS)));
+		else
+			button.setImage(FlixBlocksUtils
+					.getImage(ItemTableClient.getTexturePack().getFolder() + "menu/" + action.name().toLowerCase()));
+
+		button.setClickListener(new ClickListener() {
+
+			@Override
+			public void leftClick() {
+				game.setAction(action);
+			}
+		});
+
+		return button;
+	}
+
+	// =========================================================================================================================
+
 	public void refreshSelected(Cube cube) {
 		infos.refresh(cube);
 	}
@@ -267,19 +310,15 @@ public class PanGame extends PanEnvironment {
 
 		game.clearSelected();
 
-		for (MenuButtonUserAction e : userActions)
-			e.selected = game.getAction() == e.action;
+		userActions.get(UserAction.MOUSE).unselectAll();
+
+		userActions.get(game.getAction()).setSelected(true);
 
 		if (game.getAction() == UserAction.CREA_ADD)
 			infos.showCubes();
 
 		map.updateMap();
 		map.repaint();
-	}
-
-	public void updateTexturePack() {
-		for (MenuButtonCube m : infos.cubes)
-			m.updateTexturePack(game.texturePack);
 	}
 
 	// =========================================================================================================================

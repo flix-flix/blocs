@@ -13,16 +13,17 @@ import data.map.buildings.Building;
 import data.map.resources.ResourceType;
 import environment.extendsData.MapClient;
 import game.Game;
-import game.panels.menus.MenuButtonAction;
+import game.panels.menus.ButtonGameAction;
 import game.panels.menus.MenuResource;
 import graphicEngine.calcul.Engine;
 import server.send.Action;
-import utils.panels.ButtonContainer;
-import utils.panels.Menu;
-import utils.panels.MenuGrid;
+import utils.panels.FPanel;
+import utils.panels.PanGrid;
 
-public class MenuInfosBuilding extends Menu implements ButtonContainer {
+public class PanInfosBuilding extends FPanel {
 	private static final long serialVersionUID = -5061597857247176796L;
+
+	private Game game;
 
 	// =============== Font ===============
 	private Font font = new Font("monospace", Font.PLAIN, 12);
@@ -38,34 +39,33 @@ public class MenuInfosBuilding extends Menu implements ButtonContainer {
 	private String constructionText;
 
 	// =============== Panels ===============
-	private MenuButtonAction spawn, upgrade;
-	private MenuButtonAction[] buttons;
-	private MenuGrid stocks;
+	private ButtonGameAction spawn, upgrade;
+	private PanGrid stocks;
 
 	// =============== Data ===============
 	private Building build;
 
 	// =========================================================================================================================
 
-	public MenuInfosBuilding(Game game) {
-		super(game);
+	public PanInfosBuilding(Game game) {
+		this.game = game;
 
-		stocks = new MenuGrid();
+		stocks = new PanGrid();
 		stocks.setCols(3);
 		stocks.setRowHeight(50);
 		stocks.setSize(getWidth(), 50);
 		stocks.setLocation(0, getHeight() - stocks.getHeight());
 		add(stocks);
 
-		spawn = new MenuButtonAction(game, Action.BUILDING_SPAWN, this);
+		spawn = new ButtonGameAction(game, Action.BUILDING_SPAWN);
 		spawn.setBounds(15, imgSize + 20, 75, 75);
 		add(spawn);
 
-		upgrade = new MenuButtonAction(game, Action.BUILDING_RESEARCH, this);
+		upgrade = new ButtonGameAction(game, Action.BUILDING_RESEARCH);
 		upgrade.setBounds(105, imgSize + 20, 75, 75);
 		add(upgrade);
 
-		buttons = new MenuButtonAction[] { spawn, upgrade };
+		ButtonGameAction.group(spawn, upgrade);
 
 		update = new Thread(new Update());
 		update.setName("Update Building infos");
@@ -128,7 +128,7 @@ public class MenuInfosBuilding extends Menu implements ButtonContainer {
 				update.notify();
 			}
 
-		MapClient map = new MapClient(game.texturePack);
+		MapClient map = new MapClient();
 		map.add(new Building(null, build.getItemID(), 0, 0, 0, true).getCube());
 
 		engine = new Engine(ItemTableClient.getCamera(build.getItemID()), map);
@@ -158,7 +158,7 @@ public class MenuInfosBuilding extends Menu implements ButtonContainer {
 	public void clear() {
 		build = null;
 		setVisible(false);
-		releaseButtons();
+		spawn.unselectAll();
 	}
 
 	// =========================================================================================================================
@@ -211,13 +211,5 @@ public class MenuInfosBuilding extends Menu implements ButtonContainer {
 				}
 			}
 		}
-	}
-
-	// =========================================================================================================================
-
-	@Override
-	public void releaseButtons() {
-		for (MenuButtonAction b : buttons)
-			b.selected = false;
 	}
 }

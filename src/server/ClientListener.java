@@ -44,7 +44,7 @@ public class ClientListener implements Runnable {
 				server.receive(in.readObject(), id);
 			} catch (IOException e) {
 				if (e instanceof SocketException)
-					break;
+					stop();
 				else
 					e.printStackTrace();
 			} catch (ClassNotFoundException e) {
@@ -61,17 +61,19 @@ public class ClientListener implements Runnable {
 
 	public void stop() {
 		run = false;
+		server.stop(id);
 	}
 
 	// =========================================================================================================================
 
 	public void send(Object obj) {
-		try {
-			out.writeObject(obj);
-			out.flush();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		if (run)
+			try {
+				out.writeObject(obj);
+				out.flush();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 	}
 
 	// =========================================================================================================================

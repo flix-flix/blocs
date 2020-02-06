@@ -54,8 +54,8 @@ public class Game extends Environment3D implements Displayable, EnvironmentListe
 	private Server server;
 
 	// =============== Data ===============
-	 public Player player = new Player("Felix");
-//	public Player player = new Player("IA");
+	public Player player = new Player("Felix");
+	// public Player player = new Player("IA");
 	private UserAction action;
 	public CameraMode cameraMode = CameraMode.CLASSIC;
 	public GameMode gameMode = GameMode.CLASSIC;
@@ -132,7 +132,7 @@ public class Game extends Environment3D implements Displayable, EnvironmentListe
 			Server server = new Server();
 			server.start();
 			// Game game = new Game(fen, InetAddress.getLocalHost());
-			Game game = new Game(fen, InetAddress.getByAddress(new byte[] { 0, 0, 0, 0 }));
+			Game game = new Game(fen, InetAddress.getByName("0.0.0.0"));
 			game.server = server;
 			return game;
 		} catch (UnknownHostException e) {
@@ -331,8 +331,6 @@ public class Game extends Environment3D implements Displayable, EnvironmentListe
 
 	public void setTexturePack(TexturePack texturePack) {
 		this.texturePack = texturePack;
-
-		panel.updateTexturePack();
 	}
 
 	// =========================================================================================================================
@@ -463,7 +461,7 @@ public class Game extends Environment3D implements Displayable, EnvironmentListe
 
 	public void receive(Object obj) {
 		if (obj instanceof Map)
-			setMap(new MapClient((Map) obj, texturePack));
+			setMap(new MapClient((Map) obj));
 		else if (obj instanceof Message)
 			messages.receive((Message) obj);
 		else if (obj instanceof SendAction)

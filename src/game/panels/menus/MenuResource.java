@@ -5,9 +5,9 @@ import java.awt.Font;
 import java.awt.Graphics;
 
 import data.map.resources.Resource;
-import utils.panels.Menu;
+import utils.panels.FPanel;
 
-public class MenuResource extends Menu {
+public class MenuResource extends FPanel {
 	private static final long serialVersionUID = -1692728772288500652L;
 
 	private Font font = new Font("monospace", Font.BOLD, 15);

@@ -53,16 +53,16 @@ public class DrawCubeFace extends Drawable {
 
 		if (ItemTableClient.drawContour(cube.getItemID())) {
 			DrawLayer contour = new DrawLayer(cube, face);
-			contour.drawContour(cube.texturePack.getFace(cube, face).width, 0xff000000);
+			contour.drawContour(ItemTableClient.getTexturePack().getFace(cube, face).width, 0xff000000);
 			quadri.addAll(contour.getQuadri(this, engine));
 		}
 
 		// Draw the mining animation
 		if (cube.miningState != Cube.NO_MINING)
-			generateQuadri(cube.texturePack.getMiningFrame(cube.miningState), engine, quadri);
+			generateQuadri(ItemTableClient.getTexturePack().getMiningFrame(cube.miningState), engine, quadri);
 
 		// Draw the cube
-		generateQuadri(cube.texturePack.getFace(cube, face), engine, quadri);
+		generateQuadri(ItemTableClient.getTexturePack().getFace(cube, face), engine, quadri);
 
 		return quadri;
 	}

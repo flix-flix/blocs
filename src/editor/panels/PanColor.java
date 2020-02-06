@@ -10,9 +10,9 @@ import java.awt.image.BufferedImage;
 
 import editor.ActionEditor;
 import editor.Editor;
-import utils.panels.Menu;
+import utils.panels.FPanel;
 
-public class MenuColor extends Menu {
+public class PanColor extends FPanel {
 	private static final long serialVersionUID = -9106806857580543322L;
 
 	private static final int WHITE = 0xffffff;
@@ -52,7 +52,7 @@ public class MenuColor extends Menu {
 
 	// =========================================================================================================================
 
-	public MenuColor(Editor editor) {
+	public PanColor(Editor editor) {
 		int[] tab = new int[] { 0, 255, 0 };// B, R, G
 
 		for (int i = 0; i < 6; i++) {

@@ -1,24 +1,16 @@
 package mainMenu.buttons;
 
-import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.event.MouseEvent;
 
 import mainMenu.MainMenu;
 import mainMenu.MainMenu.MainMenuAction;
 import utils.FlixBlocksUtils;
-import utils.panels.Menu;
+import utils.panels.ClickListener;
+import utils.panels.FButton;
 
-public class ButtonAction extends Menu {
+public class ButtonAction extends FButton {
 	private static final long serialVersionUID = 7756689488731481855L;
 
-	private MainMenu main;
-	private MainMenuAction action;
-
-	private Image img;
-
-	private int border = 0;
 	private static Image options, quit;
 
 	static {
@@ -29,33 +21,13 @@ public class ButtonAction extends Menu {
 	// =========================================================================================================================
 
 	public ButtonAction(MainMenu main, MainMenuAction action) {
-		this.main = main;
-		this.action = action;
+		setImage(action == MainMenuAction.QUIT ? quit : options);
 
-		img = action == MainMenuAction.QUIT ? quit : options;
-	}
-
-	// =========================================================================================================================
-
-	@Override
-	protected void paintComponent(Graphics g) {
-		super.paintComponent(g);
-
-		g.setColor(Color.GRAY);
-		g.fillRect(0, 0, getWidth() - 1, getHeight() - 1);
-
-		g.drawImage(img, border, border, getWidth() - 2 * border - 1, getHeight() - 2 * border - 1, null);
-	}
-
-	// =========================================================================================================================
-	// Menu
-
-	@Override
-	public void click(MouseEvent e) {
-		main.click(action);
-	}
-
-	@Override
-	public void resize() {
+		setClickListener(new ClickListener() {
+			@Override
+			public void leftClick() {
+				main.click(action);
+			}
+		});
 	}
 }

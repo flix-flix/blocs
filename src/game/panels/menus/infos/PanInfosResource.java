@@ -7,10 +7,9 @@ import java.lang.Thread.State;
 
 import data.map.Cube;
 import data.map.resources.Resource;
-import game.Game;
-import utils.panels.Menu;
+import utils.panels.FPanel;
 
-public class MenuInfosResource extends Menu {
+public class PanInfosResource extends FPanel {
 	private static final long serialVersionUID = 8252009605405911305L;
 
 	private Font font = new Font("monospace", Font.BOLD, 15);
@@ -22,9 +21,7 @@ public class MenuInfosResource extends Menu {
 
 	// =========================================================================================================================
 
-	public MenuInfosResource(Game game) {
-		super(game);
-
+	public PanInfosResource() {
 		update = new Thread(new Update());
 		update.setName("Update Ressource infos");
 		update.start();

@@ -134,7 +134,7 @@ public class Editor extends Environment3D implements Displayable, EnvironmentLis
 
 		// ========================================================================================
 
-		map = new MapClient(texturePack);
+		map = new MapClient();
 		camera = new Camera(new Point3D(0, 0, -10), 90.5, .5);
 
 		engine.setBackground(Engine.FILL);
@@ -259,7 +259,7 @@ public class Editor extends Environment3D implements Displayable, EnvironmentLis
 
 	private void saveTexture() {
 		int id = panel.get(ActionEditor.ITEM_ID).getWheelStep();
-		String tag = panel.get(ActionEditor.ITEM_NAME).getString();
+		String tag = panel.get(ActionEditor.ITEM_TAG).getString();
 		int color = panel.get(ActionEditor.ITEM_COLOR).getValue();
 
 		if (!texturePack.isIDAvailable(id))
@@ -554,7 +554,7 @@ public class Editor extends Environment3D implements Displayable, EnvironmentLis
 			break;
 
 		// ================== PanItem ======================
-		case ITEM_NAME:
+		case ITEM_TAG:
 			if (panel.get(action).isSelected())
 				setListeningKey(action);
 			break;
@@ -568,7 +568,7 @@ public class Editor extends Environment3D implements Displayable, EnvironmentLis
 		case ITEM_NEW:
 		case ITEM_CLEAR:
 			initTextureFrame();
-			panel.get(ActionEditor.ITEM_NAME).reinit();
+			panel.get(ActionEditor.ITEM_TAG).reinit();
 			panel.get(ActionEditor.ITEM_ID).reinit();
 			panel.get(ActionEditor.ITEM_COLOR).reinit();
 			break;
@@ -667,6 +667,7 @@ public class Editor extends Environment3D implements Displayable, EnvironmentLis
 
 		panel.get(buttonListeningKey).setString(str);
 		panel.get(buttonListeningKey).setBool(valid);
+		panel.get(buttonListeningKey).updateData();
 	}
 
 	private void esc() {

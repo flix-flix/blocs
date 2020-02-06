@@ -79,7 +79,17 @@ text:
         infos:
             build:
                 construction: In construction
-
+    
+    editor:
+        buttons:
+            item_tag: Item Tag
+            item_id: ID
+            
+            item_save: Save
+            item_new: New
+            item_clear: Clear
+            
+            valid_color: Select
     
     main_menu:
         play: Play

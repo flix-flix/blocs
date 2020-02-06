@@ -1,5 +1,6 @@
 package utils.panels;
 
+import java.awt.Graphics;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
@@ -7,16 +8,12 @@ import java.awt.event.MouseListener;
 
 import javax.swing.JPanel;
 
-import game.Game;
-
-public class Menu extends JPanel {
+public class FPanel extends JPanel {
 	private static final long serialVersionUID = -5458848328043427804L;
-
-	protected Game game;
 
 	// =========================================================================================================================
 
-	public Menu() {
+	public FPanel() {
 		this.setLayout(null);
 		this.setOpaque(false);
 
@@ -63,9 +60,19 @@ public class Menu extends JPanel {
 		});
 	}
 
-	public Menu(Game game) {
-		this();
-		this.game = game;
+	// =========================================================================================================================
+
+	protected void drawCenteredRect(Graphics g, int ext) {
+		g.fillRect(ext, ext, getWidth() - 1 - 2 * ext, getHeight() - 1 - 2 * ext);
+	}
+
+	protected void drawEmptyRect(Graphics g, int x, int y, int width, int height, int thickness) {
+		for (int i = 0; i < thickness; i++)
+			g.drawRect(x + i, y + i, width - 2 * i, height - 2 * i);
+	}
+
+	protected void drawEmptyCenteredRect(Graphics g, int ext, int thickness) {
+		drawEmptyRect(g, ext, ext, getWidth() - 1 - 2 * ext, getHeight() - 1 - 2 * ext, thickness);
 	}
 
 	// =========================================================================================================================

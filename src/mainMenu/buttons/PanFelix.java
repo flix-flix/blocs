@@ -8,9 +8,9 @@ import java.awt.event.MouseEvent;
 
 import environment.textures.TextureFace;
 import environment.textures.TextureSquare;
-import utils.panels.Menu;
+import utils.panels.FPanel;
 
-public class PanFelix extends Menu {
+public class PanFelix extends FPanel {
 	private static final long serialVersionUID = 952213898263587392L;
 
 	private String felix = "Félix B.";
@@ -58,9 +58,5 @@ public class PanFelix extends Menu {
 	public void click(MouseEvent e) {
 		face.rotation += 3;
 		repaint();
-	}
-
-	@Override
-	public void resize() {
 	}
 }

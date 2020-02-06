@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import data.map.Chunk;
 import data.map.Cube;
-import environment.textures.TexturePack;
 import graphicEngine.calcul.Camera;
 import graphicEngine.calcul.Engine;
 import graphicEngine.calcul.Matrix;
@@ -27,16 +26,15 @@ public class ChunkClient extends Chunk implements Modelisable {
 		grid = new CubeClient[X][Y][Z];
 	}
 
-	public ChunkClient(Chunk chunk, TexturePack texturePack) {
+	public ChunkClient(Chunk chunk) {
 		this(chunk.x, chunk.z);
 		for (int x = 0; x < X; x++)
 			for (int y = 0; y < Y; y++)
 				for (int z = 0; z < Z; z++)
-					grid[x][y][z] = chunk.grid[x][y][z] == null ? null
-							: new CubeClient(chunk.grid[x][y][z], texturePack);
+					grid[x][y][z] = chunk.grid[x][y][z] == null ? null : new CubeClient(chunk.grid[x][y][z]);
 
 		for (Cube c : chunk.cubes)
-			cubes.add(new CubeClient(c, texturePack));
+			cubes.add(new CubeClient(c));
 	}
 
 	// =========================================================================================================================

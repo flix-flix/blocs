@@ -22,9 +22,6 @@ import java.util.stream.Stream;
 
 import javax.imageio.ImageIO;
 
-import environment.PanEnvironment;
-import environment.textures.TextureFace;
-
 public class FlixBlocksUtils {
 	public static final double toRadian = Math.PI / 180;
 	public static final double toDegres = 180 / Math.PI;
@@ -55,11 +52,11 @@ public class FlixBlocksUtils {
 	// Image
 
 	public static Image getImage(String path) {
-		URL url = PanEnvironment.class.getResource("/" + path + ".png");
+		URL url = URL.class.getResource("/" + path + ".png");
 
 		if (url == null) {
 			debugBefore("ERROR: can't read file: " + ("/" + path + ".png"));
-			url = PanEnvironment.class.getResource("/textures/999.png");
+			url = URL.class.getResource("/textures/999.png");
 		}
 
 		try {
@@ -76,7 +73,7 @@ public class FlixBlocksUtils {
 	}
 
 	public static boolean resourceExist(String name) {
-		URL url = TextureFace.class.getResource("/" + name);
+		URL url = URL.class.getResource("/" + name);
 		return url != null;
 	}
 

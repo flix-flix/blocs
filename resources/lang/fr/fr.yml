@@ -79,6 +79,17 @@ text:
             build:
                 construction: En construction
     
+    editor:
+        buttons:
+            item_tag: Item Tag
+            item_id: ID
+            
+            item_save: Enregistrer
+            item_new: Nouveau
+            item_clear: Effacer
+            
+            valid_color: Selectionner
+
     main_menu:
         play: Jouer
         editor: Editeur

@@ -393,7 +393,7 @@ public class KeyboardEditor extends KeyboardEnvironment3D {
 			return;
 
 		// Writing
-		if (editor.getButtonListeningKey() == ActionEditor.ITEM_NAME) {
+		if (editor.getButtonListeningKey() == ActionEditor.ITEM_TAG) {
 			editor.write(e);
 			return;
 		}

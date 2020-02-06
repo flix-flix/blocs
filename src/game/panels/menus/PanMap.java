@@ -7,18 +7,19 @@ import java.awt.event.MouseEvent;
 import data.id.ItemTableClient;
 import data.map.Map;
 import game.Game;
-import utils.panels.Menu;
+import utils.panels.FPanel;
 
-public class MenuMap extends Menu {
+public class PanMap extends FPanel {
 	private static final long serialVersionUID = -1593773012271092246L;
+
+	private Game game;
 
 	private Map map;
 
 	// =========================================================================================================================
 
-	public MenuMap(Game game) {
-		super(game);
-
+	public PanMap(Game game) {
+		this.game = game;
 		updateMap();
 	}
 

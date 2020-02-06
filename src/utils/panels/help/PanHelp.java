@@ -11,9 +11,9 @@ import java.util.ArrayList;
 
 import data.id.ItemTableClient;
 import utils.FlixBlocksUtils;
-import utils.panels.Menu;
+import utils.panels.FPanel;
 
-public class MenuHelp extends Menu {
+public class PanHelp extends FPanel {
 	private static final long serialVersionUID = -3108013483466382742L;
 
 	private Font font = new Font("monospace", Font.BOLD, 15);
@@ -40,7 +40,7 @@ public class MenuHelp extends Menu {
 
 	// =========================================================================================================================
 
-	public MenuHelp(Mark mark, int width, int circleSize, int border, Tip tip) {
+	public PanHelp(Mark mark, int width, int circleSize, int border, Tip tip) {
 		this.mark = mark;
 		this.width = width;
 		this.circleSize = circleSize;
