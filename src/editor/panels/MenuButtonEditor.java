@@ -3,7 +3,6 @@ package editor.panels;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
@@ -22,14 +21,6 @@ public class MenuButtonEditor extends ButtonBlocks {
 
 	private Editor editor;
 	private ActionEditor action;
-
-	// ======================= WIP =========================
-	private static Image wipImg;
-	private boolean wip = false;
-
-	static {
-		wipImg = FlixBlocksUtils.getImage("static/WIP");
-	}
 
 	// ======================= Wheel =========================
 	private final static int NULL = -1;
@@ -159,9 +150,6 @@ public class MenuButtonEditor extends ButtonBlocks {
 			g.setColor(new Color(value & 0xffffff));
 			g.fillRect(getContentWidth() / 2 - x / 2, getContentHeight() / 2 - y / 2, x, y);
 		}
-
-		if (wip)
-			g.drawImage(wipImg, 0, 0, getContentWidth() - 1, getContentHeight() - 1, null);
 	}
 
 	// =========================================================================================================================
@@ -177,6 +165,7 @@ public class MenuButtonEditor extends ButtonBlocks {
 		case SELECT_ALPHA:
 		case VALID_COLOR:
 
+		case EDIT_CUBE:
 		case MINIATURE:
 			return false;
 		default:
@@ -191,32 +180,6 @@ public class MenuButtonEditor extends ButtonBlocks {
 			return true;
 		default:
 			return false;
-		}
-	}
-
-	public String getText() {
-		switch (action) {
-		// ========== Item ==========
-		case ITEM_COLOR:
-			return "COLOR";
-		case ITEM_ID:
-			return wheelStep == NULL ? "ID" : ("" + wheelStep);
-		case ITEM_TAG:
-			return "ItemID";
-
-		case ITEM_SAVE:
-			return "SAVE";
-		case ITEM_NEW:
-			return "NEW";
-		case ITEM_CLEAR:
-			return "CLEAR";
-		// ========== Color ==========
-		case SELECT_ALPHA:
-			return wheelStep * 5 + "%";
-		case VALID_COLOR:
-			return "Select";
-		default:
-			return "ERROR : Text missing";
 		}
 	}
 
@@ -294,10 +257,6 @@ public class MenuButtonEditor extends ButtonBlocks {
 			setText("" + wheelStep);
 
 		repaint();
-	}
-
-	public void setWIP() {
-		wip = true;
 	}
 
 	// =========================================================================================================================

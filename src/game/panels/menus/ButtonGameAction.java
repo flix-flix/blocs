@@ -19,6 +19,6 @@ public class ButtonGameAction extends ButtonBlocks {
 		setSelectedColor(Color.GRAY);
 
 		setImage(FlixBlocksUtils
-				.getImage(ItemTableClient.getTexturePack().getFolder() + "menu/" + action.name().toLowerCase()));
+				.getImage(ItemTableClient.getTexturePack().getFolder() + "menu/game/" + action.name().toLowerCase()));
 	}
 }

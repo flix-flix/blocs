@@ -1,9 +1,13 @@
 package utilsBlocks;
 
+import java.awt.Graphics;
+import java.awt.Image;
+
 import data.id.ItemTableClient;
 import environment.extendsData.CubeClient;
 import environment.extendsData.MapClient;
 import graphicEngine.calcul.Engine;
+import utils.FlixBlocksUtils;
 import utils.panels.FButton;
 
 public class ButtonBlocks extends FButton {
@@ -12,7 +16,23 @@ public class ButtonBlocks extends FButton {
 	Engine engine = null;
 	MapClient map = null;
 
+	// ======================= WIP =========================
+	private static Image wipImg;
+	private boolean wip = false;
+
+	static {
+		wipImg = FlixBlocksUtils.getImage("static/WIP");
+	}
+
 	// =========================================================================================================================
+
+	@Override
+	protected void paintCenter(Graphics g) {
+		super.paintCenter(g);
+
+		if (wip)
+			g.drawImage(wipImg, 0, 0, getContentWidth() - 1, getContentHeight() - 1, null);
+	}
 
 	// =========================================================================================================================
 
@@ -29,6 +49,12 @@ public class ButtonBlocks extends FButton {
 	public void update() {
 		if (engine != null)
 			setImage(engine.getImage(getContentWidth(), getContentHeight()));
+	}
+
+	// =========================================================================================================================
+
+	public void setWIP() {
+		wip = true;
 	}
 
 	// =========================================================================================================================

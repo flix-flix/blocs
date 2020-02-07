@@ -286,7 +286,7 @@ public class PanGame extends PanEnvironment {
 			button.setModel(new CubeClient(new Cube(ItemID.GRASS)));
 		else
 			button.setImage(FlixBlocksUtils
-					.getImage(ItemTableClient.getTexturePack().getFolder() + "menu/" + action.name().toLowerCase()));
+					.getImage(ItemTableClient.getTexturePack().getFolder() + "menu/game/" + action.name().toLowerCase()));
 
 		button.setClickListener(new ClickListener() {
 

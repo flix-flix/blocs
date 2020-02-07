@@ -112,12 +112,18 @@ public class DrawLayer {
 	// =========================================================================================================================
 
 	public void drawContour(int size, int color) {
-		for (int i = 0; i < size; i++) {
-			drawLine(i, 0, i + 1, 0, color);
-			drawLine(0, i, 0, i + 1, color);
-			drawLine(i, size, i + 1, size, color);
-			drawLine(size, i, size, i + 1, color);
-		}
+		drawLine(0, 0, size, 0, color);
+		drawLine(0, 0, 0, size, color);
+		drawLine(0, size, size, size, color);
+		drawLine(size, 0, size, size, color);
+
+		// Contour quadri by quadri
+		// for (int i = 0; i < size; i++) {
+		// drawLine(i, 0, i + 1, 0, color);
+		// drawLine(0, i, 0, i + 1, color);
+		// drawLine(i, size, i + 1, size, color);
+		// drawLine(size, i, size, i + 1, color);
+		// }
 	}
 
 	// =========================================================================================================================
