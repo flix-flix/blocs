@@ -1,7 +1,6 @@
 package utils.panels;
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
@@ -15,8 +14,8 @@ public class PanCol extends FPanel {
 	/** Set the component's height so that it will fill the remaining place */
 	public static final int REMAINING = -3;
 
-	int border = 10;
-	int padding = 10;
+	// =============== Size ===============
+	int padding = 10, border = 10;
 
 	/** List of the panels at the top of the column */
 	ArrayList<FPanel> top = new ArrayList<>();
@@ -30,12 +29,10 @@ public class PanCol extends FPanel {
 
 	// =========================================================================================================================
 
-	@Override
-	protected void paintComponent(Graphics g) {
-		g.setColor(Color.GRAY);
-		g.fillRect(0, 0, getWidth(), getHeight());
-		g.setColor(Color.LIGHT_GRAY);
-		g.fillRect(border, border, getWidth() - 2 * border, getHeight() - 2 * border);
+	public PanCol() {
+		setBorder(10, Color.GRAY);
+		setBackground(Color.LIGHT_GRAY);
+		setPadding(10);
 	}
 
 	// =========================================================================================================================

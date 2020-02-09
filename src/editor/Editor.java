@@ -20,7 +20,6 @@ import editor.history.PixelHistory;
 import editor.history.SizeHistory;
 import editor.panels.PanEditor;
 import environment.Environment3D;
-import environment.EnvironmentListener;
 import environment.extendsData.CubeClient;
 import environment.extendsData.MapClient;
 import environment.extendsEngine.DrawLayer;
@@ -39,7 +38,7 @@ import window.Displayable;
 import window.Fen;
 import window.KeyBoard;
 
-public class Editor extends Environment3D implements Displayable, EnvironmentListener {
+public class Editor extends Environment3D implements Displayable {
 
 	private TexturePack texturePack;
 

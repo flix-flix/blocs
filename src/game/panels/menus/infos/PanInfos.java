@@ -38,6 +38,8 @@ public class PanInfos extends FPanel {
 	public PanInfos(Game game) {
 		this.game = game;
 
+		setBackground(Color.LIGHT_GRAY);
+
 		resource = new PanInfosResource();
 		unit = new PanInfosUnit(game);
 		build = new PanInfosBuilding(game);

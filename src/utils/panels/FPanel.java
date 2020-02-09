@@ -15,14 +15,24 @@ import javax.swing.JPanel;
 public class FPanel extends JPanel {
 	private static final long serialVersionUID = -5458848328043427804L;
 
+	// =============== Border ===============
+	private int border = 0;
+	private Color borderColor;
+
+	// =============== Box ===============
+	/** Pixel size between the panel bounds and the border */
+	private int margin = 0;
+	/** Pixel size between the border and the content */
+	private int padding = 0;
+
 	// ======================= Scroll =========================
 	private JPanel scrollBar;
 	/** Width of the scrollBar */
 	private int scrollWidth = 10;
 	/** Previous postion of the mouse (if draging) */
-	private int scrollClick = -1;
+	private int scrollClickY = -1;
 	/** Number of pixels to decal (on scroll) */
-	private int scrolled = 0;
+	private int scrolledY = 0;
 	/** Number of pixels to decal on one scroll-tick */
 	private int scrollStep = 20;
 	/** Number of pixels visible */
@@ -33,6 +43,8 @@ public class FPanel extends JPanel {
 	public FPanel() {
 		this.setLayout(null);
 		this.setOpaque(false);
+
+		setBackground(Color.GRAY);
 
 		this.addMouseListener(new MouseListener() {
 			@Override
@@ -90,7 +102,7 @@ public class FPanel extends JPanel {
 
 			@Override
 			public void mousePressed(MouseEvent e) {
-				scrollClick = e.getYOnScreen();
+				scrollClickY = e.getYOnScreen();
 			}
 
 			@Override
@@ -113,8 +125,8 @@ public class FPanel extends JPanel {
 
 			@Override
 			public void mouseDragged(MouseEvent e) {
-				scrolled += (int) ((e.getYOnScreen() - scrollClick) * ((double) getHeight() / visibleHeight));
-				scrollClick = e.getYOnScreen();
+				scrolledY += (int) ((e.getYOnScreen() - scrollClickY) * ((double) getHeight() / visibleHeight));
+				scrollClickY = e.getYOnScreen();
 
 				updateScroll();
 			}
@@ -122,16 +134,41 @@ public class FPanel extends JPanel {
 	}
 
 	// =========================================================================================================================
+
+	@Override
+	protected void paintComponent(Graphics g) {
+		super.paintComponent(g);
+
+		// Fill Border
+		g.setColor(borderColor);
+		drawEmptyCenteredRect(g, margin, border);
+
+		// Fill Padding
+		g.setColor(getBackground());
+		drawEmptyCenteredRect(g, margin + border, padding);
+
+		int undrawn = getUndrawSize();
+		paintCenter(g.create(undrawn, undrawn, getContentWidth(), getContentHeight()));
+	}
+
+	// =========================================================================================================================
+
+	protected void paintCenter(Graphics g) {
+		g.setColor(getBackground());
+		g.fillRect(0, 0, getContentWidth(), getContentHeight());
+	}
+
+	// =========================================================================================================================
 	// Scroll
 
-	public void enableScroll() {
+	public void enableVerticalScroll() {
 		addMouseWheelListener(new MouseWheelListener() {
 			@Override
 			public void mouseWheelMoved(MouseWheelEvent e) {
 				if (visibleHeight < getHeight()) {
 					e.consume();
 
-					scrolled += e.getWheelRotation() * scrollStep;
+					scrolledY += e.getWheelRotation() * scrollStep;
 
 					updateScroll();
 				}
@@ -145,12 +182,12 @@ public class FPanel extends JPanel {
 		if (visibleHeight >= getHeight())
 			return;
 
-		scrolled = Math.max(0, scrolled);
-		scrolled = Math.min(getHeight() - visibleHeight, scrolled);
+		scrolledY = Math.max(0, scrolledY);
+		scrolledY = Math.min(getHeight() - visibleHeight, scrolledY);
 
 		double ratio = visibleHeight / (double) getHeight();
 
-		scrollBar.setLocation(getWidth() - scrollWidth, (int) (scrolled * ratio));
+		scrollBar.setLocation(getWidth() - scrollWidth, (int) (scrolledY * ratio));
 		scrollBar.setSize(scrollWidth, (int) (visibleHeight * ratio));
 	}
 
@@ -177,6 +214,39 @@ public class FPanel extends JPanel {
 	}
 
 	// =========================================================================================================================
+	// Setters (Box)
+
+	/** Margin is the number pixels between the panel bounds and the border */
+	public void setMargin(int margin) {
+		this.margin = margin;
+	}
+
+	/** Padding is the number of pixels between the border and the content */
+	public void setPadding(int padding) {
+		this.padding = padding;
+	}
+
+	public void setBorder(int size, Color color) {
+		this.border = size;
+		this.borderColor = color;
+	}
+
+	// =========================================================================================================================
+	// Get inside size
+
+	public int getContentWidth() {
+		return getWidth() - 2 * getUndrawSize();
+	}
+
+	public int getContentHeight() {
+		return getHeight() - 2 * getUndrawSize();
+	}
+
+	public int getUndrawSize() {
+		return margin + border + padding;
+	}
+
+	// =========================================================================================================================
 	// Utils
 
 	public void setBottomRightCorner(int x, int y) {
@@ -184,10 +254,10 @@ public class FPanel extends JPanel {
 	}
 
 	// =========================================================================================================================
-	// Getters
+	// Getters (Scroll)
 
 	public int getScrolled() {
-		return scrolled;
+		return scrolledY;
 	}
 
 	public int getScrollWidth() {

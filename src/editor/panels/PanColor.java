@@ -22,7 +22,7 @@ public class PanColor extends FPanel {
 	private FontMetrics fm = getFontMetrics(font);
 
 	// =========================================================================================================================
-	private MenuButtonEditor valid, alpha;
+	private ButtonEditor valid, alpha;
 
 	private int[] colorLine = new int[6 * 44];
 	private int lineStartX = 0;// Set in resize
@@ -68,11 +68,11 @@ public class PanColor extends FPanel {
 
 		updatePointedColor();
 
-		valid = new MenuButtonEditor(editor, ActionEditor.VALID_COLOR);
+		valid = new ButtonEditor(editor, ActionEditor.VALID_COLOR);
 		valid.setBounds(getWidth() - 150, getHeight() - 50, 75, 35);
 		this.add(valid);
 
-		alpha = new MenuButtonEditor(editor, ActionEditor.SELECT_ALPHA);
+		alpha = new ButtonEditor(editor, ActionEditor.SELECT_ALPHA);
 		alpha.setWheelMinMax(0, 20);
 		alpha.setWheelStep(20);
 		this.add(alpha);

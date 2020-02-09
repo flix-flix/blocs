@@ -17,7 +17,6 @@ import data.map.buildings.Building;
 import data.map.resources.ResourceType;
 import data.map.units.Unit;
 import environment.Environment3D;
-import environment.EnvironmentListener;
 import environment.Target;
 import environment.extendsData.MapClient;
 import environment.textures.TexturePack;
@@ -35,7 +34,7 @@ import window.Displayable;
 import window.Fen;
 import window.KeyBoard;
 
-public class Game extends Environment3D implements Displayable, EnvironmentListener {
+public class Game extends Environment3D implements Displayable {
 	public Fen fen;
 
 	// =============== Pan ===============

@@ -22,17 +22,7 @@ public class FButton extends FPanel {
 	private boolean selected = false;
 	private ArrayList<FButton> group;
 
-	private Color selectedColor;
-
-	// =============== Border ===============
-	private int border = 0;
-	private Color borderColor;
-
-	// =============== Box ===============
-	/** Pixel size between the panel bounds and the border */
-	private int margin = 0;
-	/** Pixel size between the border and the content */
-	private int padding = 5;
+	private Color selectedColor = Color.LIGHT_GRAY;
 
 	// =============== Image ===============
 	private Image img = null;
@@ -50,52 +40,35 @@ public class FButton extends FPanel {
 
 	private Color textBackground = null;
 
+	private int textX = CENTERED, textY = CENTERED;
+	private int textXRelativeTo = ABSOLUTE, textYRelativeTo = ABSOLUTE;
+
+	// =============== Static ===============
 	public static final int CENTERED = -10_000;
 
 	public static final int ABSOLUTE = 0;
 	public static final int BOTTOM = 1;
-
-	private int textX = CENTERED, textY = CENTERED;
-	private int textXRelativeTo = ABSOLUTE, textYRelativeTo = ABSOLUTE;
 
 	// =========================================================================================================================
 
 	public FButton() {
 		setBackground(Color.GRAY);
 		setForeground(Color.WHITE);
-		selectedColor = Color.LIGHT_GRAY;
 	}
 
 	// =========================================================================================================================
 
 	@Override
-	protected void paintComponent(Graphics g) {
-		super.paintComponent(g);
+	/** Paint the panel except margin, border and padding areas */
+	protected void paintCenter(Graphics g) {
+		super.paintCenter(g);
 
-		// Fill Border
-		g.setColor(borderColor);
-		drawEmptyCenteredRect(g, margin, border);
-
-		// Fill Padding
-		g.setColor(getBackground());
-		drawEmptyCenteredRect(g, margin + border, padding);
-
-		int undrawn = margin + border + padding;
+		int w = getContentWidth();
+		int h = getContentHeight();
 
 		// Fill Center
 		g.setColor(selected ? selectedColor : getBackground());
-		g.fillRect(undrawn, undrawn, getWidth() - 2 * undrawn, getHeight() - 2 * undrawn);
-
-		// Paint Center
-		paintCenter(g.create(undrawn, undrawn, getWidth() - 1 - 2 * undrawn, getHeight() - 1 - 2 * undrawn));
-	}
-
-	// =========================================================================================================================
-
-	/** Paint the panel except margin, border and padding areas */
-	protected void paintCenter(Graphics g) {
-		int w = getContentWidth();
-		int h = getContentHeight();
+		g.fillRect(0, 0, w, h);
 
 		if (img != null) {
 			int x = 0, y = 0;
@@ -173,19 +146,6 @@ public class FButton extends FPanel {
 
 	// =========================================================================================================================
 
-	public void setMargin(int margin) {
-		this.margin = margin;
-	}
-
-	public void setPadding(int padding) {
-		this.padding = padding;
-	}
-
-	public void setBorder(int size, Color color) {
-		this.border = size;
-		this.borderColor = color;
-	}
-
 	public void setSelectedColor(Color color) {
 		this.selectedColor = color;
 	}
@@ -241,17 +201,6 @@ public class FButton extends FPanel {
 		if (group != null)
 			for (FButton button : group)
 				button.setSelected(false);
-	}
-
-	// =========================================================================================================================
-	// Get inside size
-
-	public int getContentWidth() {
-		return getWidth() - 2 * (margin + border + padding);
-	}
-
-	public int getContentHeight() {
-		return getHeight() - 2 * (margin + border + padding);
 	}
 
 	// =========================================================================================================================

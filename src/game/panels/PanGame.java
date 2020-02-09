@@ -288,6 +288,7 @@ public class PanGame extends PanEnvironment {
 			button.setImage(FlixBlocksUtils
 					.getImage(ItemTableClient.getTexturePack().getFolder() + "menu/game/" + action.name().toLowerCase()));
 
+		button.setPadding(5);
 		button.setClickListener(new ClickListener() {
 
 			@Override

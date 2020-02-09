@@ -48,9 +48,7 @@ public class PanKeys extends FPanel {
 	// =========================================================================================================================
 
 	@Override
-	protected void paintComponent(Graphics g) {
-		super.paintComponent(g);
-
+	public void paintComponent(Graphics g) {
 		g.setColor(Color.DARK_GRAY);
 		g.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 100, 100);
 		g.setColor(Color.GRAY);

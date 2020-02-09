@@ -34,8 +34,8 @@ public class PanFelix extends FPanel {
 	// =========================================================================================================================
 
 	@Override
-	protected void paintComponent(Graphics g) {
-		super.paintComponent(g);
+	protected void paintCenter(Graphics g) {
+		super.paintCenter(g);
 
 		g.setColor(Color.DARK_GRAY);
 		g.setFont(font);

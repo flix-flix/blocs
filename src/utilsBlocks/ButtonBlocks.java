@@ -27,11 +27,11 @@ public class ButtonBlocks extends FButton {
 	// =========================================================================================================================
 
 	@Override
-	protected void paintCenter(Graphics g) {
+	public void paintCenter(Graphics g) {
 		super.paintCenter(g);
 
 		if (wip)
-			g.drawImage(wipImg, 0, 0, getContentWidth() - 1, getContentHeight() - 1, null);
+			g.drawImage(wipImg, 0, 0, getContentWidth(), getContentHeight(), null);
 	}
 
 	// =========================================================================================================================

@@ -16,7 +16,7 @@ import environment.extendsData.CubeClient;
 import utils.FlixBlocksUtils;
 import utilsBlocks.ButtonBlocks;
 
-public class MenuButtonEditor extends ButtonBlocks {
+public class ButtonEditor extends ButtonBlocks {
 	private static final long serialVersionUID = 8368480819248766526L;
 
 	private Editor editor;
@@ -43,9 +43,11 @@ public class MenuButtonEditor extends ButtonBlocks {
 
 	// =========================================================================================================================
 
-	public MenuButtonEditor(Editor editor, ActionEditor action) {
+	public ButtonEditor(Editor editor, ActionEditor action) {
 		this.editor = editor;
 		this.action = action;
+		
+		setPadding(5);
 
 		if (hasImage())
 			setImage(FlixBlocksUtils.getImage(
@@ -90,6 +92,7 @@ public class MenuButtonEditor extends ButtonBlocks {
 			}
 			setFont(new Font("monospace", Font.BOLD, 14));
 			setBackground(Color.DARK_GRAY);
+			setSelectedColor(Color.GRAY);
 		}
 
 		if (action == ActionEditor.ITEM_ID)
@@ -138,7 +141,7 @@ public class MenuButtonEditor extends ButtonBlocks {
 	// =========================================================================================================================
 
 	@Override
-	protected void paintCenter(Graphics g) {
+	public void paintCenter(Graphics g) {
 		super.paintCenter(g);
 
 		if (action == ActionEditor.ITEM_COLOR) {

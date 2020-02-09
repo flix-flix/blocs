@@ -17,6 +17,7 @@ public class ButtonGameAction extends ButtonBlocks {
 		setSelectable(true);
 		setBackground(Color.DARK_GRAY);
 		setSelectedColor(Color.GRAY);
+		setPadding(5);
 
 		setImage(FlixBlocksUtils
 				.getImage(ItemTableClient.getTexturePack().getFolder() + "menu/game/" + action.name().toLowerCase()));

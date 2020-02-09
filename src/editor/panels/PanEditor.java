@@ -23,7 +23,7 @@ public class PanEditor extends JPanel {
 	// ======================= Menu =========================
 	private int menuWidth = 400;
 
-	private PanCol menu = new PanCol();
+	private PanCol menu;
 
 	private ActionEditor[] _buttonsTop = { ActionEditor.EDIT_CUBE, ActionEditor.EDIT_MULTI_CUBE,
 			ActionEditor.EDIT_MULTI_TEXTURE, ActionEditor.QUIT };
@@ -37,7 +37,7 @@ public class PanEditor extends JPanel {
 	private ActionEditor[] _buttonsItemID = { ActionEditor.ITEM_TAG, ActionEditor.ITEM_ID, ActionEditor.ITEM_COLOR,
 			ActionEditor.ITEM_SAVE, ActionEditor.ITEM_NEW, ActionEditor.ITEM_CLEAR };
 
-	private HashMap<ActionEditor, MenuButtonEditor> buttonsTop = new HashMap<>(), buttonsAction = new HashMap<>(),
+	private HashMap<ActionEditor, ButtonEditor> buttonsTop = new HashMap<>(), buttonsAction = new HashMap<>(),
 			buttonsItemID = new HashMap<>();
 
 	private PanGrid topActions, gridActions, gridItemID;
@@ -56,7 +56,7 @@ public class PanEditor extends JPanel {
 		panel = editor.getPanel();
 		panel.setLocation(menuWidth, 0);
 		panel.setSize(getWidth() - menuWidth, getHeight());
-		add(panel);
+		this.add(panel);
 
 		help = new PanHelp(Mark.INTERROGATION, 500, 80, 10, TipEditor.ZOOM);
 		help.setLocation(25, 25);
@@ -68,7 +68,11 @@ public class PanEditor extends JPanel {
 		helpTool.setVisible(false);
 		panel.add(helpTool);
 
+		menu = new PanCol();
 		menu.setBounds(0, 0, menuWidth, getHeight());
+		menu.setBorder(10, Color.GRAY);
+		menu.setBackground(Color.LIGHT_GRAY);
+		menu.setPadding(10);
 		this.add(menu);
 
 		// ========================================================================================
@@ -77,7 +81,7 @@ public class PanEditor extends JPanel {
 		menu.addTop(topActions = new PanGrid(), 100);
 
 		for (ActionEditor action : _buttonsTop) {
-			buttonsTop.put(action, new MenuButtonEditor(editor, action));
+			buttonsTop.put(action, new ButtonEditor(editor, action));
 			topActions.addMenu(buttonsTop.get(action));
 		}
 
@@ -103,7 +107,7 @@ public class PanEditor extends JPanel {
 		gridItemID.setPadding(PanGrid.GRID_SPACE);
 
 		for (ActionEditor action : _buttonsItemID) {
-			buttonsItemID.put(action, new MenuButtonEditor(editor, action));
+			buttonsItemID.put(action, new ButtonEditor(editor, action));
 			gridItemID.addMenu(buttonsItemID.get(action));
 		}
 
@@ -117,7 +121,7 @@ public class PanEditor extends JPanel {
 		menu.addTop(gridActions = new PanGrid(), PanCol.REMAINING);
 
 		for (ActionEditor action : _buttonsAction) {
-			buttonsAction.put(action, new MenuButtonEditor(editor, action));
+			buttonsAction.put(action, new ButtonEditor(editor, action));
 			gridActions.addMenu(buttonsAction.get(action));
 		}
 
@@ -129,7 +133,7 @@ public class PanEditor extends JPanel {
 		get(ActionEditor.PAINT).setSelectable(true);
 		get(ActionEditor.FILL).setSelectable(true);
 		get(ActionEditor.PLAYER_COLOR).setSelectable(true);
-		MenuButtonEditor.group(get(ActionEditor.SQUARE_SELECTION), get(ActionEditor.FILL), get(ActionEditor.PAINT),
+		ButtonEditor.group(get(ActionEditor.SQUARE_SELECTION), get(ActionEditor.FILL), get(ActionEditor.PAINT),
 				get(ActionEditor.PLAYER_COLOR));
 
 		get(ActionEditor.ALONE).setWIP();
@@ -140,7 +144,7 @@ public class PanEditor extends JPanel {
 
 	// =========================================================================================================================
 
-	public MenuButtonEditor get(ActionEditor action) {
+	public ButtonEditor get(ActionEditor action) {
 		if (buttonsAction.containsKey(action))
 			return buttonsAction.get(action);
 		else if (buttonsItemID.containsKey(action))
