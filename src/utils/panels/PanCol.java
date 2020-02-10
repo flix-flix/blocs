@@ -1,6 +1,5 @@
 package utils.panels;
 
-import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
@@ -15,7 +14,8 @@ public class PanCol extends FPanel {
 	public static final int REMAINING = -3;
 
 	// =============== Size ===============
-	int padding = 10, border = 10;
+	/** Number of pixel between a component and another or with the border */
+	int space = 10;
 
 	/** List of the panels at the top of the column */
 	ArrayList<FPanel> top = new ArrayList<>();
@@ -30,9 +30,6 @@ public class PanCol extends FPanel {
 	// =========================================================================================================================
 
 	public PanCol() {
-		setBorder(10, Color.GRAY);
-		setBackground(Color.LIGHT_GRAY);
-		setPadding(10);
 	}
 
 	// =========================================================================================================================
@@ -53,10 +50,10 @@ public class PanCol extends FPanel {
 
 		menus.add(menu);
 
-		int size = border + y + padding * menus.size();
+		int size = getBorderSize() + y + space * menus.size();
 
-		menu.setLocation(border + padding, menus == top ? size : getHeight() - 1 - height - size);
-		menu.setSize(getWidth() - 2 * border - 2 * padding, height);
+		menu.setLocation(getBorderSize() + space, menus == top ? size : getHeight() - 1 - height - size);
+		menu.setSize(getWidth() - 2 * getBorderSize() - 2 * space, height);
 		this.add(menu);
 	}
 
@@ -64,7 +61,7 @@ public class PanCol extends FPanel {
 		if (height == CURRENT)
 			return menu.getHeight();
 		if (height == WIDTH)
-			return getWidth() - 2 * border - 2 * padding;
+			return getWidth() - 2 * getBorderSize() - 2 * space;
 		if (height == REMAINING) {
 			remaining = menu;
 			return getRemainingHeight();
@@ -81,7 +78,13 @@ public class PanCol extends FPanel {
 		for (FPanel m : bottom)
 			x += m.getHeight();
 
-		return getHeight() - x - 2 * border - padding * (1 + top.size() + bottom.size());
+		return getHeight() - x - 2 * getBorderSize() - space * (1 + top.size() + bottom.size());
+	}
+
+	// =========================================================================================================================
+
+	public void setSpace(int space) {
+		this.space = space;
 	}
 
 	// =========================================================================================================================
@@ -94,8 +97,8 @@ public class PanCol extends FPanel {
 			for (int j = 0; j < i; j++)
 				y += bottom.get(j).getHeight();
 
-			bottom.get(i).setLocation(border + padding,
-					getHeight() - 1 - bottom.get(i).getHeight() - border - y - padding * (i + 1));
+			bottom.get(i).setLocation(getBorderSize() + space,
+					getHeight() - 1 - bottom.get(i).getHeight() - getBorderSize() - y - space * (i + 1));
 		}
 
 		// Resize the center panel

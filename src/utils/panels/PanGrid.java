@@ -88,7 +88,7 @@ public class PanGrid extends FPanel {
 		int menuWidth = (getWidth() - (cols - 1) * gridSpace) / cols;
 		int rows = list.size() / cols + (list.size() % cols == 0 ? 0 : 1);
 
-		super.setSize(getWidth(), 2 * (borderSize + padding) + rows * (rowHeight == SQUARE ? menuWidth : rowHeight)
+		super.setRealSize(getWidth(), 2 * (borderSize + padding) + rows * (rowHeight == SQUARE ? menuWidth : rowHeight)
 				+ (rows - 1) * gridSpace);
 	}
 
@@ -137,7 +137,7 @@ public class PanGrid extends FPanel {
 
 	@Override
 	public void setSize(int width, int height) {
-		super.setVisibleSize(width, height);
+		super.setSize(width, height);
 
 		updateSize();
 		updateScroll();

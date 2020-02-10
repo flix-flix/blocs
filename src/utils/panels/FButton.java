@@ -66,9 +66,11 @@ public class FButton extends FPanel {
 		int w = getContentWidth();
 		int h = getContentHeight();
 
-		// Fill Center
-		g.setColor(selected ? selectedColor : getBackground());
-		g.fillRect(0, 0, w, h);
+		// Fill Center in different color if selected
+		if (selected) {
+			g.setColor(selectedColor);
+			g.fillRect(0, 0, w, h);
+		}
 
 		if (img != null) {
 			int x = 0, y = 0;
@@ -87,10 +89,20 @@ public class FButton extends FPanel {
 
 			g.setFont(font);
 
+			String text = this.text;
+
+			if (fm.stringWidth(text) > getWidth() - 5) {
+				while (fm.stringWidth(text) > getWidth() - 20)
+					text = text.substring(0, text.length() - 2);
+
+				// if (!text.equals(this.text))
+				text += "...";
+			}
+
 			int x = 0, y = 0;
 			if (textXRelativeTo == ABSOLUTE)
 				if (textX == CENTERED)
-					x = w / 2 - fm.stringWidth(text) / 2;
+					x = w / 2 - fm.stringWidth(text) / 2 - 2;// -2 correct the space lost by the white line
 
 			if (textYRelativeTo == ABSOLUTE) {
 				if (textY == CENTERED)
@@ -128,6 +140,7 @@ public class FButton extends FPanel {
 
 	public void setText(String text) {
 		this.text = text;
+		this.setToolTipText(text);
 	}
 
 	public void setFont(Font font) {

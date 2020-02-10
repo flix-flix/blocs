@@ -7,10 +7,10 @@ items:
     water: Water
         
     oak_leaves: Oak leaves
-    oak_trunk: Oak Trunk
+    oak_trunk: Oak trunk
 
     glass: Glass
-    glass_red: Ged glass
+    glass_red: Red glass
     glass_gray: Gray glass
     
     unit: Unit
@@ -20,7 +20,7 @@ items:
     tree: Oak
     e: E
 
-    preview: Preveiw
+    preview: Preview
     test: Test
 
 keys:
@@ -90,6 +90,13 @@ text:
             item_clear: Clear
             
             valid_color: Select
+    
+    data_manager:
+        type:
+            id: ID
+            tag: Tag
+            name: Name
+            miniature: Preview
     
     main_menu:
         play: Play

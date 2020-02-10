@@ -89,6 +89,13 @@ text:
             item_clear: Effacer
             
             valid_color: Selectionner
+            
+    data_manager:
+        type:
+            id: ID
+            tag: Tag
+            name: Nom
+            miniature: Aperçu
 
     main_menu:
         play: Jouer

@@ -7,16 +7,14 @@ import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.lang.Thread.State;
 
+import data.id.ItemTableClient;
 import data.map.Cube;
-import data.map.enumerations.Orientation;
 import data.map.units.Unit;
 import environment.extendsData.CubeClient;
 import game.Game;
 import game.panels.menus.ButtonGameAction;
 import game.panels.menus.MenuResource;
-import graphicEngine.calcul.Camera;
 import graphicEngine.calcul.Engine;
-import graphicEngine.calcul.Point3D;
 import server.send.Action;
 import utils.panels.FPanel;
 
@@ -94,10 +92,7 @@ public class PanInfosUnit extends FPanel {
 				update.notify();
 			}
 
-		Cube cube = new Cube(unit.getItemID());
-		cube.orientation = Orientation.WEST;
-
-		engine = new Engine(new Camera(new Point3D(-.4, 1.5, -1), 58, -35), new CubeClient(cube));
+		engine = new Engine(ItemTableClient.getCamera(unit.getItemID()), new CubeClient(new Cube(unit.getItemID())));
 		engine.setBackground(Engine.NONE);
 		img = engine.getImage(75, 75);
 

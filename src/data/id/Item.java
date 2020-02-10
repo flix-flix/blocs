@@ -13,8 +13,8 @@ public class Item {
 	TreeMap<String, Object> tree;
 
 	// ==================== ID ====================
-	int id;
-	String tag;
+	public int id;
+	public String tag;
 
 	// ==================== Properties ====================
 	boolean opaque = true;
@@ -38,7 +38,7 @@ public class Item {
 	int mapColor = 0xeaff00;
 
 	// ==================== Language ====================
-	String name;
+	public String name;
 
 	// =========================================================================================================================
 

@@ -28,6 +28,7 @@ public class PanFelix extends FPanel {
 	// =========================================================================================================================
 
 	public PanFelix() {
+		setBackground(Color.LIGHT_GRAY);
 		setSize(fm.stringWidth(felix) + 20 + size * face.getRotated().width, 40);
 	}
 
@@ -41,14 +42,15 @@ public class PanFelix extends FPanel {
 		g.setFont(font);
 		g.drawString(felix, 10, getHeight() - 5);
 
-		int start = fm.stringWidth(felix) + 20;
-
 		TextureSquare sq = face.getRotated();
+
+		int startX = fm.stringWidth(felix) + 20;
+		int startY = (getHeight() - sq.height * size)/2;
 
 		for (int x = 0; x < sq.width; x++)
 			for (int y = 0; y < sq.height; y++) {
 				g.setColor(new Color(sq.getColor(y, x)));
-				g.fillRect(start + x * size, y * size, size, size);
+				g.fillRect(startX + x * size, startY + y * size, size, size);
 			}
 	}
 

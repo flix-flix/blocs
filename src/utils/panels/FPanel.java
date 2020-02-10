@@ -26,6 +26,8 @@ public class FPanel extends JPanel {
 	private int padding = 0;
 
 	// ======================= Scroll =========================
+	boolean enableVerticalScroll = true;
+
 	private JPanel scrollBar;
 	/** Width of the scrollBar */
 	private int scrollWidth = 10;
@@ -38,13 +40,15 @@ public class FPanel extends JPanel {
 	/** Number of pixels visible */
 	private int visibleHeight = 0;
 
+	private int realHeight = 0;
+
 	// =========================================================================================================================
 
 	public FPanel() {
 		this.setLayout(null);
 		this.setOpaque(false);
 
-		setBackground(Color.GRAY);
+		super.setBackground(Color.GRAY);
 
 		this.addMouseListener(new MouseListener() {
 			@Override
@@ -139,9 +143,7 @@ public class FPanel extends JPanel {
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 
-		// Fill Border
-		g.setColor(borderColor);
-		drawEmptyCenteredRect(g, margin, border);
+		paintBorder(g, margin, border);
 
 		// Fill Padding
 		g.setColor(getBackground());
@@ -153,6 +155,11 @@ public class FPanel extends JPanel {
 
 	// =========================================================================================================================
 
+	protected void paintBorder(Graphics g, int margin, int border) {
+		g.setColor(borderColor);
+		drawEmptyCenteredRect(g, margin, border);
+	}
+
 	protected void paintCenter(Graphics g) {
 		g.setColor(getBackground());
 		g.fillRect(0, 0, getContentWidth(), getContentHeight());
@@ -162,10 +169,11 @@ public class FPanel extends JPanel {
 	// Scroll
 
 	public void enableVerticalScroll() {
+		enableVerticalScroll = true;
 		addMouseWheelListener(new MouseWheelListener() {
 			@Override
 			public void mouseWheelMoved(MouseWheelEvent e) {
-				if (visibleHeight < getHeight()) {
+				if (visibleHeight < realHeight) {
 					e.consume();
 
 					scrolledY += e.getWheelRotation() * scrollStep;
@@ -177,15 +185,15 @@ public class FPanel extends JPanel {
 	}
 
 	public void updateScroll() {
-		scrollBar.setVisible(visibleHeight < getHeight());
+		scrollBar.setVisible(visibleHeight < realHeight);
 
-		if (visibleHeight >= getHeight())
+		if (visibleHeight >= realHeight)
 			return;
 
 		scrolledY = Math.max(0, scrolledY);
-		scrolledY = Math.min(getHeight() - visibleHeight, scrolledY);
+		scrolledY = Math.min(realHeight - visibleHeight, scrolledY);
 
-		double ratio = visibleHeight / (double) getHeight();
+		double ratio = visibleHeight / (double) realHeight;
 
 		scrollBar.setLocation(getWidth() - scrollWidth, (int) (scrolledY * ratio));
 		scrollBar.setSize(scrollWidth, (int) (visibleHeight * ratio));
@@ -195,6 +203,14 @@ public class FPanel extends JPanel {
 		super.setSize(width, height);
 
 		visibleHeight = height;
+
+		updateScroll();
+	}
+
+	public void setRealSize(int width, int height) {
+		realHeight = height;
+
+		updateScroll();
 	}
 
 	// =========================================================================================================================
@@ -214,7 +230,7 @@ public class FPanel extends JPanel {
 	}
 
 	// =========================================================================================================================
-	// Setters (Box)
+	// Box
 
 	/** Margin is the number pixels between the panel bounds and the border */
 	public void setMargin(int margin) {
@@ -229,6 +245,10 @@ public class FPanel extends JPanel {
 	public void setBorder(int size, Color color) {
 		this.border = size;
 		this.borderColor = color;
+	}
+
+	protected int getBorderSize() {
+		return border;
 	}
 
 	// =========================================================================================================================
@@ -275,5 +295,15 @@ public class FPanel extends JPanel {
 	}
 
 	public void resize() {
+	}
+
+	// =========================================================================================================================
+
+	@Override
+	public void setSize(int width, int height) {
+		if (enableVerticalScroll)
+			setVisibleSize(width, height);
+		else
+			super.setSize(width, height);
 	}
 }

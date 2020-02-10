@@ -8,6 +8,7 @@ import java.net.UnknownHostException;
 import javax.swing.JPanel;
 
 import data.id.ItemTableClient;
+import dataManager.DataManager;
 import editor.Editor;
 import environment.textures.TexturePack;
 import game.Game;
@@ -25,6 +26,8 @@ public class MainMenu extends JPanel implements Displayable {
 	private Fen fen;
 
 	private ButtonEnv game, editor;
+
+	private ButtonAction data;
 
 	private PanFelix felix;
 	private ButtonLang lang;
@@ -54,13 +57,16 @@ public class MainMenu extends JPanel implements Displayable {
 		// ========================================================================================
 
 		add(game = ButtonEnv.generateButton(this, MainMenuAction.PLAY));
-		add(editor = ButtonEnv.generateButton(this, MainMenuAction.EDITOR));
-
 		game.setSize(750, 500);
-		editor.setSize(300, 300);
-
 		game.setLocation(50, 50);
+
+		add(editor = ButtonEnv.generateButton(this, MainMenuAction.EDITOR));
+		editor.setSize(300, 300);
 		editor.setLocation(50, 600);
+
+		add(data = new ButtonAction(this, MainMenuAction.DATA_MANAGER));
+		data.setSize(300, 300);
+		data.setLocation(380, 600);
 
 		felix = new PanFelix();
 		add(felix);
@@ -96,8 +102,13 @@ public class MainMenu extends JPanel implements Displayable {
 			else
 				fen.setDisplay(Game.startLocalServer(fen));
 			break;
+		case SERVER:
+			break;
 		case EDITOR:
 			fen.setDisplay(new Editor(fen));
+			break;
+		case DATA_MANAGER:
+			fen.setDisplay(new DataManager(fen));
 			break;
 		case OPTIONS:
 			keys.setVisible(!keys.isVisible());
@@ -138,6 +149,9 @@ public class MainMenu extends JPanel implements Displayable {
 		editor.setSize((int) (getHeight() / 3), getHeight() / 3);
 		editor.setLocation(getWidth() / 10, game.getLocation().y + game.getHeight() + (int) (getHeight() * .05));
 
+		data.setSize((int) (getHeight() / 3), getHeight() / 3);
+		data.setLocation(getWidth() *4/ 10, game.getLocation().y + game.getHeight() + (int) (getHeight() * .05));
+
 		felix.setBottomRightCorner(getWidth() - quit.getWidth() - 2 * margin, getHeight() - margin);
 
 		lang.setBottomRightCorner(getWidth() - margin,
@@ -168,6 +182,6 @@ public class MainMenu extends JPanel implements Displayable {
 	// =========================================================================================================================
 
 	public enum MainMenuAction {
-		PLAY, EDITOR, OPTIONS, QUIT;
+		PLAY, SERVER, EDITOR, DATA_MANAGER, OPTIONS, QUIT;
 	}
 }

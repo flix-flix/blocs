@@ -17,8 +17,8 @@ import game.CameraMode;
 import game.Game;
 import game.StateHUD;
 import game.UserAction;
-import game.panels.menus.PanMap;
 import game.panels.menus.MenuRessources;
+import game.panels.menus.PanMap;
 import game.panels.menus.infos.PanInfos;
 import game.tips.TipGame;
 import server.game.messages.Message;
@@ -124,6 +124,9 @@ public class PanGame extends PanEnvironment {
 		// ========================================================================================
 
 		menu.setBounds(0, 0, menuWidth, getHeight());
+		menu.setBorder(10, Color.GRAY);
+		menu.setBackground(Color.LIGHT_GRAY);
+		menu.setPadding(10);
 		this.add(menu);
 
 		menu.addTop(gridActions = new PanGrid(), 100);
@@ -285,8 +288,8 @@ public class PanGame extends PanEnvironment {
 		if (action == UserAction.CREA_ADD)
 			button.setModel(new CubeClient(new Cube(ItemID.GRASS)));
 		else
-			button.setImage(FlixBlocksUtils
-					.getImage(ItemTableClient.getTexturePack().getFolder() + "menu/game/" + action.name().toLowerCase()));
+			button.setImage(FlixBlocksUtils.getImage(
+					ItemTableClient.getTexturePack().getFolder() + "menu/game/" + action.name().toLowerCase()));
 
 		button.setPadding(5);
 		button.setClickListener(new ClickListener() {
