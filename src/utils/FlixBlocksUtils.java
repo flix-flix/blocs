@@ -181,9 +181,24 @@ public class FlixBlocksUtils {
 	}
 
 	public static void write(String content, String name) {
+		File file = new File(name);
+
+		// Create File
+		if (!file.exists()) {
+			if (file.getParentFile() != null)
+				file.getParentFile().mkdirs();
+			try {
+				file.createNewFile();
+			} catch (IOException e) {
+				FlixBlocksUtils.debug("Can't createFile");
+				return;
+			}
+		}
+
+		// Write
 		FileWriter fw;
 		try {
-			fw = new FileWriter(new File(name));
+			fw = new FileWriter(file);
 			fw.write(content);
 			fw.close();
 		} catch (IOException e) {

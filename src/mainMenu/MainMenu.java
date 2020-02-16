@@ -2,6 +2,8 @@ package mainMenu;
 
 import java.awt.Color;
 import java.awt.Cursor;
+import java.io.File;
+import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
@@ -20,12 +22,15 @@ import server.ServerDescription;
 import utils.panels.ButtonPad;
 import utils.panels.FButton;
 import utils.panels.FPanel;
+import utils.yaml.YAML;
 import window.Displayable;
 import window.Fen;
 import window.KeyBoard;
 
 public class MainMenu extends JPanel implements Displayable {
 	private static final long serialVersionUID = -3189420915172593199L;
+
+	private static final String knownFile = "resources/settings/server/known.yml";
 
 	private Fen fen;
 
@@ -43,6 +48,8 @@ public class MainMenu extends JPanel implements Displayable {
 
 	// =============== Server ===============
 	private PanServer panServer;
+
+	private YAML servers;
 
 	// =============== Keys ===============
 	PanKeys keys;
@@ -122,6 +129,17 @@ public class MainMenu extends JPanel implements Displayable {
 
 		this.add(panServer);
 
+		// Get memorized ones
+		if (new File(knownFile).exists()) {
+			servers = YAML.parseFile(knownFile);
+
+			if (servers.contains("known"))
+				for (YAML server : servers.getList("known"))
+					panServer.addServer(new ServerDescription(server.getString("ip"), server.getInt("port"),
+							server.getString("name")));
+		} else
+			servers = new YAML();
+
 		refreshLang();
 	}
 
@@ -162,27 +180,52 @@ public class MainMenu extends JPanel implements Displayable {
 
 	}
 
-	public void clickServer(MainMenuAction action, ServerDescription descritpion) {
+	public void clickServer(MainMenuAction action, ServerDescription description) {
 		switch (action) {
+		case SERVER_JOIN:
+			fen.setDisplay(new Game(fen, description));
+			break;
+
 		case SERVER_START:
-			Server server = new Server(descritpion.port, descritpion.name);
+			Server server = new Server(description.port, description.name);
 			server.start();
 			panServer.startServer(server);
 			break;
+		case SERVER_STOP:
+			panServer.removeHosted(description);
+			description.server.stop();
+			break;
 
 		case SERVER_ADD:
-			panServer.addServer(descritpion);
-			break;
+			panServer.addServer(description);
 
-		case SERVER_JOIN:
-			fen.setDisplay(new Game(fen, descritpion));
-			break;
-		case SERVER_STOP:
-			panServer.removeHosted(descritpion);
-			descritpion.server.stop();
+			// Write on disk
+			if (!servers.contains("known"))
+				servers.put("known", new ArrayList<YAML>());
+
+			YAML yaml = new YAML();
+			yaml.put("ip", description.ip);
+			yaml.put("port", "" + description.port);
+			yaml.put("name", description.name);
+
+			servers.getList("known").add(yaml);
+
+			YAML.encodeFile(servers, knownFile);
 			break;
 		case SERVER_DELETE:
-			panServer.removeKnown(descritpion);
+			panServer.removeKnown(description);
+
+			// Remove from disk
+			ArrayList<YAML> list = servers.getList("known");
+			for (int i = 0; i < list.size(); i++) {
+				YAML y = list.get(i);
+				if (y.getString("ip").equals(description.ip) && y.getInt("port") == description.port
+						&& y.getString("name").equals(description.name)) {
+					list.remove(i);
+					break;
+				}
+			}
+			YAML.encodeFile(servers, knownFile);
 			break;
 
 		default:
@@ -230,7 +273,8 @@ public class MainMenu extends JPanel implements Displayable {
 		data.setSize((int) (getHeight() / 3), getHeight() / 3);
 		data.setLocation(getWidth() * 4 / 10, game.getLocation().y + game.getHeight() + (int) (getHeight() * .05));
 
-		wip.setBottomRightCorner(getWidth() - quit.getWidth() - felix.getWidth() - 2 * margin, getHeight() - margin-5);
+		wip.setBottomRightCorner(getWidth() - quit.getWidth() - felix.getWidth() - 2 * margin,
+				getHeight() - margin - 5);
 		felix.setBottomRightCorner(getWidth() - quit.getWidth() - 2 * margin, getHeight() - margin);
 
 		lang.setBottomRightCorner(getWidth() - margin,

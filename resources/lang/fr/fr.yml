@@ -106,7 +106,7 @@ text:
             server: Serveurs
             data_manager: Données du jeu
         server:
-            hosted: PARTIES HÉBERGÉES
+            hosted: SERVEURS HÉBERGÉS
             known: SERVEURS CONNUS
             none: AUCUN
             start: LANCER

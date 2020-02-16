@@ -118,7 +118,6 @@ public class PanServer extends FPanel {
 		quit.setSize(100, 100);
 		quit.setBorder(5, Color.DARK_GRAY);
 		add(quit);
-
 	}
 
 	// =========================================================================================================================
@@ -222,7 +221,7 @@ public class PanServer extends FPanel {
 
 		for (PanServerDescription pan : listKnows)
 			pan.refreshLang();
-		
+
 		refresh();
 	}
 

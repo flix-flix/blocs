@@ -35,7 +35,7 @@ public class PanServerDescription extends FButton {
 		this.setBorder(10, Color.GRAY);
 		this.setBackground(Color.LIGHT_GRAY);
 		this.setSize(600, 150);
-		this.setPadding(10);
+		this.setPadding(5);
 
 		join = new ButtonPad("JOIN", fontButton, Color.LIGHT_GRAY, PanServer.GREEN, 5);
 
@@ -61,6 +61,8 @@ public class PanServerDescription extends FButton {
 
 			this.add(stop);
 		}
+
+		refreshLang();
 	}
 
 	public PanServerDescription(MainMenu main, Server server) {
@@ -100,18 +102,15 @@ public class PanServerDescription extends FButton {
 	public void refreshLang() {
 		join.setText(ItemTableClient.getText("main_menu.server.join"));
 		stop.setText(ItemTableClient.getText("main_menu.server." + (description.server == null ? "delete" : "stop")));
+
+		refreshLocation();
 	}
 
-	// =========================================================================================================================
-
-	@Override
-	public void resize() {
-		super.resize();
-
+	public void refreshLocation() {
 		if (join != null)
 			join.setBottomRightCorner(getWidth() - getUndrawSize(), getHeight() - getUndrawSize());
 		if (stop != null)
-			stop.setBottomRightCorner(getWidth() - getUndrawSize() - join.getWidth() - 10,
+			stop.setBottomRightCorner(getWidth() - getUndrawSize() - join.getWidth() - 5,
 					getHeight() - getUndrawSize());
 	}
 }
