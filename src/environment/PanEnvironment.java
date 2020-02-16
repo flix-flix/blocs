@@ -25,6 +25,9 @@ public class PanEnvironment extends JPanel {
 	/** Center of the display of environment */
 	public int envCenterW, envCenterH;
 
+	/** true: the panel have been resized and need a new image to be generated */
+	public boolean resized = false;
+
 	// =============== Display Engine Infos ===============
 	public boolean showEngineInfos;
 	private Graphics graphics;
@@ -49,15 +52,13 @@ public class PanEnvironment extends JPanel {
 
 	// =========================================================================================================================
 
-	public void paintComponent(Graphics g) {
+	protected void paintComponent(Graphics g) {
 		if (img == null)
 			return;
 
 		graphics = g;
 
 		g.drawImage(img, 0, 0, null);
-
-		env.setProcessing(false);
 
 		drawEngineData();
 	}
@@ -70,6 +71,8 @@ public class PanEnvironment extends JPanel {
 
 		envCenterW = width / 2;
 		envCenterH = height / 2;
+
+		resized = true;
 	}
 
 	// =========================================================================================================================

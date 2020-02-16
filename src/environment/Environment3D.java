@@ -12,12 +12,10 @@ public class Environment3D {
 	// =============== F3 (Dev infos) ===============
 	/** Number of frames displayed the last second */
 	public int fps;
-	/** true : start the generation of a new image then turn to false */
-	private boolean repaint = false;
 
 	/** Chronometric marks */
 	public long timeMat, timeDraw, timeQuadri;
-	/** Number of cubes and chunks displayed */
+	/** Number of chunks and faces displayed */
 	public int nbChunks, nbFaces;
 
 	public int ticksPhys, ticksKeyBoard;
@@ -27,15 +25,10 @@ public class Environment3D {
 	public int FPSmax = 30;
 
 	// =============== Thread ===============
-	/** Refresh the image */
 	private Actu actu;
-	/** Processing the next image doesn't affect the others tasks */
-	private GetImg getImg;
-	private Thread threadActu, threadImage;
-	/** true : currently generating an image */
-	public boolean processing = false;
-
-	/** true : stop calling for new image */
+	/** true : currently processing a new image */
+	private boolean processing = false;
+	/** true : suspend the generation of new images */
 	private boolean paused = false;
 
 	// ============= Engine ===================
@@ -50,13 +43,6 @@ public class Environment3D {
 
 	public Environment3D() {
 		panel = new PanEnvironment(this);
-
-		threadActu = new Thread(actu = new Actu());
-		threadImage = new Thread(getImg = new GetImg());
-
-		threadActu.setName("Max fps counter");
-		threadImage.setName("Image generator");
-
 		engine = new Engine(null, null);
 	}
 
@@ -64,22 +50,29 @@ public class Environment3D {
 		this();
 		this.map = map;
 		this.camera = camera;
+
+		panel.setCamera(camera);
+		engine.setModelCamera(map, camera);
 	}
 
 	// =========================================================================================================================
+	// Thread
 
 	public void start() {
 		panel.setCamera(camera);
-
 		engine.setModelCamera(map, camera);
 
-		threadActu.start();
-		threadImage.start();
+		Thread thread = new Thread(actu = new Actu());
+		thread.setName("Max fps counter");
+		thread.start();
 	}
 
 	public void stop() {
 		actu.stop();
-		getImg.stop();
+	}
+
+	public void setPaused(boolean paused) {
+		this.paused = paused;
 	}
 
 	// =========================================================================================================================
@@ -105,6 +98,7 @@ public class Environment3D {
 
 	// =========================================================================================================================
 
+	/** Set target location (e.g. mouse location or cross-indicator) */
 	public void setTarget(int x, int y) {
 		engine.setTarget(x, y);
 	}
@@ -165,16 +159,11 @@ public class Environment3D {
 	public void oneSecondTick() {
 	}
 
-	/** Repaint the panel */
 	public void repaint() {
 		panel.repaint();
 	}
 
 	// =========================================================================================================================
-
-	public void setProcessing(boolean processing) {
-		this.processing = processing;
-	}
 
 	public PanEnvironment getPanel() {
 		return panel;
@@ -193,21 +182,34 @@ public class Environment3D {
 	}
 
 	// =========================================================================================================================
+	// Repaint
 
-	/** Set "repaint" to true when it need a new image */
+	private void generatesNewImage() {
+		if (panel.envWidth > 0 && panel.envHeight > 0)
+			panel.setImage(engine.getImage(panel.envWidth, panel.envHeight));
+
+		updateTimeDev();
+		targetUpdate();
+
+		panel.repaint();
+	}
+
+	/** Refresh the image "FPSmax times" per second and when panel is resized */
 	class Actu implements Runnable {
 		boolean run = true;
 
 		public void run() {
 			// Count the number of frames displayed since the last "second timer" restart
 			int fps = 0;
-			// The number of ms before generating another frame
-			long wait = 0;
 			// Store the time which the last second starts
-			long time = System.currentTimeMillis();
+			long lastSecond = System.currentTimeMillis();
+			// The time where a new image would be needed
+			long waitTill = 0;
+
 			while (run) {
-				if (System.currentTimeMillis() - time >= 1000) {// Update FPS infos
-					time = System.currentTimeMillis();
+				// Update FPS infos
+				if (System.currentTimeMillis() - lastSecond >= 1000) {
+					lastSecond = System.currentTimeMillis();
 
 					Environment3D.this.fps = fps;
 					fps = 0;
@@ -221,11 +223,17 @@ public class Environment3D {
 					e.printStackTrace();
 				}
 
-				if (!paused && !processing && wait <= System.currentTimeMillis()) {
+				// If panel resized or enough time flied since previous image
+				// => Start the generation of a new image
+				if (!paused && !processing && (waitTill <= System.currentTimeMillis() || panel.resized)) {
+					panel.resized = false;
 					processing = true;
-					wait = System.currentTimeMillis() + 1000 / FPSmax;
 
-					repaint = true;
+					waitTill = System.currentTimeMillis() + 1000 / FPSmax;
+
+					Thread thread = new Thread(new GeneratesImage());
+					thread.start();
+
 					fps++;
 				}
 			}
@@ -236,34 +244,11 @@ public class Environment3D {
 		}
 	}
 
-	/** Generates a new image if needed */
-	class GetImg implements Runnable {
-		boolean run = true;
-
+	/** Generates a new image */
+	class GeneratesImage implements Runnable {
 		public void run() {
-			while (run) {
-				if (repaint) {
-					repaint = false;
-
-					if (panel.envWidth > 0 && panel.envHeight > 0)
-						panel.setImage(engine.getImage(panel.envWidth, panel.envHeight));
-
-					updateTimeDev();
-					targetUpdate();
-
-					repaint();
-				}
-				try {
-					Thread.sleep(1);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				processing = false;
-			}
-		}
-
-		public void stop() {
-			run = false;
+			generatesNewImage();
+			processing = false;
 		}
 	}
 }
