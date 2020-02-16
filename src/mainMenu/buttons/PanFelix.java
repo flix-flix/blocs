@@ -45,7 +45,7 @@ public class PanFelix extends FPanel {
 		TextureSquare sq = face.getRotated();
 
 		int startX = fm.stringWidth(felix) + 20;
-		int startY = (getHeight() - sq.height * size)/2;
+		int startY = (getHeight() - sq.height * size) / 2;
 
 		for (int x = 0; x < sq.width; x++)
 			for (int y = 0; y < sq.height; y++) {
@@ -58,7 +58,7 @@ public class PanFelix extends FPanel {
 
 	@Override
 	public void click(MouseEvent e) {
-		face.rotation += 3;
+		face.rotation += e.getButton() == 1 ? 3 : 1;
 		repaint();
 	}
 }

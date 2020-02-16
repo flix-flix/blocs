@@ -18,6 +18,7 @@ public class PanItemLine extends FPanel {
 	protected int lineHeight = 50;
 
 	// =============== Width ===============
+	protected int separatorWidth = 3;
 	protected int startW = 5;
 
 	protected TreeMap<LineType, Integer> widths = new TreeMap<>();
@@ -39,7 +40,7 @@ public class PanItemLine extends FPanel {
 
 		addLinePart(new PanLinePart(item.tag), LineType.TAG);
 
-		addLinePart(new PanLinePart(item.tag == null ? "-" : item.name), LineType.NAME);
+		addLinePart(new PanLinePart(item.name == null ? "-" : item.name), LineType.NAME);
 
 		// =============== Texture ===============
 		PanLinePart pan = new PanLinePart();
@@ -52,17 +53,20 @@ public class PanItemLine extends FPanel {
 	@Override
 	protected void paintCenter(Graphics g) {
 		super.paintCenter(g);
-	
-	g.setColor(Color.BLACK);
-	g.fillRect(getUndrawSize(), getUndrawSize(), 5, getContentHeight());
+
+		g.setColor(Color.WHITE);
+		g.fillRect(0, 0, startW, getHeight());
+
+		g.setColor(Color.BLACK);
+		g.fillRect(getUndrawSize(), getUndrawSize(), 5, getContentHeight());
 	}
-	
+
 	// =========================================================================================================================
 
 	protected void addLinePart(PanLinePart pan, LineType type) {
 		pan.setSize(widths.get(type), lineHeight);
 		pan.setLocation(startW, 0);
-		startW += widths.get(type);
+		startW += widths.get(type) + separatorWidth;
 		add(pan);
 		panels.put(type, pan);
 	}
@@ -75,6 +79,6 @@ public class PanItemLine extends FPanel {
 
 		if (panels != null)
 			for (PanLinePart pan : panels.values())
-				pan.setBackground(getBackground());
+				pan.setBackground(bg);
 	}
 }

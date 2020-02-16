@@ -4,7 +4,7 @@ import utils.panels.help.Tip;
 
 public enum TipEditor implements Tip {
 
-	ZOOM, ROTATE, GRID, PICK_COLOR, FACE_NAME, LINE_SQUARE;
+	ZOOM, ROTATE, GRID, UNDO, PICK_COLOR, FACE_NAME, LINE_SQUARE;
 
 	@Override
 	public TipEditor next() {

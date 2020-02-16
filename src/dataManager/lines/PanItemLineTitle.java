@@ -39,9 +39,8 @@ public class PanItemLineTitle extends PanItemLine {
 
 		part.setSize(widths.get(type), lineHeight - 2 * getBorderSize());
 		part.setLocation(startW, getBorderSize());
-		startW += widths.get(type);
+		startW += widths.get(type) + separatorWidth;
 		add(part);
 		panels.put(type, part);
-
 	}
 }

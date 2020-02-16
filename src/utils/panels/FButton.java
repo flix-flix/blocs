@@ -33,9 +33,9 @@ public class FButton extends FPanel {
 	public static final int KEEP_RATIO = 1;
 
 	// =============== Text ===============
-	private String text = null;
+	protected String text = null;
 
-	private Font font = new Font("monospace", Font.BOLD, 14);
+	protected Font font = new Font("monospace", Font.BOLD, 14);
 	private FontMetrics fm = getFontMetrics(font);
 
 	private Color textBackground = null;
@@ -89,29 +89,36 @@ public class FButton extends FPanel {
 
 			g.setFont(font);
 
+			// TODO [Improve] [Move] Test if Button text is too long
 			String text = this.text;
 
 			if (fm.stringWidth(text) > getWidth() - 5) {
 				while (fm.stringWidth(text) > getWidth() - 20)
 					text = text.substring(0, text.length() - 2);
 
-				// if (!text.equals(this.text))
 				text += "...";
 			}
 
 			int x = 0, y = 0;
 			if (textXRelativeTo == ABSOLUTE)
 				if (textX == CENTERED)
-					x = w / 2 - fm.stringWidth(text) / 2 - 2;// -2 correct the space lost by the white line
+					x = w / 2 - fm.stringWidth(text) / 2;
+				else
+					x = textX;
 
 			if (textYRelativeTo == ABSOLUTE) {
 				if (textY == CENTERED)
-					y = h / 2 + (int) (fm.getStringBounds(text, g).getHeight() / 2) - 3;
-			} else if (textYRelativeTo == BOTTOM)
+					y = h / 2 + (int) (fm.getStringBounds(text, g).getHeight() / 3);
+				else
+					y = textY;
+			} else if (textYRelativeTo == BOTTOM) {
 				y = h - textY;
+			}
 
-			g.setColor(textBackground);
-			g.fillRect(x, y - (int) r.getHeight() + 3, (int) r.getWidth(), (int) r.getHeight());
+			if (textBackground != null) {
+				g.setColor(textBackground);
+				g.fillRect(x, y - (int) r.getHeight() + 3, (int) r.getWidth(), (int) r.getHeight());
+			}
 
 			g.setColor(getForeground());
 			g.drawString(text, x, y);
@@ -140,7 +147,6 @@ public class FButton extends FPanel {
 
 	public void setText(String text) {
 		this.text = text;
-		this.setToolTipText(text);
 	}
 
 	public void setFont(Font font) {
@@ -150,6 +156,11 @@ public class FButton extends FPanel {
 
 	public void setTextBackground(Color color) {
 		this.textBackground = color;
+	}
+
+	public void setTextXLocation(int x, int relativeTo) {
+		textX = x;
+		textXRelativeTo = relativeTo;
 	}
 
 	public void setTextYLocation(int y, int relativeTo) {

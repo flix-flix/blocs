@@ -70,18 +70,18 @@ public class WorldGeneration {
 		}
 
 		// Off-grid cube
-		Cube off = new Cube(-1, ground, 0, 0, 45, 45, 1, 1, 1, ItemID.TEST);
+		Cube off = new Cube(-2, 2, -4, 0, 45, 45, 1, 1, 1, ItemID.TEST);
 		map.add(off);
 
 		// Cubes (texture 16x16) with the differents step of the mining animation
-		for (int x = 0; x < 5; x++) {
+		for (int x = -1; x < 5; x++) {
 			Cube c = new Cube(x, 2, -3, ItemID.TEST);
 			c.miningState = x;
 			map.add(c);
 		}
 
 		// Cubes (texture 3x3) with the differents step of the mining animation
-		for (int x = 0; x < 5; x++) {
+		for (int x = -1; x < 5; x++) {
 			Cube c = new Cube(x, 2, -5, ItemID.GRASS);
 			c.miningState = x;
 			map.add(c);

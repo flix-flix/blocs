@@ -2,7 +2,6 @@ package dataManager.lines;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Graphics;
 
 import utilsBlocks.ButtonBlocks;
 
@@ -11,8 +10,6 @@ public class PanLinePart extends ButtonBlocks {
 
 	private Font font = new Font("monospace", Font.BOLD, 12);
 
-	int separatorWidth = 3;
-
 	// =========================================================================================================================
 
 	public PanLinePart(String str) {
@@ -20,8 +17,6 @@ public class PanLinePart extends ButtonBlocks {
 
 		setForeground(Color.BLACK);
 		setFont(font);
-		
-		
 	}
 
 	public PanLinePart() {
@@ -30,11 +25,9 @@ public class PanLinePart extends ButtonBlocks {
 	// =========================================================================================================================
 
 	@Override
-	protected void paintComponent(Graphics g) {
-		super.paintComponent(g);
-
-		g.setColor(Color.WHITE);
-		g.fillRect(getWidth() - 1 - separatorWidth, 0, separatorWidth, getHeight());
+	public void setText(String text) {
+		super.setText(text);
+		this.setToolTipText(text);
 	}
 
 	// =========================================================================================================================

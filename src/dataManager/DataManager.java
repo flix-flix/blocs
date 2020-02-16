@@ -34,7 +34,7 @@ public class DataManager implements Displayable {
 
 		case RENAME:
 			break;
-		case SHOW_FIELD:
+		case SHOW_FIELDS:
 			break;
 
 		case QUIT:

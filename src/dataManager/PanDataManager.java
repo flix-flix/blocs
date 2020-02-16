@@ -57,7 +57,7 @@ public class PanDataManager extends FPanel {
 		ButtonDataManager tree = new ButtonDataManager(data, ActionDataManager.TREE);
 		grid.addMenu(tree);
 	
-		ButtonDataManager none = new ButtonDataManager(data, ActionDataManager.NONE);
+		ButtonDataManager none = new ButtonDataManager(data, ActionDataManager.SHOW_FIELDS);
 		grid.addMenu(none);
 		ButtonDataManager none2 = new ButtonDataManager(data, ActionDataManager.NONE);
 		grid.addMenu(none2);

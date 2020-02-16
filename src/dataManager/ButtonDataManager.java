@@ -26,6 +26,7 @@ public class ButtonDataManager extends ButtonBlocks {
 		switch (action) {
 
 		case LANG:
+			setWIP();
 			if (ItemTableClient.getLanguage().equals(Locale.FRENCH.getLanguage()))
 				setImage(FlixBlocksUtils.getImage("static/flags/fr"), FButton.KEEP_RATIO);
 			else
@@ -34,14 +35,22 @@ public class ButtonDataManager extends ButtonBlocks {
 			setPadding(10);
 			break;
 		case TEXTURE:
+			setWIP();
 			setModel(new CubeClient(new Cube(ItemID.GRASS)));
 			setPadding(5);
+			break;
+
+		case SHOW_FIELDS:
+		case TREE:
+			setWIP();
+			setImage(FlixBlocksUtils.getImage("textures/classic/menu/dataManager/" + action.name().toLowerCase()),
+					FButton.KEEP_RATIO);
 			break;
 
 		case NONE:
 			setBackground(Color.LIGHT_GRAY);
 			break;
-			
+
 		case QUIT:
 			setImage(FlixBlocksUtils.getImage("static/quit"));
 			break;
@@ -50,7 +59,6 @@ public class ButtonDataManager extends ButtonBlocks {
 			setText("ERROR");
 			break;
 		}
-
 	}
 
 	@Override

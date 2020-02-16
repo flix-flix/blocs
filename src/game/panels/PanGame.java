@@ -93,8 +93,6 @@ public class PanGame extends PanEnvironment {
 	public PanCol menu = new PanCol();
 
 	private UserAction[] _userActions = { UserAction.MOUSE, UserAction.CREA_ADD, UserAction.CREA_DESTROY };
-	// private MenuButtonUserAction[] userActions = new
-	// MenuButtonUserAction[_userActions.length];
 	private TreeMap<UserAction, ButtonBlocks> userActions = new TreeMap<>();
 
 	private PanGrid gridActions;
@@ -109,6 +107,7 @@ public class PanGame extends PanEnvironment {
 
 	public PanGame(Game game) {
 		super(game);
+		// Like this.env but already casted
 		this.game = game;
 
 		pause = new PanPause(game);
