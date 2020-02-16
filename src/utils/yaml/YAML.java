@@ -8,8 +8,12 @@ import java.util.TreeMap;
 import utils.FlixBlocksUtils;
 
 public class YAML {
-
+	/** Number of spaces shifted for each child node */
+	private static int shiftStep = 4;
+	/** Data */
 	TreeMap<String, Object> tree;
+
+	// =========================================================================================================================
 
 	public YAML() {
 		this(new TreeMap<>());
@@ -37,7 +41,12 @@ public class YAML {
 		return get(path, false);
 	}
 
-	/** force = true Will create the YAML object at the given path */
+	/**
+	 * @param path
+	 *            - "node.node.key"
+	 * @param force
+	 *            - true : will create the YAML object at the given path
+	 */
 	public YAML get(String path, boolean force) {
 		String[] keys = path.split("\\.");
 		YAML yaml = this;
@@ -60,6 +69,11 @@ public class YAML {
 
 	public YAML getYAML(String path) {
 		return (YAML) getObject(path);
+	}
+
+	@SuppressWarnings("unchecked")
+	public ArrayList<YAML> getList(String path) {
+		return (ArrayList<YAML>) getObject(path);
 	}
 
 	public String getString(String path) {
@@ -146,60 +160,85 @@ public class YAML {
 	// =========================================================================================================================
 	// Parser
 
-	public static YAML decode(ArrayList<String> list) {
-		return decode(list, new Int(0), 0);
+	public static YAML decode(ArrayList<String> lines) {
+		return decode(lines, new Int(0), 0);
 	}
 
-	public static YAML decode(ArrayList<String> list, Int index, int decal) {
+	/**
+	 * @param lines
+	 *            - lines of the file
+	 * @param index
+	 *            - current line index
+	 * @param shift
+	 *            - number of spaces shifted of the current node
+	 */
+	public static YAML decode(ArrayList<String> lines, Int index, int shift) {
 		YAML yaml = new YAML();
 
-		for (; index.value < list.size(); index.value++) {
-			if (!isAligned(list, index, decal))
+		for (; index.value < lines.size(); index.value++) {
+			if (!isAligned(lines, index, shift))
 				break;
 
-			String[] elems = list.get(index.value).split(":");
+			String line = lines.get(index.value).trim();
+			int colon = line.indexOf(':');
 
-			if (elems.length != 2) {
-				if (elems.length == 1) {
-
-					// Test if it is a List
-					if (isAList(list, index.value)) {
-						index.value++;
-						yaml.put(elems[0].trim(), decodeList(list, index, decal + 4));
-						continue;
-					}
-					// Decode child node
-					else {
-						index.value++;
-						yaml.put(elems[0].trim(), decode(list, index, decal + 4));
-						index.value--;
-						continue;
-					}
-				}
-				// Wrong number of ':'
-				System.err.println("[YAML]: " + (elems.length - 1) + " ':' on a line => " + list.get(index.value));
-			} else {
-				yaml.put(elems[0].trim(), decodeLine(elems[1]));
+			if (colon == -1) {
+				FlixBlocksUtils.debug("No ':'");
+				break;
 			}
+
+			String key = line.substring(0, colon).trim();
+
+			// Line with only "<Key>:"
+			if (colon == line.length() - 1) {
+				// Double Array
+				if (isADoubleArray(lines, index.value)) {
+					index.value++;
+					yaml.put(key, decodeList(lines, index, shift + shiftStep));
+					continue;
+				}
+				// Child node
+				else {
+					index.value++;
+					YAML node = decode(lines, index, shift + shiftStep);
+					index.value--;
+
+					// List
+					if (key.contains("[")) {
+						key = key.substring(0, key.indexOf('['));
+
+						if (!yaml.contains(key))
+							yaml.put(key, new ArrayList<YAML>());
+						yaml.getList(key).add(node);
+					}
+					// Classic
+					else
+						yaml.put(key, node);
+					continue;
+				}
+			}
+			// Classic line (Key: Value)
+			else
+				yaml.put(key, decodeLine(line.substring(colon + 1)));
 		}
 		return yaml;
 	}
 
-	public static boolean isAList(ArrayList<String> list, int index) {
-		return list.size() > index + 1 && list.get(index + 1).contains("[");
+	public static boolean isADoubleArray(ArrayList<String> lines, int index) {
+		return lines.size() > index + 1 && lines.get(index + 1).contains("[");
 	}
 
-	public static Object decodeList(ArrayList<String> list, Int index, int decal) {
+	public static Object decodeList(ArrayList<String> lines, Int index, int shift) {
 		ArrayList<Object> array = new ArrayList<>();
 
-		for (; index.value < list.size(); index.value++) {
-			if (!isAligned(list, index, decal))
+		for (; index.value < lines.size(); index.value++) {
+			if (!isAligned(lines, index, shift))
 				break;
 
-			if (!list.get(index.value).contains("-"))
+			if (!lines.get(index.value).contains("-"))
 				break;
 
-			array.add(decodeLine(list.get(index.value)));
+			array.add(decodeLine(lines.get(index.value)));
 		}
 
 		index.value--;
@@ -219,9 +258,9 @@ public class YAML {
 		return line.contains("[") ? decodeArray(line) : line.trim();
 	}
 
-	public static boolean isAligned(ArrayList<String> list, Int index, int decal) {
-		for (int i = 0; i < decal; i++)
-			if (list.get(index.value).charAt(i) != ' ')
+	public static boolean isAligned(ArrayList<String> lines, Int index, int shift) {
+		for (int i = 0; i < shift; i++)
+			if (lines.get(index.value).charAt(i) != ' ')
 				return false;
 		return true;
 	}
@@ -237,38 +276,62 @@ public class YAML {
 		return sw.toString();
 	}
 
-	public static void encode(StringWriter sw, YAML yaml, int decal) {
+	/**
+	 * @param sw
+	 *            - yaml transcription of the future file
+	 * @param yaml
+	 *            - object to be encoded
+	 * @param shift
+	 *            - number of spaces shifted of the current node
+	 */
+	public static void encode(StringWriter sw, YAML yaml, int shift) {
 		for (String name : yaml.tree.keySet()) {
-			decal(sw, decal);
-
-			sw.write(name);
-			sw.write(": ");
 
 			Object obj = yaml.tree.get(name);
 			Class<? extends Object> c = obj.getClass();
 
-			if (c == String.class || c == Integer.class || c == Boolean.class) {// Variables
+			// List
+			if (c == ArrayList.class) {
+				ArrayList<?> list = (ArrayList<?>) obj;
+				for (int i = 0; i < list.size(); i++) {
+					shift(sw, shift);
+					sw.write(String.format("%s[%d]: \r\n", name, i));
+					encode(sw, (YAML) list.get(i), shift + shiftStep);
+				}
+				continue;
+			}
+
+			shift(sw, shift);
+			sw.write(name);
+			sw.write(": ");
+
+			// Variables
+			if (c == String.class || c == Integer.class || c == Boolean.class) {
 				sw.write(String.valueOf(obj));
 				sw.write("\r\n");
-			} else if (c == String[][].class) {// Double array
+			}
+			// Double array
+			else if (c == String[][].class) {
 				sw.write("\r\n");
-				encodeDoubleArray(sw, (String[][]) yaml.getObject(name), decal + 4);
-			} else if (c == YAML.class) {// Child node
+				encodeDoubleArray(sw, (String[][]) yaml.getObject(name), shift + shiftStep);
+			}
+			// Child node
+			else if (c == YAML.class) {
 				sw.write("\r\n");
-				encode(sw, (YAML) obj, decal + 4);
+				encode(sw, (YAML) obj, shift + shiftStep);
 			} else
-				System.err.println("[YAML] " + c);
+				FlixBlocksUtils.debug("Wrong class " + c);
 		}
 	}
 
-	public static void decal(StringWriter sw, int decal) {
-		for (int i = 0; i < decal; i++)
+	public static void shift(StringWriter sw, int shift) {
+		for (int i = 0; i < shift; i++)
 			sw.write(" ");
 	}
 
-	public static void encodeDoubleArray(StringWriter sw, String[][] array, int decal) {
+	public static void encodeDoubleArray(StringWriter sw, String[][] array, int shift) {
 		for (String[] objs : array) {
-			decal(sw, decal);
+			shift(sw, shift);
 			sw.write("- [");
 			sw.write(String.join(", ", Arrays.asList(objs)));
 			sw.write("]\r\n");
@@ -278,10 +341,15 @@ public class YAML {
 	// =========================================================================================================================
 
 	public static YAML parseFile(String file) {
-		String[] lines = FlixBlocksUtils.read(file).split("\r\n");
-		ArrayList<String> list = new ArrayList<>();
+		String[] _lines = FlixBlocksUtils.read(file).split("\r\n");
+		ArrayList<String> lines = new ArrayList<>();
 
-		for (String line : lines) {
+		for (String line : _lines) {
+			// Detect comment
+			int comment = line.indexOf('#');
+			if (comment != -1)
+				line = line.substring(0, comment);
+
 			// Ignore empty lines
 			if (line.trim().isEmpty())
 				continue;
@@ -291,10 +359,10 @@ public class YAML {
 			while (line.charAt(--end) == ' ')
 				;
 
-			list.add(line.substring(0, end + 1));
+			lines.add(line.substring(0, end + 1));
 		}
 
-		return decode(list);
+		return decode(lines);
 	}
 
 	public static void encodeFile(YAML yaml, String file) {
