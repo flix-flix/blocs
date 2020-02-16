@@ -6,8 +6,10 @@ import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
+import java.net.UnknownHostException;
 
 import data.id.ItemTableClient;
+import server.ServerDescription;
 
 public class Client implements Runnable {
 
@@ -23,11 +25,19 @@ public class Client implements Runnable {
 
 	// =========================================================================================================================
 
-	public Client(Game game, InetAddress inetAdr) {
+	public Client(Game game, ServerDescription description) {
 		this.game = game;
 
+		InetAddress inetAdr;
 		try {
-			server = new Socket(inetAdr, port);
+			inetAdr = InetAddress.getByName(description.ip);
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+			return;
+		}
+
+		try {
+			server = new Socket(inetAdr, description.port);
 
 			out = new ObjectOutputStream(server.getOutputStream());
 			in = new ObjectInputStream(server.getInputStream());

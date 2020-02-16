@@ -47,6 +47,8 @@ tips:
             pick_color: Avec le pinceau, maintenez "Ctrl" pour récuperer la couleur de la case ciblée
             zoom: Utilisez la molette pour zoomer/dézoomer
             line_square: Avec le pinceau, maintenez "Maj" pour dessiner une ligne. "Maj + Ctrl" pour remplir un carré
+            undo: Utilisez "Ctrl+Z" pour annuler la dernière modification et "Ctrl+Y" pour l'appliquer de nouveau
+            
         calk:
             apply: Appuyez sur "Entrée" pour appliquer le calque
             delete: Appuyez sur "Esc" pour supprimer le calque
@@ -98,5 +100,23 @@ text:
             miniature: Aperçu
 
     main_menu:
-        play: Jouer
-        editor: Editeur
+        buttons: 
+            play: Jouer
+            editor: Editeur
+            server: Serveurs
+            data_manager: Données du jeu
+        server:
+            hosted: PARTIES HÉBERGÉES
+            known: SERVEURS CONNUS
+            none: AUCUN
+            start: LANCER
+            stop: ARRETER
+            add: AJOUTER
+            delete: OUBLIER
+            join: REJOINDRE
+            
+            valid: Valider
+            cancel: Annuler
+            name: Nom
+            ip: IP
+            port: Port

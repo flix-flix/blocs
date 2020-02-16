@@ -1,6 +1,9 @@
 package server.send;
 
 public enum Action {
+	// Server
+	SERVER_NAME, SERVER_NB_PLAYERS,
+
 	// Cube
 	ADD, REMOVE,
 

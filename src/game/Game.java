@@ -2,8 +2,6 @@ package game;
 
 import java.awt.Cursor;
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 import javax.swing.JPanel;
 
@@ -24,6 +22,7 @@ import game.panels.PanGame;
 import graphicEngine.calcul.Camera;
 import graphicEngine.calcul.Point3D;
 import server.Server;
+import server.ServerDescription;
 import server.game.GameMode;
 import server.game.Player;
 import server.game.messages.Message;
@@ -94,9 +93,14 @@ public class Game extends Environment3D implements Displayable {
 
 	// =========================================================================================================================
 
-	public Game(Fen fen, InetAddress inetAdr) {
+	public Game(Fen fen, Server server) {
+		this(fen, server.getDescription());
+		this.server = server;
+	}
+
+	public Game(Fen fen, ServerDescription description) {
 		this.fen = fen;
-		client = new Client(this, inetAdr);
+		client = new Client(this, description);
 
 		// ======================================
 
@@ -127,17 +131,12 @@ public class Game extends Environment3D implements Displayable {
 	// =========================================================================================================================
 
 	public static Game startLocalServer(Fen fen) {
-		try {
-			Server server = new Server();
-			server.start();
-			// Game game = new Game(fen, InetAddress.getLocalHost());
-			Game game = new Game(fen, InetAddress.getByName("0.0.0.0"));
-			game.server = server;
-			return game;
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		}
-		return null;
+		Server server = new Server();
+		server.start();
+
+		Game game = new Game(fen, server);
+
+		return game;
 	}
 
 	public void connexionLost(String errorMsg) {

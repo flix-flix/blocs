@@ -13,6 +13,9 @@ public interface Displayable {
 	public Cursor getCursor();
 
 	public KeyBoard getKeyBoard();
-	
+
 	public void stop();
+
+	public default void resume() {
+	}
 }

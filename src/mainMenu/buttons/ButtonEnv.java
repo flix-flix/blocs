@@ -25,14 +25,14 @@ import graphicEngine.calcul.Camera;
 import graphicEngine.calcul.Engine;
 import graphicEngine.calcul.Point3D;
 import mainMenu.MainMenu;
-import mainMenu.MainMenu.MainMenuAction;
+import mainMenu.MainMenuAction;
 import server.game.Player;
 
 public class ButtonEnv extends PanEnvironment {
 	private static final long serialVersionUID = -7013365965777831831L;
 
-	MainMenu main;
-	MainMenuAction action;
+	private MainMenu main;
+	private MainMenuAction action;
 
 	// =============== Text ===============
 	private String text;
@@ -51,7 +51,7 @@ public class ButtonEnv extends PanEnvironment {
 
 		refreshLang();
 
-		addMouseListener(new MouseListener() {
+		this.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
 			}
@@ -82,7 +82,7 @@ public class ButtonEnv extends PanEnvironment {
 		super.paintComponent(g);
 
 		g.setFont(font);
-		g.setColor(action == MainMenuAction.PLAY ? Color.BLACK : Color.LIGHT_GRAY);
+		g.setColor(action == MainMenuAction.EDITOR ? Color.LIGHT_GRAY : Color.BLACK);
 		g.drawString(text, getWidth() / 2 - fm.stringWidth(text) / 2, getHeight() - 25);
 
 		g.setColor(Color.WHITE);
@@ -106,19 +106,30 @@ public class ButtonEnv extends PanEnvironment {
 		env.stop();
 	}
 
+	public void setPaused(boolean paused) {
+		env.setPaused(paused);
+	}
+
 	// =========================================================================================================================
 
 	public void refreshLang() {
-		text = ItemTableClient.getText("main_menu." + action.name().toLowerCase());
+		text = ItemTableClient.getText("main_menu.buttons." + action.name().toLowerCase());
 	}
 
 	// =========================================================================================================================
 
 	public static ButtonEnv generateButton(MainMenu main, MainMenuAction action) {
+		Env env;
 		if (action == MainMenuAction.PLAY)
-			return generateEnvPlay(main).getPanel();
+			env = generateEnvPlay(main);
+		else if (action == MainMenuAction.SERVER)
+			env = generateEnvServer(main);
+		else
+			env = generateEnvEditor(main);
 
-		return generateEnvEditor(main).getPanel();
+		env.FPSmax = 1;
+
+		return env.getPanel();
 	}
 
 	// =========================================================================================================================
@@ -128,11 +139,10 @@ public class ButtonEnv extends PanEnvironment {
 		Player felix = new Player("");
 
 		int ground = 2;
-		int size = 35;
 
 		// ========== Ground and Borders ==========
-		for (int x = 0; x < size; x++)
-			for (int z = 0; z < size; z++)
+		for (int x = 0; x < 45; x++)
+			for (int z = 0; z < 25; z++)
 				if (x % 99 == 0 || z % 99 == 0)
 					for (int y = 0; y <= ground + 3; y++)
 						map.add(new Cube(x, y, z, ItemID.BORDER));
@@ -148,31 +158,22 @@ public class ButtonEnv extends PanEnvironment {
 				if (x / 2 + z < 15 || x + z / 2 < 15)
 					map.set(new Cube(x, ground - 1, z, ItemID.DIRT));
 
-		map.add(new Tree(2, ground, 4).getCube());
-		map.add(new Tree(2, ground, 17).getCube());
-		map.add(new Tree(3, ground, 11).getCube());
-		map.add(new Tree(5, ground, 6).getCube());
-		map.add(new Tree(5, ground, 15).getCube());
-		map.add(new Tree(8, ground, 8).getCube());
 		map.add(new Tree(10, ground, 5).getCube());
 		map.add(new Tree(14, ground, 5).getCube());
 		map.add(new Tree(18, ground, 4).getCube());
 
-		// Add multibloc
 		map.add(new Tree(20, ground, 10).getCube());
-
-		// Add shifted multibloc
-		Tree t = new Tree();
-		t.setCoords(25, ground, 10);
-		map.add(t.getCube());
+		map.add(new Tree(25, ground, 10).getCube());
 
 		// =========================================================================================================================
 		// Units
 
 		// Dig
 		for (int i = 10; i < 20; i++)
-			for (int j = 6; j < 15; j++)
+			for (int j = 6; j < 15; j++) {
 				map.remove(i, 1, j);
+				map.add(new Cube(i, 0, j, ItemID.DIRT));
+			}
 
 		// Add Units
 		map.addUnit(new Unit(ItemID.UNIT, felix, 27, ground, 11));
@@ -208,6 +209,63 @@ public class ButtonEnv extends PanEnvironment {
 
 		return new Env(main, map, new Camera(new Point3D(28, ground + 3.1, 16), 238, -30), MainMenuAction.PLAY);
 	}
+
+	// =========================================================================================================================
+
+	private static Env generateEnvServer(MainMenu main) {
+		MapClient map = new MapClient();
+
+		Player felix = new Player("");
+
+		int ground = 2;
+
+		// ========== Ground and Borders ==========
+		for (int x = 0; x < 45; x++)
+			for (int z = 0; z < 25; z++)
+				if (x % 99 == 0 || z % 99 == 0)
+					for (int y = 0; y <= ground + 3; y++)
+						map.add(new Cube(x, y, z, ItemID.BORDER));
+				else {
+					for (int y = 0; y < ground - 1; y++)
+						map.add(new Cube(x, y, z, ItemID.DIRT));
+					map.add(new Cube(x, ground - 1, z, ItemID.GRASS));
+				}
+
+		// ========== Forest ==========
+		for (int x = 1; x < 30; x++)
+			for (int z = 1; z < 30; z++)
+				if (x / 2 + z < 15 || x + z / 2 < 15)
+					map.set(new Cube(x, ground - 1, z, ItemID.DIRT));
+
+		map.add(new Tree(10, ground, 5).getCube());
+		map.add(new Tree(14, ground, 5).getCube());
+		map.add(new Tree(18, ground, 4).getCube());
+		map.add(new Tree(20, ground, 10).getCube());
+		map.add(new Tree(25, ground, 10).getCube());
+
+		map.add(new Tree(20, ground, 3).getCube());
+
+		map.add(new Tree(24, ground, 9).getCube());
+
+		// =========================================================================================================================
+		// Units
+
+		// Add Units
+		map.addUnit(new Unit(ItemID.UNIT, felix, 21, ground, 11));
+		map.addUnit(new Unit(ItemID.UNIT, felix, 21, ground, 12));
+		map.addUnit(new Unit(ItemID.UNIT, felix, 21, ground, 13));
+
+		map.addUnit(new Unit(ItemID.UNIT, felix, 23, ground, 10));
+
+		CubeClient c = map.gridGet(23, ground, 10);
+
+		c.unit.orientation = Orientation.EAST;
+		c.updateFromUnit();
+
+		return new Env(main, map, new Camera(new Point3D(23.5, ground + 2, 17.5), 260, -20), MainMenuAction.SERVER);
+	}
+
+	// =========================================================================================================================
 
 	private static Env generateEnvEditor(MainMenu main) {
 		MapClient map = new MapClient();

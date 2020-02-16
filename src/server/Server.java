@@ -1,9 +1,11 @@
 package server;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.TreeMap;
 
 import data.dynamic.TickClock;
@@ -17,23 +19,37 @@ import server.game.Player;
 import server.game.messages.Message;
 import server.game.messages.TypeMessage;
 import server.send.SendAction;
+import utils.FlixBlocksUtils;
 
 public class Server implements Runnable {
 
 	public static final int defaultPort = 1212;
 
-	ServerSocket server;
-	boolean run = true;
+	private ServerDescription description;
 
-	TreeMap<Integer, ClientListener> clients = new TreeMap<>();
+	private ServerSocket server;
+	private boolean run = true;
 
-	// =========================================================================================================================
+	private TreeMap<Integer, ClientListener> clients = new TreeMap<>();
 
+	// =============== Data ===============
 	MapServer map;
 
 	// =========================================================================================================================
 
-	public Server(int port) {
+	public Server(int port, String name) {
+		String ip = "0.0.0.0";
+		try {
+			ip = InetAddress.getLocalHost().toString();
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
+
+		if (ip.contains("/"))
+			ip = ip.substring(ip.indexOf('/') + 1);
+
+		this.description = new ServerDescription(ip, port, name, this);
+
 		try {
 			server = new ServerSocket(port);
 		} catch (IOException e) {
@@ -46,6 +62,10 @@ public class Server implements Runnable {
 		clock.add(map);
 
 		clock.start();
+	}
+
+	public Server(int port) {
+		this(port, "Default Name");
 	}
 
 	public Server() {
@@ -108,6 +128,10 @@ public class Server implements Runnable {
 			client.send(obj);
 	}
 
+	public void sendToAllSeeing(Object obj) {
+
+	}
+
 	public void sendToPlayer(Object obj, int id) {
 		clients.get(id).send(obj);
 	}
@@ -122,13 +146,13 @@ public class Server implements Runnable {
 		else if (obj instanceof SendAction)
 			receiveSend((SendAction) obj, id);
 		else
-			System.err.println("UNKNOWN OBJECT");
+			FlixBlocksUtils.debug("[RECEIVE] Unknown object");
 	}
 
 	// =========================================================================================================================
 
 	public void receiveSend(SendAction send, int id) {
-		System.out.println(send.action);
+		System.out.println("[RECEIVE] " + send.action);
 		switch (send.action) {
 		case UNIT_GOTO:
 			map.getUnit(send.id1).goTo(map, send.coord);
@@ -186,5 +210,11 @@ public class Server implements Runnable {
 
 	public void unitStore(Unit unit, Building build) {
 		sendToAll(SendAction.store(unit, build).finished());
+	}
+
+	// =========================================================================================================================
+
+	public ServerDescription getDescription() {
+		return description;
 	}
 }

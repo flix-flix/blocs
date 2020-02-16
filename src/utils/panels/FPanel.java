@@ -73,7 +73,7 @@ public class FPanel extends JPanel {
 			}
 		});
 
-		addComponentListener(new ComponentListener() {
+		this.addComponentListener(new ComponentListener() {
 			@Override
 			public void componentShown(ComponentEvent e) {
 			}
@@ -214,9 +214,9 @@ public class FPanel extends JPanel {
 	}
 
 	// =========================================================================================================================
-	// Draw
+	// Draw Centered
 
-	protected void drawCenteredRect(Graphics g, int ext) {
+	protected void fillCenteredRect(Graphics g, int ext) {
 		g.fillRect(ext, ext, getWidth() - 1 - 2 * ext, getHeight() - 1 - 2 * ext);
 	}
 
@@ -227,6 +227,17 @@ public class FPanel extends JPanel {
 
 	protected void drawEmptyCenteredRect(Graphics g, int ext, int thickness) {
 		drawEmptyRect(g, ext, ext, getWidth() - 1 - 2 * ext, getHeight() - 1 - 2 * ext, thickness);
+	}
+
+	// =========================================================================================================================
+
+	protected void drawCenteredRect(Graphics g, int centerX, int centerY, int radius, int thickness) {
+		for (int i = 0; i < thickness; i++)
+			g.drawRect(centerX - radius - i, centerY - radius - i, (radius + i) * 2, (radius + i) * 2);
+	}
+
+	protected void fillCenteredRoundRect(Graphics g, int centerX, int centerY, int radius, int round) {
+		g.fillRoundRect(centerX - radius, centerY - radius, radius * 2, radius * 2, round, round);
 	}
 
 	// =========================================================================================================================
@@ -269,8 +280,19 @@ public class FPanel extends JPanel {
 	// =========================================================================================================================
 	// Utils
 
+	/**
+	 * Call setLocation() to make the bottom right corner of this panel at the given
+	 * coordinates
+	 */
 	public void setBottomRightCorner(int x, int y) {
 		setLocation(x - getWidth(), y - getHeight());
+	}
+
+	/**
+	 * Call setLocation() to make the center of this panel at the given coordinates
+	 */
+	public void setCenter(int x, int y) {
+		setLocation(x - getWidth() / 2, y - getHeight() / 2);
 	}
 
 	// =========================================================================================================================

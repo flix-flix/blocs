@@ -1,11 +1,12 @@
 package mainMenu.buttons;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 
 import mainMenu.MainMenu;
-import mainMenu.MainMenu.MainMenuAction;
+import mainMenu.MainMenuAction;
 import utils.FlixBlocksUtils;
 import utils.panels.ClickListener;
 import utils.panels.FButton;
@@ -28,13 +29,17 @@ public class ButtonAction extends FButton {
 	public ButtonAction(MainMenu main, MainMenuAction action) {
 		this.action = action;
 
-		if (action == MainMenuAction.QUIT)
+		if (action == MainMenuAction.QUIT || action == MainMenuAction.SERVER_QUIT)
 			setImage(quit);
 		else if (action == MainMenuAction.OPTIONS)
 			setImage(options);
 		else if (action == MainMenuAction.DATA_MANAGER) {
 			setImage(data);
 			setBorder(9, Color.DARK_GRAY);
+
+			setText("Data Manager");
+			setFont(new Font("arial", Font.BOLD, 35));
+			setForeground(Color.BLACK);
 		}
 
 		setClickListener(new ClickListener() {
@@ -56,6 +61,6 @@ public class ButtonAction extends FButton {
 			g.setColor(Color.DARK_GRAY);
 			drawEmptyCenteredRect(g, margin + 1, border - 2);
 		} else
-			super.paintBorder(g);
+			super.paintBorder(g, margin, border);
 	}
 }

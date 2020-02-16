@@ -19,6 +19,10 @@ public class SendAction implements Serializable {
 
 	// =========================================================================================================================
 
+	private SendAction(Action action) {
+		this.action = action;
+	}
+
 	private SendAction(Action action, Cube cube) {
 		this.action = action;
 		this.cube = cube;
@@ -51,6 +55,17 @@ public class SendAction implements Serializable {
 	public SendAction finished() {
 		done = true;
 		return this;
+	}
+
+	// =========================================================================================================================
+	// Server
+
+	public static SendAction getServerName() {
+		return new SendAction(Action.SERVER_NAME);
+	}
+
+	public static SendAction getServerNbPlayers() {
+		return new SendAction(Action.SERVER_NB_PLAYERS);
 	}
 
 	// =========================================================================================================================

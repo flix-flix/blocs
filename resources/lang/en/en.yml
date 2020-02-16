@@ -48,6 +48,8 @@ tips:
             pick_color: With the pencil, maintain "Ctrl" to pick up the color of the selected case
             zoom: Use the mouse wheel to zoom in/zoom out
             line_square: With the pencil, maintain "Shift" to draw a line. "Shift + Ctrl" to fill a square
+            undo: Use "Ctrl+Z" to undo the last modification and "Ctrl+Y" to redo it
+            
         calk:
             apply: Press "Enter" to apply the calk
             delete: Press "Esc" to delete the calk
@@ -99,5 +101,23 @@ text:
             miniature: Preview
     
     main_menu:
-        play: Play
-        editor: Editor
+        buttons:
+            play: Play
+            editor: Editor
+            server: Servers
+            data_manager: Data Manager
+        server:
+            hosted: HOSTED
+            known: KNOWN
+            none: NONE
+            start: START
+            stop: STOP
+            add: ADD
+            delete: DELETE
+            join: JOIN
+            
+            valid: Valid
+            cancel: Cancel
+            name: Name
+            ip: IP
+            port: Port
