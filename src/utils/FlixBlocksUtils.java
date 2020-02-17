@@ -128,9 +128,8 @@ public class FlixBlocksUtils {
 	// Debug
 
 	public static void debugBefore(String str) {
-		System.err.print(str);
-		System.err.println(" (" + Thread.currentThread().getStackTrace()[3].getFileName() + ":"
-				+ Thread.currentThread().getStackTrace()[3].getLineNumber() + ")");
+		StackTraceElement stack = Thread.currentThread().getStackTrace()[3];
+		System.err.println(String.format("%s (%s:%d)", str, stack.getFileName(), stack.getLineNumber()));
 	}
 
 	public static void debug(String str) {

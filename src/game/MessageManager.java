@@ -3,7 +3,6 @@ package game;
 import java.util.ArrayList;
 
 import server.game.messages.Message;
-import server.game.messages.TypeMessage;
 
 public class MessageManager {
 
@@ -162,24 +161,9 @@ public class MessageManager {
 
 	// =========================================================================================================================
 
-	public void addConsoleMsg(String text) {
-		messagesPrinted.add(new Message(text, TypeMessage.CONSOLE));
-	}
-
-	public void addTextMsg(String text) {
-		messagesPrinted.add(new Message(text));
-	}
-
-	public void addErrorMsg(String text) {
-		messagesPrinted.add(new Message(text, TypeMessage.ERROR));
-	}
-
-	// =========================================================================================================================
-
 	public void saveLine() {
 		if (history.isEmpty() || !msg.equals(history.get(history.size() - 1)))
 			history.add(msg);
-
 	}
 
 	public void clearLine() {

@@ -35,12 +35,12 @@ public class Message implements Serializable {
 		switch (type) {
 		case AUTHOR:
 			return author.getName() + " : " + text;
+		case CONSOLE:
+			// return "[Console] " + text;
+		case ERROR:
+			// return "[Error] " + text;
 		case TEXT:
 			return text;
-		case CONSOLE:
-			return "[Console] " + text;
-		case ERROR:
-			return "[Error] " + text;
 		default:
 			return "Error during message retranscription";
 		}

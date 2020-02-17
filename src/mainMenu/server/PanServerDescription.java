@@ -78,6 +78,8 @@ public class PanServerDescription extends FButton {
 		});
 
 		this.add(stop);
+
+		refreshLang();
 	}
 
 	// =========================================================================================================================
@@ -101,8 +103,11 @@ public class PanServerDescription extends FButton {
 	// =========================================================================================================================
 
 	public void refreshLang() {
-		join.setText(ItemTableClient.getText("main_menu.server.join"));
-		stop.setText(ItemTableClient.getText("main_menu.server." + (description.server == null ? "delete" : "stop")));
+		if (join != null)
+			join.setText(ItemTableClient.getText("main_menu.server.join"));
+		if (stop != null)
+			stop.setText(
+					ItemTableClient.getText("main_menu.server." + (description.server == null ? "delete" : "stop")));
 
 		refreshLocation();
 	}

@@ -1,5 +1,6 @@
-package server;
+package server.model;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -10,19 +11,19 @@ public class ClientListener implements Runnable {
 
 	private static int nextID = 0;
 
-	private int id;
+	protected int id;
 
-	Server server;
-	Socket client;
-	ObjectInputStream in;
-	ObjectOutputStream out;
+	private ServerAbstract server;
+	private Socket client;
+	private ObjectInputStream in;
+	private ObjectOutputStream out;
 
 	private Thread thread;
 	private boolean run = true;
 
 	// =========================================================================================================================
 
-	public ClientListener(Server server, Socket client) {
+	public ClientListener(ServerAbstract server, Socket client) {
 		this.server = server;
 		this.client = client;
 		this.id = nextID++;
@@ -43,7 +44,7 @@ public class ClientListener implements Runnable {
 			try {
 				server.receive(in.readObject(), id);
 			} catch (IOException e) {
-				if (e instanceof SocketException)
+				if (e instanceof SocketException || e instanceof EOFException)
 					stop();
 				else
 					e.printStackTrace();
@@ -53,15 +54,27 @@ public class ClientListener implements Runnable {
 		}
 	}
 
+	// =========================================================================================================================
+
 	public void start() {
 		thread = new Thread(this);
 		thread.setName("ClientListner [" + id + "]");
 		thread.start();
 	}
 
+	/** Called when client quit */
 	public void stop() {
 		run = false;
 		server.stop(id);
+	}
+
+	/** Close the stream */
+	public void close() {
+		try {
+			client.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	// =========================================================================================================================
@@ -93,5 +106,4 @@ public class ClientListener implements Runnable {
 	public int getID() {
 		return id;
 	}
-
 }

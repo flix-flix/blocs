@@ -22,6 +22,7 @@ import game.panels.menus.PanMap;
 import game.panels.menus.infos.PanInfos;
 import game.tips.TipGame;
 import server.game.messages.Message;
+import server.game.messages.TypeMessage;
 import utils.FlixBlocksUtils;
 import utils.panels.ClickListener;
 import utils.panels.FButton;
@@ -45,6 +46,7 @@ public class PanGame extends PanEnvironment {
 
 	// =============== Dialog ===============
 	private Font dialogFont = new Font("monospace", Font.BOLD, 18);
+	private final static Color RED = new Color(255, 150, 0);
 
 	/** Previous messages to display */
 	public Message[] messages = new Message[10];
@@ -156,7 +158,8 @@ public class PanGame extends PanEnvironment {
 			}
 		});
 		quitButton.setText(ItemTableClient.getText("game.error.buttonQuit"));
-		quitButton.setBorder(2, Color.BLACK);
+		quitButton.setColor(Color.DARK_GRAY, Color.LIGHT_GRAY, 2, Color.LIGHT_GRAY);
+		quitButton.setInColor(Color.GRAY, Color.DARK_GRAY, Color.DARK_GRAY);
 		quitButton.setSize(300, 75);
 		quitButton.setVisible(false);
 		add(quitButton);
@@ -178,17 +181,16 @@ public class PanGame extends PanEnvironment {
 		int centerW = width / 2;
 		int centerH = height / 2;
 
-		if (game.stateHUD == StateHUD.ERROR) {
+		if (game.getStateHUD() == StateHUD.ERROR) {
 			g.setColor(new Color(236, 135, 15)); // Orange
 			g.fillRect(0, 0, width, height);
 
-			g.setColor(Color.LIGHT_GRAY);
+			g.setColor(Color.DARK_GRAY);
 			g.setFont(fontError);
 
 			int textW = fmError.stringWidth(game.errorMsg);
-			int textH = (int) fm.getStringBounds(game.errorMsg, g).getHeight();
 
-			g.drawString(game.errorMsg, centerW - textW / 2 + 10, centerH + textH / 2 - 20);
+			g.drawString(game.errorMsg, centerW - textW / 2 + 10, centerH - 25);
 
 			return;
 		}
@@ -204,9 +206,10 @@ public class PanGame extends PanEnvironment {
 			int textW = (int) (fontLoading.getStringBounds(loadingText, frc).getWidth());
 			int textH = (int) (fontLoading.getStringBounds(loadingText, frc).getHeight());
 
-			g.setColor(Color.LIGHT_GRAY);
+			g.setColor(Color.DARK_GRAY);
 			g.setFont(fontLoading);
 			g.drawString(loadingText, centerW + menuWidth / 2 - textW / 2 + 10, centerH + textH / 2 - 20);
+			g.setColor(Color.LIGHT_GRAY);
 			g.setFont(fontLoadingError);
 			g.drawString(loadingTextError, centerW + menuWidth / 2 - fmLoadingError.stringWidth(loadingTextError) / 2,
 					centerH + textH / 2 + 20);
@@ -225,7 +228,7 @@ public class PanGame extends PanEnvironment {
 			}
 
 			// =============== Dialog Display ===============
-			if (game.stateHUD == StateHUD.DIALOG) {
+			if (game.getStateHUD() == StateHUD.DIALOG) {
 				int grayBack = 120;
 				Color colorBack = new Color(grayBack, grayBack, grayBack, 200);
 				Color colorMsg = Color.WHITE;
@@ -265,9 +268,10 @@ public class PanGame extends PanEnvironment {
 				g.fillRect(startW, height - 100 - 10 - 30 * nbMsg, msgBackWidth, 30 * nbMsg);
 
 				// Text
-				g.setColor(colorMsg);
-				for (int i = 0; i < nbMsg; i++)
+				for (int i = 0; i < nbMsg; i++) {
+					g.setColor(getColor(messages[i].getType()));
 					g.drawString(messages[i].toMessage(), startW + 5, height - 100 + 20 - 10 - (nbMsg - i) * 30);
+				}
 			}
 		}
 
@@ -275,6 +279,21 @@ public class PanGame extends PanEnvironment {
 		g.setColor(Color.WHITE);
 		g.setFont(fontWIP);
 		g.drawString(wip, getWidth() - fm.stringWidth(wip) - 10, getHeight() - 10);
+	}
+
+	// =========================================================================================================================
+
+	private Color getColor(TypeMessage type) {
+		switch (type) {
+		case ERROR:
+			return RED;
+		case CONSOLE:
+			return Color.LIGHT_GRAY;
+		case AUTHOR:
+		case TEXT:
+		default:
+			return Color.WHITE;
+		}
 	}
 
 	// =========================================================================================================================
@@ -335,8 +354,8 @@ public class PanGame extends PanEnvironment {
 
 	public void error() {
 		setGUIVisible(false);
-		System.out.println(quitButton.getBounds());
 		quitButton.setVisible(true);
+		FlixBlocksUtils.debug("Error: " + game.errorMsg);
 
 		repaint();
 	}
@@ -369,6 +388,6 @@ public class PanGame extends PanEnvironment {
 		menu.setSize(menuWidth, height);
 		help.setLocation(menuWidth + 25, getHeight() - help.getHeight() - 35);
 
-		quitButton.setLocation(getWidth() / 2 - quitButton.getWidth() / 2, getHeight() / 2 + 75);
+		quitButton.setLocation(getWidth() / 2 - quitButton.getWidth() / 2, getHeight() / 2);
 	}
 }

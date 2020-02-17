@@ -1,9 +1,11 @@
 package server;
 
+import server.model.ServerAbstract;
+
 public class ServerDescription {
 
 	/** Null if not local server */
-	public Server server;
+	public ServerAbstract server;
 
 	public String ip = "192.168.0.16";
 	public int port = 1212;
@@ -22,7 +24,7 @@ public class ServerDescription {
 		this.name = name;
 	}
 
-	public ServerDescription(String ip, int port, String name, Server server) {
+	public ServerDescription(String ip, int port, String name, ServerAbstract server) {
 		this(ip, port, name);
 		this.server = server;
 	}

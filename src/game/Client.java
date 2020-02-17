@@ -1,5 +1,6 @@
 package game;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -60,8 +61,9 @@ public class Client implements Runnable {
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
-				if (e instanceof SocketException) {
-					game.connexionLost(ItemTableClient.getText("game.error.connexionLost"));
+				if (e instanceof SocketException || e instanceof EOFException) {
+					if (run)
+						game.connexionLost(ItemTableClient.getText("game.error.connexionLost"));
 					break;
 				}
 				e.printStackTrace();
@@ -71,7 +73,13 @@ public class Client implements Runnable {
 
 	// =========================================================================================================================
 
-	public void stop() {
+	public void close() {
 		run = false;
+
+		try {
+			server.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

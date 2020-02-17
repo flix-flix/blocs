@@ -113,7 +113,7 @@ public class KeyboardGame extends KeyboardEnvironment3D {
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		if (game.stateHUD == StateHUD.PAUSE) {
+		if (game.getStateHUD() == StateHUD.PAUSE) {
 			if (Key.get(e.getKeyCode()) != null)
 				switch (Key.get(e.getKeyCode())) {
 				case PAUSE:
@@ -122,7 +122,7 @@ public class KeyboardGame extends KeyboardEnvironment3D {
 				default:
 					break;
 				}
-		} else if (game.stateHUD == StateHUD.DIALOG) {
+		} else if (game.getStateHUD() == StateHUD.DIALOG) {
 			if (Key.get(e.getKeyCode()) != null)
 				switch (Key.get(e.getKeyCode())) {
 				case PAUSE:
@@ -132,7 +132,7 @@ public class KeyboardGame extends KeyboardEnvironment3D {
 				case VALID:
 					game.messages.send();
 					game.keyboard.mouseToCenter();
-					game.stateHUD = StateHUD.GAME;
+					game.setStateHUD(StateHUD.GAME);
 					break;
 				case DEL:
 					game.messages.deletePrevious();
@@ -178,7 +178,7 @@ public class KeyboardGame extends KeyboardEnvironment3D {
 			if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9')
 					|| " \\/(){}[]+-:;,!?#|&\"'_²@=<>%.*^$£€".contains("" + c))
 				game.messages.write(c);
-		} else if (game.stateHUD == StateHUD.GAME) {
+		} else if (game.getStateHUD() == StateHUD.GAME) {
 			super.keyPressed(e);
 
 			if (Key.get(e.getKeyCode()) != null)
@@ -227,6 +227,6 @@ public class KeyboardGame extends KeyboardEnvironment3D {
 	// =========================================================================================================================
 
 	public void dialog() {
-		game.stateHUD = StateHUD.DIALOG;
+		game.setStateHUD(StateHUD.DIALOG);
 	}
 }

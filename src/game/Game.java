@@ -77,7 +77,7 @@ public class Game extends Environment3D implements Displayable {
 	public int ticksPhys;
 
 	/** State of the window [GAME, PAUSE, DIALOG, ...] */
-	public StateHUD stateHUD = StateHUD.GAME;
+	private StateHUD stateHUD = StateHUD.GAME;
 
 	// =============== Adding ===============
 	public String errorMsg = "UNKNOWN";
@@ -166,6 +166,8 @@ public class Game extends Environment3D implements Displayable {
 
 		keyboard.stop();
 		clock.stop();
+
+		client.close();
 
 		if (server != null)
 			server.stop();
@@ -328,6 +330,11 @@ public class Game extends Environment3D implements Displayable {
 		}
 
 		keyboard.setTargetOnMouse();
+		fen.requestFocusInWindow();
+	}
+
+	public void exit() {
+		fen.returnToMainMenu();
 	}
 
 	// =========================================================================================================================
@@ -478,6 +485,15 @@ public class Game extends Environment3D implements Displayable {
 
 	public Target getTarget() {
 		return target;
+	}
+
+	public StateHUD getStateHUD() {
+		return stateHUD;
+	}
+
+	public void setStateHUD(StateHUD stateHUD) {
+		panel.help.setVisible(stateHUD != StateHUD.DIALOG);
+		this.stateHUD = stateHUD;
 	}
 
 	// =========================================================================================================================

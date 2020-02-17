@@ -43,7 +43,6 @@ public class PanPause extends PopUp {
 			public void leftClick() {
 				close();
 				game.resume();
-				game.fen.requestFocusInWindow();
 			}
 		});
 		options.setClickListener(new ClickListener() {
@@ -54,7 +53,7 @@ public class PanPause extends PopUp {
 		saveQuit.setClickListener(new ClickListener() {
 			@Override
 			public void leftClick() {
-				game.fen.returnToMainMenu();
+				game.exit();
 			}
 		});
 	}

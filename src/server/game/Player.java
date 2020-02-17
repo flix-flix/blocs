@@ -9,6 +9,7 @@ public class Player implements Serializable {
 	private static final long serialVersionUID = -3099767464576186554L;
 
 	private String name;
+	public int id = -1;
 
 	private int wood = 0;
 	private int stone = 0;
@@ -20,6 +21,12 @@ public class Player implements Serializable {
 
 	public Player(String name) {
 		this.name = name;
+	}
+
+	// =========================================================================================================================
+
+	public void setID(int id) {
+		this.id = id;
 	}
 
 	// =========================================================================================================================
