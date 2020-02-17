@@ -217,6 +217,7 @@ public class DrawLayer {
 							getPoint2D(engine, size, data.col2, data.row1, data.fly), data.color, true));
 					break;
 				case LINE:
+					// TODO [Improve] Long line are in front and behind the camera (point in (0,0))
 					quadris.add(new Quadri(getPoint2D(engine, size, data.col1, data.row1, data.fly),
 							getPoint2D(engine, size, data.col2, data.row2, data.fly), data.color));
 					break;

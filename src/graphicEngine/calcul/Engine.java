@@ -216,23 +216,34 @@ public class Engine {
 		if (q.isLine())
 			drawLine(q.line, q.color);
 
-		else if (q.fill)
-			for (int row = yInScreen(q.getTop()); row <= yInScreen(q.getBottom()); row++)
-				for (int col = xInScreen(q.getLeft(row)); col <= xInScreen(q.getRight(row)); col++)
-					setPixel(col, row, q.color);
+		else if (q.fill) {
+			int bottom = yInScreen(q.getBottom());
+			int right;
 
-		else
+			for (int row = yInScreen(q.getTop()); row <= bottom; row++) {
+				right = xInScreen(q.getRight(row));
+				for (int col = xInScreen(q.getLeft(row)); col <= right; col++)
+					setPixel(col, row, q.color);
+			}
+
+		} else
 			for (Line l : q.lines)
 				drawLine(l, q.color);
 	}
 
 	private void drawLine(Line l, int color) {
-		if (l.max < 0 || l.min >= imgHeight)
+		if (l.max <= 0 || l.min >= imgHeight)
 			return;
 
-		for (int row = yInScreen(l.min); row <= yInScreen(l.max); row++)
-			for (int col = xInScreen(l.getLeft(row)); col <= xInScreen(l.getRight(row)); col++)
-				setPixel(col, row, color);
+		int max = yInScreen(l.max);
+		int right;
+
+		for (int row = yInScreen(l.min); row <= max; row++)
+			if ((right = l.getRight(row)) >= 0) {
+				right = xInScreen(right);
+				for (int col = xInScreen(l.getLeft(row)); col <= right; col++)
+					setPixel(col, row, color);
+			}
 	}
 
 	// =========================================================================================================================
