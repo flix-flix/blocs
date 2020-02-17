@@ -62,10 +62,12 @@ public class FPanel extends JPanel {
 
 			@Override
 			public void mouseExited(MouseEvent e) {
+				exited();
 			}
 
 			@Override
 			public void mouseEntered(MouseEvent e) {
+				entered();
 			}
 
 			@Override
@@ -147,7 +149,7 @@ public class FPanel extends JPanel {
 
 		// Fill Padding
 		g.setColor(getBackground());
-		drawEmptyCenteredRect(g, margin + border, padding);
+		drawCenteredRect(g, margin + border, padding);
 
 		int undrawn = getUndrawSize();
 		paintCenter(g.create(undrawn, undrawn, getContentWidth(), getContentHeight()));
@@ -157,7 +159,7 @@ public class FPanel extends JPanel {
 
 	protected void paintBorder(Graphics g, int margin, int border) {
 		g.setColor(borderColor);
-		drawEmptyCenteredRect(g, margin, border);
+		drawCenteredRect(g, margin, border);
 	}
 
 	protected void paintCenter(Graphics g) {
@@ -220,24 +222,24 @@ public class FPanel extends JPanel {
 		g.fillRect(ext, ext, getWidth() - 1 - 2 * ext, getHeight() - 1 - 2 * ext);
 	}
 
-	protected void drawEmptyRect(Graphics g, int x, int y, int width, int height, int thickness) {
+	protected void drawRect(Graphics g, int x, int y, int width, int height, int thickness) {
 		for (int i = 0; i < thickness; i++)
 			g.drawRect(x + i, y + i, width - 2 * i, height - 2 * i);
 	}
 
-	protected void drawEmptyCenteredRect(Graphics g, int ext, int thickness) {
-		drawEmptyRect(g, ext, ext, getWidth() - 1 - 2 * ext, getHeight() - 1 - 2 * ext, thickness);
+	protected void drawCenteredRect(Graphics g, int ext, int thickness) {
+		drawRect(g, ext, ext, getWidth() - 1 - 2 * ext, getHeight() - 1 - 2 * ext, thickness);
 	}
 
 	// =========================================================================================================================
 
-	protected void drawCenteredRect(Graphics g, int centerX, int centerY, int radius, int thickness) {
+	protected void drawCenteredRect(Graphics g, int centerX, int centerY, int width, int height, int thickness) {
 		for (int i = 0; i < thickness; i++)
-			g.drawRect(centerX - radius - i, centerY - radius - i, (radius + i) * 2, (radius + i) * 2);
+			g.drawRect(centerX - width / 2 - i, centerY - height / 2 - i, width + i * 2, height + i * 2);
 	}
 
-	protected void fillCenteredRoundRect(Graphics g, int centerX, int centerY, int radius, int round) {
-		g.fillRoundRect(centerX - radius, centerY - radius, radius * 2, radius * 2, round, round);
+	protected void fillCenteredRoundRect(Graphics g, int centerX, int centerY, int width, int height, int round) {
+		g.fillRoundRect(centerX - width / 2, centerY - height / 2, width, height, round, round);
 	}
 
 	// =========================================================================================================================
@@ -260,6 +262,13 @@ public class FPanel extends JPanel {
 
 	protected int getBorderSize() {
 		return border;
+	}
+
+	/** setBackground(), setForeground() and setBorder() in one function */
+	public void setColor(Color back, Color fore, int size, Color border) {
+		setBackground(back);
+		setForeground(fore);
+		setBorder(size, border);
 	}
 
 	// =========================================================================================================================
@@ -319,7 +328,21 @@ public class FPanel extends JPanel {
 	public void resize() {
 	}
 
+	public void entered() {
+	}
+
+	public void exited() {
+	}
+
 	// =========================================================================================================================
+
+	public void setWidth(int width) {
+		setSize(width, getHeight());
+	}
+
+	public void setHeight(int height) {
+		setSize(getWidth(), height);
+	}
 
 	@Override
 	public void setSize(int width, int height) {

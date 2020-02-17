@@ -87,7 +87,8 @@ public class PanServerDescription extends FButton {
 		super.paintCenter(g);
 
 		g.setColor(Color.GRAY);
-		drawCenteredRect(g, getContentHeight() / 2, getContentHeight() / 2, getContentHeight() / 2 - 10, 5);
+		drawCenteredRect(g, getContentHeight() / 2, getContentHeight() / 2, getContentHeight() - 20,
+				getContentHeight() - 20, 5);
 
 		g.setColor(Color.DARK_GRAY);
 		g.setFont(fontName);

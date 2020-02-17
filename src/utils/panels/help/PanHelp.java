@@ -19,24 +19,27 @@ public class PanHelp extends FPanel {
 	private Font font = new Font("monospace", Font.BOLD, 15);
 	private FontMetrics fm = getFontMetrics(font);
 
-	// ========== Data ==========
+	// =============== Size ===============
 	Mark mark;
 	private int width, circleSize, border, total;
 
-	// ========== ==========
+	// =============== ===============
 	private Image img;
 
 	private boolean active = false;
 
 	private Ellipse2D circle;
 
-	// ========== Tip ==========
+	// =============== Tip ===============
 	private Tip tip;
 	private String tipText;
 	private ArrayList<String> tipLines = null;
 
-	// ========== Arrow ==========
+	// =============== Arrow ===============
 	int widthArrow = 30;
+
+	// =============== Color ===============
+	Color borderColor = Color.GRAY;
 
 	// =========================================================================================================================
 
@@ -56,6 +59,7 @@ public class PanHelp extends FPanel {
 				.getImage("static/" + (mark == Mark.INTERROGATION ? "interrogationMark" : "exclamationMark"));
 
 		setBackground(Color.LIGHT_GRAY);
+		setForeground(Color.WHITE);
 
 		setSize(total, total);
 	}
@@ -77,11 +81,11 @@ public class PanHelp extends FPanel {
 	@Override
 	protected void paintComponent(Graphics g) {
 		if (active) {
-			g.setColor(Color.GRAY);
+			g.setColor(borderColor);
 			g.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, total, total);
 
 			// ========== Tip ==========
-			g.setColor(Color.WHITE);
+			g.setColor(getForeground());
 			g.setFont(font);
 			int lineH = (int) fm.getStringBounds("A", g).getHeight();
 
@@ -102,7 +106,7 @@ public class PanHelp extends FPanel {
 			}
 
 		} else {
-			g.setColor(Color.GRAY);
+			g.setColor(borderColor);
 			g.fillRoundRect(0, 0, total, total, total, total);
 		}
 
@@ -111,6 +115,12 @@ public class PanHelp extends FPanel {
 		g.fillOval(border, border, circleSize, circleSize);
 
 		g.drawImage(img, border * 2, border * 2, circleSize - border * 2, circleSize - border * 2, null);
+	}
+
+	// =========================================================================================================================
+
+	public void setBorderColor(Color borderColor) {
+		this.borderColor = borderColor;
 	}
 
 	// =========================================================================================================================

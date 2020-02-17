@@ -115,8 +115,7 @@ text:
             delete: OUBLIER
             join: REJOINDRE
             
-            valid: Valider
-            cancel: Annuler
+            cancel: ANNULER
             name: Nom
             ip: IP
             port: Port

@@ -17,6 +17,14 @@ public class FButton extends FPanel {
 	// =============== Listener ===============
 	private ClickListener listener;
 
+	// =============== Over ===============
+	/** true : the cursor is in the component */
+	private boolean in = false;
+	/**
+	 * Colors if the cursor is in the component (null : doesn't modify the color)
+	 */
+	private Color inBackColor, inForeColor, inBorderColor;
+
 	// =============== Select ===============
 	private boolean selectable = false;
 	private boolean selected = false;
@@ -70,6 +78,9 @@ public class FButton extends FPanel {
 		if (selected) {
 			g.setColor(selectedColor);
 			g.fillRect(0, 0, w, h);
+		} else if (in && inBackColor != null) {
+			g.setColor(inBackColor);
+			g.fillRect(0, 0, w, h);
 		}
 
 		if (img != null) {
@@ -120,9 +131,21 @@ public class FButton extends FPanel {
 				g.fillRect(x, y - (int) r.getHeight() + 3, (int) r.getWidth(), (int) r.getHeight());
 			}
 
-			g.setColor(getForeground());
+			if (in && inForeColor != null)
+				g.setColor(inForeColor);
+			else
+				g.setColor(getForeground());
 			g.drawString(text, x, y);
 		}
+	}
+
+	@Override
+	protected void paintBorder(Graphics g, int margin, int border) {
+		if (in && inBorderColor != null) {
+			g.setColor(inBorderColor);
+			drawCenteredRect(g, margin, border);
+		} else
+			super.paintBorder(g, margin, border);
 	}
 
 	// =========================================================================================================================
@@ -172,6 +195,12 @@ public class FButton extends FPanel {
 
 	public void setSelectedColor(Color color) {
 		this.selectedColor = color;
+	}
+
+	public void setInColor(Color back, Color fore, Color border) {
+		this.inBackColor = back;
+		this.inForeColor = fore;
+		this.inBorderColor = border;
 	}
 
 	// =========================================================================================================================
@@ -246,5 +275,19 @@ public class FButton extends FPanel {
 	@Override
 	public void resize() {
 		super.resize();
+	}
+
+	@Override
+	public void entered() {
+		super.entered();
+		in = true;
+		repaint();
+	}
+
+	@Override
+	public void exited() {
+		super.exited();
+		in = false;
+		repaint();
 	}
 }

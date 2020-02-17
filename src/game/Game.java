@@ -184,6 +184,9 @@ public class Game extends Environment3D implements Displayable {
 	// =========================================================================================================================
 
 	public void setGameMode(GameMode gameMode) {
+		// Ignore if map isn't loaded
+		if (camera == null)
+			return;
 		this.gameMode = gameMode;
 
 		panel.refreshGUI();
@@ -201,13 +204,16 @@ public class Game extends Environment3D implements Displayable {
 			clearSelected();
 
 			keyboard.setTargetOnMouse();
+			keyboard.setSpeedModifier(2);
 
 			panel.setGUIVisible(true);
 			setCursorVisible(true);
 			break;
 		case CREATIVE:
 			cameraMode = CameraMode.FIRST_PERSON;
+
 			keyboard.mouseToCenter();
+			keyboard.setSpeedModifier(1);
 
 			setCursorVisible(false);
 			panel.setGUIVisible(false);
@@ -307,6 +313,7 @@ public class Game extends Environment3D implements Displayable {
 		keyboard.setPaused(true);
 
 		setCursorVisible(true);
+		setTargetNull();
 
 		panel.pause.setVisible(true);
 	}
@@ -319,8 +326,6 @@ public class Game extends Environment3D implements Displayable {
 			setCursorVisible(false);
 			keyboard.mouseToCenter();
 		}
-
-		panel.pause.setVisible(false);
 
 		keyboard.setTargetOnMouse();
 	}

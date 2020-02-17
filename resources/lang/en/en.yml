@@ -59,7 +59,7 @@ tips:
             camera: Use ~FORWARD, ~LEFT, ~BACKWARD, ~RIGHT to move the point of view and use the mouse wheel to modify the altitude
             user_action: In the top left corner there are 3 buttons allowing to select the wanted action (Select, Add, Remove)
             mouse: The cursor allow to select a resource, a building or an unit. If an unit is selected it's possible to make it move with a right click at the desired destination
-            add: The cube allow to add the selected cube or structure with a right click at the desired location
+            add: The cube allow to add a cube or a structure with a right click at the desired location
             remove: The red cross allow to remove cube or structure with a left click on it
             f3: Press ~DEVLOP to display the graphic engine infos
 
@@ -116,8 +116,7 @@ text:
             delete: DELETE
             join: JOIN
             
-            valid: Valid
-            cancel: Cancel
+            cancel: CANCEL
             name: Name
             ip: IP
             port: Port

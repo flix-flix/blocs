@@ -65,6 +65,8 @@ public class PanServer extends FPanel {
 		// =============== Start/Add Panel ===============
 		panAdd = new PanServerAdd(this);
 		panAdd.setVisible(false);
+		panAdd.setLocation(0, 0);
+		panAdd.setSize(getWidth(), getHeight());
 		add(panAdd);
 
 		// =============== Category ===============
@@ -197,7 +199,7 @@ public class PanServer extends FPanel {
 		}
 		startY += add.getHeight() + space;
 
-		panAdd.setCenter(getWidth() / 2, getHeight() / 2);
+		panAdd.setSize(getWidth(), getHeight());
 
 		quit.setBottomRightCorner(getWidth() - margin, getHeight() - margin);
 

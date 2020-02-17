@@ -39,6 +39,9 @@ public abstract class KeyboardEnvironment3D implements KeyBoard {
 	public boolean forwardKeyEnabled = false, backwardKeyEnabled = false, rightKeyEnabled = false,
 			leftKeyEnabled = false, jumpKeyEnabled = false, sneakKeyEnabled = false, sprintKeyEnabled = false;
 
+	// =============== Options ===============
+	protected int speedModifier = 1;
+
 	// =========================== Infos Dev ===========================
 	/** Ticks count (camera movements/sec) */
 	public int ticks = 0;
@@ -322,16 +325,17 @@ public abstract class KeyboardEnvironment3D implements KeyBoard {
 
 		// Slow down the camera if moving in 2 directions
 		if ((rightKeyEnabled || leftKeyEnabled) && (forwardKeyEnabled || backwardKeyEnabled)) {
-			x *= .5;
-			z *= .5;
+			x /= 1.414;
+			z /= 1.414;
 		}
 
 		// Slow down the camera if not running
 		if (!sprintKeyEnabled) {
-			x *= .3;
-			z *= .3;
+			x *= .2;
+			z *= .2;
 		}
-		camera.move(x, z);
+
+		camera.move(x * speedModifier, z * speedModifier);
 	}
 
 	public double cameraMovementX(double vx, boolean forward, boolean backward, boolean right, boolean left) {
@@ -365,6 +369,10 @@ public abstract class KeyboardEnvironment3D implements KeyBoard {
 	}
 
 	// =========================================================================================================================
+
+	public void setSpeedModifier(int speedModifier) {
+		this.speedModifier = speedModifier;
+	}
 
 	public void setPaused(boolean paused) {
 		this.paused = paused;

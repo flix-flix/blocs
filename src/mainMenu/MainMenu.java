@@ -71,8 +71,8 @@ public class MainMenu extends JPanel implements Displayable {
 		// ========================================================================================
 
 		keys = new PanKeys();
-		keys.setSize(400, getHeight() * 3 / 4);
-		keys.setLocation(getWidth() / 2 - keys.getWidth() / 2, getHeight() / 2 - keys.getHeight() / 2);
+		keys.setSize(getWidth(), getHeight());
+		keys.setLocation(0, 0);
 		this.add(keys);
 
 		// ========================================================================================
@@ -168,7 +168,7 @@ public class MainMenu extends JPanel implements Displayable {
 			fen.setDisplay(new DataManager(fen));
 			break;
 		case OPTIONS:
-			keys.setVisible(!keys.isVisible());
+			keys.setVisible(true);
 			break;
 		case QUIT:
 			System.exit(0);
@@ -282,8 +282,7 @@ public class MainMenu extends JPanel implements Displayable {
 		options.setBottomRightCorner(getWidth() - margin, getHeight() - quit.getHeight() - 2 * margin);
 		quit.setBottomRightCorner(getWidth() - margin, getHeight() - margin);
 
-		keys.setSize(Math.min(500, getWidth() / 2), getHeight() * 3 / 4);
-		keys.setLocation(getWidth() / 2 - keys.getWidth() / 2, getHeight() / 2 - keys.getHeight() / 2);
+		keys.setSize(getWidth(), getHeight());
 	}
 
 	@Override

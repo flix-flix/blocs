@@ -1,87 +1,62 @@
 package game.panels;
 
 import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-
-import javax.swing.JButton;
-import javax.swing.JPanel;
 
 import data.id.ItemTableClient;
 import game.Game;
+import utils.panels.ClickListener;
+import utils.panels.FButton;
+import utils.panels.PopUp;
 
-public class PanPause extends JPanel {
+public class PanPause extends PopUp {
 	private static final long serialVersionUID = 2735034739187347959L;
 
-	private JButton resume, options, saveQuit;
+	private FButton resume, options, saveQuit;
 
 	// =========================================================================================================================
 
 	public PanPause(Game game) {
-		this.setOpaque(false);
-		this.setLayout(null);
 		this.setVisible(false);
+		setRect(500, 700);
+		setBackground(Color.GRAY);
+		setBorder(10, Color.LIGHT_GRAY);
+		setVoile(new Color(90, 90, 90, 150));
 
-		this.addMouseListener(new MouseListener() {
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				e.consume();
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-				e.consume();
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent e) {
-			}
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-			}
-		});
-
-		add(resume = new JButton());
-		add(options = new JButton());
-		add(saveQuit = new JButton());
+		this.add(resume = new FButton());
 		resume.setSize(200, 50);
-		options.setSize(200, 50);
-		saveQuit.setSize(200, 50);
+		resume.setColor(Color.DARK_GRAY, Color.LIGHT_GRAY, 2, Color.LIGHT_GRAY);
+		resume.setInColor(Color.LIGHT_GRAY, Color.DARK_GRAY, Color.DARK_GRAY);
 
-		options.setEnabled(false);
+		this.add(options = new FButton());
+		options.setSize(200, 50);
+		options.setColor(Color.GRAY, Color.LIGHT_GRAY, 2, Color.LIGHT_GRAY);
+
+		this.add(saveQuit = new FButton());
+		saveQuit.setSize(200, 50);
+		saveQuit.setColor(Color.DARK_GRAY, Color.LIGHT_GRAY, 2, Color.LIGHT_GRAY);
+		saveQuit.setInColor(Color.LIGHT_GRAY, Color.DARK_GRAY, Color.DARK_GRAY);
 
 		refreshLang();
 
-		resume.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+		resume.setClickListener(new ClickListener() {
+			@Override
+			public void leftClick() {
+				close();
 				game.resume();
 				game.fen.requestFocusInWindow();
 			}
 		});
-		options.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+		options.setClickListener(new ClickListener() {
+			@Override
+			public void leftClick() {
 			}
 		});
-		saveQuit.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+		saveQuit.setClickListener(new ClickListener() {
+			@Override
+			public void leftClick() {
 				game.fen.returnToMainMenu();
 			}
 		});
-	}
-
-	// =========================================================================================================================
-
-	public void paintComponent(Graphics g) {
-		g.setColor(new Color(90, 90, 90, 90));
-		g.fillRect(0, 0, getWidth() - 1, getHeight() - 1);
 	}
 
 	// =========================================================================================================================

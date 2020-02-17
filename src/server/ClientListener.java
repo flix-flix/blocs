@@ -67,6 +67,18 @@ public class ClientListener implements Runnable {
 	// =========================================================================================================================
 
 	public void send(Object obj) {
+		// Size
+		// ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		// ObjectOutputStream o = null;
+		// try {
+		// o = new ObjectOutputStream(bos);
+		// o.writeObject(obj);
+		// o.flush();
+		// System.out.println(bos.toByteArray().length);
+		// } catch (IOException e) {
+		// e.printStackTrace();
+		// }
+
 		if (run)
 			try {
 				out.writeObject(obj);

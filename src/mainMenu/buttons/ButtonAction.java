@@ -56,10 +56,10 @@ public class ButtonAction extends FButton {
 	protected void paintBorder(Graphics g, int margin, int border) {
 		if (action == MainMenuAction.DATA_MANAGER) {
 			g.setColor(Color.WHITE);
-			drawEmptyCenteredRect(g, margin, 1);
-			drawEmptyCenteredRect(g, margin + border - 1, 1);
+			drawCenteredRect(g, margin, 1);
+			drawCenteredRect(g, margin + border - 1, 1);
 			g.setColor(Color.DARK_GRAY);
-			drawEmptyCenteredRect(g, margin + 1, border - 2);
+			drawCenteredRect(g, margin + 1, border - 2);
 		} else
 			super.paintBorder(g, margin, border);
 	}

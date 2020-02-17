@@ -107,6 +107,10 @@ public class Environment3D {
 		setTarget(panel.envCenterW, panel.envCenterH);
 	}
 
+	public void setTargetNull() {
+		setTarget(-10_000, -10_000);
+	}
+
 	// =========================================================================================================================
 
 	public void targetUpdate() {

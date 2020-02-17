@@ -11,26 +11,33 @@ import mainMenu.MainMenuAction;
 import server.ServerDescription;
 import utils.panels.ClickListener;
 import utils.panels.FButton;
-import utils.panels.FPanel;
+import utils.panels.PopUp;
 
-public class PanServerAdd extends FPanel {
+public class PanServerAdd extends PopUp {
 	private static final long serialVersionUID = 6516568869780458100L;
 
-	private boolean hosted = true;
-
-	private JTextField name, ip;
-
-	private FButton valid, cancel;
+	/** Align (X abscissa) Label and JTextField */
+	private static final int shift = 40;
 
 	private Font font = new Font("monospace", Font.BOLD, 14);
 	private Font fontTextField = new Font("monospace", Font.BOLD, 15);
+
+	/** true: ask user fort port | false : ask user for ip */
+	private boolean hosted = true;
+
+	private JTextField name, ip;
+	private FButton valid, cancel;
 
 	private String textName, textIP, textPort;
 
 	// =========================================================================================================================
 
 	public PanServerAdd(PanServer panel) {
-		this.setSize(500, 500);
+		setRect(500, 500);
+		setBackground(Color.GRAY);
+		setBorder(10, Color.DARK_GRAY);
+		setVoile(new Color(90, 90, 90, 150));
+		setExitOnClick(true);
 
 		name = new JTextField();
 		name.setSize(200, 50);
@@ -48,8 +55,10 @@ public class PanServerAdd extends FPanel {
 		valid.setSize(100, 50);
 		valid.setLocation(getWidth() / 2 - valid.getWidth() - 5, 350);
 		valid.setText("START");
-		valid.setForeground(Color.BLACK);
-		valid.setBackground(Color.LIGHT_GRAY);
+		valid.setForeground(Color.LIGHT_GRAY);
+		valid.setBackground(Color.DARK_GRAY);
+		valid.setBorder(2, Color.LIGHT_GRAY);
+		valid.setInColor(Color.LIGHT_GRAY, Color.DARK_GRAY, Color.DARK_GRAY);
 
 		valid.setClickListener(new ClickListener() {
 			@Override
@@ -70,9 +79,7 @@ public class PanServerAdd extends FPanel {
 						panel.main.clickServer(MainMenuAction.SERVER_ADD, descritpion);
 					}
 
-					name.setText("");
-					ip.setText("");
-					setVisible(false);
+					close();
 				} catch (NumberFormatException e) {
 				}
 			}
@@ -84,15 +91,15 @@ public class PanServerAdd extends FPanel {
 		cancel.setSize(100, 50);
 		cancel.setLocation(getWidth() / 2 + 5, 350);
 		cancel.setText("CANCEL");
-		cancel.setForeground(Color.BLACK);
-		cancel.setBackground(Color.LIGHT_GRAY);
+		cancel.setForeground(Color.LIGHT_GRAY);
+		cancel.setBackground(Color.DARK_GRAY);
+		cancel.setBorder(2, Color.LIGHT_GRAY);
+		cancel.setInColor(Color.LIGHT_GRAY, Color.DARK_GRAY, Color.DARK_GRAY);
 
 		cancel.setClickListener(new ClickListener() {
 			@Override
 			public void leftClick() {
-				name.setText("");
-				ip.setText("");
-				setVisible(false);
+				close();
 			}
 		});
 
@@ -103,16 +110,13 @@ public class PanServerAdd extends FPanel {
 
 	@Override
 	public void paintComponent(Graphics g) {
-		g.setColor(Color.DARK_GRAY);
-		fillCenteredRoundRect(g, getWidth() / 2, getHeight() / 2, 250, 100);
-		g.setColor(Color.GRAY);
-		fillCenteredRoundRect(g, getWidth() / 2, getHeight() / 2, 250 - 5, 100);
+		super.paintComponent(g);
 
 		g.setFont(font);
-		g.setColor(Color.LIGHT_GRAY);
-		g.drawString(textName + ": ", getWidth() / 2 - 100, 130);
+		g.setColor(Color.WHITE);
 
-		g.drawString((hosted ? textPort : textIP) + ": ", getWidth() / 2 - 100, 230);
+		g.drawString(textName + ": ", getWidth() / 2 - 100 - shift, getHeight() / 2 - 120);
+		g.drawString((hosted ? textPort : textIP) + ": ", getWidth() / 2 - 100 - shift, getHeight() / 2 - 20);
 	}
 
 	// =========================================================================================================================
@@ -137,12 +141,23 @@ public class PanServerAdd extends FPanel {
 	// =========================================================================================================================
 
 	@Override
+	public void close() {
+		super.close();
+
+		name.setText("");
+		ip.setText("");
+	}
+
+	// =========================================================================================================================
+
+	@Override
 	public void resize() {
 		super.resize();
 
-		if (valid == null)
-			return;
-		valid.setLocation(getWidth() / 2 - valid.getWidth() - 5, 300);
-		cancel.setLocation(getWidth() / 2 + 5, 300);
+		name.setLocation(getWidth() / 2 - 50 - shift, getHeight() / 2 - 150);
+		ip.setLocation(getWidth() / 2 - 50 - shift, getHeight() / 2 - 50);
+
+		valid.setLocation(getWidth() / 2 - valid.getWidth() - 5, getHeight() / 2 + 100);
+		cancel.setLocation(getWidth() / 2 + 5, getHeight() / 2 + 100);
 	}
 }

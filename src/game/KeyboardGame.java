@@ -21,6 +21,7 @@ public class KeyboardGame extends KeyboardEnvironment3D {
 	public KeyboardGame(Game game) {
 		super(game.fen, game);
 		this.game = game;
+		setSpeedModifier(2);
 	}
 
 	// =========================================================================================================================

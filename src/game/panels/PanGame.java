@@ -110,13 +110,14 @@ public class PanGame extends PanEnvironment {
 		// Like this.env but already casted
 		this.game = game;
 
-		pause = new PanPause(game);
-		this.add(pause);
+		this.add(pause = new PanPause(game));
 
 		// ========================================================================================
 
 		help = new PanHelp(Mark.INTERROGATION, 700, 80, 10, TipGame.values()[0]);
 		help.setBackground(new Color(0xff4068c4));
+		help.setBorderColor(Color.LIGHT_GRAY);
+		help.setForeground(Color.DARK_GRAY);
 		help.setLocation(menuWidth + 25, getHeight() - 25);
 		this.add(help);
 
@@ -209,7 +210,6 @@ public class PanGame extends PanEnvironment {
 			g.setFont(fontLoadingError);
 			g.drawString(loadingTextError, centerW + menuWidth / 2 - fmLoadingError.stringWidth(loadingTextError) / 2,
 					centerH + textH / 2 + 20);
-
 		}
 
 		// =========================================================================================================================

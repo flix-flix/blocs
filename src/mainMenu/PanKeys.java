@@ -1,32 +1,38 @@
 package mainMenu;
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.util.TreeMap;
 
 import utils.panels.FPanel;
 import utils.panels.PanGrid;
+import utils.panels.PopUp;
 import window.Key;
 
-public class PanKeys extends FPanel {
+public class PanKeys extends PopUp {
 	private static final long serialVersionUID = 7036782098855756010L;
 
 	private TreeMap<Key, PanKey> panels = new TreeMap<>();
 
 	private PanGrid grid = new PanGrid();
-
-	private int margin = 50;
-
 	FPanel menu;
 
 	Key clicked = null;
 
+	private int margin = 50;
+
 	// =========================================================================================================================
 
 	public PanKeys() {
+		setRect(500, 700);
+		setBackground(Color.GRAY);
+		setBorder(10, Color.DARK_GRAY);
+		setVoile(new Color(90, 90, 90, 150));
+		setExitOnClick(true);
+
 		grid.setRowHeight(50);
 		grid.setCols(1);
 		grid.setBackground(Color.GRAY);
+		grid.setWidth(400);
 
 		for (Key k : Key.values()) {
 			if (k.toString() == null)
@@ -39,20 +45,11 @@ public class PanKeys extends FPanel {
 		menu = new FPanel();
 		menu.add(grid);
 		menu.setLocation(margin, margin);
+		menu.setWidth(400);
 
 		add(menu);
 
 		setVisible(false);
-	}
-
-	// =========================================================================================================================
-
-	@Override
-	public void paintComponent(Graphics g) {
-		g.setColor(Color.DARK_GRAY);
-		g.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 100, 100);
-		g.setColor(Color.GRAY);
-		g.fillRoundRect(8, 8, getWidth() - 1 - 16, getHeight() - 1 - 16, 100 - 16, 100 - 16);
 	}
 
 	// =========================================================================================================================
@@ -66,6 +63,8 @@ public class PanKeys extends FPanel {
 
 		clicked = key;
 		panels.get(clicked).setSelected(true);
+
+		repaint();
 	}
 
 	public void keyPressed(int keyCode) {
@@ -76,13 +75,22 @@ public class PanKeys extends FPanel {
 		if (keyCode != Key.PAUSE.code)
 			clicked.code = keyCode;
 		clicked = null;
+
+		repaint();
 	}
 
 	// =========================================================================================================================
 
 	@Override
 	public void resize() {
-		grid.setSize(getWidth() - 2 * margin - 1, getHeight() - 2 * margin - 1);
-		menu.setSize(getWidth() - 2 * margin - 1, getHeight() - 2 * margin - 1);
+		super.resize();
+
+		int height = Math.min(getHeight() - 50, 700);
+
+		height -= 2 * margin + 1;
+		grid.setHeight(height);
+		menu.setHeight(height);
+
+		menu.setCenter(getWidth() / 2, getHeight() / 2);
 	}
 }
