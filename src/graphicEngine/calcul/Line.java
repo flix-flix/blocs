@@ -40,28 +40,28 @@ public class Line {
 	// =========================================================================================================================
 
 	/**
-	 * Return the leftmost pixel of the indicated row
+	 * Return the leftmost pixel of the indicated Y
 	 * 
-	 * @param row
+	 * @param y
 	 *            - must be between the min and max of the line
 	 */
-	public int getLeft(int row) {
-		return p1.x + (int) Math.round((row - p1.y) * slope);
+	public int getLeft(int y) {
+		return p1.x + (int) Math.round((y - p1.y) * slope);
 	}
 
 	/**
-	 * Return the rightmost pixel of the indicated row
+	 * Return the rightmost pixel of the indicated Y
 	 * 
-	 * @param row
+	 * @param y
 	 *            - must be between the min and max of the line
 	 */
-	public int getRight(int row) {
-		if (row == p2.y)
+	public int getRight(int y) {
+		if (y == p2.y)
 			return p2.x;
 
-		int prevLeft = getLeft(row - variation);
+		int prevLeft = getLeft(y - variation);
 
-		if (prevLeft == getLeft(row))
+		if (prevLeft == getLeft(y))
 			return prevLeft;
 		return prevLeft - 1;
 	}

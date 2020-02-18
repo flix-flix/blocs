@@ -63,7 +63,7 @@ public class Editor extends Environment3D implements Displayable {
 	// =============== Texture generation ===============
 	private TextureCube textureCube;
 	private static final int MAX_SIZE = 16;
-	/** colors of the quadri [Face][y][x] */
+	/** Colors of the quadri <strong>([face][x][y])</strong> */
 	private int[][][] texture = new int[6][MAX_SIZE][MAX_SIZE];
 	private int textureSize = 3;
 
@@ -73,8 +73,7 @@ public class Editor extends Environment3D implements Displayable {
 
 	// =============== Paint Line/Square ===============
 	private Face lastPaintFace = null;
-	private int lastPaintCol = -1;
-	private int lastPaintRow = -1;
+	private int lastPaintX = -1, lastPaintY = -1;
 
 	// =============== History ===============
 	/** Store the modifications */
@@ -101,9 +100,12 @@ public class Editor extends Environment3D implements Displayable {
 	private String realString = "";
 
 	// =============== Calk ===============
-	/** The full face copy of the copied face */
+	/** The full face copy of the copied face <strong>([x][y])</strong> */
 	private int[][] calk = new int[MAX_SIZE][MAX_SIZE];
-	/** The mask of the copied pixels (true : copied | false : not) */
+	/**
+	 * The mask of the copied pixels (true : copied | false : not)
+	 * <strong>([x][y])</strong>
+	 */
 	private boolean[][] calkMask = new boolean[MAX_SIZE][MAX_SIZE];
 	/** Coords of the bottom left corner */
 	private int calkStartX, calkStartY;
@@ -217,9 +219,9 @@ public class Editor extends Environment3D implements Displayable {
 
 	private void initTextureFrame() {
 		for (int face = 0; face < 6; face++)
-			for (int i = 0; i < MAX_SIZE; i++)
-				for (int j = 0; j < MAX_SIZE; j++)
-					texture[face][i][j] = (i + j) % 2 == 0 ? 0xff888888 : 0xff555555;
+			for (int x = 0; x < MAX_SIZE; x++)
+				for (int y = 0; y < MAX_SIZE; y++)
+					texture[face][x][y] = (x + y) % 2 == 0 ? 0xff888888 : 0xff555555;
 
 		updatePreviewTexture();
 	}
@@ -229,8 +231,10 @@ public class Editor extends Environment3D implements Displayable {
 
 		for (int face = 0; face < 6; face++) { // Generates faces
 			int[] tab = new int[textureSize * textureSize];
+
 			for (int k = 0; k < tab.length; k++) // Generates data-arrays
-				tab[k] = texture[face][k / textureSize][k % textureSize];
+				tab[k] = texture[face][k % textureSize][k / textureSize];
+
 			tf[face] = new TextureFace(new TextureSquare(tab, textureSize));
 		}
 
@@ -261,7 +265,7 @@ public class Editor extends Environment3D implements Displayable {
 		String tag = panel.get(ActionEditor.ITEM_TAG).getString();
 		int color = panel.get(ActionEditor.ITEM_COLOR).getValue();
 
-		if (!texturePack.isIDAvailable(id))
+		if (!ItemTable.getItemIDList().contains(id))
 			return;
 
 		// Add to ItemTable
@@ -279,17 +283,17 @@ public class Editor extends Environment3D implements Displayable {
 	// Painting
 
 	void paintPixel() {
-		drawPixel(target.face, getTargetedY(), getTargetedX(), panel.panColor.getColor());
+		drawPixel(target.face, getTargetedX(), getTargetedY(), panel.panColor.getColor());
 		updateLastPixel();
 		updatePreviewTexture();
 	}
 
 	void paintLine() {
-		Line l = new Line(getTargetedX(), getTargetedY(), lastPaintCol, lastPaintRow);
+		Line l = new Line(getTargetedX(), getTargetedY(), lastPaintX, lastPaintY);
 
-		for (int row = l.min; row <= l.max; row++)
-			for (int col = l.getLeft(row); col <= l.getRight(row); col++)
-				drawPixel(target.face, row, col, panel.panColor.getColor());
+		for (int y = l.min; y <= l.max; y++)
+			for (int x = l.getLeft(y); x <= l.getRight(y); x++)
+				drawPixel(target.face, x, y, panel.panColor.getColor());
 
 		updateLastPixel();
 		updatePreviewTexture();
@@ -297,34 +301,34 @@ public class Editor extends Environment3D implements Displayable {
 	}
 
 	void paintSquare() {
-		int col1 = Math.min(getTargetedX(), lastPaintCol);
-		int row1 = Math.min(getTargetedY(), lastPaintRow);
-		int col2 = Math.max(getTargetedX(), lastPaintCol);
-		int row2 = Math.max(getTargetedY(), lastPaintRow);
+		int xMin = Math.min(getTargetedX(), lastPaintX);
+		int yMin = Math.min(getTargetedY(), lastPaintY);
+		int xMax = Math.max(getTargetedX(), lastPaintX);
+		int yMax = Math.max(getTargetedY(), lastPaintY);
 
-		for (int col = col1; col <= col2; col++)
-			for (int row = row1; row <= row2; row++)
-				drawPixel(target.face, row, col, panel.panColor.getColor());
+		for (int x = xMin; x <= xMax; x++)
+			for (int y = yMin; y <= yMax; y++)
+				drawPixel(target.face, x, y, panel.panColor.getColor());
 
 		updateLastPixel();
 		updatePreviewTexture();
 		historyPack();
 	}
 
-	private void drawPixel(Face face, int col, int row, int color) {
+	private void drawPixel(Face face, int x, int y, int color) {
 		// Pack the previous history action if different from PAINT
 		if (!historyPack.isEmpty() && !(historyPack.get(historyPack.size() - 1) instanceof PixelHistory))
 			historyPack();
 
-		if (texture[face.ordinal()][col][row] != color)
-			historyPack.add(new PixelHistory(face, col, row, texture[face.ordinal()][col][row], color, lastPaintCol,
-					lastPaintRow, getTargetedX(), getTargetedY()));
+		if (texture[face.ordinal()][x][y] != color)
+			historyPack.add(new PixelHistory(face, x, y, texture[face.ordinal()][x][y], color, lastPaintX, lastPaintY,
+					getTargetedX(), getTargetedY()));
 
-		setPixel(face, col, row, color);
+		setPixel(face, x, y, color);
 	}
 
-	public void setPixel(Face face, int col, int row, int color) {
-		texture[face.ordinal()][col][row] = color;
+	public void setPixel(Face face, int x, int y, int color) {
+		texture[face.ordinal()][x][y] = color;
 	}
 
 	// =========================================================================================================================
@@ -343,8 +347,8 @@ public class Editor extends Environment3D implements Displayable {
 
 		for (int x = 0; x < MAX_SIZE; x++)
 			for (int y = 0; y < MAX_SIZE; y++) {
-				calk[y][x] = texture[face.ordinal()][y][x];// Copy all the face
-				calkMask[y][x] = false;// Reset mask
+				calk[x][y] = texture[face.ordinal()][x][y];// Copy all the face
+				calkMask[x][y] = false;// Reset mask
 			}
 
 		// Init Mask
@@ -374,7 +378,7 @@ public class Editor extends Environment3D implements Displayable {
 
 		for (int x = 0; x < calkSizeX; x++)
 			for (int y = 0; y < calkSizeY; y++)
-				drawPixel(calkFace, calkCornerY + y, calkCornerX + x, calk[calkStartY + y][calkStartX + x]);
+				drawPixel(calkFace, calkCornerX + x, calkCornerY + y, calk[calkStartX + x][calkStartY + y]);
 
 		historyPack();
 		updatePreviewTexture();
@@ -391,11 +395,11 @@ public class Editor extends Environment3D implements Displayable {
 	void rotateCalkRight() {
 		int sizeX = MAX_SIZE;
 		int sizeY = MAX_SIZE;
-		int[][] calk2 = new int[sizeY][sizeX];
+		int[][] calk2 = new int[sizeX][sizeY];
 
 		for (int x = 0; x < sizeX; x++)
 			for (int y = 0; y < sizeY; y++)
-				calk2[sizeX - 1 - x][y] = calk[y][x];
+				calk2[y][sizeX-1-x] = calk[x][y];
 
 		int _calkStartX = calkStartX;
 		calkStartX = calkStartY;
@@ -434,61 +438,61 @@ public class Editor extends Environment3D implements Displayable {
 	}
 
 	/**
-	 * Replace the color of the continuous zone containing coord (row, col) by the
-	 * paint color
+	 * Replace the color of the continuous zone containing coord (x, y) by the paint
+	 * color
 	 * 
 	 * @param face
 	 *            - the face to modify
-	 * @param row
+	 * @param x
 	 *            - the coord of a point in the zone
-	 * @param col
+	 * @param y
 	 *            - the coord of a point in the zone
 	 */
-	void initFill(Face face, int row, int col) {
+	void initFill(Face face, int x, int y) {
 		// New color must be different from the previous one
-		if (texture[face.ordinal()][row][col] == panel.panColor.getColor())
+		if (texture[face.ordinal()][x][y] == panel.panColor.getColor())
 			return;
-		_fill(face.ordinal(), row, col, texture[face.ordinal()][row][col], panel.panColor.getColor());
+		_fill(face.ordinal(), x, y, texture[face.ordinal()][x][y], panel.panColor.getColor());
 	}
 
 	/**
-	 * Set the new color to the pixel [row, col] then call _fill(...) for the
-	 * adjacent pixels
+	 * Set the new color to the pixel [x, y] then call _fill(...) for the adjacent
+	 * pixels
 	 * 
+	 * @param face
+	 *            - the index of the face to modify
+	 * @param x
+	 *            - the coord of a point in the zone
+	 * @param y
+	 *            - the coord of a point in the zone
 	 * @param erasedColor
 	 *            - the color to replace
 	 * @param newColor
 	 *            - the new color
-	 * @param face
-	 *            - the index of the face to modify
-	 * @param row
-	 *            - the coord of a point in the zone
-	 * @param col
-	 *            - the coord of a point in the zone
 	 */
-	private void _fill(int face, int row, int col, int erasedColor, int newColor) {
-		if (row < 0 || textureSize <= row || col < 0 || textureSize <= col)
+	private void _fill(int face, int x, int y, int erasedColor, int newColor) {
+		if (x < 0 || textureSize <= x || y < 0 || textureSize <= y)
 			return;
 
 		// Stop the propagation if the color doesn't match the one to replace
-		if (texture[face][row][col] != erasedColor)
+		if (texture[face][x][y] != erasedColor)
 			return;
 
-		drawPixel(Face.faces[face], row, col, newColor);
+		drawPixel(Face.faces[face], x, y, newColor);
 
-		_fill(face, row + 1, col, erasedColor, newColor);
-		_fill(face, row - 1, col, erasedColor, newColor);
-		_fill(face, row, col + 1, erasedColor, newColor);
-		_fill(face, row, col - 1, erasedColor, newColor);
+		_fill(face, x, y + 1, erasedColor, newColor);
+		_fill(face, x, y - 1, erasedColor, newColor);
+		_fill(face, x + 1, y, erasedColor, newColor);
+		_fill(face, x - 1, y, erasedColor, newColor);
 	}
 
 	// =========================================================================================================================
 	// Memory
 
-	public void setLastPixel(Face face, int col, int row) {
+	public void setLastPixel(Face face, int x, int y) {
 		lastPaintFace = face;
-		lastPaintCol = col;
-		lastPaintRow = row;
+		lastPaintX = x;
+		lastPaintY = y;
 	}
 
 	public void updateLastPixel() {
@@ -496,8 +500,8 @@ public class Editor extends Environment3D implements Displayable {
 	}
 
 	public boolean hasLastPixel() {
-		return target.cube == cube && target.face == lastPaintFace && lastPaintCol < textureSize
-				&& lastPaintRow < textureSize && lastPaintRow != -1;
+		return target.cube == cube && target.face == lastPaintFace && lastPaintX < textureSize
+				&& lastPaintY < textureSize && lastPaintY != -1;
 	}
 
 	// =========================================================================================================================
@@ -614,7 +618,7 @@ public class Editor extends Environment3D implements Displayable {
 
 		// ================== PanItem ======================
 		case ITEM_ID:
-			panel.get(action).setBool(texturePack.isIDAvailable(panel.get(action).getWheelStep()));
+			panel.get(action).setBool(!ItemTable.getItemIDList().contains(panel.get(action).getWheelStep()));
 			break;
 
 		// ================== Not handled ======================
@@ -785,15 +789,15 @@ public class Editor extends Environment3D implements Displayable {
 		if (keyboard.shiftDown && hasLastPixel()) {
 			DrawLayer layer = new DrawLayer(cube, target.face);
 
-			int col1 = getTargetedX();
-			int row1 = getTargetedY();
-			int col2 = lastPaintCol;
-			int row2 = lastPaintRow;
+			int x1 = getTargetedX();
+			int y1 = getTargetedY();
+			int x2 = lastPaintX;
+			int y2 = lastPaintY;
 
 			if (keyboard.controlDown) // Square
-				layer.drawSquareAndCross(col1, row1, col2, row2, 0xffdddddd, 0xff555555);
+				layer.drawSquareAndCross(x1, y1, x2, y2, 0xffdddddd, 0xff555555);
 			else // Line
-				layer.drawLineAndCross(col1, row1, col2, row2, 0xffdddddd, 0xff555555);
+				layer.drawLineAndCross(x1, y1, x2, y2, 0xffdddddd, 0xff555555);
 
 			cube.setLayer(lineSquareLayer, layer);
 		} else
@@ -819,7 +823,7 @@ public class Editor extends Environment3D implements Displayable {
 
 			for (int x = 0; x < calkSizeX; x++)
 				for (int y = 0; y < calkSizeY; y++) {
-					layer.fillSquare(calkCornerX + x, calkCornerY + y, calk[calkStartY + y][calkStartX + x], true, 1,
+					layer.fillSquare(calkCornerX + x, calkCornerY + y, calk[calkStartX + x][calkStartY + y], true, 1,
 							0);
 				}
 
@@ -903,10 +907,6 @@ public class Editor extends Environment3D implements Displayable {
 		fen.updateCursor();
 	}
 
-	public TexturePack getTexturePack() {
-		return texturePack;
-	}
-
 	public boolean hasCalk() {
 		return hasCalk;
 	}
@@ -956,7 +956,8 @@ public class Editor extends Environment3D implements Displayable {
 			}
 
 			refreshLineSquareLayer();
-		}
+		} else if (action == ActionEditor.FILL)
+			target.cube.setSelectedQuadri(target.face, target.quadri);
 
 		fen.updateCursor();
 	}
@@ -969,6 +970,8 @@ public class Editor extends Environment3D implements Displayable {
 		target.cube.removeLayer(lineSquareLayer);
 
 		cursorInCalk = false;
+
+		fen.updateCursor();
 	}
 
 	@Override

@@ -8,7 +8,7 @@ public class TextureSquare {
 
 	public int width, height;
 
-	// row * width + col
+	// Y * width + X
 	int color[];
 
 	public static TextureSquare defaultFace;
@@ -34,12 +34,12 @@ public class TextureSquare {
 
 	// =========================================================================================================================
 
-	public int getColor(int row, int col) {
-		return color[row * width + col];
+	public int getColor(int y, int x) {
+		return color[y * width + x];
 	}
 
-	public void setColor(int row, int col, int color) {
-		this.color[row * width + col] = color;
+	public void setColor(int y, int x, int color) {
+		this.color[y * width + x] = color;
 	}
 
 	// =========================================================================================================================
@@ -51,9 +51,9 @@ public class TextureSquare {
 	public static TextureSquare generateSquare(BufferedImage bimg) {
 		int[] color = new int[bimg.getHeight() * bimg.getWidth()];
 
-		for (int i = 0; i < bimg.getHeight(); i++)
-			for (int j = 0; j < bimg.getWidth(); j++)
-				color[(bimg.getHeight() - 1 - i) * bimg.getWidth() + j] = bimg.getRGB(j, i);
+		for (int x = 0; x < bimg.getWidth(); x++)
+			for (int y = 0; y < bimg.getHeight(); y++)
+				color[(bimg.getHeight() - 1 - y) * bimg.getWidth() + x] = bimg.getRGB(x, y);
 
 		return new TextureSquare(color, bimg.getWidth());
 	}
@@ -61,12 +61,12 @@ public class TextureSquare {
 	// =========================================================================================================================
 
 	/** Returns a portion of the Face */
-	public TextureSquare getRect(int x, int y, int width, int height) {
+	public TextureSquare getRect(int startX, int startY, int width, int height) {
 		TextureSquare text = new TextureSquare(width, height);
 
-		for (int i = 0; i < width; i++)
-			for (int j = 0; j < height; j++)
-				text.setColor(j, i, getColor(y + j, x + i));
+		for (int x = 0; x < width; x++)
+			for (int y = 0; y < height; y++)
+				text.setColor(y, x, getColor(startY + y, startX + x));
 
 		return text;
 	}

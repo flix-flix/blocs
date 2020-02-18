@@ -12,21 +12,18 @@ public class TextureFace {
 	public TextureFace(TextureSquare normal) {
 		this.normal = normal;
 
-		int rows = normal.height;
-		int cols = normal.width;
-
-		if (cols != rows)
+		if (normal.width != normal.height)
 			return;
 
-		reverse = new TextureSquare(cols, rows);
-		right = new TextureSquare(cols, rows);
-		left = new TextureSquare(cols, rows);
+		reverse = new TextureSquare(normal.width, normal.height);
+		right = new TextureSquare(normal.width, normal.height);
+		left = new TextureSquare(normal.width, normal.height);
 
-		for (int row = 0; row < rows; row++)
-			for (int col = 0; col < cols; col++) {
-				reverse.setColor(rows - 1 - row, cols - 1 - col, normal.getColor(row, col));
-				right.setColor(cols - 1 - col, row, normal.getColor(row, col));
-				left.setColor(col, rows - 1 - row, normal.getColor(row, col));
+		for (int y = 0; y < normal.height; y++)
+			for (int x = 0; x < normal.width; x++) {
+				reverse.setColor(normal.height - 1 - y, normal.width - 1 - x, normal.getColor(y, x));
+				right.setColor(normal.width - 1 - x, y, normal.getColor(y, x));
+				left.setColor(x, normal.height - 1 - y, normal.getColor(y, x));
 			}
 	}
 

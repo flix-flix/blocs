@@ -43,42 +43,42 @@ public class Quadri {
 
 	// =========================================================================================================================
 
-	public int getLeft(int row) {
-		int col = 10_000;
+	public int getLeft(int y) {
+		int x = 10_000;
 
 		for (Line l : lines)
-			if (l.min <= row && row <= l.max)
-				col = Math.min(col, l.getLeft(row));
+			if (l.min <= y && y <= l.max)
+				x = Math.min(x, l.getLeft(y));
 
-		return col;
+		return x;
 	}
 
-	public int getRight(int row) {
-		int col = -1;
+	public int getRight(int y) {
+		int x = -1;
 
 		for (Line l : lines)
-			if (l.min <= row && row <= l.max)
-				col = Math.max(col, l.getRight(row));
+			if (l.min <= y && y <= l.max)
+				x = Math.max(x, l.getRight(y));
 
-		return col;
+		return x;
 	}
 
 	public int getTop() {
-		int row = 10_000;
+		int y = 10_000;
 
 		for (Point p : points)
-			row = Math.min(row, p.y);
+			y = Math.min(y, p.y);
 
-		return row;
+		return y;
 	}
 
 	public int getBottom() {
-		int row = -1;
+		int y = -1;
 
 		for (Point p : points)
-			row = Math.max(row, p.y);
+			y = Math.max(y, p.y);
 
-		return row;
+		return y;
 	}
 
 	// =========================================================================================================================

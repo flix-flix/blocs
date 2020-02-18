@@ -82,10 +82,10 @@ public class DrawCubeFace extends Drawable {
 
 		boolean isFaceSelected = cube.selectedQuadri != CubeClient.NO_QUADRI && cube.selectedFace == face;
 
-		for (int row = 0; row < texture.height; row++)
-			for (int col = 0; col < texture.width; col++) {
-				int color = texture.getColor(row, col);
-				boolean selected = isFaceSelected && (row * texture.width + col) == cube.selectedQuadri;
+		for (int y = 0; y < texture.height; y++)
+			for (int x = 0; x < texture.width; x++) {
+				int color = texture.getColor(y, x);
+				boolean selected = isFaceSelected && (y * texture.width + x) == cube.selectedQuadri;
 
 				// If the quadri is invisible -> ignore color modifications
 				if (((color >> 24) & 0xff) == 0) {
@@ -112,9 +112,9 @@ public class DrawCubeFace extends Drawable {
 					}
 				}
 
-				quadri.add(new Quadri(points2D[row * cols1 + col], points2D[(row + 1) * cols1 + col],
-						points2D[(row + 1) * cols1 + col + 1], points2D[row * cols1 + col + 1], color, true,
-						row * texture.width + col));
+				quadri.add(new Quadri(points2D[y * cols1 + x], points2D[(y + 1) * cols1 + x],
+						points2D[(y + 1) * cols1 + x + 1], points2D[y * cols1 + x + 1], color, true,
+						y * texture.width + x));
 			}
 	}
 
@@ -128,32 +128,32 @@ public class DrawCubeFace extends Drawable {
 		Vector vy = cube.vy.divise(rows);
 		Vector vz = cube.vz.divise(cols);
 
-		for (int row = 0; row <= rows; row++)
-			for (int col = 0; col <= cols; col++)
-				points2D[row * (cols + 1) + col] = engine.to2D(getPoint3D(vx, vy, vz, col, row));
+		for (int y = 0; y <= rows; y++)
+			for (int x = 0; x <= cols; x++)
+				points2D[y * (cols + 1) + x] = engine.to2D(getPoint3D(vx, vy, vz, x, y));
 
 		return points2D;
 	}
 
 	/**
-	 * Returns the 3D point (col, row) of the current face
+	 * Returns the 3D point (x, y) of the current face
 	 * 
 	 * /!\ vx,vy,vz must have been divised by the resolution of the face
 	 */
-	public Point3D getPoint3D(Vector vx, Vector vy, Vector vz, int col, int row) {
+	public Point3D getPoint3D(Vector vx, Vector vy, Vector vz, int x, int y) {
 		switch (face) {
 		case UP:
-			return vx.multiply(vz.multiply(cube.points[4], col), row);
+			return vx.multiply(vz.multiply(cube.points[4], x), y);
 		case DOWN:
-			return vx.multiply(vz.multiply(cube.points[2], col), -row);
+			return vx.multiply(vz.multiply(cube.points[2], x), -y);
 		case EAST:
-			return vy.multiply(vx.multiply(cube.points[1], col), row);
+			return vy.multiply(vx.multiply(cube.points[1], x), y);
 		case WEST:
-			return vy.multiply(vx.multiply(cube.points[2], -col), row);
+			return vy.multiply(vx.multiply(cube.points[2], -x), y);
 		case SOUTH:
-			return vy.multiply(vz.multiply(cube.points[0], col), row);
+			return vy.multiply(vz.multiply(cube.points[0], x), y);
 		case NORTH:
-			return vy.multiply(vz.multiply(cube.points[3], -col), row);
+			return vy.multiply(vz.multiply(cube.points[3], -x), y);
 		default:
 			return null;
 		}

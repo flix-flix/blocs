@@ -211,7 +211,7 @@ public class KeyboardEditor extends KeyboardEnvironment3D {
 					if (controlDown)
 						editor.pickColor();
 					else if (editor.isPreviewCube()) {
-						editor.initFill(editor.target.face, lastClickedY, lastClickedX);
+						editor.initFill(editor.target.face, lastClickedX, lastClickedY);
 
 						editor.updatePreviewTexture();
 						editor.historyPack();

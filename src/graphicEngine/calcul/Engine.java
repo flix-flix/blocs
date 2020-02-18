@@ -124,9 +124,9 @@ public class Engine {
 			return;
 
 		if (background == FILL) {
-			for (int row = 0; row < imgHeight; row++)
-				for (int col = 0; col < imgWidth; col++)
-					setPixel(col, row, 0xff000000);
+			for (int x = 0; x < imgWidth; x++)
+				for (int y = 0; y < imgHeight; y++)
+					setPixel(x, y, 0xff000000);
 			return;
 		}
 
@@ -142,18 +142,19 @@ public class Engine {
 
 		int color;
 
-		for (int row = 0; row < imgHeight; row++) {
-			if (row < sky)
+		for (int y = 0; y < imgHeight; y++) {
+			if (y < sky)
 				color = blue;
-			else if (row <= horizon) // blue -> light_blue
-				color = addHue(blue, light_blue, (row - sky) / ((double) horizon - sky));
-			else if (row <= voiD) // light_blue -> black
-				color = addHue(light_blue, black, (row - horizon) / ((double) voiD - horizon));
+			else if (y <= horizon) // blue -> light_blue
+				color = addHue(blue, light_blue, (y - sky) / ((double) horizon - sky));
+			else if (y <= voiD) // light_blue -> black
+				color = addHue(light_blue, black, (y - horizon) / ((double) voiD - horizon));
 			else
 				color = black;
 
-			for (int col = 0; col < imgWidth; col++)
-				setPixel(col, row, color);
+			// Draw line
+			for (int x = 0; x < imgWidth; x++)
+				setPixel(x, y, color);
 		}
 	}
 
@@ -220,10 +221,10 @@ public class Engine {
 			int bottom = yInScreen(q.getBottom());
 			int right;
 
-			for (int row = yInScreen(q.getTop()); row <= bottom; row++) {
-				right = xInScreen(q.getRight(row));
-				for (int col = xInScreen(q.getLeft(row)); col <= right; col++)
-					setPixel(col, row, q.color);
+			for (int y = yInScreen(q.getTop()); y <= bottom; y++) {
+				right = xInScreen(q.getRight(y));
+				for (int x = xInScreen(q.getLeft(y)); x <= right; x++)
+					setPixel(x, y, q.color);
 			}
 
 		} else
@@ -238,34 +239,34 @@ public class Engine {
 		int max = yInScreen(l.max);
 		int right;
 
-		for (int row = yInScreen(l.min); row <= max; row++)
-			if ((right = l.getRight(row)) >= 0) {
+		for (int y = yInScreen(l.min); y <= max; y++)
+			if ((right = l.getRight(y)) >= 0) {
 				right = xInScreen(right);
-				for (int col = xInScreen(l.getLeft(row)); col <= right; col++)
-					setPixel(col, row, color);
+				for (int x = xInScreen(l.getLeft(y)); x <= right; x++)
+					setPixel(x, y, color);
 			}
 	}
 
 	// =========================================================================================================================
 
-	private void setPixel(int col, int row, int rgb) {
+	private void setPixel(int x, int y, int rgb) {
 		// Returns if the pixel is already paint
-		if ((getElem(col, row) >> 24 & 0xff) == 255)
+		if ((getElem(x, y) >> 24 & 0xff) == 255)
 			return;
 
 		// If colored transparence : generate mixed color
-		if (getElem(col, row) != 0)
-			rgb = mixARGB(getElem(col, row), rgb);
+		if (getElem(x, y) != 0)
+			rgb = mixARGB(getElem(x, y), rgb);
 
-		setElem(col, row, rgb);
+		setElem(x, y, rgb);
 	}
 
-	private int getElem(int col, int row) {
-		return dataBuffer.getElem(row * imgWidth + col);
+	private int getElem(int x, int y) {
+		return dataBuffer.getElem(y * imgWidth + x);
 	}
 
-	private void setElem(int col, int row, int val) {
-		dataBuffer.setElem(row * imgWidth + col, val);
+	private void setElem(int x, int y, int val) {
+		dataBuffer.setElem(y * imgWidth + x, val);
 	}
 
 	// =========================================================================================================================

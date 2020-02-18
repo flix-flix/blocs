@@ -117,11 +117,11 @@ public class YAML {
 
 		int[] hexa = new int[size];
 
-		for (int i = 0; i < objects.length; i++) {
-			String[] strings = (String[]) objects[i];
+		for (int y = 0; y < objects.length; y++) {
+			String[] strings = (String[]) objects[y];
 
-			for (int j = 0; j < strings.length; j++)
-				hexa[i * strings.length + j] = FlixBlocksUtils.parseHexa(strings[j]);
+			for (int x = 0; x < strings.length; x++)
+				hexa[y * strings.length + x] = FlixBlocksUtils.parseHexa(strings[x]);
 		}
 
 		return hexa;
@@ -140,9 +140,9 @@ public class YAML {
 
 	public void putHexaDoubleArrayInline(String path, int[] array, int width) {
 		String[][] doubleArray = new String[array.length / width][width];
-		for (int col = 0; col < width; col++)
-			for (int row = 0; row < doubleArray.length; row++)
-				doubleArray[row][col] = FlixBlocksUtils.hexaToString(array[row * width + col]);
+		for (int x = 0; x < width; x++)
+			for (int y = 0; y < doubleArray.length; y++)
+				doubleArray[y][x] = FlixBlocksUtils.hexaToString(array[y * width + x]);
 		put(path, doubleArray);
 	}
 

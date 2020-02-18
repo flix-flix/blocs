@@ -6,36 +6,36 @@ import editor.Editor;
 public class PixelHistory implements History {
 
 	public Face face;
-	public int col, row;
+	public int x, y;
 	public int oldColor, newColor;
 
 	/** The previous click location */
-	public int prevCol, prevRow;
-	/** The next click location (Different from row/col for line/square draw) */
-	public int nextCol, nextRow;
+	public int prevX, prevY;
+	/** The next click location (Different from x/y for line/square draw) */
+	public int nextX, nextY;
 
-	public PixelHistory(Face face, int col, int row, int oldColor, int newColor, int prevCol, int prevRow, int nextCol,
+	public PixelHistory(Face face, int x, int y, int oldColor, int newColor, int prevCol, int prevRow, int nextCol,
 			int nextRow) {
 		this.face = face;
-		this.col = col;
-		this.row = row;
+		this.x = x;
+		this.y = y;
 		this.oldColor = oldColor;
 		this.newColor = newColor;
-		this.prevCol = prevCol;
-		this.prevRow = prevRow;
-		this.nextCol = nextCol;
-		this.nextRow = nextRow;
+		this.prevX = prevCol;
+		this.prevY = prevRow;
+		this.nextX = nextCol;
+		this.nextY = nextRow;
 	}
 
 	@Override
 	public void undo(Editor editor) {
-		editor.setPixel(face, col, row, oldColor);
-		editor.setLastPixel(face, prevCol, prevRow);
+		editor.setPixel(face, x, y, oldColor);
+		editor.setLastPixel(face, prevX, prevY);
 	}
 
 	@Override
 	public void redo(Editor editor) {
-		editor.setPixel(face, col, row, newColor);
-		editor.setLastPixel(face, nextCol, nextRow);
+		editor.setPixel(face, x, y, newColor);
+		editor.setLastPixel(face, nextX, nextY);
 	}
 }

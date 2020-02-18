@@ -53,60 +53,60 @@ public class DrawLayer {
 
 	// =========================================================================================================================
 
-	public void drawLineMiddle(int col1, int row1, int col2, int row2, int color) {
-		col1 = col1 * 4 + 2;
-		row1 = row1 * 4 + 2;
-		col2 = col2 * 4 + 2;
-		row2 = row2 * 4 + 2;
+	public void drawLineMiddle(int x1, int y1, int x2, int y2, int color) {
+		x1 = x1 * 4 + 2;
+		y1 = y1 * 4 + 2;
+		x2 = x2 * 4 + 2;
+		y2 = y2 * 4 + 2;
 
-		dataList.add(new Data(Type.LINE, col1, row1, col2, row2, true, 4, color));
+		dataList.add(new Data(Type.LINE, x1, y1, x2, y2, true, 4, color));
 	}
 
-	public void drawCross(int col, int row, int color) {
-		col = col * 4 + 2;
-		row = row * 4 + 2;
+	public void drawCross(int x, int y, int color) {
+		x = x * 4 + 2;
+		y = y * 4 + 2;
 
-		dataList.add(new Data(Type.LINE, col - 1, row, col + 1, row, true, 4, color));
-		dataList.add(new Data(Type.LINE, col, row - 1, col, row + 1, true, 4, color));
+		dataList.add(new Data(Type.LINE, x - 1, y, x + 1, y, true, 4, color));
+		dataList.add(new Data(Type.LINE, x, y - 1, x, y + 1, true, 4, color));
 	}
 
-	public void drawLineAndCross(int col1, int row1, int col2, int row2, int colorLine, int colorCross) {
-		drawLineMiddle(col1, row1, col2, row2, colorLine);
-		drawCross(col1, row1, colorCross);
-		drawCross(col2, row2, colorCross);
+	public void drawLineAndCross(int x1, int y1, int x2, int y2, int colorLine, int colorCross) {
+		drawLineMiddle(x1, y1, x2, y2, colorLine);
+		drawCross(x1, y1, colorCross);
+		drawCross(x2, y2, colorCross);
 	}
 
-	public void drawSquareAndCross(int col1, int row1, int col2, int row2, int colorLine, int colorCross) {
-		drawLineMiddle(col1, row1, col1, row2, colorLine);
-		drawLineMiddle(col1, row2, col2, row2, colorLine);
-		drawLineMiddle(col2, row2, col2, row1, colorLine);
-		drawLineMiddle(col2, row1, col1, row1, colorLine);
+	public void drawSquareAndCross(int x1, int y1, int x2, int y2, int colorLine, int colorCross) {
+		drawLineMiddle(x1, y1, x1, y2, colorLine);
+		drawLineMiddle(x1, y2, x2, y2, colorLine);
+		drawLineMiddle(x2, y2, x2, y1, colorLine);
+		drawLineMiddle(x2, y1, x1, y1, colorLine);
 
-		drawCross(col1, row1, colorCross);
-		drawCross(col1, row2, colorCross);
-		drawCross(col2, row2, colorCross);
-		drawCross(col2, row1, colorCross);
+		drawCross(x1, y1, colorCross);
+		drawCross(x1, y2, colorCross);
+		drawCross(x2, y2, colorCross);
+		drawCross(x2, y1, colorCross);
 	}
 
 	// =========================================================================================================================
 
-	public void drawLine(int col1, int row1, int col2, int row2, int color, Face face) {
-		dataList.add(new Data(Type.LINE, col1, row1, col2, row2, true, 1, color, face));
+	public void drawLine(int x1, int y1, int x2, int y2, int color, Face face) {
+		dataList.add(new Data(Type.LINE, x1, y1, x2, y2, true, 1, color, face));
 	}
 
-	public void drawLine(int col1, int row1, int col2, int row2, int color) {
-		dataList.add(new Data(Type.LINE, col1, row1, col2, row2, true, 1, color));
+	public void drawLine(int x1, int y1, int x2, int y2, int color) {
+		dataList.add(new Data(Type.LINE, x1, y1, x2, y2, true, 1, color));
 	}
 
-	public void drawSquare(int col1, int row1, int col2, int row2, boolean sizeRelative, int size, int color) {
-		drawLine(col1, row1, col1, row2, color);
-		drawLine(col1, row2, col2, row2, color);
-		drawLine(col2, row2, col2, row1, color);
-		drawLine(col2, row1, col1, row1, color);
+	public void drawSquare(int x1, int y1, int x2, int y2, boolean sizeRelative, int size, int color) {
+		drawLine(x1, y1, x1, y2, color);
+		drawLine(x1, y2, x2, y2, color);
+		drawLine(x2, y2, x2, y1, color);
+		drawLine(x2, y1, x1, y1, color);
 	}
 
-	public void fillSquare(int col, int row, int color, boolean sizeRelative, int size, int fly) {
-		dataList.add(new Data(Type.SQUARE, col, row, col + 1, row + 1, sizeRelative, size, color, face, fly));
+	public void fillSquare(int x, int y, int color, boolean sizeRelative, int size, int fly) {
+		dataList.add(new Data(Type.SQUARE, x, y, x + 1, y + 1, sizeRelative, size, color, face, fly));
 	}
 
 	// =========================================================================================================================
@@ -128,39 +128,39 @@ public class DrawLayer {
 
 	// =========================================================================================================================
 
-	public void drawDottedLinePixel(int col1, int row1, boolean verti, int color1, int color2, Face face) {
-		col1 = col1 * 2;
-		row1 = row1 * 2;
+	public void drawDottedLinePixel(int x1, int y1, boolean verti, int color1, int color2, Face face) {
+		x1 = x1 * 2;
+		y1 = y1 * 2;
 
 		if (verti) {
-			dataList.add(new Data(Type.LINE, col1, row1, col1, row1 + 1, true, 2, color1, face));
-			dataList.add(new Data(Type.LINE, col1, row1 + 1, col1, row1 + 2, true, 2, color2, face));
+			dataList.add(new Data(Type.LINE, x1, y1, x1, y1 + 1, true, 2, color1, face));
+			dataList.add(new Data(Type.LINE, x1, y1 + 1, x1, y1 + 2, true, 2, color2, face));
 		} else {
-			dataList.add(new Data(Type.LINE, col1, row1, col1 + 1, row1, true, 2, color1, face));
-			dataList.add(new Data(Type.LINE, col1 + 1, row1, col1 + 2, row1, true, 2, color2, face));
+			dataList.add(new Data(Type.LINE, x1, y1, x1 + 1, y1, true, 2, color1, face));
+			dataList.add(new Data(Type.LINE, x1 + 1, y1, x1 + 2, y1, true, 2, color2, face));
 		}
 	}
 
 	/** Must be horizontal or vertical (no diagonal) */
-	public void drawDottedLine(int col1, int row1, boolean verti, int coord2, int color1, int color2, Face face) {
+	public void drawDottedLine(int x1, int y1, boolean verti, int coord2, int color1, int color2, Face face) {
 		if (verti)
-			for (int row = row1; row < coord2; row++)
-				drawDottedLinePixel(col1, row, verti, color1, color2, face);
+			for (int y = y1; y < coord2; y++)
+				drawDottedLinePixel(x1, y, verti, color1, color2, face);
 		else
-			for (int col = col1; col < coord2; col++)
-				drawDottedLinePixel(col, row1, verti, color1, color2, face);
+			for (int x = x1; x < coord2; x++)
+				drawDottedLinePixel(x, y1, verti, color1, color2, face);
 	}
 
 	public void drawDottedSquare(int c1, int r1, int c2, int r2, int color1, int color2, Face face) {
-		int col1 = Math.min(c1, c2);
-		int row1 = Math.min(r1, r2);
-		int col2 = Math.max(c1, c2) + 1;
-		int row2 = Math.max(r1, r2) + 1;
+		int x1 = Math.min(c1, c2);
+		int y1 = Math.min(r1, r2);
+		int x2 = Math.max(c1, c2) + 1;
+		int y2 = Math.max(r1, r2) + 1;
 
-		drawDottedLine(col1, row1, true, row2, color1, color2, face);
-		drawDottedLine(col2, row1, true, row2, color1, color2, face);
-		drawDottedLine(col1, row1, false, col2, color1, color2, face);
-		drawDottedLine(col1, row2, false, col2, color1, color2, face);
+		drawDottedLine(x1, y1, true, y2, color1, color2, face);
+		drawDottedLine(x2, y1, true, y2, color1, color2, face);
+		drawDottedLine(x1, y1, false, x2, color1, color2, face);
+		drawDottedLine(x1, y2, false, x2, color1, color2, face);
 	}
 
 	// =========================================================================================================================
@@ -168,10 +168,10 @@ public class DrawLayer {
 	public void drawGrid() {
 		TextureSquare texture = ItemTableClient.getTexturePack().getFace(cube.getItemID(), face);
 
-		for (int row = 0; row <= texture.height; row++)
-			drawLine(0, row, texture.width, row, 0xffffffff, face);
-		for (int col = 0; col <= texture.width; col++)
-			drawLine(col, 0, col, texture.height, 0xffffffff, face);
+		for (int y = 0; y <= texture.height; y++)
+			drawLine(0, y, texture.width, y, 0xffffffff, face);
+		for (int x = 0; x <= texture.width; x++)
+			drawLine(x, 0, x, texture.height, 0xffffffff, face);
 	}
 
 	public void drawString(String str) {
@@ -186,10 +186,10 @@ public class DrawLayer {
 		int start = 3;
 		for (int i = 0; i < text.length; i++) {
 			TextureSquare letter = getLetter(str.charAt(i));
-			for (int col = 0; col < letter.width; col++)
-				for (int row = 0; row < letter.height; row++)
-					if (letter.getColor(row, col) == 0xff000000)
-						fillSquare(start + col, size / 2 - 3 + row, 0xffc86400, false, size, size / 5);
+			for (int x = 0; x < letter.width; x++)
+				for (int y = 0; y < letter.height; y++)
+					if (letter.getColor(y, x) == 0xff000000)
+						fillSquare(start + x, size / 2 - 3 + y, 0xffc86400, false, size, size / 5);
 			start += 1 + letter.width;
 		}
 	}
@@ -211,15 +211,15 @@ public class DrawLayer {
 			if (data.face == Data.ALL_FACES || data.face == draw.face.ordinal())
 				switch (data.type) {
 				case SQUARE:
-					quadris.add(new Quadri(getPoint2D(engine, size, data.col1, data.row1, data.fly),
-							getPoint2D(engine, size, data.col1, data.row2, data.fly),
-							getPoint2D(engine, size, data.col2, data.row2, data.fly),
-							getPoint2D(engine, size, data.col2, data.row1, data.fly), data.color, true));
+					quadris.add(new Quadri(getPoint2D(engine, size, data.x1, data.y1, data.fly),
+							getPoint2D(engine, size, data.x1, data.y2, data.fly),
+							getPoint2D(engine, size, data.x2, data.y2, data.fly),
+							getPoint2D(engine, size, data.x2, data.y1, data.fly), data.color, true));
 					break;
 				case LINE:
 					// TODO [Improve] Long line are in front and behind the camera (point in (0,0))
-					quadris.add(new Quadri(getPoint2D(engine, size, data.col1, data.row1, data.fly),
-							getPoint2D(engine, size, data.col2, data.row2, data.fly), data.color));
+					quadris.add(new Quadri(getPoint2D(engine, size, data.x1, data.y1, data.fly),
+							getPoint2D(engine, size, data.x2, data.y2, data.fly), data.color));
 					break;
 				case CUBE:
 					break;
@@ -230,7 +230,7 @@ public class DrawLayer {
 	}
 
 	/** Generates the on-screen Point */
-	public Point getPoint2D(Engine engine, int size, int col, int row, int fly) {
+	public Point getPoint2D(Engine engine, int size, int x, int y, int fly) {
 		Vector vx = cube.vx.divise(face == Face.UP || face == Face.DOWN ? size : size);// rows/cols
 		Vector vy = cube.vy.divise(size);// rows
 		Vector vz = cube.vz.divise(size);// cols
@@ -239,22 +239,22 @@ public class DrawLayer {
 
 		switch (face) {
 		case UP:
-			p = vy.multiply(vx.multiply(vz.multiply(cube.points[4], col), row), fly);
+			p = vy.multiply(vx.multiply(vz.multiply(cube.points[4], x), y), fly);
 			break;
 		case DOWN:
-			p = vy.multiply(vx.multiply(vz.multiply(cube.points[2], col), -row), -fly);
+			p = vy.multiply(vx.multiply(vz.multiply(cube.points[2], x), -y), -fly);
 			break;
 		case EAST:
-			p = vz.multiply(vy.multiply(vx.multiply(cube.points[1], col), row), fly);
+			p = vz.multiply(vy.multiply(vx.multiply(cube.points[1], x), y), fly);
 			break;
 		case WEST:
-			p = vz.multiply(vy.multiply(vx.multiply(cube.points[2], -col), row), -fly);
+			p = vz.multiply(vy.multiply(vx.multiply(cube.points[2], -x), y), -fly);
 			break;
 		case SOUTH:
-			p = vx.multiply(vy.multiply(vz.multiply(cube.points[0], col), row), -fly);
+			p = vx.multiply(vy.multiply(vz.multiply(cube.points[0], x), y), -fly);
 			break;
 		case NORTH:
-			p = vx.multiply(vy.multiply(vz.multiply(cube.points[3], -col), row), fly);
+			p = vx.multiply(vy.multiply(vz.multiply(cube.points[3], -x), y), fly);
 			break;
 		}
 
@@ -265,7 +265,7 @@ public class DrawLayer {
 
 	private class Data {
 		Type type;
-		int row1, col1, row2, col2;
+		int y1, x1, y2, x2;
 		int color;
 		int size;
 		/** Number of pixel above the face */
@@ -282,26 +282,25 @@ public class DrawLayer {
 		static final int ALL_FACES = -1;
 		int face = ALL_FACES;
 
-		public Data(Type type, int col1, int row1, int col2, int row2, boolean sizeRelative, int size, int color) {
+		public Data(Type type, int x1, int y1, int x2, int y2, boolean sizeRelative, int size, int color) {
 			this.type = type;
-			this.row1 = row1;
-			this.col1 = col1;
-			this.row2 = row2;
-			this.col2 = col2;
+			this.y1 = y1;
+			this.x1 = x1;
+			this.y2 = y2;
+			this.x2 = x2;
 			this.sizeRelative = sizeRelative;
 			this.size = size;
 			this.color = color;
 		}
 
-		public Data(Type type, int col1, int row1, int col2, int row2, boolean sizeRelative, int size, int color,
-				Face face) {
-			this(type, col1, row1, col2, row2, sizeRelative, size, color);
+		public Data(Type type, int x1, int y1, int x2, int y2, boolean sizeRelative, int size, int color, Face face) {
+			this(type, x1, y1, x2, y2, sizeRelative, size, color);
 			this.face = face.ordinal();
 		}
 
-		public Data(Type type, int col1, int row1, int col2, int row2, boolean sizeRelative, int size, int color,
-				Face face, int fly) {
-			this(type, col1, row1, col2, row2, sizeRelative, size, color, face);
+		public Data(Type type, int x1, int y1, int x2, int y2, boolean sizeRelative, int size, int color, Face face,
+				int fly) {
+			this(type, x1, y1, x2, y2, sizeRelative, size, color, face);
 			this.fly = fly;
 		}
 	}

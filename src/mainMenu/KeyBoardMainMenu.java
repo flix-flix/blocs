@@ -2,6 +2,7 @@ package mainMenu;
 
 import java.awt.event.KeyEvent;
 
+import window.Key;
 import window.KeyBoard;
 
 public class KeyBoardMainMenu implements KeyBoard {
@@ -22,6 +23,7 @@ public class KeyBoardMainMenu implements KeyBoard {
 			main.keys.keyPressed(e.getKeyCode());
 
 		if (main.panServer.isVisible())
-			main.panServer.panAdd.close();
+			if (Key.PAUSE.code == e.getKeyCode())
+				main.panServer.panAdd.close();
 	}
 }

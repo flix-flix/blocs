@@ -54,7 +54,7 @@ public class PanGrid extends FPanel {
 	// =========================================================================================================================
 
 	public void addMenu(FPanel menu) {
-		setMenu(menu, list.size() / cols, list.size() % cols);
+		setMenu(menu, list.size() % cols, list.size() / cols);
 
 		list.add(menu);
 		add(menu, -1);
@@ -63,7 +63,7 @@ public class PanGrid extends FPanel {
 		updateScroll();
 	}
 
-	private void setMenu(FPanel menu, int row, int col) {
+	private void setMenu(FPanel menu, int x, int y) {
 		int padding = this.padding == GRID_SPACE ? gridSpace : this.padding;
 
 		int width = getWidth() - (getVisibleHeight() < getHeight() ? getScrollWidth() + gridSpace : 0);
@@ -72,14 +72,14 @@ public class PanGrid extends FPanel {
 		int wMore = (getWidth() - (cols - 1) * gridSpace - 2 * (borderSize + padding)) % cols;
 		int h = rowHeight == SQUARE ? w : rowHeight;
 
-		menu.setLocation(borderSize + padding + (w + gridSpace) * col,
-				-getScrolled() + borderSize + padding + (h + gridSpace) * row);
-		menu.setSize(w + (col == cols - 1 ? wMore : 0), h);
+		menu.setLocation(borderSize + padding + (w + gridSpace) * x,
+				-getScrolled() + borderSize + padding + (h + gridSpace) * y);
+		menu.setSize(w + (x == cols - 1 ? wMore : 0), h);
 	}
 
 	private void updateMenu() {
 		for (int i = 0; i < list.size(); i++)
-			setMenu(list.get(i), i / cols, i % cols);
+			setMenu(list.get(i), i % cols, i / cols);
 	}
 
 	private void updateSize() {

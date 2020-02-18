@@ -11,7 +11,7 @@ public class YAMLTextureCube {
 
 	int x, y, z;
 
-	// face-row-col
+	/** [face][y * width + x] */
 	int[][] faces = new int[6][];
 	TextureSquare[] ts = new TextureSquare[6];
 	TextureFace[] tf = new TextureFace[6];

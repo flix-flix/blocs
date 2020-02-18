@@ -69,19 +69,19 @@ public class MenuRessources extends FPanel {
 		paintRess(2, 1, units, game.player.getNbUnits());
 	}
 
-	private void paintRess(int row, int col, Image img, int value) {
+	private void paintRess(int x, int y, Image img, int value) {
 		int width = (getWidth() - 2 * border) / 3;
 		int height = (getHeight() - 2 * border) / 2;
 
 		g.setColor(Color.GRAY);
-		g.fillRect(row * width + border + padding, col * height + border + padding, width - 2 * padding,
+		g.fillRect(x * width + border + padding, y * height + border + padding, width - 2 * padding,
 				imgSize + 2 * padding);
 
-		g.drawImage(img, row * width + border + width / 2 - imgSize, col * height + border + padding * 2, imgSize,
+		g.drawImage(img, x * width + border + width / 2 - imgSize, y * height + border + padding * 2, imgSize,
 				imgSize, null);
 
 		g.setColor(Color.WHITE);
-		g.drawString(": " + value, row * width + border + width / 2, col * height + border + padding + textSpaceY);
+		g.drawString(": " + value, x * width + border + width / 2, y * height + border + padding + textSpaceY);
 	}
 
 	// =========================================================================================================================
