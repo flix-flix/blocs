@@ -45,8 +45,10 @@ public class TextureSquare {
 	// =========================================================================================================================
 
 	public static TextureSquare generateSquare(String file) {
-		BufferedImage bimg = (BufferedImage) FlixBlocksUtils.getImage(file);
+		return generateSquare((BufferedImage) FlixBlocksUtils.getImage(file));
+	}
 
+	public static TextureSquare generateSquare(BufferedImage bimg) {
 		int[] color = new int[bimg.getHeight() * bimg.getWidth()];
 
 		for (int i = 0; i < bimg.getHeight(); i++)

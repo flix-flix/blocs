@@ -5,14 +5,16 @@ import java.awt.FontMetrics;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URL;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -25,6 +27,17 @@ import javax.imageio.ImageIO;
 public class FlixBlocksUtils {
 	public static final double toRadian = Math.PI / 180;
 	public static final double toDegres = 180 / Math.PI;
+
+	public static Image imgError;
+
+	static {
+		try {
+			imgError = ImageIO.read(FlixBlocksUtils.class.getResource("/999.png"));
+		} catch (IOException e) {
+			debugBefore("Can't read imgERROR");
+			e.printStackTrace();
+		}
+	}
 
 	// =========================================================================================================================
 	// Hexa
@@ -52,29 +65,20 @@ public class FlixBlocksUtils {
 	// Image
 
 	public static Image getImage(String path) {
-		URL url = URL.class.getResource("/" + path + ".png");
+		File file = new File("resources/" + path + ".png");
 
-		if (url == null) {
-			debugBefore("ERROR: can't read file: " + ("/" + path + ".png"));
-			url = URL.class.getResource("/textures/999.png");
+		if (!file.exists()) {
+			debugBefore("ERROR: file doesn't exists: " + file.getPath());
+			return imgError;
 		}
 
 		try {
-			return ImageIO.read(url);
+			return ImageIO.read(file);
 		} catch (IOException e) {
-			debugBefore("ERROR: can't read error file: " + url);
+			debugBefore("ERROR: can't read image: " + file.getPath());
 			e.printStackTrace();
 		}
-		return null;
-	}
-
-	public static boolean pngExist(String name) {
-		return resourceExist(name + ".png");
-	}
-
-	public static boolean resourceExist(String name) {
-		URL url = URL.class.getResource("/" + name);
-		return url != null;
+		return imgError;
 	}
 
 	// =========================================================================================================================
@@ -158,31 +162,31 @@ public class FlixBlocksUtils {
 	// Read/Write
 
 	public static String read(String name) {
-		String str = new String();
-		FileChannel fc;
-		FileInputStream fis;
+		StringWriter sw = new StringWriter();
 
 		try {
-			fis = new FileInputStream(new File(name));
-			fc = fis.getChannel();
-			int size = (int) fc.size();
-			ByteBuffer bBuff = ByteBuffer.allocate(size);
-			fc.read(bBuff);
-			bBuff.flip();
-			byte[] tab = bBuff.array();
-			str = new String(tab);
+			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(new File(name)), "UTF8"));
+			char[] arr = new char[1024];
+			int size;
+
+			while ((size = br.read(arr)) > 0) {
+				sw.write(arr, 0, size);
+			}
+
+			br.close();
+
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return str;
+		return sw.toString();
 	}
 
 	public static void write(String content, String name) {
 		File file = new File(name);
 
-		// Create File
+		// Create File (and folders)
 		if (!file.exists()) {
 			if (file.getParentFile() != null)
 				file.getParentFile().mkdirs();
@@ -195,11 +199,12 @@ public class FlixBlocksUtils {
 		}
 
 		// Write
-		FileWriter fw;
 		try {
-			fw = new FileWriter(file);
-			fw.write(content);
-			fw.close();
+			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF8"));
+
+			bw.write(content);
+			bw.close();
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

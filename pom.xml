@@ -12,7 +12,7 @@
 		<sourceDirectory>src</sourceDirectory>
 		<resources>
 			<resource>
-				<directory>resources</directory>
+				<directory>include</directory>
 				<excludes>
 					<exclude>**/*.java</exclude>
 				</excludes>
@@ -37,7 +37,7 @@
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>libs/</classpathPrefix>
 							<mainClass>
-								client.main.Main
+								main.Main
 							</mainClass>
 						</manifest>
 					</archive>

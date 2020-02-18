@@ -1,5 +1,6 @@
 package environment.textures;
 
+import java.awt.image.BufferedImage;
 import java.util.TreeMap;
 
 import data.id.ItemTable;
@@ -30,7 +31,7 @@ public class TexturePack {
 	TextureSquare[] miningFrames = new TextureSquare[nbAnim];
 
 	/** Default missing texture */
-	TextureSquare faceError = TextureSquare.generateSquare("textures/999");
+	TextureSquare faceError = TextureSquare.generateSquare((BufferedImage) FlixBlocksUtils.imgError);
 
 	public TexturePack(String folder) {
 		this.folder = folder;
