@@ -68,8 +68,11 @@ public class PanKeys extends PopUp {
 	}
 
 	public void keyPressed(int keyCode) {
-		if (clicked == null)
+		if (clicked == null) {
+			if (Key.PAUSE.code == keyCode)
+				close();
 			return;
+		}
 
 		panels.get(clicked).setSelected(false);
 		if (keyCode != Key.PAUSE.code)

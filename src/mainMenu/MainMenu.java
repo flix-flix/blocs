@@ -10,7 +10,6 @@ import javax.swing.JPanel;
 import data.id.ItemTableClient;
 import dataManager.DataManager;
 import editor.Editor;
-import environment.textures.TexturePack;
 import game.Game;
 import mainMenu.buttons.ButtonAction;
 import mainMenu.buttons.ButtonEnv;
@@ -47,7 +46,7 @@ public class MainMenu extends JPanel implements Displayable {
 	private ButtonAction options, quit;
 
 	// =============== Server ===============
-	private PanServer panServer;
+	PanServer panServer;
 
 	private YAML servers;
 
@@ -65,8 +64,6 @@ public class MainMenu extends JPanel implements Displayable {
 	public MainMenu(Fen fen) {
 		this.fen = fen;
 		this.setLayout(null);
-
-		ItemTableClient.setTexturePack(new TexturePack("classic"));
 
 		// ========================================================================================
 
@@ -177,7 +174,6 @@ public class MainMenu extends JPanel implements Displayable {
 		default:
 			break;
 		}
-
 	}
 
 	public void clickServer(MainMenuAction action, ServerDescription description) {

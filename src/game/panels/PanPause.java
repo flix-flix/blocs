@@ -41,7 +41,6 @@ public class PanPause extends PopUp {
 		resume.setClickListener(new ClickListener() {
 			@Override
 			public void leftClick() {
-				close();
 				game.resume();
 			}
 		});

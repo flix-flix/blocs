@@ -30,7 +30,7 @@ public class PanServer extends FPanel {
 	/** Clickable */
 	private ButtonPad start, add;
 
-	private PanServerAdd panAdd;
+	public PanServerAdd panAdd;
 
 	// =============== Display ===============
 	/** Number of pixels between component border and quit button */

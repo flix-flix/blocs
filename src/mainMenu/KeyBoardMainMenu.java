@@ -18,6 +18,10 @@ public class KeyBoardMainMenu implements KeyBoard {
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		main.keys.keyPressed(e.getKeyCode());
+		if (main.keys.isVisible())
+			main.keys.keyPressed(e.getKeyCode());
+
+		if (main.panServer.isVisible())
+			main.panServer.panAdd.close();
 	}
 }

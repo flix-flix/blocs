@@ -4,7 +4,7 @@ import utils.panels.help.Tip;
 
 public enum TipGame implements Tip {
 
-	CAMERA, USER_ACTION, MOUSE, ADD, REMOVE, F3;
+	CAMERA, USER_ACTION, MOUSE, ADD, REMOVE, F3, CHAT;
 
 	@Override
 	public TipGame next() {

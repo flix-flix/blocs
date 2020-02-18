@@ -62,6 +62,7 @@ tips:
             add: The cube allow to add a cube or a structure with a right click at the desired location
             remove: The red cross allow to remove cube or structure with a left click on it
             f3: Press ~DEVLOP to display the graphic engine infos
+            chat: Press ~DIALOG to open the chat. Enter to send the message, Esc to close the interface. Send !help to display the list of available commands
 
 text:
     game:

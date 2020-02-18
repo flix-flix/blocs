@@ -329,6 +329,8 @@ public class Game extends Environment3D implements Displayable {
 			keyboard.mouseToCenter();
 		}
 
+		panel.pause.close();
+
 		keyboard.setTargetOnMouse();
 		fen.requestFocusInWindow();
 	}
