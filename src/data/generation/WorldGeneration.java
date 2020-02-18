@@ -114,9 +114,9 @@ public class WorldGeneration {
 		// Units
 
 		// Dig
-		for (int i = 10; i < 20; i++)
-			for (int j = 6; j < 15; j++)
-				map.remove(i, 9, j);
+		for (int x = 10; x < 20; x++)
+			for (int z = 6; z < 15; z++)
+				map.remove(x, ground - 1, z);
 
 		// Add Units
 		map.addUnit(new Unit(ItemID.UNIT, felix, 5, ground, 5));
@@ -141,12 +141,12 @@ public class WorldGeneration {
 	// =========================================================================================================================
 
 	private static void addMountain(Map map, int x, int y, int z) {
-		for (int i = 0; i < 7; i++) {
-			int a = (7 - i) / 2;
-			for (int j = -a; j <= a; j++)
-				for (int k = -a; k <= a; k++)
-					if (!((j == -a || j == a) && (k == -a || k == a) && (7 - i) % 2 == 0))
-						map.add(new Cube(x + j, y + i, z + k, ItemID.STONE));
+		for (int _y = 0; _y < 7; _y++) {
+			int a = (7 - _y) / 2;
+			for (int _x = -a; _x <= a; _x++)
+				for (int _z = -a; _z <= a; _z++)
+					if (!((_x == -a || _x == a) && (_z == -a || _z == a) && (7 - _y) % 2 == 0))
+						map.add(new Cube(x + _x, y + _y, z + _z, ItemID.STONE));
 
 			map.add(new Cube(x, y + 7, z, ItemID.STONE));
 			map.add(new Cube(x, y + 6, z, ItemID.STONE));

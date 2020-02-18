@@ -104,8 +104,11 @@ public class FButton extends FPanel {
 			String text = this.text;
 
 			if (fm.stringWidth(text) > getWidth() - 5) {
-				while (fm.stringWidth(text) > getWidth() - 20)
+				while (fm.stringWidth(text) > getWidth() - 20) {
+					if (text.length() < 2)
+						break;
 					text = text.substring(0, text.length() - 2);
+				}
 
 				text += "...";
 			}

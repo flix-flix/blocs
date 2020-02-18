@@ -101,12 +101,12 @@ public class YAML {
 
 		int[][] hexa = new int[objects.length][];
 
-		for (int i = 0; i < objects.length; i++) {
-			String[] strings = (String[]) objects[i];
-			hexa[i] = new int[strings.length];
+		for (int y = 0; y < objects.length; y++) {
+			String[] strings = (String[]) objects[y];
+			hexa[y] = new int[strings.length];
 
-			for (int j = 0; j < strings.length; j++)
-				hexa[i][j] = FlixBlocksUtils.parseHexa(strings[j]);
+			for (int x = 0; x < strings.length; x++)
+				hexa[y][x] = FlixBlocksUtils.parseHexa(strings[x]);
 		}
 
 		return hexa;

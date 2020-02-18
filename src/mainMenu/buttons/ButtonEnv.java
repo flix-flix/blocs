@@ -112,6 +112,15 @@ public class ButtonEnv extends PanEnvironment {
 
 	// =========================================================================================================================
 
+	/**
+	 * Call setLocation() to make the center of this panel at the given coordinates
+	 */
+	public void setCenter(int x, int y) {
+		setLocation(x - getWidth() / 2, y - getHeight() / 2);
+	}
+
+	// =========================================================================================================================
+
 	public void refreshLang() {
 		text = ItemTableClient.getText("main_menu.buttons." + action.name().toLowerCase());
 	}
@@ -169,10 +178,10 @@ public class ButtonEnv extends PanEnvironment {
 		// Units
 
 		// Dig
-		for (int i = 10; i < 20; i++)
-			for (int j = 6; j < 15; j++) {
-				map.remove(i, 1, j);
-				map.add(new Cube(i, 0, j, ItemID.DIRT));
+		for (int x = 10; x < 20; x++)
+			for (int z = 6; z < 15; z++) {
+				map.remove(x, ground - 1, z);
+				map.add(new Cube(x, ground - 2, z, ItemID.DIRT));
 			}
 
 		// Add Units

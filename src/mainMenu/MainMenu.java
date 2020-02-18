@@ -254,31 +254,75 @@ public class MainMenu extends JPanel implements Displayable {
 	public void updateSize(int x, int y) {
 		super.setSize(x, y);
 
+		// =============== Panels ===============
 		menu.setSize(getWidth(), getHeight());
 		panServer.setSize(getWidth(), getHeight());
+		keys.setSize(getWidth(), getHeight());
 
-		game.setSize((int) (getWidth() * .6), getHeight() / 2);
-		game.setLocation((int) (getWidth() * .05), (int) (getHeight() * .07));
-
-		server.setSize((int) (getWidth() * .25), getHeight() / 2);
-		server.setLocation((int) (getWidth() * .7), (int) (getHeight() * .07));
-
-		editor.setSize((int) (getHeight() / 3), getHeight() / 3);
-		editor.setLocation(getWidth() / 10, game.getLocation().y + game.getHeight() + (int) (getHeight() * .05));
-
-		data.setSize((int) (getHeight() / 3), getHeight() / 3);
-		data.setLocation(getWidth() * 4 / 10, game.getLocation().y + game.getHeight() + (int) (getHeight() * .05));
-
-		wip.setBottomRightCorner(getWidth() - quit.getWidth() - felix.getWidth() - 2 * margin,
-				getHeight() - margin - 5);
-		felix.setBottomRightCorner(getWidth() - quit.getWidth() - 2 * margin, getHeight() - margin);
-
+		// =============== Buttons ===============
 		lang.setBottomRightCorner(getWidth() - margin,
 				getHeight() - options.getHeight() - quit.getHeight() - 3 * margin);
 		options.setBottomRightCorner(getWidth() - margin, getHeight() - quit.getHeight() - 2 * margin);
 		quit.setBottomRightCorner(getWidth() - margin, getHeight() - margin);
 
-		keys.setSize(getWidth(), getHeight());
+		int borderX = quit.getWidth() + 2 * margin;
+
+		// =============== Bottom ===============
+		felix.setBottomRightCorner(getWidth() - quit.getWidth() - 2 * margin, getHeight() - margin);
+		wip.setBottomRightCorner(getWidth() - quit.getWidth() - felix.getWidth() - 2 * margin,
+				getHeight() - margin - 5);
+
+		int borderY = felix.getHeight() + 2 * margin;
+
+		// =============== Display (Top) ===============
+		int marginTopX = (int) (getWidth() * .05);
+		int marginTopY = (int) (getHeight() * .05);
+
+		int topH = (int) (getHeight() * .6);
+		// Avoid the top panels to hide the right-side buttons
+		int topW = getWidth() - (topH > lang.getLocation().y - margin ? borderX : marginTopX);
+
+		// Remove the margin before
+		topW -= marginTopX;
+		topH -= marginTopY;
+
+		// Size without ratio
+		int _gameW = (int) (topW * .65), _gameH = topH;
+		int _serverW = (int) (topW * .30), _serverH = topH;
+
+		// Size with ratio
+		int gameW = _gameW, gameH = _gameH;
+		int serverW = _serverW;
+
+		if (gameW >= 3 * gameH)
+			gameW = 3 * gameH;
+		else if (gameW < gameH * 2 / 3)
+			gameH = gameW * 3 / 2;
+
+		if (serverW > gameH)
+			serverW = gameH;
+
+		game.setSize(gameW, gameH);
+		game.setCenter(marginTopX + _gameW / 2, marginTopY + _gameH / 2);
+
+		server.setSize(serverW, gameH);
+		server.setCenter(marginTopX + _gameW + (int) (topW * .05) + _serverW / 2, marginTopY + _serverH / 2);
+
+		// =============== Display (Bottom) ===============
+		int bottomStartY = topH + 2 * marginTopY;
+
+		int width = getWidth() - marginTopX - borderX;
+		int sizeW = width / 3;
+		int sizeH = getHeight() - bottomStartY - borderY;
+		int size = Math.min(sizeW, sizeH);
+
+		int marginBottomX = (width - 2 * sizeW) / 3;
+
+		editor.setSize(size, size);
+		editor.setCenter(marginBottomX + sizeW / 2, bottomStartY + sizeH / 2);
+
+		data.setSize(size, size);
+		data.setCenter(marginBottomX * 2 + sizeW + sizeW / 2, bottomStartY + sizeH / 2);
 	}
 
 	@Override
