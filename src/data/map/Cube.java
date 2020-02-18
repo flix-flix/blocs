@@ -51,10 +51,7 @@ public class Cube implements Serializable {
 	// =========================================================================================================================
 	// Mining
 
-	public static final int NO_MINING = -1;
 	public int minedAlready = 0;
-	/** Step of the bloc's "mining state" */
-	public int miningState = NO_MINING;
 
 	// =========================================================================================================================
 
@@ -155,9 +152,6 @@ public class Cube implements Serializable {
 	public boolean addMined(int x) {
 		if ((minedAlready += x) > ItemTable.getMiningTime(getItemID()))
 			minedAlready = ItemTable.getMiningTime(getItemID());
-
-		miningState = (int) (minedAlready / (double) (ItemTable.getMiningTime(getItemID()))
-				* ItemTable.getNumberOfMiningSteps());
 
 		return minedAlready == ItemTable.getMiningTime(getItemID());
 	}

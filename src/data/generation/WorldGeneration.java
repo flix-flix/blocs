@@ -74,16 +74,18 @@ public class WorldGeneration {
 		map.add(off);
 
 		// Cubes (texture 16x16) with the differents step of the mining animation
-		for (int x = -1; x < 5; x++) {
+		map.add(new Cube(-1, 2, -3, ItemID.TEST));
+		for (int x = 0; x < 5; x++) {
 			Cube c = new Cube(x, 2, -3, ItemID.TEST);
-			c.miningState = x;
+			c.minedAlready = x == 0 ? 1 : ItemTable.getMiningTime(ItemID.TEST) / 5 * x;
 			map.add(c);
 		}
 
 		// Cubes (texture 3x3) with the differents step of the mining animation
-		for (int x = -1; x < 5; x++) {
+		map.add(new Cube(-1, 2, -5, ItemID.GRASS));
+		for (int x = 0; x < 5; x++) {
 			Cube c = new Cube(x, 2, -5, ItemID.GRASS);
-			c.miningState = x;
+			c.minedAlready = x == 0 ? 1 : ItemTable.getMiningTime(ItemID.GRASS) / 5 * x;
 			map.add(c);
 		}
 

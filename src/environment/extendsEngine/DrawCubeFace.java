@@ -5,7 +5,6 @@ import java.awt.Polygon;
 import java.util.ArrayList;
 
 import data.id.ItemTableClient;
-import data.map.Cube;
 import data.map.enumerations.Face;
 import environment.extendsData.CubeClient;
 import environment.textures.TextureSquare;
@@ -58,7 +57,7 @@ public class DrawCubeFace extends Drawable {
 		}
 
 		// Draw the mining animation
-		if (cube.miningState != Cube.NO_MINING)
+		if (cube.miningState != CubeClient.NO_MINING)
 			generateQuadri(ItemTableClient.getTexturePack().getMiningFrame(cube.miningState), engine, quadri);
 
 		// Draw the cube

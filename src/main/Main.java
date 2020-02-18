@@ -1,6 +1,7 @@
 package main;
 
 import data.id.ItemTableClient;
+import environment.textures.TexturePack;
 import window.Fen;
 
 public class Main {
@@ -9,6 +10,7 @@ public class Main {
 		System.out.println("========== CLIENT ==========");
 
 		ItemTableClient.init();
+		ItemTableClient.setTexturePack(new TexturePack("classic"));
 
 		new Fen();
 	}

@@ -4,6 +4,7 @@ package environment.extendsData;
 import java.util.ArrayList;
 
 import data.id.ItemID;
+import data.id.ItemTable;
 import data.map.Cube;
 import data.map.enumerations.Face;
 import environment.extendsEngine.DrawCubeFace;
@@ -20,14 +21,21 @@ public class CubeClient extends Cube implements Modelisable {
 
 	private static final double toRadian = Math.PI / 180;
 
-	/** center after map rotation */
+	// =============== Draw order ===============
+	/** The center point after map rotation */
 	public Point3D centerDecal;
+	/** Index of the cube (used to sort when centers are at the same location) */
+	int index;
+
+	// =============== Graphic generation ===============
 	/** The cube will be generate with vectors from this point */
 	public Point3D generationPoint;
 	/** The 3 adjacents points of centerDecal after the map and cube rotations */
 	public Point3D ppx, ppy, ppz;
 	/** Vectors of the cube for the 3 axes (centerDecal to ppx, ppy, ppz) */
 	public Vector vx, vy, vz;
+
+	// =============== Graphic representation ===============
 	/**
 	 * 3D Points of the cube calculed with the vectors
 	 * 
@@ -35,14 +43,15 @@ public class CubeClient extends Cube implements Modelisable {
 	 */
 	public Point3D[] points = new Point3D[8];
 
-	/** Index of the cube (used to sort when centers are at the same location) */
-	int index;
 	/**
-	 * true: the face won't be displayed (Handled by ModelMap when an adjacent cube
-	 * is added)
+	 * true: the face won't be displayed (Handled by
+	 * <strong>MapClient._update()</strong> when an adjacent cube is added)
+	 * 
+	 * @see MapClient
 	 */
 	public boolean[] hideFace = { false, false, false, false, false, false };
 
+	// =============== State ===============
 	/** true : the cube will be transparent */
 	private boolean preview = false;
 	/** true : allow the cube to be selected */
@@ -50,15 +59,20 @@ public class CubeClient extends Cube implements Modelisable {
 	/** true : pointed by the player */
 	private boolean highlight;
 
-	// =================== Layer ===================
+	// =============== Mining ===============
+	public static final int NO_MINING = -1;
+	/** Step of the bloc's "mining state" */
+	public int miningState = NO_MINING;
+
+	// =============== Layer ===============
 	private ArrayList<DrawLayer> layers;
 
-	// =================== Quadri ===================
+	// =============== Quadri ===============
 	public Face selectedFace = null;
 	public static final int NO_QUADRI = -1;
 	public int selectedQuadri = NO_QUADRI;
 
-	// =================== Model ===================
+	// =============== Model ===============
 	/**
 	 * false: the cube won't be displayed<br>
 	 * (Will be set to false only if the 6 adjacent blocs are opaque)
@@ -78,6 +92,8 @@ public class CubeClient extends Cube implements Modelisable {
 	public CubeClient(Cube c) {
 		this(c.x, c.y, c.z, c.rotaX, c.rotaY, c.rotaZ, c.sizeX, c.sizeY, c.sizeZ, c.getItemID());
 
+		this.onGrid = c.onGrid;
+
 		this.shiftX = c.shiftX;
 		this.shiftY = c.shiftY;
 		this.shiftZ = c.shiftZ;
@@ -85,8 +101,8 @@ public class CubeClient extends Cube implements Modelisable {
 		this.rotation = c.rotation;
 		this.orientation = c.orientation;
 
-		this.miningState = c.miningState;
-		this.onGrid = c.onGrid;
+		this.minedAlready = c.minedAlready;
+		updateMiningState();
 
 		this.multibloc = c.multibloc;
 		this.unit = c.unit == null ? null : (c.unit instanceof UnitClient ? c.unit : new UnitClient(c.unit));
@@ -166,13 +182,6 @@ public class CubeClient extends Cube implements Modelisable {
 
 	// =========================================================================================================================
 
-	public void removeLayer(int i) {
-		if (layers != null && i < layers.size())
-			layers.set(i, null);
-	}
-
-	// =========================================================================================================================
-
 	public boolean isPreview() {
 		return preview;
 	}
@@ -190,6 +199,25 @@ public class CubeClient extends Cube implements Modelisable {
 	public void setSelectedQuadri(Face face, int id) {
 		selectedFace = face;
 		selectedQuadri = id;
+	}
+
+	// =========================================================================================================================
+
+	@Override
+	public boolean addMined(int x) {
+		boolean broke = super.addMined(x);
+
+		updateMiningState();
+
+		return broke;
+	}
+
+	private void updateMiningState() {
+		if (minedAlready == 0)
+			miningState = NO_MINING;
+		else
+			miningState = (int) (minedAlready / (double) (ItemTable.getMiningTime(getItemID()))
+					* ItemTable.getNumberOfMiningSteps());
 	}
 
 	// =========================================================================================================================
@@ -263,6 +291,11 @@ public class CubeClient extends Cube implements Modelisable {
 
 	public void setLayer(int index, DrawLayer layer) {
 		layers.set(index, layer);
+	}
+
+	public void removeLayer(int i) {
+		if (layers != null && i < layers.size())
+			layers.set(i, null);
 	}
 
 	// =========================================================================================================================
