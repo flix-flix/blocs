@@ -3,6 +3,7 @@ package data.map.units;
 import java.io.Serializable;
 import java.util.LinkedList;
 
+import data.Gamer;
 import data.id.ItemTableClient;
 import data.map.Coord;
 import data.map.Map;
@@ -11,7 +12,6 @@ import data.map.enumerations.Face;
 import data.map.enumerations.Orientation;
 import data.map.enumerations.Rotation;
 import data.map.resources.Resource;
-import server.game.Player;
 import server.send.Action;
 import utils.FlixBlocksUtils;
 
@@ -23,8 +23,8 @@ public class Unit implements Serializable {
 	// ========== Data ==========
 	/** ID of the unit (allow server/client to communicate) */
 	protected int id;
-	/** Player controlling this unit */
-	protected Player player;
+	/** Gamer controlling this unit */
+	protected Gamer gamer;
 	/** Type of unit */
 	protected int itemID;
 
@@ -85,16 +85,16 @@ public class Unit implements Serializable {
 
 	// =========================================================================================================================
 
-	public Unit(int itemID, Player player, int x, int y, int z) {
+	public Unit(int itemID, Gamer gamer, int x, int y, int z) {
 		this.itemID = itemID;
 		id = nextID++;
-		this.player = player;
+		this.gamer = gamer;
 		coord = new Coord(x, y, z);
 	}
 
 	protected Unit(Unit u) {
 		id = u.id;
-		player = u.player;
+		gamer = u.gamer;
 		itemID = u.itemID;
 		coord = u.coord;
 
@@ -502,8 +502,8 @@ public class Unit implements Serializable {
 		return destination != null || action != null;
 	}
 
-	public Player getPlayer() {
-		return player;
+	public Gamer getGamer() {
+		return gamer;
 	}
 
 	public Resource getResource() {
@@ -534,6 +534,6 @@ public class Unit implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Player: " + player.getName() + " | Coords: " + (coord == null ? null : coord.toString());
+		return "Player: " + gamer.getName() + " | Coords: " + (coord == null ? null : coord.toString());
 	}
 }

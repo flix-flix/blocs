@@ -60,13 +60,13 @@ public class MenuRessources extends FPanel {
 		g.setColor(Color.WHITE);
 		g.setFont(font);
 
-		paintRess(0, 0, ResourceType.WOOD.getImage(), game.player.getWood());
-		paintRess(1, 0, ResourceType.STONE.getImage(), game.player.getStone());
-		paintRess(2, 0, ResourceType.WATER.getImage(), game.player.getWater());
+		paintRess(0, 0, ResourceType.WOOD.getImage(), game.gamer.getWood());
+		paintRess(1, 0, ResourceType.STONE.getImage(), game.gamer.getStone());
+		paintRess(2, 0, ResourceType.WATER.getImage(), game.gamer.getWater());
 
-		paintRess(0, 1, units, game.player.getWood());
-		paintRess(1, 1, units, game.player.getStone());
-		paintRess(2, 1, units, game.player.getNbUnits());
+		paintRess(0, 1, units, game.gamer.getWood());
+		paintRess(1, 1, units, game.gamer.getStone());
+		paintRess(2, 1, units, game.gamer.getNbUnits());
 	}
 
 	private void paintRess(int x, int y, Image img, int value) {
@@ -77,8 +77,8 @@ public class MenuRessources extends FPanel {
 		g.fillRect(x * width + border + padding, y * height + border + padding, width - 2 * padding,
 				imgSize + 2 * padding);
 
-		g.drawImage(img, x * width + border + width / 2 - imgSize, y * height + border + padding * 2, imgSize,
-				imgSize, null);
+		g.drawImage(img, x * width + border + width / 2 - imgSize, y * height + border + padding * 2, imgSize, imgSize,
+				null);
 
 		g.setColor(Color.WHITE);
 		g.drawString(": " + value, x * width + border + width / 2, y * height + border + padding + textSpaceY);

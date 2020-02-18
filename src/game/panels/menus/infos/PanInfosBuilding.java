@@ -148,8 +148,8 @@ public class PanInfosBuilding extends FPanel {
 	}
 
 	private void _update() {
-		spawn.setVisible(build.isBuild() && build.getPlayer().equals(game.player));
-		upgrade.setVisible(build.isBuild() && build.getPlayer().equals(game.player));
+		spawn.setVisible(build.isBuild() && build.getGamer().equals(game.gamer));
+		upgrade.setVisible(build.isBuild() && build.getGamer().equals(game.gamer));
 
 		setVisible(true);
 		repaint();

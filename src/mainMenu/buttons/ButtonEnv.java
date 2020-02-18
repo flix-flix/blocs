@@ -7,6 +7,7 @@ import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+import data.Gamer;
 import data.id.ItemID;
 import data.id.ItemTableClient;
 import data.map.Cube;
@@ -26,7 +27,6 @@ import graphicEngine.calcul.Engine;
 import graphicEngine.calcul.Point3D;
 import mainMenu.MainMenu;
 import mainMenu.MainMenuAction;
-import server.game.Player;
 
 public class ButtonEnv extends PanEnvironment {
 	private static final long serialVersionUID = -7013365965777831831L;
@@ -145,7 +145,7 @@ public class ButtonEnv extends PanEnvironment {
 
 	private static Env generateEnvPlay(MainMenu main) {
 		MapClient map = new MapClient();
-		Player felix = new Player("");
+		Gamer player1 = new Gamer(1);
 
 		int ground = 2;
 
@@ -185,10 +185,10 @@ public class ButtonEnv extends PanEnvironment {
 			}
 
 		// Add Units
-		map.addUnit(new Unit(ItemID.UNIT, felix, 27, ground, 11));
-		map.addUnit(new Unit(ItemID.UNIT, felix, 25, ground, 13));
-		map.addUnit(new Unit(ItemID.UNIT, felix, 23, ground, 11));
-		map.addUnit(new Unit(ItemID.UNIT, felix, 21, ground, 12));
+		map.addUnit(new Unit(ItemID.UNIT, player1, 27, ground, 11));
+		map.addUnit(new Unit(ItemID.UNIT, player1, 25, ground, 13));
+		map.addUnit(new Unit(ItemID.UNIT, player1, 23, ground, 11));
+		map.addUnit(new Unit(ItemID.UNIT, player1, 21, ground, 12));
 
 		CubeClient c1, c2, c3, c4;
 
@@ -214,7 +214,7 @@ public class ButtonEnv extends PanEnvironment {
 		// =========================================================================================================================
 		// Buildings
 
-		map.addBuilding(new Building(felix, ItemID.CASTLE, 26, ground, 8, true));
+		map.addBuilding(new Building(player1, ItemID.CASTLE, 26, ground, 8, true));
 
 		return new Env(main, map, new Camera(new Point3D(28, ground + 3.1, 16), 238, -30), MainMenuAction.PLAY);
 	}
@@ -224,7 +224,7 @@ public class ButtonEnv extends PanEnvironment {
 	private static Env generateEnvServer(MainMenu main) {
 		MapClient map = new MapClient();
 
-		Player felix = new Player("");
+		Gamer player1 = new Gamer(1);
 
 		int ground = 2;
 
@@ -260,11 +260,11 @@ public class ButtonEnv extends PanEnvironment {
 		// Units
 
 		// Add Units
-		map.addUnit(new Unit(ItemID.UNIT, felix, 21, ground, 11));
-		map.addUnit(new Unit(ItemID.UNIT, felix, 21, ground, 12));
-		map.addUnit(new Unit(ItemID.UNIT, felix, 21, ground, 13));
+		map.addUnit(new Unit(ItemID.UNIT, player1, 21, ground, 11));
+		map.addUnit(new Unit(ItemID.UNIT, player1, 21, ground, 12));
+		map.addUnit(new Unit(ItemID.UNIT, player1, 21, ground, 13));
 
-		map.addUnit(new Unit(ItemID.UNIT, felix, 23, ground, 10));
+		map.addUnit(new Unit(ItemID.UNIT, player1, 23, ground, 10));
 
 		CubeClient c = map.gridGet(23, ground, 10);
 

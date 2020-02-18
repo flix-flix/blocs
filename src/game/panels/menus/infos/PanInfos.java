@@ -81,6 +81,7 @@ public class PanInfos extends FPanel {
 
 		button.setSelectable(true);
 		button.setBackground(Color.GRAY);
+		button.setPadding(5);
 		button.setForeground(Color.WHITE);
 		button.setTextBackground(new Color(75, 75, 75));
 		button.setTextYLocation(5, ButtonBlocks.BOTTOM);

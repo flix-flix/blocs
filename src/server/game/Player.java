@@ -1,21 +1,12 @@
 package server.game;
 
 import java.io.Serializable;
-import java.util.LinkedList;
-
-import data.map.units.Unit;
 
 public class Player implements Serializable {
 	private static final long serialVersionUID = -3099767464576186554L;
 
 	private String name;
-	public int id = -1;
-
-	private int wood = 0;
-	private int stone = 0;
-	private int water = 0;
-
-	private LinkedList<Unit> units = new LinkedList<>();
+	public transient int id = -1;
 
 	// =========================================================================================================================
 
@@ -27,38 +18,6 @@ public class Player implements Serializable {
 
 	public void setID(int id) {
 		this.id = id;
-	}
-
-	// =========================================================================================================================
-
-	public int getWood() {
-		return wood;
-	}
-
-	public void addWood(int wood) {
-		this.wood += wood;
-	}
-
-	public int getStone() {
-		return stone;
-	}
-
-	public void addRocks(int rocks) {
-		this.stone += rocks;
-	}
-
-	public int getWater() {
-		return water;
-	}
-
-	public void addWater(int water) {
-		this.water += water;
-	}
-
-	// =========================================================================================================================
-
-	public int getNbUnits() {
-		return units.size();
 	}
 
 	public String getName() {

@@ -1,5 +1,6 @@
 package data.generation;
 
+import data.Gamer;
 import data.id.ItemID;
 import data.id.ItemTable;
 import data.map.Cube;
@@ -9,7 +10,6 @@ import data.map.multiblocs.E;
 import data.map.multiblocs.MultiBloc;
 import data.map.multiblocs.Tree;
 import data.map.units.Unit;
-import server.game.Player;
 import utils.FlixBlocksUtils;
 
 public class WorldGeneration {
@@ -17,8 +17,8 @@ public class WorldGeneration {
 	public static Map generateMap() {
 		Map map = new Map();
 
-		Player felix = new Player("Felix");
-		Player ia = new Player("IA");
+		Gamer felix = new Gamer(1, "Félix");
+		Gamer ia = new Gamer(2, "IA");
 
 		int ground = 10;
 		int size = 20;

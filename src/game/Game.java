@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import javax.swing.JPanel;
 
+import data.Gamer;
 import data.dynamic.TickClock;
 import data.id.ItemTable;
 import data.id.ItemTableClient;
@@ -50,10 +51,10 @@ public class Game extends Environment3D implements Displayable {
 	private Client client;
 	/** Local server if not online play */
 	private Server server;
+	public Player player = new Player("Felix");
 
 	// =============== Data ===============
-	public Player player = new Player("Felix");
-	// public Player player = new Player("IA");
+	public Gamer gamer = new Gamer(1);
 	private UserAction action;
 	public CameraMode cameraMode = CameraMode.CLASSIC;
 	public GameMode gameMode = GameMode.CLASSIC;
@@ -123,7 +124,7 @@ public class Game extends Environment3D implements Displayable {
 		// ======================================
 
 		setAction(UserAction.MOUSE);
-		setGameMode(GameMode.CLASSIC);
+		setCameraMode(CameraMode.CLASSIC);
 
 		send(player);
 	}
@@ -185,17 +186,17 @@ public class Game extends Environment3D implements Displayable {
 
 	// =========================================================================================================================
 
-	public void setGameMode(GameMode gameMode) {
+	public void setCameraMode(CameraMode cameraMode) {
 		// Ignore if map isn't loaded
 		if (camera == null)
 			return;
-		this.gameMode = gameMode;
+		this.cameraMode = cameraMode;
 
 		panel.refreshGUI();
 
-		switch (gameMode) {
+		switch (cameraMode) {
 		case CLASSIC:
-			cameraMode = CameraMode.CLASSIC;
+			gameMode = GameMode.CLASSIC;
 			// Realign the camera with the grid
 			camera.setVx(90);
 			camera.setVy(-65);
@@ -211,16 +212,14 @@ public class Game extends Environment3D implements Displayable {
 			panel.setGUIVisible(true);
 			setCursorVisible(true);
 			break;
-		case CREATIVE:
-			cameraMode = CameraMode.FIRST_PERSON;
+		case FIRST_PERSON:
+			gameMode = GameMode.CREATIVE;
 
 			keyboard.mouseToCenter();
 			keyboard.setSpeedModifier(1);
 
 			setCursorVisible(false);
 			panel.setGUIVisible(false);
-			break;
-		case SPECTATOR:
 			break;
 		}
 
@@ -252,7 +251,7 @@ public class Game extends Environment3D implements Displayable {
 
 		if (getAction() == UserAction.MOUSE)
 
-			if (cube != null && selectedUnit != null && selectedUnit.getPlayer().equals(player))
+			if (cube != null && selectedUnit != null && selectedUnit.getGamer().equals(gamer))
 
 				if (unitAction == Action.UNIT_HARVEST)
 					switch (ItemTable.getResourceType(cube.getItemID())) {
@@ -545,7 +544,7 @@ public class Game extends Environment3D implements Displayable {
 
 					Cube cube = target.cube;
 
-					if (cube == null || selectedUnit == null || !selectedUnit.getPlayer().equals(player))
+					if (cube == null || selectedUnit == null || !selectedUnit.getGamer().equals(gamer))
 						return;
 
 					// Harvestable
@@ -554,7 +553,7 @@ public class Game extends Environment3D implements Displayable {
 
 					// Building
 					else if (cube.build != null) {
-						if (cube.build.getPlayer().equals(player)) {
+						if (cube.build.getGamer().equals(gamer)) {
 							if (!cube.build.isBuild())
 								unitAction = Action.UNIT_BUILD;
 
@@ -567,7 +566,7 @@ public class Game extends Environment3D implements Displayable {
 
 					// Unit
 					else if (cube.unit != null)
-						if (cube.unit.getPlayer().equals(player)) // Own
+						if (cube.unit.getGamer().equals(gamer)) // Own
 							;
 						else // Opponent
 							unitAction = Action.UNIT_ATTACK;

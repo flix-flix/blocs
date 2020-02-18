@@ -3,6 +3,7 @@ package data.map.buildings;
 import java.io.Serializable;
 import java.util.HashMap;
 
+import data.Gamer;
 import data.id.ItemTable;
 import data.id.ItemTableClient;
 import data.map.Coord;
@@ -10,7 +11,6 @@ import data.map.Cube;
 import data.map.multiblocs.MultiBloc;
 import data.map.resources.Resource;
 import data.map.resources.ResourceType;
-import server.game.Player;
 
 public class Building implements Serializable {
 	private static final long serialVersionUID = -1662130293196731466L;
@@ -19,7 +19,7 @@ public class Building implements Serializable {
 
 	private int id;
 	public Coord coord;
-	private Player player;
+	private Gamer gamer;
 	private int itemID;
 	private MultiBloc multi;
 
@@ -32,10 +32,10 @@ public class Building implements Serializable {
 
 	// =========================================================================================================================
 
-	public Building(Player player, int itemID, int x, int y, int z, boolean isBuild) {
+	public Building(Gamer gamer, int itemID, int x, int y, int z, boolean isBuild) {
 		id = nextID++;
 		coord = new Coord(x, y, z);
-		this.player = player;
+		this.gamer = gamer;
 		this.itemID = itemID;
 		this.isBuild = isBuild;
 
@@ -105,8 +105,8 @@ public class Building implements Serializable {
 		return multi.getCube();
 	}
 
-	public Player getPlayer() {
-		return player;
+	public Gamer getGamer() {
+		return gamer;
 	}
 
 	public boolean isBuild() {
@@ -129,6 +129,6 @@ public class Building implements Serializable {
 
 	@Override
 	public String toString() {
-		return "I'm a building of " + (player == null ? "[null]" : player.getName());
+		return "I'm a building of " + (gamer == null ? "[null]" : gamer.getName());
 	}
 }

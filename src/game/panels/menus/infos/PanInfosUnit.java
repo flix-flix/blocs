@@ -103,7 +103,7 @@ public class PanInfosUnit extends FPanel {
 		if (unit != null)
 			res.update(unit.getResource());
 
-		destroy.setVisible(unit.getPlayer().equals(game.player));
+		destroy.setVisible(unit.getGamer().equals(game.gamer));
 
 		setVisible(true);
 		repaint();

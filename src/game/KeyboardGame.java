@@ -86,7 +86,7 @@ public class KeyboardGame extends KeyboardEnvironment3D {
 					return;
 				if (e.getWheelRotation() < 0 && camera.vue.y <= 25)
 					return;
-					camera.moveY(e.getWheelRotation() * 10);
+				camera.moveY(e.getWheelRotation() * 10);
 			}
 	}
 
@@ -193,10 +193,10 @@ public class KeyboardGame extends KeyboardEnvironment3D {
 				switch (Key.get(e.getKeyCode())) {
 
 				case ACCESS_1:
-					game.setGameMode(GameMode.CREATIVE);
+					game.setCameraMode(CameraMode.FIRST_PERSON);
 					break;
 				case ACCESS_2:
-					game.setGameMode(GameMode.CLASSIC);
+					game.setCameraMode(CameraMode.CLASSIC);
 					break;
 				case ACCESS_3:
 					break;
