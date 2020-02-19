@@ -4,7 +4,7 @@
 
 ## Specifications
 
-###Double array
+### Double array
 
 array**[x][y]** are stored like array2**[y][x]** to be displayed like:
 
