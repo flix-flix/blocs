@@ -8,7 +8,7 @@ import data.map.buildings.Building;
 import data.map.multiblocs.MultiBloc;
 import data.map.resources.ResourceType;
 import environment.textures.TexturePack;
-import utils.FlixBlocksUtils;
+import utils.Utils;
 import utils.yaml.YAML;
 
 public class ItemTable {
@@ -20,7 +20,7 @@ public class ItemTable {
 	// =========================================================================================================================
 
 	public static void init() {
-		for (String file : FlixBlocksUtils.getFilesName("resources/items"))
+		for (String file : Utils.getFilesName("resources/items"))
 			addItem(new Item(YAML.parseFile(file)));
 	}
 
@@ -66,7 +66,7 @@ public class ItemTable {
 
 	public static MultiBloc createMulti(int itemID) {
 		if (!isMultiBloc(itemID)) {
-			FlixBlocksUtils.debugBefore(itemID + " isn't a multibloc");
+			Utils.debugBefore(itemID + " isn't a multibloc");
 			return null;
 		}
 

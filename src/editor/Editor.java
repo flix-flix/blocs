@@ -32,7 +32,7 @@ import graphicEngine.calcul.Engine;
 import graphicEngine.calcul.Line;
 import graphicEngine.calcul.Point3D;
 import graphicEngine.calcul.Quadri;
-import utils.FlixBlocksUtils;
+import utils.Utils;
 import utils.yaml.YAML;
 import window.Displayable;
 import window.Fen;
@@ -399,7 +399,7 @@ public class Editor extends Environment3D implements Displayable {
 
 		for (int x = 0; x < sizeX; x++)
 			for (int y = 0; y < sizeY; y++)
-				calk2[y][sizeX-1-x] = calk[x][y];
+				calk2[y][sizeX - 1 - x] = calk[x][y];
 
 		int _calkStartX = calkStartX;
 		calkStartX = calkStartY;
@@ -507,7 +507,7 @@ public class Editor extends Environment3D implements Displayable {
 	// =========================================================================================================================
 	// Buttons events
 
-	public void menuClick(ActionEditor action) {
+	public void buttonClick(ActionEditor action) {
 		mayLooseListeningKey(action);
 		panel.helpTool.setVisible(false);
 
@@ -584,7 +584,7 @@ public class Editor extends Environment3D implements Displayable {
 		}
 	}
 
-	public void menuWheel(ActionEditor action) {
+	public void buttonWheel(ActionEditor action) {
 		mayLooseListeningKey(action);
 
 		switch (action) {
@@ -714,11 +714,10 @@ public class Editor extends Environment3D implements Displayable {
 	// Rotate-Mode
 
 	public void lookCube() {
-		camera.setVx(FlixBlocksUtils.toDegres * Math.atan((camera.vue.x - .5) / -(camera.vue.z - .5)) + 90
+		camera.setVx(Utils.toDegres * Math.atan((camera.vue.x - .5) / -(camera.vue.z - .5)) + 90
 				+ (camera.vue.z - .5 >= 0 ? 180 : 0));
-		camera.setVy(FlixBlocksUtils.toDegres
-				* Math.atan(Math.hypot(camera.vue.x - .5, camera.vue.z - .5) / (camera.vue.y - .5)) - 90
-				+ (camera.vue.y - .5 <= 0 ? 180 : 0));
+		camera.setVy(Utils.toDegres * Math.atan(Math.hypot(camera.vue.x - .5, camera.vue.z - .5) / (camera.vue.y - .5))
+				- 90 + (camera.vue.y - .5 <= 0 ? 180 : 0));
 	}
 
 	public void rotateCamera(int x, int y) {
@@ -730,10 +729,10 @@ public class Editor extends Environment3D implements Displayable {
 		else if (angleY <= -60)
 			angleY = -59.9;
 
-		camera.vue.y = .5 - Math.sin(FlixBlocksUtils.toRadian * angleY) * distY;
-		double distX = Math.cos(FlixBlocksUtils.toRadian * angleY) * distY;
+		camera.vue.y = .5 - Math.sin(Utils.toRadian * angleY) * distY;
+		double distX = Math.cos(Utils.toRadian * angleY) * distY;
 
-		double angleX = FlixBlocksUtils.toRadian * (camera.getVx() + x * rotateSpeed);
+		double angleX = Utils.toRadian * (camera.getVx() + x * rotateSpeed);
 
 		camera.vue.x = .5 - distX * Math.cos(angleX);
 		camera.vue.z = .5 - distX * Math.sin(angleX);
@@ -855,11 +854,11 @@ public class Editor extends Environment3D implements Displayable {
 
 	private void generateCursor() {
 		String folder = texturePack.getFolder() + "cursor/editor/";
-		cursorPaint = FlixBlocksUtils.createCursor(folder + "cursorPaint");
-		cursorFill = FlixBlocksUtils.createCursor(folder + "cursorFill");
-		cursorSelectColor = FlixBlocksUtils.createCursor(folder + "cursorSelectColor");
-		cursorSquareSelection = FlixBlocksUtils.createCursor(folder + "cursorSquareSelection");
-		cursorMoveSelection = FlixBlocksUtils.createCursor(folder + "cursorMoveSelection");
+		cursorPaint = Utils.createCursor(folder + "cursorPaint");
+		cursorFill = Utils.createCursor(folder + "cursorFill");
+		cursorSelectColor = Utils.createCursor(folder + "cursorSelectColor");
+		cursorSquareSelection = Utils.createCursor(folder + "cursorSquareSelection");
+		cursorMoveSelection = Utils.createCursor(folder + "cursorMoveSelection");
 	}
 
 	// =========================================================================================================================

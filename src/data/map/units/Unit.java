@@ -13,7 +13,7 @@ import data.map.enumerations.Orientation;
 import data.map.enumerations.Rotation;
 import data.map.resources.Resource;
 import server.send.Action;
-import utils.FlixBlocksUtils;
+import utils.Utils;
 
 public class Unit implements Serializable {
 	private static final long serialVersionUID = -3095427303288055442L;
@@ -183,7 +183,7 @@ public class Unit implements Serializable {
 			break;
 
 		default:
-			FlixBlocksUtils.debugBefore("Action " + action + " unimplemented");
+			Utils.debugBefore("Action " + action + " unimplemented");
 		}
 	}
 

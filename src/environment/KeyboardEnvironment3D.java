@@ -13,7 +13,7 @@ import data.map.enumerations.Face;
 import environment.extendsData.CubeClient;
 import environment.extendsData.MapClient;
 import graphicEngine.calcul.Camera;
-import utils.FlixBlocksUtils;
+import utils.Utils;
 import window.Fen;
 import window.Key;
 import window.KeyBoard;
@@ -58,7 +58,8 @@ public abstract class KeyboardEnvironment3D implements KeyBoard {
 	protected Cube targetedCube;
 	protected Face targetedFace;
 
-	private ThreadCameraMovements cameraMov;
+	// =============== Thread ===============
+	private boolean run = true;
 
 	// =========================================================================================================================
 
@@ -76,16 +77,19 @@ public abstract class KeyboardEnvironment3D implements KeyBoard {
 	// =========================================================================================================================
 
 	public void start() {
+		if (!run)
+			return;
+
 		map = env.getMap();
 		camera = env.getCamera();
 
-		Thread t = new Thread(cameraMov = new ThreadCameraMovements());
+		Thread t = new Thread(new ThreadCameraMovements());
 		t.setName("Camera Movements");
 		t.start();
 	}
 
 	public void stop() {
-		cameraMov.stop();
+		run = false;
 	}
 
 	// =========================================================================================================================
@@ -342,13 +346,13 @@ public abstract class KeyboardEnvironment3D implements KeyBoard {
 		double x = 0;
 
 		if (forward)
-			x = Math.cos(vx * FlixBlocksUtils.toRadian);
+			x = Math.cos(vx * Utils.toRadian);
 		if (backward)
-			x -= Math.cos(vx * FlixBlocksUtils.toRadian);
+			x -= Math.cos(vx * Utils.toRadian);
 		if (right)
-			x += Math.cos((vx + 90) * FlixBlocksUtils.toRadian);
+			x += Math.cos((vx + 90) * Utils.toRadian);
 		if (left)
-			x -= Math.cos((vx + 90) * FlixBlocksUtils.toRadian);
+			x -= Math.cos((vx + 90) * Utils.toRadian);
 
 		return x;
 	}
@@ -357,13 +361,13 @@ public abstract class KeyboardEnvironment3D implements KeyBoard {
 		double z = 0;
 
 		if (forward)
-			z = Math.sin(vx * FlixBlocksUtils.toRadian);
+			z = Math.sin(vx * Utils.toRadian);
 		if (backward)
-			z -= Math.sin(vx * FlixBlocksUtils.toRadian);
+			z -= Math.sin(vx * Utils.toRadian);
 		if (right)
-			z += Math.sin((vx + 90) * FlixBlocksUtils.toRadian);
+			z += Math.sin((vx + 90) * Utils.toRadian);
 		if (left)
-			z -= Math.sin((vx + 90) * FlixBlocksUtils.toRadian);
+			z -= Math.sin((vx + 90) * Utils.toRadian);
 
 		return z;
 	}
@@ -381,8 +385,6 @@ public abstract class KeyboardEnvironment3D implements KeyBoard {
 	// =========================================================================================================================
 
 	class ThreadCameraMovements implements Runnable {
-		boolean run = true;
-
 		public void run() {
 			while (run) {
 				ticks++;
@@ -396,10 +398,6 @@ public abstract class KeyboardEnvironment3D implements KeyBoard {
 					e.printStackTrace();
 				}
 			}
-		}
-
-		public void stop() {
-			run = false;
 		}
 	}
 }

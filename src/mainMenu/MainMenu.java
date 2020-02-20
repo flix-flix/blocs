@@ -311,23 +311,20 @@ public class MainMenu extends JPanel implements Displayable {
 		// =============== Display (Bottom) ===============
 		int bottomStartY = topH + 2 * marginTopY;
 
-		int width = getWidth() - marginTopX - borderX;
-		int sizeW = width / 3;
+		int sizeW = (getWidth() - borderX - 3 * marginTopX) / 2;
 		int sizeH = getHeight() - bottomStartY - borderY;
 		int size = Math.min(sizeW, sizeH);
 
-		int marginBottomX = (width - 2 * sizeW) / 3;
-
 		editor.setSize(size, size);
-		editor.setCenter(marginBottomX + sizeW / 2, bottomStartY + sizeH / 2);
+		editor.setCenter(marginTopX + sizeW / 2, bottomStartY + sizeH / 2);
 
 		data.setSize(size, size);
-		data.setCenter(marginBottomX * 2 + sizeW + sizeW / 2, bottomStartY + sizeH / 2);
+		data.setCenter(marginTopX * 2 + sizeW + sizeW / 2, bottomStartY + sizeH / 2);
 	}
 
 	@Override
 	public Cursor getCursor() {
-		return Cursor.getDefaultCursor();
+		return ItemTableClient.defaultCursor;
 	}
 
 	@Override

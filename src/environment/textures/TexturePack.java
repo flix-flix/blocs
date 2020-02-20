@@ -8,7 +8,7 @@ import data.map.enumerations.Face;
 import data.map.enumerations.Orientation;
 import data.map.enumerations.Rotation;
 import environment.extendsData.CubeClient;
-import utils.FlixBlocksUtils;
+import utils.Utils;
 import utils.yaml.YAML;
 import utils.yaml.YAMLTextureCube;
 import utils.yaml.YAMLTextureMulti;
@@ -31,19 +31,19 @@ public class TexturePack {
 	TextureSquare[] miningFrames = new TextureSquare[nbAnim];
 
 	/** Default missing texture */
-	TextureSquare faceError = TextureSquare.generateSquare((BufferedImage) FlixBlocksUtils.imgError);
+	TextureSquare faceError = TextureSquare.generateSquare((BufferedImage) Utils.imgError);
 
 	public TexturePack(String folder) {
 		this.folder = folder;
 
-		for (String file : FlixBlocksUtils.getFilesName("resources/textures/" + folder + "/cubes")) {
+		for (String file : Utils.getFilesName("resources/textures/" + folder + "/cubes")) {
 			YAML yaml = YAML.parseFile(file);
 			yamls.put(yaml.getInt("id"), yaml);
 			YAMLTextureCube texture = new YAMLTextureCube(yaml);
 			texturesCubes.put(texture.id, texture.getTextureCube());
 		}
 
-		for (String file : FlixBlocksUtils.getFilesName("resources/textures/" + folder + "/multi")) {
+		for (String file : Utils.getFilesName("resources/textures/" + folder + "/multi")) {
 			YAML yaml = YAML.parseFile(file);
 			yamls.put(yaml.getInt("id"), yaml);
 

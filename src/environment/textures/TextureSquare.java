@@ -2,7 +2,7 @@ package environment.textures;
 
 import java.awt.image.BufferedImage;
 
-import utils.FlixBlocksUtils;
+import utils.Utils;
 
 public class TextureSquare {
 
@@ -45,7 +45,7 @@ public class TextureSquare {
 	// =========================================================================================================================
 
 	public static TextureSquare generateSquare(String file) {
-		return generateSquare((BufferedImage) FlixBlocksUtils.getImage(file));
+		return generateSquare((BufferedImage) Utils.getImage(file));
 	}
 
 	public static TextureSquare generateSquare(BufferedImage bimg) {

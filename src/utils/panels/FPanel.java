@@ -16,14 +16,14 @@ public class FPanel extends JPanel {
 	private static final long serialVersionUID = -5458848328043427804L;
 
 	// =============== Border ===============
-	private int border = 0;
-	private Color borderColor;
+	protected int border = 0;
+	protected Color borderColor;
 
 	// =============== Box ===============
 	/** Pixel size between the panel bounds and the border */
-	private int margin = 0;
+	protected int margin = 0;
 	/** Pixel size between the border and the content */
-	private int padding = 0;
+	protected int padding = 0;
 
 	// ======================= Scroll =========================
 	boolean enableVerticalScroll = true;
@@ -46,7 +46,6 @@ public class FPanel extends JPanel {
 
 	public FPanel() {
 		this.setLayout(null);
-		this.setOpaque(false);
 
 		super.setBackground(Color.GRAY);
 
@@ -131,7 +130,7 @@ public class FPanel extends JPanel {
 
 			@Override
 			public void mouseDragged(MouseEvent e) {
-				scrolledY += (int) ((e.getYOnScreen() - scrollClickY) * ((double) getHeight() / visibleHeight));
+				scrolledY += (int) ((e.getYOnScreen() - scrollClickY) * ((double) realHeight / visibleHeight));
 				scrollClickY = e.getYOnScreen();
 
 				updateScroll();
@@ -189,11 +188,8 @@ public class FPanel extends JPanel {
 	public void updateScroll() {
 		scrollBar.setVisible(visibleHeight < realHeight);
 
-		if (visibleHeight >= realHeight)
-			return;
-
-		scrolledY = Math.max(0, scrolledY);
 		scrolledY = Math.min(realHeight - visibleHeight, scrolledY);
+		scrolledY = Math.max(0, scrolledY);
 
 		double ratio = visibleHeight / (double) realHeight;
 
@@ -260,15 +256,16 @@ public class FPanel extends JPanel {
 		this.borderColor = color;
 	}
 
-	protected int getBorderSize() {
-		return border;
-	}
-
 	/** setBackground(), setForeground() and setBorder() in one function */
 	public void setColor(Color back, Color fore, int size, Color border) {
 		setBackground(back);
 		setForeground(fore);
 		setBorder(size, border);
+	}
+
+	/** setBackground() and setForeground() */
+	public void setColor(Color back, Color fore) {
+		setColor(back, fore, 0, null);
 	}
 
 	// =========================================================================================================================
@@ -287,7 +284,7 @@ public class FPanel extends JPanel {
 	}
 
 	// =========================================================================================================================
-	// Utils
+	// setLocation
 
 	/**
 	 * Call setLocation() to make the bottom right corner of this panel at the given
@@ -295,6 +292,14 @@ public class FPanel extends JPanel {
 	 */
 	public void setBottomRightCorner(int x, int y) {
 		setLocation(x - getWidth(), y - getHeight());
+	}
+
+	/**
+	 * Call setLocation() to make the bottom right corner of this panel at the given
+	 * coordinates
+	 */
+	public void setBottomLeftCorner(int x, int y) {
+		setLocation(x, y - getHeight());
 	}
 
 	/**
@@ -335,6 +340,7 @@ public class FPanel extends JPanel {
 	}
 
 	// =========================================================================================================================
+	// setSize
 
 	public void setWidth(int width) {
 		setSize(width, getHeight());

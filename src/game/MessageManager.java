@@ -2,11 +2,13 @@ package game;
 
 import java.util.ArrayList;
 
+import game.panels.PanGameEnv;
 import server.game.messages.Message;
 
 public class MessageManager {
 
 	Game game;
+	PanGameEnv panel;
 
 	// =============== Data ===============
 	/** All messages since the beginning of the session */
@@ -48,23 +50,24 @@ public class MessageManager {
 
 	public MessageManager(Game game) {
 		this.game = game;
+		this.panel = game.panel.panEnv;
 	}
 
 	// =========================================================================================================================
 
 	public void updateLine() {
-		game.panel.msgLine = msg;
+		panel.msgLine = msg;
 	}
 
 	public void updateCursor() {
-		game.panel.cursorPos = cursorPos;
+		panel.cursorPos = cursorPos;
 	}
 
 	public void updateMessages() {
-		game.panel.nbMsg = Math.min(messagesPrinted.size() - firstMsg, nbMsgMax);
+		panel.nbMsg = Math.min(messagesPrinted.size() - firstMsg, nbMsgMax);
 
-		for (int i = 0; i < game.panel.nbMsg; i++)
-			game.panel.messages[i] = messagesPrinted.get(firstMsg + i);
+		for (int i = 0; i < panel.nbMsg; i++)
+			panel.messages[i] = messagesPrinted.get(firstMsg + i);
 	}
 
 	// =========================================================================================================================

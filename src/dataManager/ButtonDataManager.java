@@ -2,14 +2,13 @@
 package dataManager;
 
 import java.awt.Color;
-import java.awt.event.MouseEvent;
 import java.util.Locale;
 
 import data.id.ItemID;
 import data.id.ItemTableClient;
 import data.map.Cube;
 import environment.extendsData.CubeClient;
-import utils.FlixBlocksUtils;
+import utils.Utils;
 import utils.panels.FButton;
 import utilsBlocks.ButtonBlocks;
 
@@ -18,6 +17,8 @@ public class ButtonDataManager extends ButtonBlocks {
 
 	private DataManager dm;
 	private ActionDataManager action;
+
+	// =========================================================================================================================
 
 	public ButtonDataManager(DataManager dm, ActionDataManager action) {
 		this.dm = dm;
@@ -28,9 +29,9 @@ public class ButtonDataManager extends ButtonBlocks {
 		case LANG:
 			setWIP();
 			if (ItemTableClient.getLanguage().equals(Locale.FRENCH.getLanguage()))
-				setImage(FlixBlocksUtils.getImage("static/flags/fr"), FButton.KEEP_RATIO);
+				setImage(Utils.getImage("static/flags/fr"), FButton.KEEP_RATIO);
 			else
-				setImage(FlixBlocksUtils.getImage("static/flags/en"), FButton.KEEP_RATIO);
+				setImage(Utils.getImage("static/flags/en"), FButton.KEEP_RATIO);
 
 			setPadding(10);
 			break;
@@ -43,7 +44,7 @@ public class ButtonDataManager extends ButtonBlocks {
 		case SHOW_FIELDS:
 		case TREE:
 			setWIP();
-			setImage(FlixBlocksUtils.getImage("textures/classic/menu/dataManager/" + action.name().toLowerCase()),
+			setImage(Utils.getImage("textures/classic/menu/dataManager/" + action.name().toLowerCase()),
 					FButton.KEEP_RATIO);
 			break;
 
@@ -52,7 +53,7 @@ public class ButtonDataManager extends ButtonBlocks {
 			break;
 
 		case QUIT:
-			setImage(FlixBlocksUtils.getImage("static/quit"));
+			setImage(Utils.getImage("static/quit"));
 			break;
 
 		default:
@@ -61,10 +62,10 @@ public class ButtonDataManager extends ButtonBlocks {
 		}
 	}
 
-	@Override
-	public void click(MouseEvent e) {
-		super.click(e);
+	// =========================================================================================================================
 
+	@Override
+	public void eventClick() {
 		dm.click(action);
 	}
 }

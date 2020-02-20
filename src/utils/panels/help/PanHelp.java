@@ -10,7 +10,7 @@ import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
 
 import data.id.ItemTableClient;
-import utils.FlixBlocksUtils;
+import utils.Utils;
 import utils.panels.FPanel;
 
 public class PanHelp extends FPanel {
@@ -52,11 +52,12 @@ public class PanHelp extends FPanel {
 
 		this.total = circleSize + border * 2;
 
+		this.setOpaque(false);
+
 		circle = new Ellipse2D.Double(border, border, circleSize, circleSize);
 		updateTip();
 
-		img = FlixBlocksUtils
-				.getImage("static/" + (mark == Mark.INTERROGATION ? "interrogationMark" : "exclamationMark"));
+		img = Utils.getImage("static/" + (mark == Mark.INTERROGATION ? "interrogationMark" : "exclamationMark"));
 
 		setBackground(Color.LIGHT_GRAY);
 		setForeground(Color.WHITE);
@@ -68,7 +69,7 @@ public class PanHelp extends FPanel {
 
 	public void updateTip() {
 		tipText = ItemTableClient.getTip(tip);
-		tipLines = FlixBlocksUtils.getLines(tipText, fm, getWidth() - 100 - widthArrow - 20);
+		tipLines = Utils.getLines(tipText, fm, getWidth() - 100 - widthArrow - 20);
 	}
 
 	public void setTip(Tip tip) {
@@ -78,6 +79,7 @@ public class PanHelp extends FPanel {
 
 	// =========================================================================================================================
 
+	// Override paintComponent() cause it's non-rectangular
 	@Override
 	protected void paintComponent(Graphics g) {
 		if (active) {

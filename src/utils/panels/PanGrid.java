@@ -1,13 +1,12 @@
 package utils.panels;
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.util.ArrayList;
 
 public class PanGrid extends FPanel {
 	private static final long serialVersionUID = 1941339088614372748L;
 
-	// ======================= Grid size =========================
+	// =============== Grid size ===============
 	/** Number of columns in the grid */
 	private int cols = 4;
 
@@ -16,80 +15,69 @@ public class PanGrid extends FPanel {
 	/** Set rowHeight to SQUARE will adjust the height to equals the width */
 	public static final int SQUARE = -1;
 
-	private int borderSize = 0;
-
 	/** Number of pixels between the items of the grid */
 	private int gridSpace = 2;
 	/** Number of pixel between the border and the grid */
-	private int padding = 0;
-	/** Set padding to GRID_SPACE will adjust the padding to match the gridSpace */
+	private int gridPadding = 0;
+	/**
+	 * Set gridPadding to GRID_SPACE will adjust the gridPadding to match the
+	 * gridSpace
+	 */
 	public static final int GRID_SPACE = -1;
 
-	// ======================= Color =========================
-	private Color backgroundColor = Color.LIGHT_GRAY;
-	private Color borderColor = Color.DARK_GRAY;
-
-	// ======================= Menus =========================
+	// =============== Panels ===============
 	/** List of the panels in the grid */
 	private ArrayList<FPanel> list = new ArrayList<>();
 
 	// =========================================================================================================================
 
 	public PanGrid() {
+		setBackground(Color.LIGHT_GRAY);
+
 		enableVerticalScroll();
 	}
 
 	// =========================================================================================================================
 
-	@Override
-	protected void paintComponent(Graphics g) {
-		g.setColor(backgroundColor);
-		g.fillRect(borderSize, borderSize, getWidth() - borderSize * 2, getHeight() - borderSize * 2);
+	public void gridAdd(FPanel panels) {
+		setInGrid(panels, list.size() % cols, list.size() / cols);
 
-		g.setColor(borderColor);
-		for (int i = 0; i < borderSize; i++)
-			g.drawRect(i, i, getWidth() - 1 - 2 * i, getHeight() - 1 - 2 * i);
-	}
-
-	// =========================================================================================================================
-
-	public void addMenu(FPanel menu) {
-		setMenu(menu, list.size() % cols, list.size() / cols);
-
-		list.add(menu);
-		add(menu, -1);
+		list.add(panels);
+		add(panels, -1);
 
 		updateSize();
 		updateScroll();
 	}
 
-	private void setMenu(FPanel menu, int x, int y) {
-		int padding = this.padding == GRID_SPACE ? gridSpace : this.padding;
+	private void setInGrid(FPanel panels, int x, int y) {
+		int padding = this.gridPadding == GRID_SPACE ? gridSpace : this.gridPadding;
 
 		int width = getWidth() - (getVisibleHeight() < getHeight() ? getScrollWidth() + gridSpace : 0);
-		int w = (width - (cols - 1) * gridSpace - 2 * (borderSize + padding)) / cols;
+		int w = (width - (cols - 1) * gridSpace - 2 * (border + padding)) / cols;
 
-		int wMore = (getWidth() - (cols - 1) * gridSpace - 2 * (borderSize + padding)) % cols;
+		int wMore = (getWidth() - (cols - 1) * gridSpace - 2 * (border + padding)) % cols;
 		int h = rowHeight == SQUARE ? w : rowHeight;
 
-		menu.setLocation(borderSize + padding + (w + gridSpace) * x,
-				-getScrolled() + borderSize + padding + (h + gridSpace) * y);
-		menu.setSize(w + (x == cols - 1 ? wMore : 0), h);
+		panels.setLocation(border + padding + (w + gridSpace) * x,
+				-getScrolled() + border + padding + (h + gridSpace) * y);
+		panels.setSize(w + (x == cols - 1 ? wMore : 0), h);
 	}
 
-	private void updateMenu() {
+	private void updateGrid() {
 		for (int i = 0; i < list.size(); i++)
-			setMenu(list.get(i), i % cols, i / cols);
+			setInGrid(list.get(i), i % cols, i / cols);
+
+		repaint();
 	}
 
 	private void updateSize() {
-		int padding = this.padding == GRID_SPACE ? gridSpace : this.padding;
+		int padding = this.gridPadding == GRID_SPACE ? gridSpace : this.gridPadding;
 
-		int menuWidth = (getWidth() - (cols - 1) * gridSpace) / cols;
+		int cellWidth = (getWidth() - (cols - 1) * gridSpace) / cols;
 		int rows = list.size() / cols + (list.size() % cols == 0 ? 0 : 1);
 
-		super.setRealSize(getWidth(), 2 * (borderSize + padding) + rows * (rowHeight == SQUARE ? menuWidth : rowHeight)
-				+ (rows - 1) * gridSpace);
+		super.setRealSize(getWidth(),
+				2 * (border + padding) + rows * (rowHeight == SQUARE ? cellWidth : rowHeight) + (rows - 1) * gridSpace);
 	}
 
 	// =========================================================================================================================
@@ -97,7 +85,7 @@ public class PanGrid extends FPanel {
 	@Override
 	public void updateScroll() {
 		super.updateScroll();
-		updateMenu();
+		updateGrid();
 	}
 
 	// =========================================================================================================================
@@ -116,21 +104,12 @@ public class PanGrid extends FPanel {
 
 	// =========================================================================================================================
 
-	public void setBackground(Color color) {
-		this.backgroundColor = color;
-	}
-
-	public void setBorder(int size, Color color) {
-		this.borderSize = size;
-		this.borderColor = color;
-	}
-
 	public void setGridSpace(int x) {
 		this.gridSpace = x;
 	}
 
-	public void setPadding(int x) {
-		this.padding = x;
+	public void setGridPadding(int x) {
+		this.gridPadding = x;
 	}
 
 	// =========================================================================================================================
@@ -141,6 +120,6 @@ public class PanGrid extends FPanel {
 
 		updateSize();
 		updateScroll();
-		updateMenu();
+		updateGrid();
 	}
 }

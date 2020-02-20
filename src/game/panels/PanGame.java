@@ -8,67 +8,34 @@ import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 import java.util.TreeMap;
 
-import data.id.ItemID;
+import javax.swing.JPanel;
+
 import data.id.ItemTableClient;
 import data.map.Cube;
-import environment.PanEnvironment;
-import environment.extendsData.CubeClient;
-import game.CameraMode;
 import game.Game;
 import game.StateHUD;
 import game.UserAction;
-import game.panels.menus.MenuRessources;
+import game.panels.menus.PanRessources;
 import game.panels.menus.PanMap;
 import game.panels.menus.infos.PanInfos;
-import game.tips.TipGame;
-import server.game.messages.Message;
-import server.game.messages.TypeMessage;
-import utils.FlixBlocksUtils;
+import utils.Utils;
 import utils.panels.ClickListener;
 import utils.panels.FButton;
 import utils.panels.PanCol;
 import utils.panels.PanGrid;
-import utils.panels.help.PanHelp;
-import utils.panels.help.PanHelp.Mark;
 import utilsBlocks.ButtonBlocks;
 
-public class PanGame extends PanEnvironment {
+public class PanGame extends JPanel {
 	private static final long serialVersionUID = -4495593129648278069L;
 
 	private Game game;
 
-	public PanPause pause;
-
-	// =============== Work In Progress ===============
-	private String wip = "WORK IN PROGRESS";
-	private Font fontWIP = new Font("monospace", Font.BOLD, 30);
-	private FontMetrics fm = getFontMetrics(fontWIP);
-
-	// =============== Dialog ===============
-	private Font dialogFont = new Font("monospace", Font.BOLD, 18);
-	private final static Color RED = new Color(255, 150, 0);
-
-	/** Previous messages to display */
-	public Message[] messages = new Message[10];
-	/** Number of messages to display */
-	public int nbMsg = 0;
-	/** Width of the dialog background */
-	private int msgBackWidth = 1000;
-
-	/** Current line */
-	public String msgLine = new String();
-
-	/** Position of the text-cursor */
-	public int cursorPos = 0;
-	/** true : show the text-cursor (switch to make the cursor flashing) */
-	private boolean cursorState = true;
-	/** Store time since last cursor state switch */
-	private int cursorStateTime = 0;
-
-	// =============== Size ===============
-	private int startXPanel;
+	// =============== Environment ===============
+	public PanGameEnv panEnv;
 
 	// =============== Loading ===============
+	private boolean loading = true;
+
 	private Font fontLoading = new Font("arial", Font.BOLD, 100);
 	private AffineTransform affinetransform = new AffineTransform();
 	private FontRenderContext frc = new FontRenderContext(affinetransform, true, true);
@@ -85,14 +52,10 @@ public class PanGame extends PanEnvironment {
 
 	private FButton quitButton;
 
-	// =============== Cross ===============
-	/** Size of the central indicator (creative mode) */
-	private int crossSize = 7;
-
 	// =============== Menu ===============
 	private int menuWidth = 400;
 
-	public PanCol menu = new PanCol();
+	private PanCol menu = new PanCol();
 
 	private UserAction[] _userActions = { UserAction.MOUSE, UserAction.CREA_ADD, UserAction.CREA_DESTROY };
 	private TreeMap<UserAction, ButtonBlocks> userActions = new TreeMap<>();
@@ -100,48 +63,39 @@ public class PanGame extends PanEnvironment {
 	private PanGrid gridActions;
 
 	private PanMap map;
-	private MenuRessources ress;
+	private PanRessources ress;
 	private PanInfos infos;
-
-	public PanHelp help;
 
 	// =========================================================================================================================
 
 	public PanGame(Game game) {
-		super(game);
-		// Like this.env but already casted
 		this.game = game;
 
-		this.add(pause = new PanPause(game));
+		this.setLayout(null);
+
+		this.add(panEnv = new PanGameEnv(game));
+		panEnv.setLocation(0, 0);
+		updateEnvBounds();
 
 		// ========================================================================================
 
-		help = new PanHelp(Mark.INTERROGATION, 700, 80, 10, TipGame.values()[0]);
-		help.setBackground(new Color(0xff4068c4));
-		help.setBorderColor(Color.LIGHT_GRAY);
-		help.setForeground(Color.DARK_GRAY);
-		help.setLocation(menuWidth + 25, getHeight() - 25);
-		this.add(help);
-
-		// ========================================================================================
-
-		menu.setBounds(0, 0, menuWidth, getHeight());
-		menu.setBorder(10, Color.GRAY);
-		menu.setBackground(Color.LIGHT_GRAY);
+		menu.setSize(menuWidth, getHeight());
+		menu.setLocation(0, 0);
+		menu.setColor(Color.LIGHT_GRAY, null, 10, Color.GRAY);
 		menu.setPadding(10);
 		this.add(menu);
 
 		menu.addTop(gridActions = new PanGrid(), 100);
 
 		for (UserAction action : _userActions) {
-			userActions.put(action, createButton(action));
-			gridActions.addMenu(userActions.get(action));
+			userActions.put(action, new ButtonUserAction(game, action));
+			gridActions.gridAdd(userActions.get(action));
 		}
 
 		ButtonBlocks.group(userActions.values());
 
 		menu.addBottom(map = new PanMap(game), PanCol.WIDTH);
-		menu.addBottom(ress = new MenuRessources(game), 130);
+		menu.addBottom(ress = new PanRessources(game), 130);
 		ress.setVisible(true);
 
 		// ========================================================================================
@@ -151,12 +105,14 @@ public class PanGame extends PanEnvironment {
 		// ========================================================================================
 
 		quitButton = new FButton();
+
 		quitButton.setClickListener(new ClickListener() {
 			@Override
 			public void leftClick() {
 				game.fen.returnToMainMenu();
 			}
 		});
+
 		quitButton.setText(ItemTableClient.getText("game.error.buttonQuit"));
 		quitButton.setColor(Color.DARK_GRAY, Color.LIGHT_GRAY, 2, Color.LIGHT_GRAY);
 		quitButton.setInColor(Color.GRAY, Color.DARK_GRAY, Color.DARK_GRAY);
@@ -174,16 +130,14 @@ public class PanGame extends PanEnvironment {
 	// =========================================================================================================================
 
 	@Override
-	public void paintComponent(Graphics g) {
-		int width = getWidth();
-		int height = getHeight();
+	protected void paintComponent(Graphics g) {
+		int centerW = getWidth() / 2;
+		int centerH = getHeight() / 2;
 
-		int centerW = width / 2;
-		int centerH = height / 2;
-
+		// Error screen
 		if (game.getStateHUD() == StateHUD.ERROR) {
 			g.setColor(new Color(236, 135, 15)); // Orange
-			g.fillRect(0, 0, width, height);
+			g.fillRect(0, 0, getWidth(), getHeight());
 
 			g.setColor(Color.DARK_GRAY);
 			g.setFont(fontError);
@@ -195,152 +149,41 @@ public class PanGame extends PanEnvironment {
 			return;
 		}
 
-		// Draw Environment
-		super.paintComponent(g.create(startXPanel, 0, width - startXPanel, height));
-
 		// Loading screen
-		if (img == null) {
+		else if (loading) {
 			g.setColor(new Color(236, 135, 15)); // Orange
-			g.fillRect(0, 0, width, height);
+			g.fillRect(0, 0, getWidth(), getHeight());
 
 			int textW = (int) (fontLoading.getStringBounds(loadingText, frc).getWidth());
 			int textH = (int) (fontLoading.getStringBounds(loadingText, frc).getHeight());
 
 			g.setColor(Color.DARK_GRAY);
 			g.setFont(fontLoading);
-			g.drawString(loadingText, centerW + menuWidth / 2 - textW / 2 + 10, centerH + textH / 2 - 20);
+			g.drawString(loadingText, centerW - textW / 2 + 10, centerH + textH / 2 - 20);
 			g.setColor(Color.LIGHT_GRAY);
 			g.setFont(fontLoadingError);
-			g.drawString(loadingTextError, centerW + menuWidth / 2 - fmLoadingError.stringWidth(loadingTextError) / 2,
+			g.drawString(loadingTextError, centerW - fmLoadingError.stringWidth(loadingTextError) / 2,
 					centerH + textH / 2 + 20);
 		}
-
-		// =========================================================================================================================
-
-		else {
-			if (game.cameraMode == CameraMode.FIRST_PERSON) {
-				// Middle indicator : cross
-				g.setColor(Color.WHITE);
-				g.drawLine(centerW - crossSize, centerH - 1, centerW + crossSize - 1, centerH - 1);
-				g.drawLine(centerW - crossSize, centerH, centerW + crossSize - 1, centerH);
-				g.drawLine(centerW - 1, centerH - crossSize, centerW - 1, centerH + crossSize - 1);
-				g.drawLine(centerW, centerH - crossSize, centerW, centerH + crossSize - 1);
-			}
-
-			// =============== Dialog Display ===============
-			if (game.getStateHUD() == StateHUD.DIALOG) {
-				int grayBack = 120;
-				Color colorBack = new Color(grayBack, grayBack, grayBack, 200);
-				Color colorMsg = Color.WHITE;
-
-				int startW = 420;
-
-				// TODO [Improve] If messages text too long split in several lines
-
-				// =============== Message (Line) ===============
-
-				// Background
-				g.setColor(colorBack);
-				g.fillRect(startW, height - 100, msgBackWidth, 30);
-
-				// Text
-				g.setFont(dialogFont);
-				g.setColor(colorMsg);
-
-				// Flash the text-cursor
-				cursorStateTime++;
-				if (cursorStateTime > 3) {
-					cursorState = !cursorState;
-					cursorStateTime = 0;
-				}
-
-				if (cursorState)
-					g.drawString(msgLine.substring(0, cursorPos) + "|" + msgLine.substring(cursorPos), startW + 5,
-							height - 100 + 20);
-				else
-					g.drawString(msgLine.substring(0, cursorPos) + " " + msgLine.substring(cursorPos), startW + 5,
-							height - 100 + 20);
-
-				// =============== Messages (Previous) ===============
-
-				// Background
-				g.setColor(colorBack);
-				g.fillRect(startW, height - 100 - 10 - 30 * nbMsg, msgBackWidth, 30 * nbMsg);
-
-				// Text
-				for (int i = 0; i < nbMsg; i++) {
-					g.setColor(getColor(messages[i].getType()));
-					g.drawString(messages[i].toMessage(), startW + 5, height - 100 + 20 - 10 - (nbMsg - i) * 30);
-				}
-			}
-		}
-
-		// Work In Progress
-		g.setColor(Color.WHITE);
-		g.setFont(fontWIP);
-		g.drawString(wip, getWidth() - fm.stringWidth(wip) - 10, getHeight() - 10);
 	}
 
 	// =========================================================================================================================
 
-	private Color getColor(TypeMessage type) {
-		switch (type) {
-		case ERROR:
-			return RED;
-		case CONSOLE:
-			return Color.LIGHT_GRAY;
-		case AUTHOR:
-		case TEXT:
-		default:
-			return Color.WHITE;
-		}
-	}
-
-	// =========================================================================================================================
-
-	public ButtonBlocks createButton(UserAction action) {
-		ButtonBlocks button = new ButtonBlocks();
-
-		button.setSelectable(true);
-
-		if (action == UserAction.CREA_ADD)
-			button.setModel(new CubeClient(new Cube(ItemID.GRASS)));
-		else
-			button.setImage(FlixBlocksUtils.getImage(
-					ItemTableClient.getTexturePack().getFolder() + "menu/game/" + action.name().toLowerCase()));
-
-		button.setPadding(5);
-		button.setClickListener(new ClickListener() {
-
-			@Override
-			public void leftClick() {
-				game.setAction(action);
-			}
-		});
-
-		return button;
-	}
-
-	// =========================================================================================================================
-
-	public void refreshSelected(Cube cube) {
-		infos.refresh(cube);
-	}
-
-	public void refreshGUI() {
-		menu.setVisible(game.cameraMode == CameraMode.CLASSIC);
-
-		game.clearSelected();
-
-		userActions.get(UserAction.MOUSE).unselectAll();
-
-		userActions.get(game.getAction()).setSelected(true);
-
-		if (game.getAction() == UserAction.CREA_ADD)
-			infos.showCubes();
+	public void start() {
+		loading = false;
+		setGUIVisible(true);
 
 		map.updateMap();
-		map.repaint();
+	}
+
+	public void stop() {
+		infos.stop();
+	}
+
+	// =========================================================================================================================
+
+	public void displayInfosOf(Cube cube) {
+		infos.displayInfosOf(cube);
 	}
 
 	// =========================================================================================================================
@@ -354,28 +197,36 @@ public class PanGame extends PanEnvironment {
 
 	public void error() {
 		setGUIVisible(false);
+		panEnv.setVisible(false);
 		quitButton.setVisible(true);
-		FlixBlocksUtils.debug("Error: " + game.errorMsg);
-
-		repaint();
+		Utils.debug("Error: " + game.errorMsg);
 	}
 
 	public void setGUIVisible(boolean visible) {
-		startXPanel = visible ? menuWidth : 0;
-		updateEnvironmentSize(getWidth(), getHeight());
-		help.setVisible(visible);
+		// Can't be displayed if currently loading
+		if (loading && visible)
+			return;
+		panEnv.help.setVisible(visible);
 		menu.setVisible(visible);
 	}
 
 	// =========================================================================================================================
 
-	@Override
-	public void updateEnvironmentSize(int width, int height) {
-		envWidth = width - startXPanel;
-		envHeight = height;
+	public void updateMap() {
+		map.updateMap();
+	}
 
-		envCenterW = width / 2;
-		envCenterH = height / 2;
+	public void setCubesVisible(boolean visible) {
+		if (visible)
+			infos.showCubes();
+		else
+			infos.hide();
+	}
+
+	// =========================================================================================================================
+
+	public void updateEnvBounds() {
+		panEnv.updateEnvBounds();
 	}
 
 	// =========================================================================================================================
@@ -384,9 +235,9 @@ public class PanGame extends PanEnvironment {
 	public void setSize(int width, int height) {
 		super.setSize(width, height);
 
-		pause.setSize(width, height);
+		panEnv.setSize(getWidth(), getHeight());
+
 		menu.setSize(menuWidth, height);
-		help.setLocation(menuWidth + 25, getHeight() - help.getHeight() - 35);
 
 		quitButton.setLocation(getWidth() / 2 - quitButton.getWidth() / 2, getHeight() / 2);
 	}

@@ -34,36 +34,36 @@ public class PanCol extends FPanel {
 
 	// =========================================================================================================================
 
-	public void addTop(FPanel menu, int height) {
-		addTo(menu, height, top);
+	public void addTop(FPanel panel, int height) {
+		addTo(panel, height, top);
 	}
 
-	public void addBottom(FPanel menu, int height) {
-		addTo(menu, height, bottom);
+	public void addBottom(FPanel panel, int height) {
+		addTo(panel, height, bottom);
 	}
 
-	private void addTo(FPanel menu, int height, ArrayList<FPanel> menus) {
-		height = getHeight(menu, height);
+	private void addTo(FPanel panel, int height, ArrayList<FPanel> panels) {
+		height = getHeight(panel, height);
 		int y = 0;
-		for (int i = 0; i < menus.size(); i++)
-			y += menus.get(i).getHeight();
+		for (int i = 0; i < panels.size(); i++)
+			y += panels.get(i).getHeight();
 
-		menus.add(menu);
+		panels.add(panel);
 
-		int size = getBorderSize() + y + space * menus.size();
+		int size = border + y + space * panels.size();
 
-		menu.setLocation(getBorderSize() + space, menus == top ? size : getHeight() - 1 - height - size);
-		menu.setSize(getWidth() - 2 * getBorderSize() - 2 * space, height);
-		this.add(menu);
+		panel.setLocation(border + space, panels == top ? size : getHeight() - 1 - height - size);
+		panel.setSize(getWidth() - 2 * border - 2 * space, height);
+		this.add(panel);
 	}
 
-	private int getHeight(FPanel menu, int height) {
+	private int getHeight(FPanel panel, int height) {
 		if (height == CURRENT)
-			return menu.getHeight();
+			return panel.getHeight();
 		if (height == WIDTH)
-			return getWidth() - 2 * getBorderSize() - 2 * space;
+			return getWidth() - 2 * border - 2 * space;
 		if (height == REMAINING) {
-			remaining = menu;
+			remaining = panel;
 			return getRemainingHeight();
 		}
 
@@ -78,7 +78,7 @@ public class PanCol extends FPanel {
 		for (FPanel m : bottom)
 			x += m.getHeight();
 
-		return getHeight() - x - 2 * getBorderSize() - space * (1 + top.size() + bottom.size());
+		return getHeight() - x - 2 * border - space * (1 + top.size() + bottom.size());
 	}
 
 	// =========================================================================================================================
@@ -97,13 +97,15 @@ public class PanCol extends FPanel {
 			for (int j = 0; j < i; j++)
 				y += bottom.get(j).getHeight();
 
-			bottom.get(i).setLocation(getBorderSize() + space,
-					getHeight() - 1 - bottom.get(i).getHeight() - getBorderSize() - y - space * (i + 1));
+			bottom.get(i).setLocation(border + space,
+					getHeight() - 1 - bottom.get(i).getHeight() - border - y - space * (i + 1));
 		}
 
 		// Resize the center panel
 		if (remaining != null)
 			remaining.setSize(remaining.getWidth(), getRemainingHeight());
+
+		repaint();
 	}
 
 	@Override

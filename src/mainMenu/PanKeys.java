@@ -14,9 +14,9 @@ public class PanKeys extends PopUp {
 	private TreeMap<Key, PanKey> panels = new TreeMap<>();
 
 	private PanGrid grid = new PanGrid();
-	FPanel menu;
+	private FPanel container;
 
-	Key clicked = null;
+	private Key clicked = null;
 
 	private int margin = 50;
 
@@ -39,17 +39,18 @@ public class PanKeys extends PopUp {
 				continue;
 			PanKey p = new PanKey(this, k);
 			panels.put(k, p);
-			grid.addMenu(p);
+			grid.gridAdd(p);
 		}
 
-		menu = new FPanel();
-		menu.add(grid);
-		menu.setLocation(margin, margin);
-		menu.setWidth(400);
+		// TODO [Improve] Scroll => Remove Panel
+		container = new FPanel();
+		container.add(grid);
+		container.setLocation(margin, margin);
+		container.setWidth(400);
 
-		add(menu);
+		this.add(container);
 
-		setVisible(false);
+		this.setVisible(false);
 	}
 
 	// =========================================================================================================================
@@ -92,8 +93,8 @@ public class PanKeys extends PopUp {
 
 		height -= 2 * margin + 1;
 		grid.setHeight(height);
-		menu.setHeight(height);
+		container.setHeight(height);
 
-		menu.setCenter(getWidth() / 2, getHeight() / 2);
+		container.setCenter(getWidth() / 2, getHeight() / 2);
 	}
 }

@@ -12,11 +12,12 @@ import data.map.Map;
 import graphicEngine.calcul.Camera;
 
 public class PanEnvironment extends JPanel {
-
 	private static final long serialVersionUID = -8972445552589270416L;
 
 	protected Environment3D env;
 
+	// =============== Repaint ===============
+	protected Graphics graphics;
 	protected BufferedImage img = null;
 
 	// =============== Size ===============
@@ -30,7 +31,6 @@ public class PanEnvironment extends JPanel {
 
 	// =============== Display Engine Infos ===============
 	public boolean showEngineInfos;
-	private Graphics graphics;
 	private Camera camera;
 
 	// =============== Engine Data Display ===============
@@ -58,14 +58,17 @@ public class PanEnvironment extends JPanel {
 
 		graphics = g;
 
-		g.drawImage(img, 0, 0, null);
-
+		graphics.drawImage(img, 0, 0, null);
 		drawEngineData();
 	}
 
 	// =========================================================================================================================
 
-	public void updateEnvironmentSize(int width, int height) {
+	protected void updateEnvironmentSize(int width, int height) {
+		// Ignore if same size
+		if (width == envWidth && height == envHeight)
+			return;
+
 		this.envWidth = width;
 		this.envHeight = height;
 

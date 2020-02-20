@@ -7,7 +7,7 @@ import data.id.ItemTableClient;
 import environment.extendsData.CubeClient;
 import environment.extendsData.MapClient;
 import graphicEngine.calcul.Engine;
-import utils.FlixBlocksUtils;
+import utils.Utils;
 import utils.panels.FButton;
 
 public class ButtonBlocks extends FButton {
@@ -21,7 +21,7 @@ public class ButtonBlocks extends FButton {
 	private boolean wip = false;
 
 	static {
-		wipImg = FlixBlocksUtils.getImage("static/WIP");
+		wipImg = Utils.getImage("static/WIP");
 	}
 
 	// =========================================================================================================================

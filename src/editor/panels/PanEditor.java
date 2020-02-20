@@ -51,7 +51,6 @@ public class PanEditor extends JPanel {
 
 	public PanEditor(Editor editor) {
 		this.setLayout(null);
-		this.setOpaque(false);
 
 		panel = editor.getPanel();
 		panel.setLocation(menuWidth, 0);
@@ -82,7 +81,7 @@ public class PanEditor extends JPanel {
 
 		for (ActionEditor action : _buttonsTop) {
 			buttonsTop.put(action, new ButtonEditor(editor, action));
-			topActions.addMenu(buttonsTop.get(action));
+			topActions.gridAdd(buttonsTop.get(action));
 		}
 
 		get(ActionEditor.EDIT_CUBE).setWIP();
@@ -104,11 +103,11 @@ public class PanEditor extends JPanel {
 		gridItemID.setBackground(Color.GRAY);
 		gridItemID.setBorder(5, Color.DARK_GRAY);
 		gridItemID.setGridSpace(4);
-		gridItemID.setPadding(PanGrid.GRID_SPACE);
+		gridItemID.setGridPadding(PanGrid.GRID_SPACE);
 
 		for (ActionEditor action : _buttonsItemID) {
 			buttonsItemID.put(action, new ButtonEditor(editor, action));
-			gridItemID.addMenu(buttonsItemID.get(action));
+			gridItemID.gridAdd(buttonsItemID.get(action));
 		}
 
 		get(ActionEditor.ITEM_TAG).setSelectable(true);
@@ -122,7 +121,7 @@ public class PanEditor extends JPanel {
 
 		for (ActionEditor action : _buttonsAction) {
 			buttonsAction.put(action, new ButtonEditor(editor, action));
-			gridActions.addMenu(buttonsAction.get(action));
+			gridActions.gridAdd(buttonsAction.get(action));
 		}
 
 		get(ActionEditor.GRID).setWheelStep(editor.getTextureSize());

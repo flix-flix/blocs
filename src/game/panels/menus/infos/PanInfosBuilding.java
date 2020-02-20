@@ -5,16 +5,16 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.lang.Thread.State;
 
 import data.id.ItemTable;
 import data.id.ItemTableClient;
+import data.map.Cube;
 import data.map.buildings.Building;
 import data.map.resources.ResourceType;
 import environment.extendsData.MapClient;
 import game.Game;
 import game.panels.menus.ButtonGameAction;
-import game.panels.menus.MenuResource;
+import game.panels.menus.PanResource;
 import graphicEngine.calcul.Engine;
 import server.send.Action;
 import utils.panels.FPanel;
@@ -30,8 +30,6 @@ public class PanInfosBuilding extends FPanel {
 	private Font fontBold = new Font("monospace", Font.BOLD, 20);
 	private FontMetrics fmBold = getFontMetrics(fontBold);
 
-	private Thread update;
-
 	// =============== Display ===============
 	private Engine engine;
 	private Image img;
@@ -43,6 +41,7 @@ public class PanInfosBuilding extends FPanel {
 	private PanGrid stocks;
 
 	// =============== Data ===============
+	private Cube cube;
 	private Building build;
 
 	// =========================================================================================================================
@@ -50,7 +49,10 @@ public class PanInfosBuilding extends FPanel {
 	public PanInfosBuilding(Game game) {
 		this.game = game;
 
+		setBackground(Color.GRAY);
+
 		stocks = new PanGrid();
+		stocks.setBackground(Color.GRAY);
 		stocks.setCols(3);
 		stocks.setRowHeight(50);
 		stocks.setSize(getWidth(), 50);
@@ -67,26 +69,23 @@ public class PanInfosBuilding extends FPanel {
 
 		ButtonGameAction.group(spawn, upgrade);
 
-		update = new Thread(new Update());
-		update.setName("Update Building infos");
-		update.start();
-
 		refreshLang();
 	}
 
 	// =========================================================================================================================
 
 	@Override
-	protected void paintComponent(Graphics g) {
-		g.setColor(Color.GRAY);
-		g.fillRect(0, 0, getWidth(), getHeight());
+	protected void paintCenter(Graphics g) {
+		super.paintCenter(g);
 
+		// Image
 		g.setColor(Color.LIGHT_GRAY);
 		g.fillRect(15, 15, imgSize, imgSize);
 
 		if (img != null)
 			g.drawImage(img, 15, 15, null);
 
+		// Name
 		g.setFont(font);
 		g.setColor(Color.WHITE);
 		g.drawString(build.getName(), 20 + imgSize, 50);
@@ -94,6 +93,7 @@ public class PanInfosBuilding extends FPanel {
 		if (build != null) {
 			g.drawString(build.toString(), 20 + imgSize, 70);
 
+			// Display construction progress
 			if (!build.isBuild()) {
 				g.setColor(Color.RED);
 				g.setFont(fontBold);
@@ -120,14 +120,25 @@ public class PanInfosBuilding extends FPanel {
 
 	// =========================================================================================================================
 
-	public void update(Building build) {
-		this.build = build;
+	public void update() {
+		build = cube == null ? null : cube.build;
 
-		if (update.getState() == State.WAITING)
-			synchronized (update) {
-				update.notify();
-			}
+		// ===== Buttons =====
+		boolean visible = build.isBuild() && build.getGamer().equals(game.gamer);
+		spawn.setVisible(visible);
+		upgrade.setVisible(visible);
 
+		repaint();
+	}
+
+	public void setCube(Cube cube) {
+		this.cube = cube;
+		build = cube.build;
+
+		// Buttons
+		spawn.unselectAll();
+
+		// ===== Image =====
 		MapClient map = new MapClient();
 		map.add(new Building(null, build.getItemID(), 0, 0, 0, true).getCube());
 
@@ -135,30 +146,23 @@ public class PanInfosBuilding extends FPanel {
 		engine.setBackground(Engine.NONE);
 		img = engine.getImage(imgSize, imgSize);
 
+		// ===== Resource =====
 		stocks.clear();
 
 		for (ResourceType type : ResourceType.values())
 			if (build.hasStock(type)) {
-				MenuResource r = new MenuResource();
-				r.update(build.getStocks(type));
-				stocks.addMenu(r);
+				PanResource res = new PanResource();
+				res.setColor(Color.GRAY, Color.WHITE, 3, Color.LIGHT_GRAY);
+				res.setMargin(5);
+				res.update(build.getStocks(type));
+				stocks.gridAdd(res);
 			}
 
-		_update();
-	}
-
-	private void _update() {
-		spawn.setVisible(build.isBuild() && build.getGamer().equals(game.gamer));
-		upgrade.setVisible(build.isBuild() && build.getGamer().equals(game.gamer));
-
-		setVisible(true);
-		repaint();
+		update();
 	}
 
 	public void clear() {
 		build = null;
-		setVisible(false);
-		spawn.unselectAll();
 	}
 
 	// =========================================================================================================================
@@ -168,48 +172,11 @@ public class PanInfosBuilding extends FPanel {
 	}
 
 	// =========================================================================================================================
-	// Menu
+	// FPanel
 
 	@Override
 	public void resize() {
-		if (engine != null)
-			img = engine.getImage(getWidth(), getHeight());
-
 		stocks.setSize(getWidth(), 50);
-		stocks.setLocation(0, getHeight() - stocks.getHeight());
-	}
-
-	// =========================================================================================================================
-
-	@Override
-	public void setSize(int width, int height) {
-		super.setSize(width, height);
-		resize();
-	}
-
-	// =========================================================================================================================
-
-	private class Update implements Runnable {
-		@Override
-		public void run() {
-			while (true) {
-				if (build == null)
-					try {
-						synchronized (update) {
-							update.wait();
-						}
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-
-				_update();
-
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-		}
+		stocks.setBottomLeftCorner(0, getHeight());
 	}
 }

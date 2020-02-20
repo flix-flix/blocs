@@ -1,7 +1,6 @@
 package dataManager.lines;
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.util.ArrayList;
 
 import data.id.ItemTableClient;
@@ -27,18 +26,11 @@ public class PanItemLineTitle extends PanItemLine {
 
 	// =========================================================================================================================
 
-	@Override
-	protected void paintBorder(Graphics g, int margin, int border) {
-		super.paintBorder(g, margin, border);
-	}
-
-	// =========================================================================================================================
-
 	private void addLinePartTitle(LineType type) {
 		PanLinePart part = new PanLinePart(ItemTableClient.getText("data_manager.type." + type.name().toLowerCase()));
 
-		part.setSize(widths.get(type), lineHeight - 2 * getBorderSize());
-		part.setLocation(startW, getBorderSize());
+		part.setSize(widths.get(type), lineHeight - 2 * border);
+		part.setLocation(startW, border);
 		startW += widths.get(type) + separatorWidth;
 		add(part);
 		panels.put(type, part);

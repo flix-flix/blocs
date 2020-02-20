@@ -89,13 +89,13 @@ public abstract class ServerAbstract implements Runnable {
 			e.printStackTrace();
 		}
 
-		for (ClientListener client : clients.values())
-			client.close();
+		for (int index : clients.keySet())
+			clients.get(index).close();
 	}
 
 	// =========================================================================================================================
 
-	void stop(int id) {
+	void stopped(int id) {
 		clients.remove(id);
 	}
 

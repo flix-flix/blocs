@@ -10,7 +10,7 @@ import data.map.multiblocs.E;
 import data.map.multiblocs.MultiBloc;
 import data.map.multiblocs.Tree;
 import data.map.units.Unit;
-import utils.FlixBlocksUtils;
+import utils.Utils;
 
 public class WorldGeneration {
 
@@ -107,8 +107,8 @@ public class WorldGeneration {
 
 		// Add River
 		for (int i = 0; i < 90; i++)
-			dig(map, (int) (50 * Math.cos(i * FlixBlocksUtils.toRadian)), ground - 1,
-					(int) (50 * Math.sin(i * FlixBlocksUtils.toRadian)));
+			dig(map, (int) (50 * Math.cos(i * Utils.toRadian)), ground - 1,
+					(int) (50 * Math.sin(i * Utils.toRadian)));
 
 		// =========================================================================================================================
 		// Units

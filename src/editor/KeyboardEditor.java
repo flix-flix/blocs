@@ -9,7 +9,7 @@ import data.map.enumerations.Face;
 import environment.Environment3D;
 import environment.KeyboardEnvironment3D;
 import graphicEngine.calcul.Quadri;
-import utils.FlixBlocksUtils;
+import utils.Utils;
 
 public class KeyboardEditor extends KeyboardEnvironment3D {
 
@@ -289,7 +289,7 @@ public class KeyboardEditor extends KeyboardEnvironment3D {
 		if (editor.isRotateMode())
 			getEnvironment().setTarget(e.getX() - 8 - startW, e.getY() - 32);
 		else
-			FlixBlocksUtils.debug("Only Rotate-Mode is available");
+			Utils.debug("Only Rotate-Mode is available");
 		// getEnvironment().setTargetCenter();
 	}
 

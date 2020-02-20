@@ -24,7 +24,7 @@ import java.util.stream.Stream;
 
 import javax.imageio.ImageIO;
 
-public class FlixBlocksUtils {
+public class Utils {
 	public static final double toRadian = Math.PI / 180;
 	public static final double toDegres = 180 / Math.PI;
 
@@ -32,7 +32,7 @@ public class FlixBlocksUtils {
 
 	static {
 		try {
-			imgError = ImageIO.read(FlixBlocksUtils.class.getResource("/999.png"));
+			imgError = ImageIO.read(Utils.class.getResource("/999.png"));
 		} catch (IOException e) {
 			debugBefore("Can't read imgERROR");
 			e.printStackTrace();
@@ -85,7 +85,7 @@ public class FlixBlocksUtils {
 	// Cursor
 
 	public static Cursor createCursor(String file) {
-		Image img = FlixBlocksUtils.getImage(file);
+		Image img = Utils.getImage(file);
 		return Toolkit.getDefaultToolkit().createCustomCursor(img, new Point(0, 0), file);
 	}
 
@@ -193,7 +193,7 @@ public class FlixBlocksUtils {
 			try {
 				file.createNewFile();
 			} catch (IOException e) {
-				FlixBlocksUtils.debug("Can't createFile");
+				Utils.debug("Can't createFile");
 				return;
 			}
 		}

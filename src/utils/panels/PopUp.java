@@ -7,12 +7,11 @@ import java.awt.event.MouseEvent;
 public class PopUp extends FPanel {
 	private static final long serialVersionUID = 8093376262133103200L;
 
-	/** Color around the pop-up */
+	/** Color around the pop-up box */
 	private Color voile;
 
+	/** Size of the pop-up box */
 	protected int width = 100, height = 100;
-	protected int border = 10;
-	private Color borderColor = Color.DARK_GRAY;
 
 	/** true: click outside of the rect will close the pop-up */
 	private boolean exitOnClick = false;
@@ -25,6 +24,7 @@ public class PopUp extends FPanel {
 
 	// =========================================================================================================================
 
+	// Override paintComponent() cause it's non-rectangular
 	@Override
 	protected void paintComponent(Graphics g) {
 		if (voile != null) {
@@ -37,14 +37,6 @@ public class PopUp extends FPanel {
 		g.setColor(getBackground());
 		fillCenteredRoundRect(g, getWidth() / 2, getHeight() / 2, width - 2 * border, height - 2 * border,
 				100 - border);
-	}
-
-	// =========================================================================================================================
-
-	@Override
-	public void setBorder(int size, Color color) {
-		border = size;
-		borderColor = color;
 	}
 
 	// =========================================================================================================================
@@ -64,6 +56,12 @@ public class PopUp extends FPanel {
 
 	// =========================================================================================================================
 
+	public void close() {
+		setVisible(false);
+	}
+
+	// =========================================================================================================================
+
 	@Override
 	public void click(MouseEvent e) {
 		super.click(e);
@@ -76,11 +74,5 @@ public class PopUp extends FPanel {
 
 		if (x > width / 2 || y > height / 2)
 			close();
-	}
-
-	// =========================================================================================================================
-
-	public void close() {
-		setVisible(false);
 	}
 }

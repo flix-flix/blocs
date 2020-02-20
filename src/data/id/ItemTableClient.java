@@ -1,5 +1,6 @@
 package data.id;
 
+import java.awt.Cursor;
 import java.awt.event.KeyEvent;
 import java.io.StringWriter;
 import java.util.Locale;
@@ -11,6 +12,14 @@ import utils.yaml.YAML;
 import window.Key;
 
 public class ItemTableClient extends ItemTable {
+
+	public static Cursor defaultCursor;
+
+	static {
+		defaultCursor = Cursor.getDefaultCursor();
+	}
+
+	// =========================================================================================================================
 
 	private static YAML lang;
 	private static String LANGUAGE;

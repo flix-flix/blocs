@@ -29,7 +29,7 @@ import server.game.Player;
 import server.game.messages.Message;
 import server.send.Action;
 import server.send.SendAction;
-import utils.FlixBlocksUtils;
+import utils.Utils;
 import window.Displayable;
 import window.Fen;
 import window.KeyBoard;
@@ -55,7 +55,7 @@ public class Game extends Environment3D implements Displayable {
 
 	// =============== Data ===============
 	public Gamer gamer = new Gamer(1);
-	private UserAction action;
+	private UserAction userAction;
 	public CameraMode cameraMode = CameraMode.CLASSIC;
 	public GameMode gameMode = GameMode.CLASSIC;
 
@@ -119,11 +119,11 @@ public class Game extends Environment3D implements Displayable {
 		// ======================================
 
 		panel = new PanGame(this);
-		super.panel = panel;
+		super.panel = panel.panEnv;
 
 		// ======================================
 
-		setAction(UserAction.MOUSE);
+		setUserAction(UserAction.MOUSE);
 		setCameraMode(CameraMode.CLASSIC);
 
 		send(player);
@@ -156,9 +156,10 @@ public class Game extends Environment3D implements Displayable {
 		messages = new MessageManager(this);
 
 		super.start();
-		panel.refreshGUI();
 		clock.start();
 		keyboard.start();
+
+		panel.start();
 	}
 
 	@Override
@@ -167,6 +168,7 @@ public class Game extends Environment3D implements Displayable {
 
 		keyboard.stop();
 		clock.stop();
+		panel.stop();
 
 		client.close();
 
@@ -187,30 +189,25 @@ public class Game extends Environment3D implements Displayable {
 	// =========================================================================================================================
 
 	public void setCameraMode(CameraMode cameraMode) {
-		// Ignore if map isn't loaded
-		if (camera == null)
-			return;
 		this.cameraMode = cameraMode;
-
-		panel.refreshGUI();
+		panel.updateEnvBounds();
 
 		switch (cameraMode) {
 		case CLASSIC:
 			gameMode = GameMode.CLASSIC;
-			// Realign the camera with the grid
-			camera.setVx(90);
-			camera.setVy(-65);
-			// Replace the camera at the correct altitude
-			camera.vue.y = 35;
-
 			// Deselect
 			clearSelected();
+
+			// Replace the camera
+			camera.setVx(90);
+			camera.setVy(-65);
+			camera.vue.y = 35;
 
 			keyboard.setTargetOnMouse();
 			keyboard.setSpeedModifier(2);
 
-			panel.setGUIVisible(true);
 			setCursorVisible(true);
+			panel.setGUIVisible(true);
 			break;
 		case FIRST_PERSON:
 			gameMode = GameMode.CREATIVE;
@@ -226,11 +223,12 @@ public class Game extends Environment3D implements Displayable {
 		targetUpdate();
 	}
 
-	public void setAction(UserAction action) {
-		this.action = action;
+	public void setUserAction(UserAction action) {
+		// If action changed
+		if (action != userAction)
+			panel.setCubesVisible(action == UserAction.CREA_ADD);
 
-		fen.updateCursor();
-		panel.refreshGUI();
+		this.userAction = action;
 	}
 
 	// =========================================================================================================================
@@ -242,10 +240,10 @@ public class Game extends Environment3D implements Displayable {
 			return Fen.cursorInvisible;
 
 		if (stateHUD == StateHUD.ERROR)
-			return Cursor.getDefaultCursor();
+			return ItemTableClient.defaultCursor;
 
 		if (!target.isValid())
-			return Cursor.getDefaultCursor();
+			return ItemTableClient.defaultCursor;
 
 		Cube cube = target.cube;
 
@@ -261,6 +259,8 @@ public class Game extends Environment3D implements Displayable {
 						return cursorPickaxe;
 					case WATER:
 						return cursorBucket;
+					default:
+						return ItemTableClient.defaultCursor;
 					}
 
 				else if (unitAction == Action.UNIT_BUILD)
@@ -284,22 +284,22 @@ public class Game extends Environment3D implements Displayable {
 				else if (unitAction == Action.UNIT_GOTO)
 					return cursorGoto;
 
-		return Cursor.getDefaultCursor();
+		return ItemTableClient.defaultCursor;
 	}
 
 	public void generateCursor() {
-		cursorGoto = FlixBlocksUtils.createCursor(texturePack.getFolder() + "cursor/cursorGoto");
-		cursorBuild = FlixBlocksUtils.createCursor(texturePack.getFolder() + "cursor/cursorBuild");
-		cursorAttack = FlixBlocksUtils.createCursor(texturePack.getFolder() + "cursor/cursorAttack");
+		cursorGoto = Utils.createCursor(texturePack.getFolder() + "cursor/cursorGoto");
+		cursorBuild = Utils.createCursor(texturePack.getFolder() + "cursor/cursorBuild");
+		cursorAttack = Utils.createCursor(texturePack.getFolder() + "cursor/cursorAttack");
 
-		cursorDrop = FlixBlocksUtils.createCursor(texturePack.getFolder() + "cursor/cursorDrop");
-		cursorDropWood = FlixBlocksUtils.createCursor(texturePack.getFolder() + "cursor/cursorDropWood");
-		cursorDropStone = FlixBlocksUtils.createCursor(texturePack.getFolder() + "cursor/cursorDropStone");
-		cursorDropWater = FlixBlocksUtils.createCursor(texturePack.getFolder() + "cursor/cursorDropWater");
+		cursorDrop = Utils.createCursor(texturePack.getFolder() + "cursor/cursorDrop");
+		cursorDropWood = Utils.createCursor(texturePack.getFolder() + "cursor/cursorDropWood");
+		cursorDropStone = Utils.createCursor(texturePack.getFolder() + "cursor/cursorDropStone");
+		cursorDropWater = Utils.createCursor(texturePack.getFolder() + "cursor/cursorDropWater");
 
-		cursorAxe = FlixBlocksUtils.createCursor(texturePack.getFolder() + "cursor/cursorAxe");
-		cursorPickaxe = FlixBlocksUtils.createCursor(texturePack.getFolder() + "cursor/cursorPickaxe");
-		cursorBucket = FlixBlocksUtils.createCursor(texturePack.getFolder() + "cursor/cursorBucket");
+		cursorAxe = Utils.createCursor(texturePack.getFolder() + "cursor/cursorAxe");
+		cursorPickaxe = Utils.createCursor(texturePack.getFolder() + "cursor/cursorPickaxe");
+		cursorBucket = Utils.createCursor(texturePack.getFolder() + "cursor/cursorBucket");
 	}
 
 	public void setCursorVisible(boolean visible) {
@@ -316,7 +316,7 @@ public class Game extends Environment3D implements Displayable {
 		setCursorVisible(true);
 		setTargetNull();
 
-		panel.pause.setVisible(true);
+		panel.panEnv.pause.setVisible(true);
 	}
 
 	public void resume() {
@@ -328,7 +328,9 @@ public class Game extends Environment3D implements Displayable {
 			keyboard.mouseToCenter();
 		}
 
-		panel.pause.close();
+		panel.updateMap();
+
+		panel.panEnv.pause.close();
 
 		keyboard.setTargetOnMouse();
 		fen.requestFocusInWindow();
@@ -347,7 +349,7 @@ public class Game extends Environment3D implements Displayable {
 	// =========================================================================================================================
 
 	public UserAction getAction() {
-		return action;
+		return userAction;
 	}
 
 	public void setNextCube(Cube cube) {
@@ -369,7 +371,7 @@ public class Game extends Environment3D implements Displayable {
 	public void select(Cube cube) {
 		selectedUnit = null;
 		selectedBuilding = null;
-		panel.refreshSelected(cube);
+		panel.displayInfosOf(cube);
 
 		if (cube != null)
 			if (cube.unit != null)
@@ -386,7 +388,7 @@ public class Game extends Environment3D implements Displayable {
 		if (selectedUnit == null)
 			return;
 		if (unitAction == null) {
-			FlixBlocksUtils.debug("Action NULL");
+			Utils.debug("Action NULL");
 			return;
 		}
 
@@ -409,7 +411,7 @@ public class Game extends Environment3D implements Displayable {
 			send(SendAction.store(selectedUnit, map.getBuilding(cube)));
 			break;
 		default:
-			FlixBlocksUtils.debug("[Client] Missing unitDoAction(): " + unitAction);
+			Utils.debug("[Client] Missing unitDoAction(): " + unitAction);
 			break;
 		}
 	}
@@ -453,7 +455,7 @@ public class Game extends Environment3D implements Displayable {
 				map.getUnit(send.id1).store(map, map.getBuilding(send.id2));
 			break;
 		default:
-			FlixBlocksUtils.debug("[Client] missing receiveSend(): " + send.action);
+			Utils.debug("[Client] missing receiveSend(): " + send.action);
 			break;
 		}
 	}
@@ -493,7 +495,7 @@ public class Game extends Environment3D implements Displayable {
 	}
 
 	public void setStateHUD(StateHUD stateHUD) {
-		panel.help.setVisible(stateHUD != StateHUD.DIALOG);
+		panel.panEnv.help.setVisible(stateHUD != StateHUD.DIALOG);
 		this.stateHUD = stateHUD;
 	}
 
@@ -510,7 +512,7 @@ public class Game extends Environment3D implements Displayable {
 	public void gainTarget() {
 		if (cameraMode == CameraMode.CLASSIC)
 			if (target.cube != null)
-				if (action == UserAction.CREA_ADD) {
+				if (userAction == UserAction.CREA_ADD) {
 
 					// Test if there is a cube(s) to add
 					Cube cubeToAdd = getNextCube();
@@ -531,11 +533,11 @@ public class Game extends Environment3D implements Displayable {
 					map.setHighlight(previousPreview, true);
 				}
 
-				else if (action == UserAction.CREA_DESTROY) {
+				else if (userAction == UserAction.CREA_DESTROY) {
 					map.setHighlight(target.cube, true);
 				}
 
-				else if (action == UserAction.MOUSE) {
+				else if (userAction == UserAction.MOUSE) {
 					// Hilight the targeted cube
 					map.setHighlight(target.cube, true);
 
@@ -602,11 +604,13 @@ public class Game extends Environment3D implements Displayable {
 		// TODO get ticks from server
 		// session.ticksPhys = session.clock.ticks;
 		// session.clock.ticks = 0;
+
+		panel.updateMap();
 	}
 
 	@Override
-	public void repaint() {
-		panel.repaint();
+	public void repaintEnvironment() {
+		panel.panEnv.repaintEnv();
 	}
 
 	// =========================================================================================================================

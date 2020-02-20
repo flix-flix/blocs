@@ -1,12 +1,11 @@
 package mainMenu.buttons;
 
 import java.awt.Image;
-import java.awt.event.MouseEvent;
 import java.util.Locale;
 
 import data.id.ItemTableClient;
 import mainMenu.MainMenu;
-import utils.FlixBlocksUtils;
+import utils.Utils;
 import utils.panels.FButton;
 
 public class ButtonLang extends FButton {
@@ -19,8 +18,8 @@ public class ButtonLang extends FButton {
 	private static Image fr, en;
 
 	static {
-		fr = FlixBlocksUtils.getImage("static/flags/fr");
-		en = FlixBlocksUtils.getImage("static/flags/en");
+		fr = Utils.getImage("static/flags/fr");
+		en = Utils.getImage("static/flags/en");
 	}
 
 	// =========================================================================================================================
@@ -37,7 +36,7 @@ public class ButtonLang extends FButton {
 	// =========================================================================================================================
 
 	@Override
-	public void click(MouseEvent e) {
+	public void eventClick() {
 		french = !french;
 		lang = french ? Locale.FRENCH.getLanguage() : Locale.ENGLISH.getLanguage();
 

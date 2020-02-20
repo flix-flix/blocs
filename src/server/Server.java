@@ -14,7 +14,7 @@ import server.game.messages.CommandExecutor;
 import server.game.messages.Message;
 import server.model.ServerAbstract;
 import server.send.SendAction;
-import utils.FlixBlocksUtils;
+import utils.Utils;
 
 public class Server extends ServerAbstract {
 
@@ -72,13 +72,13 @@ public class Server extends ServerAbstract {
 		else if (obj instanceof SendAction)
 			receiveSend((SendAction) obj, id);
 		else
-			FlixBlocksUtils.debug("[RECEIVE] Unknown object");
+			Utils.debug("[Server RECEIVE] Unknown object");
 	}
 
 	// =========================================================================================================================
 
 	public void receiveSend(SendAction send, int id) {
-		System.out.println("[RECEIVE] " + send.action);
+		System.out.println("[Server RECEIVE] " + send.action);
 		switch (send.action) {
 		case UNIT_GOTO:
 			map.getUnit(send.id1).goTo(map, send.coord);

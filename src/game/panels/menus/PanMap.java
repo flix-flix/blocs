@@ -7,6 +7,7 @@ import java.awt.event.MouseEvent;
 import data.id.ItemTableClient;
 import data.map.Map;
 import game.Game;
+import game.StateHUD;
 import utils.panels.FPanel;
 
 public class PanMap extends FPanel {
@@ -20,15 +21,17 @@ public class PanMap extends FPanel {
 
 	public PanMap(Game game) {
 		this.game = game;
+
+		setBackground(Color.GRAY);
+
 		updateMap();
 	}
 
 	// =========================================================================================================================
 
 	@Override
-	protected void paintComponent(Graphics g) {
-		g.setColor(new Color(150, 150, 150));
-		g.fillRect(0, 0, getWidth(), getHeight());
+	protected void paintCenter(Graphics g) {
+		super.paintCenter(g);
 
 		int rows = 100, cols = 100;
 
@@ -52,12 +55,16 @@ public class PanMap extends FPanel {
 
 	public void updateMap() {
 		map = game.getMap();
+
+		if (game.getStateHUD() != StateHUD.PAUSE)
+			repaint();
 	}
 
 	// =========================================================================================================================
-	// Menu
+	// FPanel
 
 	@Override
 	public void click(MouseEvent e) {
+		// TODO Map clickable
 	}
 }

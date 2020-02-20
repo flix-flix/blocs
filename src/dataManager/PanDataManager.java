@@ -42,30 +42,29 @@ public class PanDataManager extends FPanel {
 
 		PanGrid grid = new PanGrid();
 		grid.setCols(2);
-		grid.setPadding(5);
+		grid.setGridPadding(5);
 		grid.setGridSpace(5);
-		
+
 		menu.addTop(grid, PanCol.REMAINING);
 
-
 		ButtonDataManager lang = new ButtonDataManager(data, ActionDataManager.LANG);
-		grid.addMenu(lang);
+		grid.gridAdd(lang);
 
 		ButtonDataManager texture = new ButtonDataManager(data, ActionDataManager.TEXTURE);
-		grid.addMenu(texture);
+		grid.gridAdd(texture);
 
 		ButtonDataManager tree = new ButtonDataManager(data, ActionDataManager.TREE);
-		grid.addMenu(tree);
-	
+		grid.gridAdd(tree);
+
 		ButtonDataManager none = new ButtonDataManager(data, ActionDataManager.SHOW_FIELDS);
-		grid.addMenu(none);
+		grid.gridAdd(none);
 		ButtonDataManager none2 = new ButtonDataManager(data, ActionDataManager.NONE);
-		grid.addMenu(none2);
+		grid.gridAdd(none2);
 		ButtonDataManager none3 = new ButtonDataManager(data, ActionDataManager.NONE);
-		grid.addMenu(none3);
+		grid.gridAdd(none3);
 
 		ButtonDataManager quit = new ButtonDataManager(data, ActionDataManager.QUIT);
-		grid.addMenu(quit);
+		grid.gridAdd(quit);
 
 		// =============== Title ===============
 		title = new PanItemLineTitle();

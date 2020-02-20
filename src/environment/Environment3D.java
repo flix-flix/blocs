@@ -20,23 +20,23 @@ public class Environment3D {
 
 	public int ticksPhys, ticksKeyBoard;
 
-	// ============ Options ============
+	// =============== Options ===============
 	/** Max frames/seconde allowed */
 	public int FPSmax = 30;
 
 	// =============== Thread ===============
-	private Actu actu;
+	boolean run = true;
 	/** true : currently processing a new image */
 	private boolean processing = false;
 	/** true : suspend the generation of new images */
 	private boolean paused = false;
 
-	// ============= Engine ===================
+	// =============== Engine ===============
 	protected Engine engine;
 	protected MapClient map;
 	protected Camera camera;
 
-	// ============= Target ===================
+	// =============== Target ===============
 	public Target target = new Target();
 
 	// =========================================================================================================================
@@ -59,16 +59,19 @@ public class Environment3D {
 	// Thread
 
 	public void start() {
+		if (!run)
+			return;
+
 		panel.setCamera(camera);
 		engine.setModelCamera(map, camera);
 
-		Thread thread = new Thread(actu = new Actu());
-		thread.setName("Max fps counter");
+		Thread thread = new Thread(new RefreshImage());
+		thread.setName("Refresh Image");
 		thread.start();
 	}
 
 	public void stop() {
-		actu.stop();
+		run = false;
 	}
 
 	public void setPaused(boolean paused) {
@@ -163,7 +166,8 @@ public class Environment3D {
 	public void oneSecondTick() {
 	}
 
-	public void repaint() {
+	/** Called when a new Image have been generated */
+	public void repaintEnvironment() {
 		panel.repaint();
 	}
 
@@ -195,13 +199,11 @@ public class Environment3D {
 		updateTimeDev();
 		targetUpdate();
 
-		panel.repaint();
+		repaintEnvironment();
 	}
 
 	/** Refresh the image "FPSmax times" per second and when panel is resized */
-	class Actu implements Runnable {
-		boolean run = true;
-
+	class RefreshImage implements Runnable {
 		public void run() {
 			// Count the number of frames displayed since the last "second timer" restart
 			int fps = 0;
@@ -241,10 +243,6 @@ public class Environment3D {
 					fps++;
 				}
 			}
-		}
-
-		public void stop() {
-			run = false;
 		}
 	}
 

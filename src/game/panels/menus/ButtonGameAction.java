@@ -5,7 +5,7 @@ import java.awt.Color;
 import data.id.ItemTableClient;
 import game.Game;
 import server.send.Action;
-import utils.FlixBlocksUtils;
+import utils.Utils;
 import utilsBlocks.ButtonBlocks;
 
 public class ButtonGameAction extends ButtonBlocks {
@@ -19,7 +19,7 @@ public class ButtonGameAction extends ButtonBlocks {
 		setSelectedColor(Color.GRAY);
 		setPadding(5);
 
-		setImage(FlixBlocksUtils
+		setImage(Utils
 				.getImage(ItemTableClient.getTexturePack().getFolder() + "menu/game/" + action.name().toLowerCase()));
 	}
 }

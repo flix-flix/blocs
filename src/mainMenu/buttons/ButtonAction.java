@@ -7,7 +7,7 @@ import java.awt.Image;
 
 import mainMenu.MainMenu;
 import mainMenu.MainMenuAction;
-import utils.FlixBlocksUtils;
+import utils.Utils;
 import utils.panels.ClickListener;
 import utils.panels.FButton;
 
@@ -17,9 +17,9 @@ public class ButtonAction extends FButton {
 	private static Image data, options, quit;
 
 	static {
-		quit = FlixBlocksUtils.getImage("static/quit");
-		options = FlixBlocksUtils.getImage("static/options");
-		data = FlixBlocksUtils.getImage("static/data");
+		quit = Utils.getImage("static/quit");
+		options = Utils.getImage("static/options");
+		data = Utils.getImage("static/data");
 	}
 
 	private MainMenuAction action;

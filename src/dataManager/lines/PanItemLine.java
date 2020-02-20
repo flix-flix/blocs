@@ -55,7 +55,10 @@ public class PanItemLine extends FPanel {
 		super.paintCenter(g);
 
 		g.setColor(Color.WHITE);
-		g.fillRect(0, 0, startW, getHeight());
+		if (this instanceof PanItemLineTitle)
+			g.fillRect(0, 0, startW - 5, getHeight());
+		else
+			g.fillRect(0, 0, startW, getHeight());
 
 		g.setColor(Color.BLACK);
 		g.fillRect(getUndrawSize(), getUndrawSize(), 5, getContentHeight());

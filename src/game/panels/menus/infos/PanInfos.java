@@ -1,37 +1,46 @@
 package game.panels.menus.infos;
 
 import java.awt.Color;
-import java.awt.Font;
-import java.awt.event.MouseEvent;
+import java.lang.Thread.State;
 import java.util.ArrayList;
 
 import data.id.ItemID;
 import data.id.ItemTable;
-import data.id.ItemTableClient;
 import data.map.Cube;
 import data.map.buildings.Building;
 import data.map.multiblocs.E;
 import data.map.multiblocs.Tree;
-import environment.extendsData.CubeClient;
 import game.Game;
-import utils.panels.ClickListener;
-import utils.panels.FPanel;
+import game.StateHUD;
+import utils.panels.PanCard;
 import utils.panels.PanGrid;
 import utilsBlocks.ButtonBlocks;
 
-public class PanInfos extends FPanel {
+public class PanInfos extends PanCard {
 	private static final long serialVersionUID = -7621681231232278749L;
 
+	private static final String CUBES = "cubes";
+	private static final String UNIT = "unit";
+	private static final String BUILD = "build";
+	private static final String RESOURCE = "res";
+
+	// =============== Panels ===============
+	private PanGrid gridCubes;
+	private PanInfosUnit unit;
+	private PanInfosBuilding build;
+	private PanInfosResource resource;
+
+	// =============== Buttons cubes ===============
+	private ArrayList<Cube> _buttonsCubes = new ArrayList<>();
+	private ArrayList<ButtonBlocks> buttonsCubes = new ArrayList<>();
+
+	// =============== Thread ===============
+	private boolean run = true;
+	private Thread update;
+
+	// =============== Data ===============
 	private Game game;
-
-	public PanInfosResource resource;
-	public PanInfosUnit unit;
-	public PanInfosBuilding build;
-
-	public PanGrid gridCubes;
-
-	private ArrayList<Cube> _cubes = new ArrayList<>();
-	public ArrayList<ButtonBlocks> cubes = new ArrayList<>();
+	private Cube cube;
 
 	// =========================================================================================================================
 
@@ -40,113 +49,142 @@ public class PanInfos extends FPanel {
 
 		setBackground(Color.LIGHT_GRAY);
 
-		resource = new PanInfosResource();
-		unit = new PanInfosUnit(game);
-		build = new PanInfosBuilding(game);
-		gridCubes = new PanGrid();
-
-		gridCubes.setSize(getSize());
+		put(RESOURCE, resource = new PanInfosResource());
+		put(UNIT, unit = new PanInfosUnit(game));
+		put(BUILD, build = new PanInfosBuilding(game));
+		put(CUBES, gridCubes = new PanGrid());
 
 		// =========================================================================================================================
+		// gridCubes
 
 		for (int itemID : ItemTable.getItemIDList())
-			_cubes.add(new Cube(itemID));
+			_buttonsCubes.add(new Cube(itemID));
 
-		_cubes.add(new Tree().getCube());
-		_cubes.add(new E().getCube());
-		_cubes.add(ItemTable.createBuilding(new Building(null, ItemID.CASTLE, 0, 0, 0, true)).getCube());
+		_buttonsCubes.add(new Tree().getCube());
+		_buttonsCubes.add(new E().getCube());
+		_buttonsCubes.add(ItemTable.createBuilding(new Building(null, ItemID.CASTLE, 0, 0, 0, true)).getCube());
 
-		for (Cube cube : _cubes) {
-			ButtonBlocks button = createButtonCube(cube);
-			cubes.add(button);
-			gridCubes.addMenu(button);
+		for (Cube cube : _buttonsCubes) {
+			ButtonBlocks button = new ButtonCube(game, cube);
+			buttonsCubes.add(button);
+			gridCubes.gridAdd(button);
 		}
 
-		ButtonBlocks.group(cubes);
+		ButtonBlocks.group(buttonsCubes);
 
 		// =========================================================================================================================
 
-		add(resource);
-		add(unit);
-		add(build);
-		add(gridCubes);
+		update = new Thread(new Update());
+		update.setName("Update PanInfos");
+		update.start();
 
-		clear();
+		hide();
 	}
 
 	// =========================================================================================================================
 
-	public ButtonBlocks createButtonCube(Cube cube) {
-		ButtonBlocks button = new ButtonBlocks();
+	/** Hide the panel */
+	public void hide() {
+		super.hide();
 
-		button.setSelectable(true);
-		button.setBackground(Color.GRAY);
-		button.setPadding(5);
-		button.setForeground(Color.WHITE);
-		button.setTextBackground(new Color(75, 75, 75));
-		button.setTextYLocation(5, ButtonBlocks.BOTTOM);
-
-		button.setModel(new CubeClient(cube));
-
-		// TODO [Improve] getName(itemID)
-		String name = ItemTableClient.getName(cube.multibloc == null ? cube.getItemID() : cube.multibloc.itemID);
-		if (name == null)
-			name = "NULL";
-
-		button.setFont(new Font("monospace", Font.PLAIN, 12));
-		button.setText(name);
-
-		button.setClickListener(new ClickListener() {
-			@Override
-			public void leftClick() {
-				game.setNextCube(cube);
-			}
-		});
-
-		return button;
-	}
-
-	// =========================================================================================================================
-
-	/** Show and update the corresponding panel */
-	public void refresh(Cube cube) {
 		resource.clear();
 		build.clear();
 		unit.clear();
-		gridCubes.setVisible(false);
-
-		if (cube == null)
-			return;
-
-		if (cube.unit != null)
-			unit.update(cube.unit);
-		else if (cube.build != null)
-			build.update(cube.build);
-		else if (cube.hasResource())
-			resource.update(cube);
 	}
 
-	/** Hide the panel */
-	public void clear() {
-		refresh(null);
-	}
-
+	/** Show the grid of cubes */
 	public void showCubes() {
-		gridCubes.setVisible(true);
+		show(CUBES);
 	}
 
 	// =========================================================================================================================
 
-	@Override
-	public void setSize(int x, int y) {
-		super.setSize(x, y);
-		resource.setSize(x, y);
-		unit.setSize(x, y);
-		build.setSize(x, y);
-		gridCubes.setSize(x, y);
+	/** Display the infos of the cube */
+	public void displayInfosOf(Cube cube) {
+		this.cube = cube;
+
+		if (cube == null) {
+			clear();
+			return;
+		}
+
+		if (cube.unit != null) {
+			unit.setCube(cube);
+			show(UNIT);
+		} else if (cube.build != null) {
+			build.setCube(cube);
+			show(BUILD);
+		} else if (cube.hasResource()) {
+			resource.setCube(cube);
+			show(RESOURCE);
+		} else
+			clear();
+
+		synchronized (update) {
+			if (update.getState() == State.WAITING)
+				update.notify();
+		}
 	}
 
-	@Override
-	public void click(MouseEvent e) {
+	private void clear() {
+		cube = null;
+		hide();
+	}
+
+	// =========================================================================================================================
+
+	public void stop() {
+		run = false;
+	}
+
+	// =========================================================================================================================
+
+	private class Update implements Runnable {
+		@Override
+		public void run() {
+			while (run) {
+				while (cube == null)
+					try {
+						synchronized (update) {
+							update.wait();
+						}
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+
+				// ========================================
+
+				String name = getVisibleName();
+
+				if (name == null) {
+					clear();
+					continue;
+				}
+
+				if (game.getStateHUD() != StateHUD.PAUSE)
+					switch (name) {
+					case UNIT:
+						unit.update();
+						break;
+					case BUILD:
+						build.update();
+						break;
+					case RESOURCE:
+						resource.update();
+						break;
+					default:
+						cube = null;
+						continue;
+					}
+
+				// ========================================
+
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 }

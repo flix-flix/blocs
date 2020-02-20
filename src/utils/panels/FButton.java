@@ -18,6 +18,8 @@ public class FButton extends FPanel {
 	private ClickListener listener;
 
 	// =============== Over ===============
+	/** true : listner if the cursor enter */
+	private boolean listenIn = false;
 	/** true : the cursor is in the component */
 	private boolean in = false;
 	/**
@@ -26,7 +28,11 @@ public class FButton extends FPanel {
 	private Color inBackColor, inForeColor, inBorderColor;
 
 	// =============== Select ===============
+	/** This button can be in a "selected" state */
 	private boolean selectable = false;
+	/** This button can be deselected be clicking on it */
+	private boolean deselectable = true;
+
 	private boolean selected = false;
 	private ArrayList<FButton> group;
 
@@ -201,6 +207,7 @@ public class FButton extends FPanel {
 	}
 
 	public void setInColor(Color back, Color fore, Color border) {
+		this.listenIn = true;
 		this.inBackColor = back;
 		this.inForeColor = fore;
 		this.inBorderColor = border;
@@ -225,8 +232,15 @@ public class FButton extends FPanel {
 			this.selected = selected;
 	}
 
+	/** Set seletable status (By default a button is deselectable) */
 	public void setSelectable(boolean selectable) {
+		setSelectable(selectable, true);
+	}
+
+	/** Set selectable and deselectable status */
+	public void setSelectable(boolean selectable, boolean deselectable) {
 		this.selectable = selectable;
+		this.deselectable = deselectable;
 	}
 
 	// =========================================================================================================================
@@ -253,35 +267,57 @@ public class FButton extends FPanel {
 		_group(new ArrayList<>(Arrays.asList(buttons)));
 	}
 
+	/** Unselect all the buttons of the group */
 	public void unselectAll() {
 		if (group != null)
 			for (FButton button : group)
 				button.setSelected(false);
 	}
 
+	/** Unselect all the buttons of the group (except this one) */
+	public void unselectAllOthers() {
+		if (group != null)
+			for (FButton button : group)
+				if (button != this)
+					button.setSelected(false);
+	}
+
+	// =========================================================================================================================
+
+	public void eventActivate() {
+	}
+
+	public void eventDesactivate() {
+	}
+
+	public void eventClick() {
+	}
+
 	// =========================================================================================================================
 
 	@Override
-	public void click(MouseEvent e) {
+	public final void click(MouseEvent e) {
 		if (selectable) {
-			if (selected)
-				setSelected(false);
-			else {
-				unselectAll();
+			if (selected) {
+				if (deselectable) {
+					setSelected(false);
+					eventDesactivate();
+				}
+			} else {
+				unselectAllOthers();
 				setSelected(true);
 			}
 		}
+
+		eventClick();
 		if (listener != null)
 			listener.leftClick();
 	}
 
 	@Override
-	public void resize() {
-		super.resize();
-	}
-
-	@Override
 	public void entered() {
+		if (!listenIn)
+			return;
 		super.entered();
 		in = true;
 		repaint();
@@ -289,6 +325,8 @@ public class FButton extends FPanel {
 
 	@Override
 	public void exited() {
+		if (!listenIn)
+			return;
 		super.exited();
 		in = false;
 		repaint();

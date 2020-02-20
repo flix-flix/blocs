@@ -4,8 +4,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.event.MouseEvent;
-import java.lang.Thread.State;
 
 import data.id.ItemTableClient;
 import data.map.Cube;
@@ -13,7 +11,7 @@ import data.map.units.Unit;
 import environment.extendsData.CubeClient;
 import game.Game;
 import game.panels.menus.ButtonGameAction;
-import game.panels.menus.MenuResource;
+import game.panels.menus.PanResource;
 import graphicEngine.calcul.Engine;
 import server.send.Action;
 import utils.panels.FPanel;
@@ -23,8 +21,6 @@ public class PanInfosUnit extends FPanel {
 
 	private Game game;
 
-	private Thread update;
-
 	private Font font = new Font("monospace", Font.PLAIN, 12);
 
 	// =============== Display ===============
@@ -32,10 +28,11 @@ public class PanInfosUnit extends FPanel {
 	private Image img;
 
 	// =============== Data ===============
+	private Cube cube;
 	private Unit unit;
 
 	// =============== Panels ===============
-	private MenuResource res;
+	private PanResource res;
 	private ButtonGameAction destroy, harvest;
 
 	// =========================================================================================================================
@@ -43,11 +40,10 @@ public class PanInfosUnit extends FPanel {
 	public PanInfosUnit(Game game) {
 		this.game = game;
 
-		update = new Thread(new Update());
-		update.setName("Update Unit infos");
-		update.start();
+		setBackground(Color.GRAY);
 
-		res = new MenuResource();
+		res = new PanResource();
+		res.setColor(Color.LIGHT_GRAY, Color.DARK_GRAY, 2, Color.DARK_GRAY);
 		res.setSize(100, 40);
 		res.setLocation(getWidth() / 2 - res.getWidth() / 2, 180);
 		add(res);
@@ -66,9 +62,8 @@ public class PanInfosUnit extends FPanel {
 	// =========================================================================================================================
 
 	@Override
-	protected void paintComponent(Graphics g) {
-		g.setColor(Color.GRAY);
-		g.fillRect(0, 0, getWidth(), getHeight());
+	protected void paintCenter(Graphics g) {
+		super.paintCenter(g);
 
 		if (img != null)
 			g.drawImage(img, 15, 15, null);
@@ -84,35 +79,34 @@ public class PanInfosUnit extends FPanel {
 
 	// =========================================================================================================================
 
-	public void update(Unit unit) {
-		this.unit = unit;
+	public void clear() {
+		unit = null;
+	}
 
-		if (update.getState() == State.WAITING)
-			synchronized (update) {
-				update.notify();
-			}
+	// =========================================================================================================================
 
+	public void update() {
+		unit = cube.unit;
+
+		// Resources
+		res.update(unit.getResource());
+		res.setVisible(!res.isEmpty());
+	}
+
+	public void setCube(Cube cube) {
+		this.cube = cube;
+		unit = cube == null ? null : cube.unit;
+
+		// ===== Image =====
 		engine = new Engine(ItemTableClient.getCamera(unit.getItemID()), new CubeClient(new Cube(unit.getItemID())));
 		engine.setBackground(Engine.NONE);
 		img = engine.getImage(75, 75);
 
-		_update();
-	}
-
-	private void _update() {
-		if (unit != null)
-			res.update(unit.getResource());
-
-		destroy.setVisible(unit.getGamer().equals(game.gamer));
-
-		setVisible(true);
-		repaint();
-	}
-
-	public void clear() {
-		unit = null;
-		setVisible(false);
+		// ===== Buttons =====
 		destroy.unselectAll();
+		boolean visible = unit.getGamer().equals(game.gamer);
+		destroy.setVisible(visible);
+		harvest.setVisible(visible);
 	}
 
 	// =========================================================================================================================
@@ -120,35 +114,5 @@ public class PanInfosUnit extends FPanel {
 	@Override
 	public void resize() {
 		res.setLocation(getWidth() / 2 - res.getWidth() / 2, 180);
-	}
-
-	@Override
-	public void click(MouseEvent e) {
-	}
-
-	// =========================================================================================================================
-
-	private class Update implements Runnable {
-		@Override
-		public void run() {
-			while (true) {
-				if (unit == null)
-					try {
-						synchronized (update) {
-							update.wait();
-						}
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-
-				_update();
-
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-		}
 	}
 }

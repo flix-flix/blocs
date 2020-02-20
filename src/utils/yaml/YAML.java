@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.TreeMap;
 
-import utils.FlixBlocksUtils;
+import utils.Utils;
 
 public class YAML {
 	/** Number of spaces shifted for each child node */
@@ -89,7 +89,7 @@ public class YAML {
 	}
 
 	public int getHexa(String path) {
-		return FlixBlocksUtils.parseHexa((getString(path)));
+		return Utils.parseHexa((getString(path)));
 	}
 
 	public boolean getBoolean(String path) {
@@ -106,7 +106,7 @@ public class YAML {
 			hexa[y] = new int[strings.length];
 
 			for (int x = 0; x < strings.length; x++)
-				hexa[y][x] = FlixBlocksUtils.parseHexa(strings[x]);
+				hexa[y][x] = Utils.parseHexa(strings[x]);
 		}
 
 		return hexa;
@@ -121,7 +121,7 @@ public class YAML {
 			String[] strings = (String[]) objects[y];
 
 			for (int x = 0; x < strings.length; x++)
-				hexa[y * strings.length + x] = FlixBlocksUtils.parseHexa(strings[x]);
+				hexa[y * strings.length + x] = Utils.parseHexa(strings[x]);
 		}
 
 		return hexa;
@@ -135,14 +135,14 @@ public class YAML {
 	}
 
 	public void putHexa(String path, int hexa) {
-		put(path, FlixBlocksUtils.hexaToString(hexa));
+		put(path, Utils.hexaToString(hexa));
 	}
 
 	public void putHexaDoubleArrayInline(String path, int[] array, int width) {
 		String[][] doubleArray = new String[array.length / width][width];
 		for (int x = 0; x < width; x++)
 			for (int y = 0; y < doubleArray.length; y++)
-				doubleArray[y][x] = FlixBlocksUtils.hexaToString(array[y * width + x]);
+				doubleArray[y][x] = Utils.hexaToString(array[y * width + x]);
 		put(path, doubleArray);
 	}
 
@@ -183,7 +183,7 @@ public class YAML {
 			int colon = line.indexOf(':');
 
 			if (colon == -1) {
-				FlixBlocksUtils.debug("No ':'");
+				Utils.debug("No ':'");
 				break;
 			}
 
@@ -320,7 +320,7 @@ public class YAML {
 				sw.write("\r\n");
 				encode(sw, (YAML) obj, shift + shiftStep);
 			} else
-				FlixBlocksUtils.debug("Wrong class " + c);
+				Utils.debug("Wrong class " + c);
 		}
 	}
 
@@ -341,7 +341,7 @@ public class YAML {
 	// =========================================================================================================================
 
 	public static YAML parseFile(String file) {
-		String[] _lines = FlixBlocksUtils.read(file).split("\r\n");
+		String[] _lines = Utils.read(file).split("\r\n");
 		ArrayList<String> lines = new ArrayList<>();
 
 		for (String line : _lines) {
@@ -366,6 +366,6 @@ public class YAML {
 	}
 
 	public static void encodeFile(YAML yaml, String file) {
-		FlixBlocksUtils.write(encode(yaml), file);
+		Utils.write(encode(yaml), file);
 	}
 }

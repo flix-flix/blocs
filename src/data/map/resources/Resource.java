@@ -5,7 +5,12 @@ import java.io.Serializable;
 public class Resource implements Serializable {
 	private static final long serialVersionUID = -8554005042263955323L;
 
-	public final int EVERYTHING = -1;
+	// TODO Implement EVERYTHING and UNLIMITED
+
+	/** Call remove(EVERYTHING) to take as mush as possible */
+	public final static int EVERYTHING = -1;
+	/** Set quantity to UNLIMITED to ignore the max limit */
+	public final static int UNLIMITED = -1;
 
 	private static int nextID = 0;
 

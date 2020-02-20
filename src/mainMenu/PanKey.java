@@ -13,14 +13,13 @@ import window.Key;
 public class PanKey extends FPanel {
 	private static final long serialVersionUID = -4605592917510364091L;
 
-	PanKeys pan;
-	Key key;
+	private PanKeys pan;
+	private Key key;
 
-	boolean selected = false;
+	private boolean selected = false;
 
 	// =============== Key description (left) ===============
-	Font fontDesc = new Font("monospace", Font.BOLD, 20);
-	FontMetrics fmDesc = getFontMetrics(fontDesc);
+	private Font fontDesc = new Font("monospace", Font.PLAIN, 14);
 
 	// =============== Key (right) ===============
 	private Font fontKey = new Font("monospace", Font.BOLD, 20);
@@ -31,19 +30,22 @@ public class PanKey extends FPanel {
 	public PanKey(PanKeys pan, Key key) {
 		this.pan = pan;
 		this.key = key;
+
+		setBackground(Color.LIGHT_GRAY);
 	}
 
 	// =========================================================================================================================
 
 	@Override
-	protected void paintComponent(Graphics g) {
-		super.paintComponent(g);
-		g.setColor(Color.LIGHT_GRAY);
-		g.fillRect(0, 0, getWidth() - 1, getHeight() - 1);
+	protected void paintCenter(Graphics g) {
+		super.paintCenter(g);
 
+		// Action
 		g.setColor(Color.BLACK);
+		g.setFont(fontDesc);
 		g.drawString(key.toString(), 10, getHeight() * 2 / 3);
 
+		// Key
 		if (selected)
 			g.setColor(Color.WHITE);
 		g.setFont(fontKey);

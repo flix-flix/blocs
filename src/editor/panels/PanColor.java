@@ -53,6 +53,8 @@ public class PanColor extends FPanel {
 	// =========================================================================================================================
 
 	public PanColor(Editor editor) {
+		setBackground(Color.GRAY);
+
 		int[] tab = new int[] { 0, 255, 0 };// B, R, G
 
 		for (int i = 0; i < 6; i++) {
@@ -94,11 +96,8 @@ public class PanColor extends FPanel {
 	// =========================================================================================================================
 
 	@Override
-	public void paintComponent(Graphics g) {
-		g.setColor(Color.GRAY);
-		g.fillRect(0, 0, getWidth() - 1, getHeight() - 1);
-
-		// =================================================
+	protected void paintCenter(Graphics g) {
+		super.paintCenter(g);
 
 		g.setColor(Color.DARK_GRAY);
 		g.drawRect(lineStartX - 1, lineStartY - 1, lineSize + 2, 6 * 44 + 1);

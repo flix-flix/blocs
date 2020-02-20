@@ -3,7 +3,6 @@ package editor.panels;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
@@ -13,7 +12,7 @@ import data.map.Cube;
 import editor.ActionEditor;
 import editor.Editor;
 import environment.extendsData.CubeClient;
-import utils.FlixBlocksUtils;
+import utils.Utils;
 import utilsBlocks.ButtonBlocks;
 
 public class ButtonEditor extends ButtonBlocks {
@@ -46,11 +45,11 @@ public class ButtonEditor extends ButtonBlocks {
 	public ButtonEditor(Editor editor, ActionEditor action) {
 		this.editor = editor;
 		this.action = action;
-		
+
 		setPadding(5);
 
 		if (hasImage())
-			setImage(FlixBlocksUtils.getImage(
+			setImage(Utils.getImage(
 					ItemTableClient.getTexturePack().getFolder() + "menu/editor/" + action.name().toLowerCase()));
 
 		else if (hasEngine()) {
@@ -88,7 +87,7 @@ public class ButtonEditor extends ButtonBlocks {
 				break;
 
 			default:
-				FlixBlocksUtils.debug("Missing " + action.name());
+				Utils.debug("Missing " + action.name());
 			}
 			setFont(new Font("monospace", Font.BOLD, 14));
 			setBackground(Color.DARK_GRAY);
@@ -131,7 +130,7 @@ public class ButtonEditor extends ButtonBlocks {
 					else if (prev == wheelMin)
 						;
 				} else
-					editor.menuWheel(action);
+					editor.buttonWheel(action);
 
 				repaint();
 			}
@@ -263,14 +262,11 @@ public class ButtonEditor extends ButtonBlocks {
 	}
 
 	// =========================================================================================================================
-	// Menu
+	// FButton
 
 	@Override
-	public void click(MouseEvent e) {
-		super.click(e);
-
-		editor.menuClick(action);
-		e.consume();
+	public void eventClick() {
+		editor.buttonClick(action);
 		repaint();
 	}
 }
