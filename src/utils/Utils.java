@@ -28,6 +28,8 @@ public class Utils {
 	public static final double toRadian = Math.PI / 180;
 	public static final double toDegres = 180 / Math.PI;
 
+	// =========================================================================================================================
+
 	public static Image imgError;
 
 	static {

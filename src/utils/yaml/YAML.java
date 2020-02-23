@@ -57,8 +57,10 @@ public class YAML {
 			else if (force) {
 				yaml.tree.put(keys[i], new YAML());
 				yaml = (YAML) yaml.tree.get(keys[i]);
-			} else
+			} else {
+				Utils.debug("Path not find: " + path);
 				return null;
+			}
 
 		return yaml;
 	}

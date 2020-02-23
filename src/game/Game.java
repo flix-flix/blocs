@@ -94,12 +94,12 @@ public class Game extends Environment3D implements Displayable {
 
 	// =========================================================================================================================
 
-	public Game(Fen fen, Server server) {
+	public Game(Fen fen, Server server) throws IOException {
 		this(fen, server.getDescription());
 		this.server = server;
 	}
 
-	public Game(Fen fen, ServerDescription description) {
+	public Game(Fen fen, ServerDescription description) throws IOException {
 		this.fen = fen;
 		client = new Client(this, description);
 
@@ -131,7 +131,8 @@ public class Game extends Environment3D implements Displayable {
 
 	// =========================================================================================================================
 
-	public static Game startLocalServer(Fen fen) {
+	public static Game startLocalServer(Fen fen) throws IOException {
+		// TODO [Feature] Change port if already used
 		Server server = new Server();
 		server.start();
 

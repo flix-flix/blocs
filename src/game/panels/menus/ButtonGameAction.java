@@ -21,5 +21,7 @@ public class ButtonGameAction extends ButtonBlocks {
 
 		setImage(Utils
 				.getImage(ItemTableClient.getTexturePack().getFolder() + "menu/game/" + action.name().toLowerCase()));
+		
+		setWIP();
 	}
 }

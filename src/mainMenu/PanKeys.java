@@ -5,7 +5,7 @@ import java.util.TreeMap;
 
 import utils.panels.FPanel;
 import utils.panels.PanGrid;
-import utils.panels.PopUp;
+import utils.panels.popUp.PopUp;
 import window.Key;
 
 public class PanKeys extends PopUp {
@@ -49,8 +49,6 @@ public class PanKeys extends PopUp {
 		container.setWidth(400);
 
 		this.add(container);
-
-		this.setVisible(false);
 	}
 
 	// =========================================================================================================================

@@ -44,11 +44,11 @@ public class ClientListener implements Runnable {
 			try {
 				server.receive(in.readObject(), id);
 			} catch (IOException e) {
+				// TODO [Fix] Server disconnection
 				if (e instanceof SocketException || e instanceof EOFException)
-					if (run)
-						stopped();
-					else
-						e.printStackTrace();
+					stopped();
+				else
+					e.printStackTrace();
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}
@@ -65,8 +65,10 @@ public class ClientListener implements Runnable {
 
 	/** Called when client quit */
 	private void stopped() {
-		run = false;
-		server.stopped(id);
+		if (run) {
+			run = false;
+			server.stopped(id);
+		}
 	}
 
 	/** Close the stream */

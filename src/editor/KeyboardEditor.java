@@ -264,6 +264,9 @@ public class KeyboardEditor extends KeyboardEnvironment3D {
 
 	@Override
 	public void wheelRotation(MouseWheelEvent e) {
+		if (editor.isPaused())
+			return;
+
 		int wheelRotation = e.getWheelRotation();
 		if (editor.isRotateMode()) {
 			// Don't go too close or too far away from the cube
@@ -333,6 +336,9 @@ public class KeyboardEditor extends KeyboardEnvironment3D {
 
 	@Override
 	public void keyPressed(KeyEvent e) {
+		if (editor.isPaused())
+			return;
+
 		updateControlShiftStatus(e);
 
 		fen.updateCursor();

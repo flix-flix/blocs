@@ -66,11 +66,11 @@ tips:
 text:
     game:
         loading: Chargement...
-        loadingError: (Si tu peux lire ce message, le jeu a probablement planté ^^)
+        loading_error: (Si tu peux lire ce message, le jeu a probablement planté ^^)
         
         error:
-            connexionLost: Perte de connexion avec le server
-            buttonQuit: Retour au menu principal
+            connexion_lost: Perte de connexion avec le server
+            button_quit: Retour au menu principal
         
         pause:
             buttons: 
@@ -88,10 +88,12 @@ text:
             item_id: ID
             
             item_save: Enregistrer
-            item_new: Nouveau
             item_clear: Effacer
             
             valid_color: Selectionner
+        pop_up:
+            close: Voulez vous vraiment fermer l'éditeur? Les modifications non sauvegardées seront perdues!
+            save_on_existant: Un fichier existe déja a cet emplacement : Voulez vous vraiment l'effacer ?
             
     data_manager:
         type:
@@ -106,6 +108,7 @@ text:
             editor: Editeur
             server: Serveurs
             data_manager: Données du jeu
+            
         server:
             hosted: SERVEURS HÉBERGÉS
             known: SERVEURS CONNUS
@@ -120,3 +123,21 @@ text:
             name: Nom
             ip: IP
             port: Port
+            
+        error:
+            default_port_already_used: Le port par défaut est déja en cours d'utilisation
+            cant_launch_game: Impossible de lancer le jeu
+            
+            port_already_used: Ce port est déja en cours d'utilisation
+            cant_start_server: Impossible de lancer le serveur
+            
+            server_not_running: Le serveur n'existe pas ou est actuellement hors ligne
+            cant_join_server: Impossible de se conecter au server
+            
+        pop_up:
+            currently_connecting: Connexion en cours...
+            
+    pop_up:
+        confirm: Confirmer
+        cancel: Annuler
+        ok: Ok

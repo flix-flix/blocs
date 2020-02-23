@@ -72,7 +72,6 @@ public class ButtonEditor extends ButtonBlocks {
 			case ITEM_ID:
 
 			case ITEM_SAVE:
-			case ITEM_NEW:
 			case ITEM_CLEAR:
 
 			case VALID_COLOR:
@@ -92,11 +91,33 @@ public class ButtonEditor extends ButtonBlocks {
 			setFont(new Font("monospace", Font.BOLD, 14));
 			setBackground(Color.DARK_GRAY);
 			setSelectedColor(Color.GRAY);
+
+			// TODO [FIX] ITEM_TAG doesn't appear red when mouse on it
+			if (action != ActionEditor.ITEM_ID)
+				setInColor(Color.LIGHT_GRAY, Color.DARK_GRAY, Color.DARK_GRAY);
 		}
+	}
 
-		if (action == ActionEditor.ITEM_ID)
-			bool = false;
+	// =========================================================================================================================
 
+	@Override
+	public void paintCenter(Graphics g) {
+		super.paintCenter(g);
+
+		if (action == ActionEditor.ITEM_COLOR) {
+			int x = 40;
+			int y = 25;
+
+			g.setColor(Color.LIGHT_GRAY);
+			g.drawRect(getContentWidth() / 2 - x / 2 - 1, getContentHeight() / 2 - y / 2 - 1, x + 1, y + 1);
+			g.setColor(new Color(value & 0xffffff));
+			g.fillRect(getContentWidth() / 2 - x / 2, getContentHeight() / 2 - y / 2, x, y);
+		}
+	}
+
+	// =========================================================================================================================
+
+	public void listenWheel() {
 		addMouseWheelListener(new MouseWheelListener() {
 			@Override
 			public void mouseWheelMoved(MouseWheelEvent e) {
@@ -139,30 +160,12 @@ public class ButtonEditor extends ButtonBlocks {
 
 	// =========================================================================================================================
 
-	@Override
-	public void paintCenter(Graphics g) {
-		super.paintCenter(g);
-
-		if (action == ActionEditor.ITEM_COLOR) {
-			int x = 40;
-			int y = 25;
-
-			g.setColor(Color.LIGHT_GRAY);
-			g.drawRect(getContentWidth() / 2 - x / 2 - 1, getContentHeight() / 2 - y / 2 - 1, x + 1, y + 1);
-			g.setColor(new Color(value & 0xffffff));
-			g.fillRect(getContentWidth() / 2 - x / 2, getContentHeight() / 2 - y / 2, x, y);
-		}
-	}
-
-	// =========================================================================================================================
-
 	public boolean hasImage() {
 		switch (action) {
 		case ITEM_CLEAR:
 		case ITEM_COLOR:
 		case ITEM_ID:
 		case ITEM_TAG:
-		case ITEM_NEW:
 		case ITEM_SAVE:
 		case SELECT_ALPHA:
 		case VALID_COLOR:
@@ -226,6 +229,7 @@ public class ButtonEditor extends ButtonBlocks {
 
 	public void setBool(boolean bool) {
 		this.bool = bool;
+		updateData();
 	}
 
 	public void reinit() {

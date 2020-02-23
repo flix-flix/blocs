@@ -15,8 +15,8 @@ import data.map.Cube;
 import game.Game;
 import game.StateHUD;
 import game.UserAction;
-import game.panels.menus.PanRessources;
 import game.panels.menus.PanMap;
+import game.panels.menus.PanRessources;
 import game.panels.menus.infos.PanInfos;
 import utils.Utils;
 import utils.panels.ClickListener;
@@ -113,7 +113,7 @@ public class PanGame extends JPanel {
 			}
 		});
 
-		quitButton.setText(ItemTableClient.getText("game.error.buttonQuit"));
+		quitButton.setText(ItemTableClient.getText("game.error.button_quit"));
 		quitButton.setColor(Color.DARK_GRAY, Color.LIGHT_GRAY, 2, Color.LIGHT_GRAY);
 		quitButton.setInColor(Color.GRAY, Color.DARK_GRAY, Color.DARK_GRAY);
 		quitButton.setSize(300, 75);
@@ -190,7 +190,7 @@ public class PanGame extends JPanel {
 
 	public void refreshLang() {
 		loadingText = ItemTableClient.getText("game.loading");
-		loadingTextError = ItemTableClient.getText("game.loadingError");
+		loadingTextError = ItemTableClient.getText("game.loading_error");
 	}
 
 	// =========================================================================================================================

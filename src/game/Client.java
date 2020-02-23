@@ -26,7 +26,7 @@ public class Client implements Runnable {
 
 	// =========================================================================================================================
 
-	public Client(Game game, ServerDescription description) {
+	public Client(Game game, ServerDescription description) throws IOException {
 		this.game = game;
 
 		InetAddress inetAdr;
@@ -37,14 +37,14 @@ public class Client implements Runnable {
 			return;
 		}
 
-		try {
-			server = new Socket(inetAdr, description.port);
+		// ====================
 
-			out = new ObjectOutputStream(server.getOutputStream());
-			in = new ObjectInputStream(server.getInputStream());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		server = new Socket(inetAdr, description.port);
+
+		out = new ObjectOutputStream(server.getOutputStream());
+		in = new ObjectInputStream(server.getInputStream());
+
+		// ====================
 
 		Thread t = new Thread(this);
 		t.setName("Client");
@@ -63,7 +63,7 @@ public class Client implements Runnable {
 			} catch (IOException e) {
 				if (e instanceof SocketException || e instanceof EOFException) {
 					if (run)
-						game.connexionLost(ItemTableClient.getText("game.error.connexionLost"));
+						game.connexionLost(ItemTableClient.getText("game.error.connexion_lost"));
 					break;
 				}
 				e.printStackTrace();

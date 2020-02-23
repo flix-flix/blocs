@@ -1,5 +1,7 @@
 package server.main;
 
+import java.io.IOException;
+
 import server.Server;
 
 public class MainServer {
@@ -9,8 +11,13 @@ public class MainServer {
 
 		// ItemTable.init();
 
-		Server server = new Server();
-		server.start();
+		Server server;
+		try {
+			server = new Server();
+			server.start();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 		// server.stop();
 	}

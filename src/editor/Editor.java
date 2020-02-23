@@ -2,6 +2,7 @@ package editor;
 
 import java.awt.Cursor;
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
@@ -18,6 +19,7 @@ import editor.history.History;
 import editor.history.HistoryList;
 import editor.history.PixelHistory;
 import editor.history.SizeHistory;
+import editor.panels.ButtonEditor;
 import editor.panels.PanEditor;
 import environment.Environment3D;
 import environment.extendsData.CubeClient;
@@ -42,7 +44,7 @@ public class Editor extends Environment3D implements Displayable {
 
 	private TexturePack texturePack;
 
-	Fen fen;
+	public Fen fen;
 	private PanEditor panel;
 
 	// =============== World ===============
@@ -122,6 +124,13 @@ public class Editor extends Environment3D implements Displayable {
 	/** true : the cursor is actually in the floating calk */
 	private boolean cursorInCalk = false;
 
+	// =============== Savek ===============
+	/** YAML representation of the texture to save */
+	private YAML yaml;
+	private int saveId;
+	private String saveTag;
+	private int saveColor;
+
 	// =========================================================================================================================
 
 	public Editor(Fen fen) {
@@ -136,13 +145,14 @@ public class Editor extends Environment3D implements Displayable {
 		// ========================================================================================
 
 		map = new MapClient();
-		camera = new Camera(new Point3D(0, 0, -10), 90.5, .5);
+		camera = new Camera(new Point3D(4, 1, -4), 90.5, .5);
 
 		engine.setBackground(Engine.FILL);
 
 		// ========================================================================================
 
 		panel = new PanEditor(this);
+		updateButtonsItem();
 
 		keyboard = new KeyboardEditor(this);
 		keyboard.start();
@@ -260,23 +270,47 @@ public class Editor extends Environment3D implements Displayable {
 		this.textureSize = textureSize;
 	}
 
-	private void saveTexture() {
-		int id = panel.get(ActionEditor.ITEM_ID).getWheelStep();
-		String tag = panel.get(ActionEditor.ITEM_TAG).getString();
-		int color = panel.get(ActionEditor.ITEM_COLOR).getValue();
+	/**
+	 * Call {@link #saveT(int, String, int)} <br>
+	 * If file already exists ask confirmation to user
+	 */
+	private void saveTextureConfirm() {
+		saveId = panel.get(ActionEditor.ITEM_ID).getWheelStep();
+		saveTag = panel.get(ActionEditor.ITEM_TAG).getString();
+		saveColor = panel.get(ActionEditor.ITEM_COLOR).getValue();
 
-		if (!ItemTable.getItemIDList().contains(id))
+		// TODO [Feature] Allow replace existant Data
+		// Ignore if already exists
+		if (ItemTable.getItemIDList().contains(saveId) || ItemTable.getItemTagList().contains(saveTag))
 			return;
 
-		// Add to ItemTable
-		ItemTable.addItem(new Item(id, tag));
-		// Create and set textureCube | Update preview
-		updatePreviewTexture(createTexture(), id);
-		// Add the cube to the list of available cubes
-		// session.fen.gui.infos.addCube(new Cube(id));
+		String fileName = "resources/temp/" + saveTag.toLowerCase() + ".yml";
 
-		// Save the cube in file
-		YAML.encodeFile(textureCube.getYAML(id, tag, color), "resources/temp/" + tag.toLowerCase() + ".yml");
+		if (new File(fileName).exists())
+			panel.confirmSaveOnExistant();
+		else
+			saveTextureSaved();
+	}
+
+	/** Call {@link #saveT(int, String, int)} with saved data */
+	public void saveTextureSaved() {
+		saveT(saveId, saveTag, saveColor);
+	}
+
+	/** Save texture in YAML and load it in {@link ItemTable} */
+	public void saveT(int id, String tag, int color) {
+
+		yaml = textureCube.getYAML(saveId, saveTag, color);
+		String fileName = "resources/temp/" + saveTag.toLowerCase() + ".yml";
+
+		// Add to ItemTable
+		ItemTable.addItem(new Item(saveId, saveTag));
+		// Create and set textureCube | Update preview
+		updatePreviewTexture(createTexture(), saveId);
+
+		YAML.encodeFile(yaml, fileName);
+
+		updateButtonsItem();
 	}
 
 	// =========================================================================================================================
@@ -513,7 +547,13 @@ public class Editor extends Environment3D implements Displayable {
 
 		switch (action) {
 		case QUIT:// Close Editor
-			fen.returnToMainMenu();
+			// TODO [Feature] Count modifications since last save
+			if (history.isEmpty())
+				fen.returnToMainMenu();
+			else {
+				setPaused(true);
+				panel.confirmReturnToMainMenu();
+			}
 			break;
 
 		// ================== EDIT TYPE ======================
@@ -566,9 +606,8 @@ public class Editor extends Environment3D implements Displayable {
 			break;
 
 		case ITEM_SAVE:
-			saveTexture();
+			saveTextureConfirm();
 			break;
-		case ITEM_NEW:
 		case ITEM_CLEAR:
 			initTextureFrame();
 			panel.get(ActionEditor.ITEM_TAG).reinit();
@@ -618,7 +657,7 @@ public class Editor extends Environment3D implements Displayable {
 
 		// ================== PanItem ======================
 		case ITEM_ID:
-			panel.get(action).setBool(!ItemTable.getItemIDList().contains(panel.get(action).getWheelStep()));
+			updateButtonsItem();
 			break;
 
 		// ================== Not handled ======================
@@ -671,6 +710,14 @@ public class Editor extends Environment3D implements Displayable {
 		panel.get(buttonListeningKey).setString(str);
 		panel.get(buttonListeningKey).setBool(valid);
 		panel.get(buttonListeningKey).updateData();
+	}
+
+	private void updateButtonsItem() {
+		ButtonEditor id = panel.get(ActionEditor.ITEM_ID);
+		id.setBool(!ItemTable.getItemIDList().contains(id.getWheelStep()));
+
+		ButtonEditor tag = panel.get(ActionEditor.ITEM_TAG);
+		tag.setBool(!ItemTable.getItemTagList().contains(tag.getString()));
 	}
 
 	private void esc() {

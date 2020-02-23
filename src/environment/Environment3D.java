@@ -78,6 +78,10 @@ public class Environment3D {
 		this.paused = paused;
 	}
 
+	public boolean isPaused() {
+		return paused;
+	}
+
 	// =========================================================================================================================
 
 	public void setEngineBackground(int x) {

@@ -6,7 +6,7 @@ import data.id.ItemTableClient;
 import game.Game;
 import utils.panels.ClickListener;
 import utils.panels.FButton;
-import utils.panels.PopUp;
+import utils.panels.popUp.PopUp;
 
 public class PanPause extends PopUp {
 	private static final long serialVersionUID = 2735034739187347959L;
@@ -16,7 +16,6 @@ public class PanPause extends PopUp {
 	// =========================================================================================================================
 
 	public PanPause(Game game) {
-		this.setVisible(false);
 		setRect(500, 700);
 		setBackground(Color.GRAY);
 		setBorder(10, Color.LIGHT_GRAY);

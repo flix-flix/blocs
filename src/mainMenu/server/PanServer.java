@@ -14,11 +14,12 @@ import utils.panels.ButtonPad;
 import utils.panels.ClickListener;
 import utils.panels.FButton;
 import utils.panels.FPanel;
+import utilsBlocks.UtilsBlocks;
 
 public class PanServer extends FPanel {
 	private static final long serialVersionUID = -6109414994781199483L;
 
-	MainMenu main;
+	private MainMenu main;
 
 	private ButtonAction quit;
 
@@ -43,37 +44,27 @@ public class PanServer extends FPanel {
 
 	private Font fontNone = new Font("monospace", Font.BOLD, 25);
 
-	public final static Color RED = new Color(157, 44, 44);
-	public final static Color GREEN = new Color(12, 126, 28);
-
 	// =============== Servers' Panel ===============
-	ArrayList<PanServerDescription> listHosted = new ArrayList<>();
-	ArrayList<PanServerDescription> listKnows = new ArrayList<>();
-
-	// =============== ===============
+	private ArrayList<PanServerDescription> listHosted = new ArrayList<>();
+	private ArrayList<PanServerDescription> listKnows = new ArrayList<>();
 
 	// =========================================================================================================================
 
 	public PanServer(MainMenu main) {
 		this.main = main;
 
-		// TODO [Improve] Replace NONE/START by equivalent in each language
-
 		this.enableVerticalScroll();
 		this.setBackground(Color.LIGHT_GRAY);
 
 		// =============== Start/Add Panel ===============
-		panAdd = new PanServerAdd(this);
-		panAdd.setVisible(false);
+		panAdd = new PanServerAdd(main);
 		panAdd.setLocation(0, 0);
 		panAdd.setSize(getWidth(), getHeight());
 		add(panAdd);
 
 		// =============== Category ===============
 		hosted = new FButton();
-		hosted.setBackground(Color.LIGHT_GRAY);
-		hosted.setBorder(10, Color.GRAY);
-		hosted.setForeground(Color.GRAY);
+		hosted.setColor(Color.LIGHT_GRAY, Color.GRAY, 10, Color.GRAY);
 		hosted.setText("HOSTED");
 		hosted.setFont(fontCat);
 		hosted.setSize(catW, catH);
@@ -81,9 +72,7 @@ public class PanServer extends FPanel {
 		this.add(hosted);
 
 		known = new FButton();
-		known.setBackground(Color.LIGHT_GRAY);
-		known.setBorder(10, Color.GRAY);
-		known.setForeground(Color.GRAY);
+		known.setColor(Color.LIGHT_GRAY, Color.GRAY, 10, Color.GRAY);
 		known.setText("KNOWS");
 		known.setFont(fontCat);
 		known.setSize(catW, catH);
@@ -91,13 +80,13 @@ public class PanServer extends FPanel {
 		this.add(known);
 
 		// =============== None ===============
-		this.add(noneHosted = new ButtonPad("NONE", fontNone, Color.LIGHT_GRAY, RED, 5));
-		this.add(noneKnows = new ButtonPad("NONE", fontNone, Color.LIGHT_GRAY, RED, 5));
+		this.add(noneHosted = new ButtonPad("NONE", fontNone, Color.LIGHT_GRAY, 5, UtilsBlocks.RED));
+		this.add(noneKnows = new ButtonPad("NONE", fontNone, Color.LIGHT_GRAY, 5, UtilsBlocks.RED));
 
 		// =============== Start/Add Buttons ===============
 
-		this.add(start = new ButtonPad("START", fontNone, Color.LIGHT_GRAY, GREEN, 5));
-		this.add(add = new ButtonPad("ADD", fontNone, Color.LIGHT_GRAY, GREEN, 5));
+		this.add(start = new ButtonPad("START", fontNone, Color.LIGHT_GRAY, 5, UtilsBlocks.GREEN));
+		this.add(add = new ButtonPad("ADD", fontNone, Color.LIGHT_GRAY, 5, UtilsBlocks.GREEN));
 
 		start.setClickListener(new ClickListener() {
 			@Override

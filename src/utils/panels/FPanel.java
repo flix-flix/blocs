@@ -286,6 +286,47 @@ public class FPanel extends JPanel {
 	// =========================================================================================================================
 	// setLocation
 
+	/** Set X location */
+	public void setX(int x) {
+		setLocation(x, getLocation().y);
+	}
+
+	/** Set Y location */
+	public void setY(int y) {
+		setLocation(getLocation().x, y);
+	}
+
+	// ====================
+
+	/** Set the X location of the center of this panel */
+	public void setXCenter(int x) {
+		setX(x - getWidth() / 2);
+	}
+
+	/** Set the X location of the end of this panel */
+	public void setXRight(int x) {
+		setX(x - getWidth());
+	}
+
+	/** Set the Y location of the center of this panel */
+	public void setYCenter(int y) {
+		setY(y - getHeight() / 2);
+	}
+
+	/** Set the Y location of the end of this panel */
+	public void setYBottom(int y) {
+		setY(y - getHeight());
+	}
+
+	// ====================
+
+	/**
+	 * Call setLocation() to make the center of this panel at the given coordinates
+	 */
+	public void setCenter(int x, int y) {
+		setLocation(x - getWidth() / 2, y - getHeight() / 2);
+	}
+
 	/**
 	 * Call setLocation() to make the bottom right corner of this panel at the given
 	 * coordinates
@@ -300,13 +341,6 @@ public class FPanel extends JPanel {
 	 */
 	public void setBottomLeftCorner(int x, int y) {
 		setLocation(x, y - getHeight());
-	}
-
-	/**
-	 * Call setLocation() to make the center of this panel at the given coordinates
-	 */
-	public void setCenter(int x, int y) {
-		setLocation(x - getWidth() / 2, y - getHeight() / 2);
 	}
 
 	// =========================================================================================================================

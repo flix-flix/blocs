@@ -1,5 +1,6 @@
 package server;
 
+import java.io.IOException;
 import java.net.Socket;
 
 import data.dynamic.TickClock;
@@ -26,7 +27,7 @@ public class Server extends ServerAbstract {
 
 	// =========================================================================================================================
 
-	public Server(int port, String name) {
+	public Server(int port, String name) throws IOException {
 		super(port, name);
 
 		map = new MapServer(WorldGeneration.generateMap(), this);
@@ -38,11 +39,11 @@ public class Server extends ServerAbstract {
 		clock.start();
 	}
 
-	public Server(int port) {
+	public Server(int port) throws IOException {
 		this(port, "Default Name");
 	}
 
-	public Server() {
+	public Server() throws IOException {
 		this(defaultPort);
 	}
 

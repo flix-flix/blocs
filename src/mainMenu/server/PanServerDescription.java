@@ -12,6 +12,7 @@ import server.ServerDescription;
 import utils.panels.ButtonPad;
 import utils.panels.ClickListener;
 import utils.panels.FButton;
+import utilsBlocks.UtilsBlocks;
 
 public class PanServerDescription extends FButton {
 	private static final long serialVersionUID = 2800972514811757907L;
@@ -37,7 +38,7 @@ public class PanServerDescription extends FButton {
 		this.setSize(600, 150);
 		this.setPadding(5);
 
-		join = new ButtonPad("JOIN", fontButton, Color.LIGHT_GRAY, PanServer.GREEN, 5);
+		join = new ButtonPad("JOIN", fontButton, Color.LIGHT_GRAY, 5, UtilsBlocks.GREEN);
 
 		join.setClickListener(new ClickListener() {
 			@Override
@@ -50,7 +51,7 @@ public class PanServerDescription extends FButton {
 
 		// If not hosted
 		if (description.server == null) {
-			stop = new ButtonPad("DELETE", fontButton, Color.LIGHT_GRAY, PanServer.RED, 5);
+			stop = new ButtonPad("DELETE", fontButton, Color.LIGHT_GRAY, 5, UtilsBlocks.RED);
 
 			stop.setClickListener(new ClickListener() {
 				@Override
@@ -68,7 +69,7 @@ public class PanServerDescription extends FButton {
 	public PanServerDescription(MainMenu main, Server server) {
 		this(main, server.getDescription());
 
-		stop = new ButtonPad("STOP", fontButton, Color.LIGHT_GRAY, PanServer.RED, 5);
+		stop = new ButtonPad("STOP", fontButton, Color.LIGHT_GRAY, 5, UtilsBlocks.RED);
 
 		stop.setClickListener(new ClickListener() {
 			@Override

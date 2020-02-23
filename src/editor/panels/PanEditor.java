@@ -10,17 +10,21 @@ import editor.Editor;
 import editor.tips.TipCalk;
 import editor.tips.TipEditor;
 import environment.PanEnvironment;
+import utils.panels.ClickListener;
 import utils.panels.PanCol;
 import utils.panels.PanGrid;
 import utils.panels.help.PanHelp;
 import utils.panels.help.PanHelp.Mark;
+import utils.panels.popUp.PopUpConfirm;
 
 public class PanEditor extends JPanel {
 	private static final long serialVersionUID = -7092208608285186782L;
 
+	private Editor editor;
+
 	private PanEnvironment panel;
 
-	// ======================= Menu =========================
+	// =============== Menu ===============
 	private int menuWidth = 400;
 
 	private PanCol menu;
@@ -35,7 +39,7 @@ public class PanEditor extends JPanel {
 			// Line 3
 			ActionEditor.PLAYER_COLOR };
 	private ActionEditor[] _buttonsItemID = { ActionEditor.ITEM_TAG, ActionEditor.ITEM_ID, ActionEditor.ITEM_COLOR,
-			ActionEditor.ITEM_SAVE, ActionEditor.ITEM_NEW, ActionEditor.ITEM_CLEAR };
+			ActionEditor.ITEM_SAVE, ActionEditor.ITEM_CLEAR };
 
 	private HashMap<ActionEditor, ButtonEditor> buttonsTop = new HashMap<>(), buttonsAction = new HashMap<>(),
 			buttonsItemID = new HashMap<>();
@@ -44,13 +48,71 @@ public class PanEditor extends JPanel {
 
 	public PanColor panColor;
 
+	// =============== Help ===============
 	private PanHelp help;
 	public PanHelp helpTool;
+
+	// =============== Pop-Up ===============
+	private PopUpConfirm popUpExit, popUpSaveOnExistant;
 
 	// =========================================================================================================================
 
 	public PanEditor(Editor editor) {
+		this.editor = editor;
+
 		this.setLayout(null);
+
+		// ========================================================================================
+		// PopUp Exit
+
+		popUpExit = new PopUpConfirm();
+		popUpExit.setYamlKey("editor.pop_up.close");
+		popUpExit.setVoile(new Color(90, 90, 90, 150));
+		popUpExit.setBorder(8, Color.LIGHT_GRAY);
+
+		popUpExit.setConfirmAction(new ClickListener() {
+			@Override
+			public void leftClick() {
+				editor.fen.returnToMainMenu();
+			}
+		});
+
+		popUpExit.setCancelAction(new ClickListener() {
+			@Override
+			public void leftClick() {
+				editor.setPaused(false);
+			}
+		});
+
+		this.add(popUpExit);
+
+		// ========================================================================================
+		// PopUp Save
+
+		popUpSaveOnExistant = new PopUpConfirm();
+		popUpSaveOnExistant.setYamlKey("editor.pop_up.save_on_existant");
+		popUpSaveOnExistant.setVoile(new Color(90, 90, 90, 150));
+		popUpSaveOnExistant.setBorder(8, Color.LIGHT_GRAY);
+
+		popUpSaveOnExistant.setConfirmAction(new ClickListener() {
+			@Override
+			public void leftClick() {
+				editor.saveTextureSaved();
+				popUpSaveOnExistant.close();
+			}
+		});
+
+		popUpSaveOnExistant.setCancelAction(new ClickListener() {
+			@Override
+			public void leftClick() {
+				editor.setPaused(false);
+			}
+		});
+
+		this.add(popUpSaveOnExistant);
+
+		// ========================================================================================
+		// Panels
 
 		panel = editor.getPanel();
 		panel.setLocation(menuWidth, 0);
@@ -111,6 +173,7 @@ public class PanEditor extends JPanel {
 		}
 
 		get(ActionEditor.ITEM_TAG).setSelectable(true);
+		get(ActionEditor.ITEM_ID).listenWheel();
 		get(ActionEditor.ITEM_ID).setWheelMinMax(0, 999);
 		get(ActionEditor.ITEM_ID).setWheelStep(0);
 
@@ -124,6 +187,7 @@ public class PanEditor extends JPanel {
 			gridActions.gridAdd(buttonsAction.get(action));
 		}
 
+		get(ActionEditor.GRID).listenWheel();
 		get(ActionEditor.GRID).setWheelStep(editor.getTextureSize());
 		get(ActionEditor.GRID).setWheelMinMax(1, 16);
 		get(ActionEditor.GRID).setSelectable(true);
@@ -155,6 +219,18 @@ public class PanEditor extends JPanel {
 
 	// =========================================================================================================================
 
+	public void confirmReturnToMainMenu() {
+		editor.setPaused(true);
+		popUpExit.setVisible(true);
+	}
+
+	public void confirmSaveOnExistant() {
+		editor.setPaused(true);
+		popUpSaveOnExistant.setVisible(true);
+	}
+
+	// =========================================================================================================================
+
 	@Override
 	public void setSize(int width, int height) {
 		super.setSize(width, height);
@@ -164,5 +240,8 @@ public class PanEditor extends JPanel {
 
 		helpTool.setLocation(25, getHeight() - 26 - helpTool.getSize().height - help.getSize().height - 25);
 		help.setLocation(25, getHeight() - 26 - help.getSize().height);
+
+		popUpExit.setSize(width, height);
+		popUpSaveOnExistant.setSize(width, height);
 	}
 }

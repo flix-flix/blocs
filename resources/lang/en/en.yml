@@ -62,16 +62,16 @@ tips:
             add: The cube allow to add a cube or a structure with a right click at the desired location
             remove: The red cross allow to remove cube or structure with a left click on it
             f3: Press ~DEVLOP to display the graphic engine infos
-            chat: Press ~DIALOG to open the chat. Enter to send the message, Esc to close the interface. Send !help to display the list of available commands
+            chat: Press ~DIALOG to open the chat. Enter to send the message, Esc to close the interface. Send !help to display the list of available commands   
 
 text:
     game:
         loading: Loading...
-        loadingError: (If you can read it, the game probably crashed ;p)
+        loading_error: (If you can read it, the game probably crashed ;p)            
         
         error:
-            connexionLost: Server connexion lost
-            buttonQuit: Return to main menu
+            connexion_lost: Server connexion lost
+            button_quit: Return to main menu
         
         pause:
             buttons: 
@@ -89,10 +89,12 @@ text:
             item_id: ID
             
             item_save: Save
-            item_new: New
             item_clear: Clear
             
             valid_color: Select
+        pop_up:
+            close: Do you want to close the Editor? Unsaved changes will be lost!
+            save_on_existant: A file already exists with this name : do you want to erase it ?
     
     data_manager:
         type:
@@ -121,3 +123,21 @@ text:
             name: Name
             ip: IP
             port: Port
+
+        error:
+            default_port_already_used: The default port is already in use
+            cant_launch_game: Can't launch the game
+            
+            port_already_used: This port is already in use
+            cant_start_server: Can't start the server
+
+            server_not_running: The server doesn't exists or isn't currently running
+            cant_join_server: Can't connect to the server
+            
+        pop_up:
+            currently_connecting: Connecting...
+            
+    pop_up:
+        confirm: Confirm
+        cancel: Cancel
+        ok: Ok        

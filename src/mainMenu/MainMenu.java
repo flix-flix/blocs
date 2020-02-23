@@ -3,6 +3,9 @@ package mainMenu;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.io.File;
+import java.io.IOException;
+import java.net.BindException;
+import java.net.ConnectException;
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
@@ -21,7 +24,10 @@ import server.ServerDescription;
 import utils.panels.ButtonPad;
 import utils.panels.FButton;
 import utils.panels.FPanel;
+import utils.panels.popUp.PopUpInfos;
+import utils.panels.popUp.PopUpText;
 import utils.yaml.YAML;
+import utilsBlocks.UtilsBlocks;
 import window.Displayable;
 import window.Fen;
 import window.KeyBoard;
@@ -55,6 +61,10 @@ public class MainMenu extends JPanel implements Displayable {
 
 	private KeyBoardMainMenu keyboard = new KeyBoardMainMenu(this);
 
+	// =============== Pop-Up ===============
+	PopUpInfos popUpError;
+	PopUpText popUpText;
+
 	// =============== Size ===============
 	/** Space between the lang/options/quit/Felix buttons */
 	private int margin = 10;
@@ -66,11 +76,20 @@ public class MainMenu extends JPanel implements Displayable {
 		this.setLayout(null);
 
 		// ========================================================================================
+		// Pop-Up
 
-		keys = new PanKeys();
-		keys.setSize(getWidth(), getHeight());
-		keys.setLocation(0, 0);
-		this.add(keys);
+		popUpError = new PopUpInfos();
+		popUpError.setVoile(new Color(255, 0, 0, 90));
+		popUpError.setColor(Color.LIGHT_GRAY, null, 5, UtilsBlocks.RED);
+		popUpError.setLocation(0, 0);
+		this.add(popUpError);
+
+		popUpText = new PopUpInfos();
+		popUpText.setVoile(new Color(150, 150, 150, 150));
+		popUpText.setColor(Color.LIGHT_GRAY, null, 5, Color.DARK_GRAY);
+		popUpText.setLocation(0, 0);
+		popUpText.setYamlKey("main_menu.pop_up.currently_connecting");
+		this.add(popUpText);
 
 		// ========================================================================================
 		// Main Menu
@@ -80,6 +99,17 @@ public class MainMenu extends JPanel implements Displayable {
 		menu.setLocation(0, 0);
 		menu.setSize(getWidth(), getHeight());
 		this.add(menu);
+
+		// ========================================================================================
+		// Keys
+
+		keys = new PanKeys();
+		keys.setSize(getWidth(), getHeight());
+		keys.setLocation(0, 0);
+		menu.add(keys);
+
+		// ========================================================================================
+		// Big buttons
 
 		menu.add(game = ButtonEnv.generateButton(this, MainMenuAction.PLAY));
 		game.setSize(750, 500);
@@ -97,9 +127,12 @@ public class MainMenu extends JPanel implements Displayable {
 		data.setSize(300, 300);
 		data.setLocation(380, 600);
 
+		// ========================================================================================
+		// Small buttons
+
 		menu.add(felix = new PanFelix());
 
-		menu.add(wip = new ButtonPad("WORK IN PROGRESS", null, Color.LIGHT_GRAY, PanServer.RED, 3));
+		menu.add(wip = new ButtonPad("WORK IN PROGRESS", null, Color.LIGHT_GRAY, 3, UtilsBlocks.RED));
 
 		lang = new ButtonLang(this);
 		lang.setSize(100, 80);
@@ -145,7 +178,24 @@ public class MainMenu extends JPanel implements Displayable {
 	public void click(MainMenuAction action) {
 		switch (action) {
 		case PLAY:
-			fen.setDisplay(Game.startLocalServer(fen));
+			boolean everythingAlright = true;
+			Game game = null;
+
+			try {
+				game = Game.startLocalServer(fen);
+			} catch (IOException e) {
+				if (e instanceof BindException)
+					popUpError.setYamlKey("main_menu.error.default_port_already_used");
+				else {
+					e.printStackTrace();
+					popUpError.setYamlKey("main_menu.error.cant_launch_game");
+				}
+				everythingAlright = false;
+				popUpError.setVisible(true);
+			}
+
+			if (everythingAlright)
+				fen.setDisplay(game);
 			break;
 
 		case SERVER:
@@ -177,15 +227,57 @@ public class MainMenu extends JPanel implements Displayable {
 	}
 
 	public void clickServer(MainMenuAction action, ServerDescription description) {
+		boolean everythingAlright = true;
+
 		switch (action) {
 		case SERVER_JOIN:
-			fen.setDisplay(new Game(fen, description));
+			Game game = null;
+
+			// TODO [Fix] Join inexistant server freeze (+ show Connecting... pop-up)
+			popUpText.setVisible(true);
+			repaint();
+
+			try {
+				game = new Game(fen, description);
+			} catch (IOException e) {
+				if (e instanceof ConnectException)
+					popUpError.setYamlKey("main_menu.error.server_not_running");
+				else {
+					e.printStackTrace();
+					popUpError.setYamlKey("main_menu.error.cant_join_server");
+				}
+				popUpText.close();
+
+				everythingAlright = false;
+				popUpError.setVisible(true);
+			}
+
+			if (everythingAlright) {
+				popUpText.close();
+				fen.setDisplay(game);
+			}
 			break;
 
 		case SERVER_START:
-			Server server = new Server(description.port, description.name);
-			server.start();
-			panServer.startServer(server);
+			Server server = null;
+
+			try {
+				server = new Server(description.port, description.name);
+			} catch (IOException e) {
+				if (e instanceof BindException)
+					popUpError.setYamlKey("main_menu.error.port_already_used");
+				else {
+					e.printStackTrace();
+					popUpError.setYamlKey("main_menu.error.cant_start_server");
+				}
+				everythingAlright = false;
+				popUpError.setVisible(true);
+			}
+
+			if (everythingAlright) {
+				server.start();
+				panServer.startServer(server);
+			}
 			break;
 		case SERVER_STOP:
 			panServer.removeHosted(description);
@@ -258,6 +350,8 @@ public class MainMenu extends JPanel implements Displayable {
 		menu.setSize(getWidth(), getHeight());
 		panServer.setSize(getWidth(), getHeight());
 		keys.setSize(getWidth(), getHeight());
+		popUpError.setSize(getWidth(), getHeight());
+		popUpText.setSize(getWidth(), getHeight());
 
 		// =============== Buttons ===============
 		lang.setBottomRightCorner(getWidth() - margin,

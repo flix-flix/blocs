@@ -28,7 +28,7 @@ public class ItemTable {
 
 	public static Item get(int itemID) {
 		if (!items.containsKey(itemID))
-			System.err.println("[ItemTable] Missing ID: " + itemID);
+			Utils.debug("Missing ID: " + itemID);
 		return items.get(itemID);
 	}
 

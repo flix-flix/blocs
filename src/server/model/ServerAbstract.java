@@ -21,7 +21,7 @@ public abstract class ServerAbstract implements Runnable {
 
 	// =========================================================================================================================
 
-	public ServerAbstract(int port, String name) {
+	public ServerAbstract(int port, String name) throws IOException {
 		String ip = "0.0.0.0";
 		try {
 			ip = InetAddress.getLocalHost().toString();
@@ -34,12 +34,7 @@ public abstract class ServerAbstract implements Runnable {
 
 		this.description = new ServerDescription(ip, port, name, this);
 
-		try {
-			server = new ServerSocket(port);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
+		server = new ServerSocket(port);
 	}
 
 	// =========================================================================================================================

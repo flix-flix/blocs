@@ -7,10 +7,12 @@ import java.awt.FontMetrics;
 public class ButtonPad extends FButton {
 	private static final long serialVersionUID = -9212352133948222194L;
 
-	public ButtonPad(String text, Font font, Color back, Color fore, int border) {
+	public ButtonPad(String text, Font font, Color back, int border, Color fore) {
 		super.setText(text);
+
 		if (font != null)
 			super.setFont(font);
+
 		super.setBackground(back);
 		super.setForeground(fore);
 		super.setBorder(border, fore);

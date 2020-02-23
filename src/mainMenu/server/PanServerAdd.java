@@ -7,11 +7,12 @@ import java.awt.Graphics;
 import javax.swing.JTextField;
 
 import data.id.ItemTableClient;
+import mainMenu.MainMenu;
 import mainMenu.MainMenuAction;
 import server.ServerDescription;
 import utils.panels.ClickListener;
 import utils.panels.FButton;
-import utils.panels.PopUp;
+import utils.panels.popUp.PopUp;
 
 public class PanServerAdd extends PopUp {
 	private static final long serialVersionUID = 6516568869780458100L;
@@ -32,7 +33,7 @@ public class PanServerAdd extends PopUp {
 
 	// =========================================================================================================================
 
-	public PanServerAdd(PanServer panel) {
+	public PanServerAdd(MainMenu main) {
 		setRect(500, 500);
 		setBackground(Color.GRAY);
 		setBorder(10, Color.DARK_GRAY);
@@ -67,7 +68,7 @@ public class PanServerAdd extends PopUp {
 					if (hosted) {
 						ServerDescription descritpion = new ServerDescription("", Integer.valueOf(ip.getText()),
 								name.getText());
-						panel.main.clickServer(MainMenuAction.SERVER_START, descritpion);
+						main.clickServer(MainMenuAction.SERVER_START, descritpion);
 					} else {
 						String[] parts = PanServerAdd.this.ip.getText().split(":");
 						if (parts.length != 2)
@@ -76,7 +77,7 @@ public class PanServerAdd extends PopUp {
 						int port = Integer.valueOf(parts[1]);
 
 						ServerDescription descritpion = new ServerDescription(ip, port, name.getText());
-						panel.main.clickServer(MainMenuAction.SERVER_ADD, descritpion);
+						main.clickServer(MainMenuAction.SERVER_ADD, descritpion);
 					}
 
 					close();
