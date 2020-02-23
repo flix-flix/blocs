@@ -3,6 +3,7 @@ package game.panels.menus.infos;
 import java.awt.Color;
 import java.awt.Font;
 
+import data.id.ItemID;
 import data.id.ItemTableClient;
 import data.map.Cube;
 import environment.extendsData.CubeClient;
@@ -27,13 +28,11 @@ public class ButtonCube extends ButtonBlocks {
 
 		setModel(new CubeClient(cube));
 
-		// TODO [Improve] getName(itemID)
-		String name = ItemTableClient.getName(cube.multibloc == null ? cube.getItemID() : cube.multibloc.itemID);
-		if (name == null)
-			name = "NULL";
+		if (cube.getItemID() == ItemID.UNIT)
+			setWIP();
 
 		setFont(new Font("monospace", Font.PLAIN, 12));
-		setText(name);
+		setText(ItemTableClient.getName(cube));
 		setTextBackground(new Color(75, 75, 75));
 		setTextYLocation(5, ButtonBlocks.BOTTOM);
 	}

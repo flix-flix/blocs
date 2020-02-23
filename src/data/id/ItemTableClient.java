@@ -5,6 +5,7 @@ import java.awt.event.KeyEvent;
 import java.io.StringWriter;
 import java.util.Locale;
 
+import data.map.Cube;
 import environment.textures.TexturePack;
 import graphicEngine.calcul.Camera;
 import utils.panels.help.Tip;
@@ -64,6 +65,11 @@ public class ItemTableClient extends ItemTable {
 		return get(itemID).camera;
 	}
 
+	public static Camera getCamera(Cube cube) {
+		int itemID = cube.multibloc == null ? cube.getItemID() : cube.multibloc.itemID;
+		return getCamera(itemID);
+	}
+
 	public static int getMapColor(int itemID) {
 		if (itemID == -1)
 			return 0;
@@ -97,6 +103,15 @@ public class ItemTableClient extends ItemTable {
 
 	public static String getName(int itemID) {
 		return get(itemID).name;
+	}
+
+	public static String getName(Cube cube) {
+		String name = getName(cube.multibloc == null ? cube.getItemID() : cube.multibloc.itemID);
+
+		if (name == null)
+			name = "NULL";
+
+		return name;
 	}
 
 	public static String getTip(Tip tip) {

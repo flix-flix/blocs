@@ -40,7 +40,7 @@ public class ButtonBlocks extends FButton {
 		map = new MapClient();
 		map.add(cube);
 
-		engine = new Engine(ItemTableClient.getCamera(cube.getItemID()), cube);
+		engine = new Engine(ItemTableClient.getCamera(cube), map);
 		engine.setBackground(Engine.NONE);
 
 		update();

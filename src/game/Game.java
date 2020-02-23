@@ -17,6 +17,7 @@ import data.map.resources.ResourceType;
 import data.map.units.Unit;
 import environment.Environment3D;
 import environment.Target;
+import environment.extendsData.CubeClient;
 import environment.extendsData.MapClient;
 import environment.textures.TexturePack;
 import game.panels.PanGame;
@@ -520,18 +521,36 @@ public class Game extends Environment3D implements Displayable {
 					if (cubeToAdd == null)
 						return;
 
-					// Calcul coords of the new cube(s)
 					previousPreview = new Coord(target.cube).face(target.face);
-					cubeToAdd.setCoords(previousPreview);
 
-					// Test if there is place for the cube(s) at the coords
-					if (!map.add(cubeToAdd))
-						return;
+					// TODO [Fix] Add unit
+					// Add unit
+					if (cubeToAdd.unit != null) {
+						// Calcul coords of the new cube(s)
+						cubeToAdd.unit.coord = previousPreview.clone();
 
-					// Mark cube(s) as "preview display"
-					map.setPreview(previousPreview, true);
-					map.setTargetable(previousPreview, false);
-					map.setHighlight(previousPreview, true);
+						map.addUnit(cubeToAdd.unit);
+
+						CubeClient unit = map.getUnitCube(cubeToAdd.unit.getId());
+
+						unit.setPreview(true);
+						unit.setTargetable(false);
+						unit.setHighlight(true);
+					}
+					// Add cube
+					else {
+						// Calcul coords of the new cube(s)
+						cubeToAdd.setCoords(previousPreview);
+
+						// Test if there is place for the cube(s) at the coords
+						if (!map.add(cubeToAdd))
+							return;
+
+						// Mark cube(s) as "preview display"
+						map.setPreview(previousPreview, true);
+						map.setTargetable(previousPreview, false);
+						map.setHighlight(previousPreview, true);
+					}
 				}
 
 				else if (userAction == UserAction.CREA_DESTROY) {

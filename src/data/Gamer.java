@@ -8,6 +8,9 @@ import data.map.units.Unit;
 public class Gamer implements Serializable {
 	private static final long serialVersionUID = 3653426306615022279L;
 
+	// =============== Static ===============
+	public static final Gamer nullGamer = new Gamer(-1, "_null");
+
 	// =============== ? ===============
 	int nb;
 	String name;

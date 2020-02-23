@@ -3,10 +3,14 @@ package data.id;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
+import data.Gamer;
 import data.map.Cube;
 import data.map.buildings.Building;
+import data.map.multiblocs.E;
 import data.map.multiblocs.MultiBloc;
+import data.map.multiblocs.Tree;
 import data.map.resources.ResourceType;
+import data.map.units.Unit;
 import environment.textures.TexturePack;
 import utils.Utils;
 import utils.yaml.YAML;
@@ -34,7 +38,6 @@ public class ItemTable {
 
 	public static void addItem(Item item) {
 		items.put(item.id, item);
-
 		tags.add(item.tag);
 	}
 
@@ -53,6 +56,39 @@ public class ItemTable {
 
 	public static String getType(int itemID) {
 		return get(itemID).type;
+	}
+
+	// =========================================================================================================================
+
+	public static Cube create(int itemID) {
+		Cube cube = new Cube(itemID);
+
+		if (itemID == ItemID.TREE)
+			cube = new Tree().getCube();
+		else if (itemID == ItemID.E)
+			cube = new E().getCube();
+		else if (itemID == ItemID.UNIT)
+			cube = new Cube(new Unit(ItemID.UNIT, Gamer.nullGamer, 0, 0, 0));
+		else if (itemID == ItemID.CASTLE)
+			cube = createBuilding(new Building(Gamer.nullGamer, ItemID.CASTLE, 0, 0, 0, true)).getCube();
+
+		return cube;
+	}
+
+	/** Retruns true if it's a cube for development process */
+	public static boolean isDevelopment(int itemID) {
+		switch (itemID) {
+		case ItemID.EDITOR_PREVIEW:
+		case ItemID.TEST:
+		case ItemID.TEST_BIG:
+		case ItemID.TEST_TRANSPARENT:
+		case ItemID.MAGIC_BLOC:
+		case ItemID.ERROR:
+
+			return true;
+		default:
+			return false;
+		}
 	}
 
 	// =========================================================================================================================

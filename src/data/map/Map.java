@@ -312,6 +312,10 @@ public class Map implements Tickable, Serializable {
 		return units.get(id).unit;
 	}
 
+	public Cube getUnitCube(int id) {
+		return units.get(id);
+	}
+
 	// =========================================================================================================================
 	// Buildings
 

@@ -4,12 +4,8 @@ import java.awt.Color;
 import java.lang.Thread.State;
 import java.util.ArrayList;
 
-import data.id.ItemID;
 import data.id.ItemTable;
 import data.map.Cube;
-import data.map.buildings.Building;
-import data.map.multiblocs.E;
-import data.map.multiblocs.Tree;
 import game.Game;
 import game.StateHUD;
 import utils.panels.PanCard;
@@ -31,7 +27,6 @@ public class PanInfos extends PanCard {
 	private PanInfosResource resource;
 
 	// =============== Buttons cubes ===============
-	private ArrayList<Cube> _buttonsCubes = new ArrayList<>();
 	private ArrayList<ButtonBlocks> buttonsCubes = new ArrayList<>();
 
 	// =============== Thread ===============
@@ -57,14 +52,12 @@ public class PanInfos extends PanCard {
 		// =========================================================================================================================
 		// gridCubes
 
-		for (int itemID : ItemTable.getItemIDList())
-			_buttonsCubes.add(new Cube(itemID));
+		for (int itemID : ItemTable.getItemIDList()) {
+			Cube cube = ItemTable.create(itemID);
 
-		_buttonsCubes.add(new Tree().getCube());
-		_buttonsCubes.add(new E().getCube());
-		_buttonsCubes.add(ItemTable.createBuilding(new Building(null, ItemID.CASTLE, 0, 0, 0, true)).getCube());
+			if (ItemTable.isDevelopment(cube.getItemID()))
+				continue;
 
-		for (Cube cube : _buttonsCubes) {
 			ButtonBlocks button = new ButtonCube(game, cube);
 			buttonsCubes.add(button);
 			gridCubes.gridAdd(button);

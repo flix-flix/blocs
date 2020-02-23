@@ -96,6 +96,11 @@ public class MapClient extends Map implements Modelisable {
 		return (UnitClient) super.getUnit(unitID);
 	}
 
+	@Override
+	public CubeClient getUnitCube(int unitID) {
+		return (CubeClient) super.getUnitCube(unitID);
+	}
+
 	// =========================================================================================================================
 	// Intercept grid modifications for update
 

@@ -137,6 +137,7 @@ public abstract class KeyboardEnvironment3D implements KeyBoard {
 
 				// Set the previewed cube as real one
 				if (isPreview()) {
+					// TODO [Fix] Add Unit
 					CubeClient model = map.gridGet(new Coord(targetedCube).face(targetedFace));
 					if (model != null && model.isPreview()) {
 						// Check if multibloc can be added at this position
