@@ -1,23 +1,18 @@
 package editor.tips;
 
-import utils.panels.help.Tip;
+import utilsBlocks.help.Tip;
 
-public enum TipEditor implements Tip {
+public enum TipEditor implements Tip<TipEditor> {
 
-	ZOOM, ROTATE, GRID, UNDO, PICK_COLOR, FACE_NAME, LINE_SQUARE;
-
-	@Override
-	public TipEditor next() {
-		return values()[(ordinal() + 1) % values().length];
-	}
-
-	@Override
-	public TipEditor previous() {
-		return values()[(ordinal() + values().length - 1) % values().length];
-	}
+	ZOOM, ROTATE, GRID, UNDO, FACE_NAME;
 
 	@Override
 	public String getPath() {
 		return "tips.editor.global.";
+	}
+
+	@Override
+	public Tip<TipEditor>[] _values() {
+		return values();
 	}
 }

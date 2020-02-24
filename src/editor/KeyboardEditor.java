@@ -141,6 +141,7 @@ public class KeyboardEditor extends KeyboardEnvironment3D {
 		selectionStartY = 0;
 		selectionEndX = editor.getTextureSize() - 1;
 		selectionEndY = editor.getTextureSize() - 1;
+		refreshLayerSelection();
 	}
 
 	/** Cancel the selection */

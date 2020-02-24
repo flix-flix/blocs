@@ -207,7 +207,7 @@ public class Unit implements Serializable {
 
 		comingFrom = coord;
 		if (movingTo == null)
-			System.err.println("ERROR movingTo = null " + Thread.currentThread().getName());
+			Utils.debug("movingTo = null " + Thread.currentThread().getName());
 		else
 			coord = movingTo;
 		movingTo = null;

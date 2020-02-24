@@ -9,13 +9,14 @@ import editor.ActionEditor;
 import editor.Editor;
 import editor.tips.TipCalk;
 import editor.tips.TipEditor;
+import editor.tips.TipPencil;
 import environment.PanEnvironment;
 import utils.panels.ClickListener;
 import utils.panels.PanCol;
 import utils.panels.PanGrid;
-import utils.panels.help.PanHelp;
-import utils.panels.help.PanHelp.Mark;
 import utils.panels.popUp.PopUpConfirm;
+import utilsBlocks.help.PanHelp;
+import utilsBlocks.help.PanHelp.Mark;
 
 public class PanEditor extends JPanel {
 	private static final long serialVersionUID = -7092208608285186782L;
@@ -49,8 +50,9 @@ public class PanEditor extends JPanel {
 	public PanColor panColor;
 
 	// =============== Help ===============
-	private PanHelp help;
-	public PanHelp helpTool;
+	private PanHelp<TipEditor> help;
+	public PanHelp<TipCalk> helpCalk;
+	public PanHelp<TipPencil> helpPencil;
 
 	// =============== Pop-Up ===============
 	private PopUpConfirm popUpExit, popUpSaveOnExistant;
@@ -119,22 +121,31 @@ public class PanEditor extends JPanel {
 		panel.setSize(getWidth() - menuWidth, getHeight());
 		this.add(panel);
 
-		help = new PanHelp(Mark.INTERROGATION, 500, 80, 10, TipEditor.ZOOM);
-		help.setLocation(25, 25);
-		panel.add(help);
-
-		helpTool = new PanHelp(Mark.EXCLAMATION, 450, 60, 7, TipCalk.values()[0]);
-		helpTool.setBackground(new Color(0xff4068c4));
-		helpTool.setLocation(25, 25);
-		helpTool.setVisible(false);
-		panel.add(helpTool);
-
 		menu = new PanCol();
 		menu.setBounds(0, 0, menuWidth, getHeight());
 		menu.setBorder(10, Color.GRAY);
 		menu.setBackground(Color.LIGHT_GRAY);
 		menu.setPadding(10);
 		this.add(menu);
+
+		// ========================================================================================
+		// Help
+
+		help = new PanHelp<>(Mark.INTERROGATION, 500, 80, 10, TipEditor.ZOOM);
+		help.setLocation(25, 25);
+		panel.add(help);
+
+		helpCalk = new PanHelp<>(Mark.EXCLAMATION, 450, 60, 7, TipCalk.values()[0]);
+		helpCalk.setBackground(new Color(0xff4068c4));
+		helpCalk.setLocation(25, 25);
+		helpCalk.setVisible(false);
+		panel.add(helpCalk);
+
+		helpPencil = new PanHelp<>(Mark.EXCLAMATION, 450, 60, 7, TipPencil.values()[0]);
+		helpPencil.setBackground(new Color(0xff4068c4));
+		helpPencil.setLocation(25, 25);
+		helpPencil.setVisible(false);
+		panel.add(helpPencil);
 
 		// ========================================================================================
 		// Top
@@ -238,8 +249,9 @@ public class PanEditor extends JPanel {
 		menu.setSize(menuWidth, height);
 		panel.setSize(width - menuWidth, height);
 
-		helpTool.setLocation(25, getHeight() - 26 - helpTool.getSize().height - help.getSize().height - 25);
-		help.setLocation(25, getHeight() - 26 - help.getSize().height);
+		helpPencil.setBottomLeftCorner(25, getHeight() - 26 - help.getSize().height - 25);
+		helpCalk.setBottomLeftCorner(25, getHeight() - 26 - help.getSize().height - 25);
+		help.setBottomLeftCorner(25, getHeight() - 26);
 
 		popUpExit.setSize(width, height);
 		popUpSaveOnExistant.setSize(width, height);

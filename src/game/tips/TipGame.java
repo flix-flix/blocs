@@ -1,23 +1,18 @@
 package game.tips;
 
-import utils.panels.help.Tip;
+import utilsBlocks.help.Tip;
 
-public enum TipGame implements Tip {
+public enum TipGame implements Tip<TipGame> {
 
 	CAMERA, USER_ACTION, MOUSE, ADD, REMOVE, F3, CHAT;
 
 	@Override
-	public TipGame next() {
-		return values()[(ordinal() + 1) % values().length];
-	}
-
-	@Override
-	public TipGame previous() {
-		return values()[(ordinal() + values().length - 1) % values().length];
-	}
-
-	@Override
 	public String getPath() {
 		return "tips.game.global.";
+	}
+
+	@Override
+	public Tip<TipGame>[] _values() {
+		return values();
 	}
 }

@@ -195,8 +195,12 @@ public class YAML {
 			if (colon == line.length() - 1) {
 				// Double Array
 				if (isADoubleArray(lines, index.value)) {
-					index.value++;
-					yaml.put(key, decodeList(lines, index, shift + shiftStep));
+					yaml.put(key, decodeDoubleArray(lines, index, shift + shiftStep));
+					continue;
+				}
+				// Dashed Array
+				else if (isADashedArray(lines, index.value)) {
+					yaml.put(key, decodeDashedArray(lines, index, shift + shiftStep));
 					continue;
 				}
 				// Child node
@@ -226,11 +230,48 @@ public class YAML {
 		return yaml;
 	}
 
+	// =========================================================================================================================
+
+	public static boolean isADashedArray(ArrayList<String> lines, int index) {
+		if (lines.size() <= index + 1)
+			return false;
+		String content = lines.get(index + 1).trim();
+		if (content.isEmpty())
+			return false;
+		return content.charAt(0) == '-';
+	}
+
+	public static Object decodeDashedArray(ArrayList<String> lines, Int index, int shift) {
+		index.value++;
+
+		ArrayList<Object> array = new ArrayList<>();
+		String line;
+
+		for (; index.value < lines.size(); index.value++) {
+			if (!isAligned(lines, index, shift))
+				break;
+
+			line = lines.get(index.value);
+
+			if (!line.contains("-"))
+				break;
+
+			array.add(decodeLine(line.substring(line.indexOf('-'))));
+		}
+
+		index.value--;
+		return array.toArray();
+	}
+
+	// =========================================================================================================================
+
 	public static boolean isADoubleArray(ArrayList<String> lines, int index) {
 		return lines.size() > index + 1 && lines.get(index + 1).contains("[");
 	}
 
-	public static Object decodeList(ArrayList<String> lines, Int index, int shift) {
+	public static Object decodeDoubleArray(ArrayList<String> lines, Int index, int shift) {
+		index.value++;
+
 		ArrayList<Object> array = new ArrayList<>();
 
 		for (; index.value < lines.size(); index.value++) {
@@ -247,7 +288,9 @@ public class YAML {
 		return array.toArray();
 	}
 
-	public static String[] decodeArray(String line) {
+	// =========================================================================================================================
+
+	public static String[] decodeInlineArray(String line) {
 		String[] elems = line.substring(line.indexOf('[') + 1, line.indexOf(']')).split(",");
 
 		for (int i = 0; i < elems.length; i++)
@@ -257,7 +300,7 @@ public class YAML {
 	}
 
 	public static Object decodeLine(String line) {
-		return line.contains("[") ? decodeArray(line) : line.trim();
+		return line.contains("[") ? decodeInlineArray(line) : line.trim();
 	}
 
 	public static boolean isAligned(ArrayList<String> lines, Int index, int shift) {

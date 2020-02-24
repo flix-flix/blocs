@@ -42,17 +42,24 @@ tips:
     editor:
         global:
             face_name: Maintenez "Alt" pour voir l'orientation de chaque face
-            rotate: Maintenez le clic droit enfoncé pour faire tourner le cube
+            rotate: Maintenez le clic droit enfoncé pour faire tourner le cube (ou ~FORWARD, ~LEFT, ~BACKWARD, ~RIGHT )
             grid: Utilisez la molette sur le bouton "Grille" pour augmenter/diminuer la résolution de la face
-            pick_color: Avec le pinceau, maintenez "Ctrl" pour récuperer la couleur de la case ciblée
             zoom: Utilisez la molette pour zoomer/dézoomer
-            line_square: Avec le pinceau, maintenez "Maj" pour dessiner une ligne. "Maj + Ctrl" pour remplir un carré
             undo: Utilisez "Ctrl+Z" pour annuler la dernière modification et "Ctrl+Y" pour l'appliquer de nouveau
             
+        pencil:
+            new_color: Selecteur de couleurs: cliquez sur la barre verticale pour choisir la couleur puis utilisez le carré pour ajuster la teinte
+            pick_color: Sur le cube, maintenez "Ctrl" pour récuperer la couleur de la case ciblée
+            line_square: Maintenez "Maj" pour dessiner une ligne depuis la dernière case peinte. "Maj + Ctrl" pour remplir un carré
+            
         calk:
-            apply: Appuyez sur "Entrée" pour appliquer le calque
-            delete: Appuyez sur "Esc" pour supprimer le calque
-            rotate: Appuyez sur "◄" ou "►" pour tourner le calque
+            select_rect: Selectionnez une zone sur une face en maintenant le clic gauche
+            copy_paste: Utilisez "Ctrl+C" pour copier la selection. Pour coller: cliquez sur la face souhaité puis appuyez sur "Ctrl+V"
+            move: Maintenez clic gauche sur le calque flottant pour le déplacer
+            rotate: Appuyez sur "◄" ou "►" pour faire tourner le calque
+            apply_delete: Appuyez sur "Entrée" pour appliquer le calque ou sur "Echap" pour le supprimer
+            select_all: "Ctrl+A" selectionne toute la face. "Ctrl+Maj+A" annule la selection
+
     game:
         global:
             camera: Utilisez ~FORWARD, ~LEFT, ~BACKWARD, ~RIGHT pour deplacer le point de vue et la molette pour modifier l'altitude
@@ -61,7 +68,7 @@ tips:
             add: Le bloc permet d'ajouter le bloc ou structure selectionné en effectuant un clic droit a l'emplacement souhaité
             remove: La croix rouge permet de detruire un cube ou une structure en effectuant un clic gauche dessus
             f3: Appuyez sur ~DEVLOP pour afficher les informations du moteur graphique
-            chat: Appuyez sur ~DIALOG pour ouvrir le chat. Entrée pour envoyer le message, Echap pour fermer l'interface. Tapez !help pour afficher la liste des commandes disponibles
+            chat: Appuyez sur ~DIALOG pour ouvrir le chat. Entrée pour envoyer le message, "Echap" pour fermer l'interface. Tapez !help pour afficher la liste des commandes disponibles
 
 text:
     game:

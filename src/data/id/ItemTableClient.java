@@ -8,8 +8,8 @@ import java.util.Locale;
 import data.map.Cube;
 import environment.textures.TexturePack;
 import graphicEngine.calcul.Camera;
-import utils.panels.help.Tip;
 import utils.yaml.YAML;
+import utilsBlocks.help.Tip;
 import window.Key;
 
 public class ItemTableClient extends ItemTable {
@@ -114,7 +114,7 @@ public class ItemTableClient extends ItemTable {
 		return name;
 	}
 
-	public static String getTip(Tip tip) {
+	public static String getTip(Tip<?> tip) {
 		return modifyKey(lang.getString(tip.getPath() + ((Enum<?>) tip).name().toLowerCase()));
 	}
 

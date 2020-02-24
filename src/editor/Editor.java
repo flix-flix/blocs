@@ -21,6 +21,8 @@ import editor.history.PixelHistory;
 import editor.history.SizeHistory;
 import editor.panels.ButtonEditor;
 import editor.panels.PanEditor;
+import editor.tips.TipCalk;
+import editor.tips.TipPencil;
 import environment.Environment3D;
 import environment.extendsData.CubeClient;
 import environment.extendsData.MapClient;
@@ -124,7 +126,7 @@ public class Editor extends Environment3D implements Displayable {
 	/** true : the cursor is actually in the floating calk */
 	private boolean cursorInCalk = false;
 
-	// =============== Savek ===============
+	// =============== Save ===============
 	/** YAML representation of the texture to save */
 	private YAML yaml;
 	private int saveId;
@@ -405,10 +407,8 @@ public class Editor extends Environment3D implements Displayable {
 	/** Replace the color bellow the calk by the ones of the calk */
 	void applyCalk() {
 		if (calkCornerX < 0 || calkCornerY < 0 || calkCornerX + calkSizeX > textureSize
-				|| calkCornerY + calkSizeY > textureSize) {
-			System.err.println("OUT OF BOUNDS");
+				|| calkCornerY + calkSizeY > textureSize)
 			return;
-		}
 
 		for (int x = 0; x < calkSizeX; x++)
 			for (int y = 0; y < calkSizeY; y++)
@@ -543,7 +543,6 @@ public class Editor extends Environment3D implements Displayable {
 
 	public void buttonClick(ActionEditor action) {
 		mayLooseListeningKey(action);
-		panel.helpTool.setVisible(false);
 
 		switch (action) {
 		case QUIT:// Close Editor
@@ -571,14 +570,22 @@ public class Editor extends Environment3D implements Displayable {
 			break;
 
 		case PAINT:
+		case SQUARE_SELECTION:
 		case FILL:
 		case PLAYER_COLOR:
-		case SQUARE_SELECTION:
+			panel.helpCalk.setVisible(false);
+			panel.helpPencil.setVisible(false);
+
 			if (action == this.action)
 				setAction(null);
 			else {
-				if (action == ActionEditor.SQUARE_SELECTION)
-					panel.helpTool.setVisible(true);
+				if (action == ActionEditor.SQUARE_SELECTION) {
+					panel.helpCalk.setTip(TipCalk.values()[0]);
+					panel.helpCalk.setVisible(true);
+				} else if (action == ActionEditor.PAINT) {
+					panel.helpPencil.setTip(TipPencil.values()[0]);
+					panel.helpPencil.setVisible(true);
+				}
 				setAction(action);
 			}
 			break;

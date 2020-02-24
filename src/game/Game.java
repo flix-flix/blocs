@@ -482,7 +482,7 @@ public class Game extends Environment3D implements Displayable {
 		else if (obj instanceof SendAction)
 			receiveSend((SendAction) obj);
 		else
-			System.err.println("Unknown object");
+			Utils.debug("[Receive] Unknown object");
 	}
 
 	// =========================================================================================================================
