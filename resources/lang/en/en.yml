@@ -43,13 +43,15 @@ tips:
     editor:
         global:
             face_name: Maintain "Alt" to see the direction of each face
-            rotate: Maintain the right click to rotate the cube (or ~FORWARD, ~LEFT, ~BACKWARD, ~RIGHT )
+            rotate: Maintain the right click while moving the mouse to rotate the cube (or ~FORWARD, ~LEFT, ~BACKWARD, ~RIGHT )
             grid: Use the mouse wheel on the "Grid" button to increase/decrease the resolution of the face
             zoom: Use the mouse wheel to zoom in/zoom out
             undo: Use "Ctrl+Z" to undo the last modification and "Ctrl+Y" to redo it
             
         pencil:
             new_color: Color selector: click on the vertical line to select the color, then use the square to adjust the hue
+            alpha: Use the mouse wheel on the "100%" button to increase/decrease the transparency of the selected color
+            memory: The last 5 used colors are displayed bellow the current one: Click on it to re-use them
             pick_color: On the cube, maintain "Ctrl" to pick up the color of the selected cell
             line_square: Maintain "Shift" to draw a line from the last drawed cell. "Shift + Ctrl" to fill a square
         
@@ -96,8 +98,10 @@ text:
             
             item_save: Save
             item_clear: Clear
-            
-            valid_color: Select
+
+        color:
+            current: Current :
+            previous: Previous :
         pop_up:
             close: Do you want to close the Editor? Unsaved changes will be lost!
             save_on_existant: A file already exists with this name : do you want to erase it ?

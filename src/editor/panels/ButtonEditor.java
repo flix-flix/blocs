@@ -21,14 +21,14 @@ public class ButtonEditor extends ButtonBlocks {
 	private Editor editor;
 	private ActionEditor action;
 
-	// ======================= Wheel =========================
+	// =============== Wheel ===============
 	private final static int NULL = -1;
 
 	private int wheelStep = NULL;
 	private int wheelMin = 0;
 	private int wheelMax = 0;
 
-	// ======================= Data =========================
+	// =============== Data ===============
 	/** ITEM_COLOR : color */
 	private int value = 0;
 	/** ITEM_NAME : name */
@@ -73,12 +73,12 @@ public class ButtonEditor extends ButtonBlocks {
 
 			case ITEM_SAVE:
 			case ITEM_CLEAR:
-
-			case VALID_COLOR:
 				setText(ItemTableClient.getText("editor.buttons." + action.name().toLowerCase()));
 				break;
 
 			case SELECT_ALPHA:
+				setPadding(0);
+				setBorder(2, Color.DARK_GRAY);
 				setText(wheelStep * 5 + "%");
 				break;
 
@@ -94,6 +94,9 @@ public class ButtonEditor extends ButtonBlocks {
 
 			// TODO [FIX] ITEM_TAG doesn't appear red when mouse on it
 			if (action != ActionEditor.ITEM_ID)
+				setInColor(Color.LIGHT_GRAY, Color.DARK_GRAY, Color.DARK_GRAY);
+
+			if (action == ActionEditor.SELECT_ALPHA)
 				setInColor(Color.LIGHT_GRAY, Color.DARK_GRAY, Color.DARK_GRAY);
 		}
 	}
@@ -168,7 +171,6 @@ public class ButtonEditor extends ButtonBlocks {
 		case ITEM_TAG:
 		case ITEM_SAVE:
 		case SELECT_ALPHA:
-		case VALID_COLOR:
 
 		case EDIT_CUBE:
 		case MINIATURE:

@@ -14,8 +14,8 @@ public enum ActionEditor {
 
 	CANCEL, SAVE,
 
-	// No image
-	VALID_COLOR, SELECT_ALPHA,
+	// PanColor
+	SELECT_ALPHA,
 
 	// ItemID
 	ITEM_TAG, ITEM_ID, ITEM_COLOR, ITEM_SAVE, ITEM_CLEAR;

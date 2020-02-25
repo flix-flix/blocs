@@ -165,6 +165,7 @@ public class PanEditor extends JPanel {
 		// Color
 
 		menu.addBottom(panColor = new PanColor(editor), PanCol.WIDTH);
+		panColor.setVisible(false);
 
 		// ========================================================================================
 		// ItemID

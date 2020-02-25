@@ -4,7 +4,7 @@ import utilsBlocks.help.Tip;
 
 public enum TipPencil implements Tip<TipPencil> {
 
-	NEW_COLOR, PICK_COLOR, LINE_SQUARE;
+	NEW_COLOR, ALPHA, MEMORY, PICK_COLOR, LINE_SQUARE;
 
 	@Override
 	public String getPath() {

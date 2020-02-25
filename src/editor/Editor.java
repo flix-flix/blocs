@@ -322,6 +322,7 @@ public class Editor extends Environment3D implements Displayable {
 		drawPixel(target.face, getTargetedX(), getTargetedY(), panel.panColor.getColor());
 		updateLastPixel();
 		updatePreviewTexture();
+		panel.panColor.addColorMemory();
 	}
 
 	void paintLine() {
@@ -334,6 +335,7 @@ public class Editor extends Environment3D implements Displayable {
 		updateLastPixel();
 		updatePreviewTexture();
 		historyPack();
+		panel.panColor.addColorMemory();
 	}
 
 	void paintSquare() {
@@ -349,6 +351,7 @@ public class Editor extends Environment3D implements Displayable {
 		updateLastPixel();
 		updatePreviewTexture();
 		historyPack();
+		panel.panColor.addColorMemory();
 	}
 
 	private void drawPixel(Face face, int x, int y, int color) {
@@ -467,8 +470,7 @@ public class Editor extends Environment3D implements Displayable {
 
 	/** Set the paint color to the picked one */
 	void pickColor() {
-		panel.panColor.setColor(texture[target.face.ordinal()][getTargetedY()][getTargetedX()]);
-		// TODO [Improve] Update colorPan on color pick
+		panel.panColor.setColor(texture[target.face.ordinal()][getTargetedX()][getTargetedY()]);
 	}
 
 	/**
@@ -487,6 +489,8 @@ public class Editor extends Environment3D implements Displayable {
 		if (texture[face.ordinal()][x][y] == panel.panColor.getColor())
 			return;
 		_fill(face.ordinal(), x, y, texture[face.ordinal()][x][y], panel.panColor.getColor());
+
+		panel.panColor.addColorMemory();
 	}
 
 	/**
@@ -575,10 +579,12 @@ public class Editor extends Environment3D implements Displayable {
 		case PLAYER_COLOR:
 			panel.helpCalk.setVisible(false);
 			panel.helpPencil.setVisible(false);
+			panel.panColor.setVisible(false);
 
 			if (action == this.action)
 				setAction(null);
 			else {
+				panel.panColor.setVisible(action == ActionEditor.PAINT || action == ActionEditor.FILL);
 				if (action == ActionEditor.SQUARE_SELECTION) {
 					panel.helpCalk.setTip(TipCalk.values()[0]);
 					panel.helpCalk.setVisible(true);
@@ -596,11 +602,6 @@ public class Editor extends Environment3D implements Displayable {
 		case MINIATURE:
 			break;
 		case CANCEL:
-			break;
-
-		// ================== PanColor ======================
-		case VALID_COLOR:
-			panel.panColor.selectColor();
 			break;
 
 		// ================== PanItem ======================

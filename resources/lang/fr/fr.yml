@@ -42,13 +42,15 @@ tips:
     editor:
         global:
             face_name: Maintenez "Alt" pour voir l'orientation de chaque face
-            rotate: Maintenez le clic droit enfoncé pour faire tourner le cube (ou ~FORWARD, ~LEFT, ~BACKWARD, ~RIGHT )
+            rotate: Maintenez le clic droit enfoncé en déplaçant la souris pour faire tourner le cube (ou ~FORWARD, ~LEFT, ~BACKWARD, ~RIGHT )
             grid: Utilisez la molette sur le bouton "Grille" pour augmenter/diminuer la résolution de la face
             zoom: Utilisez la molette pour zoomer/dézoomer
             undo: Utilisez "Ctrl+Z" pour annuler la dernière modification et "Ctrl+Y" pour l'appliquer de nouveau
             
         pencil:
             new_color: Selecteur de couleurs: cliquez sur la barre verticale pour choisir la couleur puis utilisez le carré pour ajuster la teinte
+            alpha: Utilisez la molette sur le bouton "100%" pour augmenter/diminuer la transparence de la couleur
+            memory: Les 5 dernières couleurs sont affichées en dessous de celle actuelle: cliquez dessus pour les réutiliser
             pick_color: Sur le cube, maintenez "Ctrl" pour récuperer la couleur de la case ciblée
             line_square: Maintenez "Maj" pour dessiner une ligne depuis la dernière case peinte. "Maj + Ctrl" pour remplir un carré
             
@@ -96,8 +98,10 @@ text:
             
             item_save: Enregistrer
             item_clear: Effacer
-            
-            valid_color: Selectionner
+
+        color:
+            current: Actuelle :
+            previous: Précédente :
         pop_up:
             close: Voulez vous vraiment fermer l'éditeur? Les modifications non sauvegardées seront perdues!
             save_on_existant: Un fichier existe déja a cet emplacement : Voulez vous vraiment l'effacer ?
