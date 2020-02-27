@@ -44,7 +44,6 @@ public class ClientListener implements Runnable {
 			try {
 				server.receive(in.readObject(), id);
 			} catch (IOException e) {
-				// TODO [Fix] Server disconnection
 				if (e instanceof SocketException || e instanceof EOFException)
 					stopped();
 				else

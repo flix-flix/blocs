@@ -136,6 +136,7 @@ public class Editor extends Environment3D implements Displayable {
 	// =========================================================================================================================
 
 	public Editor(Fen fen) {
+		super(new MapClient(), new Camera(new Point3D(4, 2, -4), 60.5, -20.5));
 		this.fen = fen;
 
 		texturePack = ItemTableClient.getTexturePack();
@@ -145,9 +146,6 @@ public class Editor extends Environment3D implements Displayable {
 		generateCursor();
 
 		// ========================================================================================
-
-		map = new MapClient();
-		camera = new Camera(new Point3D(4, 1, -4), 90.5, .5);
 
 		engine.setBackground(Engine.FILL);
 

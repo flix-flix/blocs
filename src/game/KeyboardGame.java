@@ -80,14 +80,15 @@ public class KeyboardGame extends KeyboardEnvironment3D {
 
 	@Override
 	public void wheelRotation(MouseWheelEvent e) {
-		if (!paused)
-			if (game.cameraMode == CameraMode.CLASSIC) {
-				if (e.getWheelRotation() > 0 && camera.vue.y >= 50)
-					return;
-				if (e.getWheelRotation() < 0 && camera.vue.y <= 25)
-					return;
-				camera.moveY(e.getWheelRotation() * 10);
-			}
+		if (started)
+			if (!paused)
+				if (game.cameraMode == CameraMode.CLASSIC) {
+					if (e.getWheelRotation() > 0 && camera.vue.y >= 50)
+						return;
+					if (e.getWheelRotation() < 0 && camera.vue.y <= 25)
+						return;
+					camera.moveY(e.getWheelRotation() * 10);
+				}
 	}
 
 	// =========================================================================================================================

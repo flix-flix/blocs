@@ -23,8 +23,6 @@ public class PanEnvironment extends JPanel {
 	// =============== Size ===============
 	/** Size of the display of environment */
 	public int envWidth, envHeight;
-	/** Center of the display of environment */
-	public int envCenterW, envCenterH;
 
 	/** true: the panel have been resized and need a new image to be generated */
 	public boolean resized = false;
@@ -71,9 +69,6 @@ public class PanEnvironment extends JPanel {
 
 		this.envWidth = width;
 		this.envHeight = height;
-
-		envCenterW = width / 2;
-		envCenterH = height / 2;
 
 		resized = true;
 	}

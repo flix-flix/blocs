@@ -83,27 +83,27 @@ public class UnitServer extends Unit {
 
 	/** Initialize a rotation to an adjacent position */
 	@Override
-	protected void setDirection(Orientation dir) {
+	protected void rollAdjacent(Orientation dir) {
 		// TODO test if cube is walkable (and set phantom cube)
-		super.setDirection(dir);
+		super.rollAdjacent(dir);
 	}
 
 	/** Initialize a rotation to a diagonal position */
-	public void setDiago(int x) {
+	public void rollDiago(int x) {
 		// TODO test if cube is walkable (and set phantom cube)
-		super.setDiago(x);
+		super.rollDiago(x);
 	}
 
 	/** Initialize a rotation to the upper position */
-	public void setUp(Orientation dir) {
+	public void rollUp(Orientation dir) {
 		// TODO test if cube is walkable (and set phantom cube)
-		super.setUp(dir);
+		super.rollUp(dir);
 	}
 
 	/** Initialize a rotation to the position below */
-	public void setDown(Orientation dir) {
+	public void rollDown(Orientation dir) {
 		// TODO test if cube is walkable (and set phantom cube)
-		super.setDown(dir);
+		super.rollDown(dir);
 	}
 
 	/** Initialize an on-place rotation to change the unit's rotation axe */

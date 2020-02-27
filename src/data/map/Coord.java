@@ -8,7 +8,10 @@ import graphicEngine.calcul.Point3D;
 
 public class Coord implements Serializable {
 	private static final long serialVersionUID = 5676550708765407937L;
+
 	public int x, y, z;
+
+	// =========================================================================================================================
 
 	public Coord(double x, double y, double z) {
 		this.x = (int) x;
@@ -62,7 +65,7 @@ public class Coord implements Serializable {
 	 * Returns the Orientation connecting the two Coords (from this to the given
 	 * one)
 	 */
-	public Orientation getOrientation(Coord coord) {
+	public Orientation getConnection(Coord coord) {
 		if (coord.y != y)
 			return null;
 
@@ -100,7 +103,10 @@ public class Coord implements Serializable {
 				rota = 3;
 		}
 
-		if (rota != -1 && y + 1 == coord.y)
+		if (rota == -1)
+			return -1;
+
+		if (y + 1 == coord.y)
 			rota += 4;
 
 		return rota;
@@ -112,10 +118,6 @@ public class Coord implements Serializable {
 		if (coord == null)
 			return false;
 		return x == coord.x && y == coord.y && z == coord.z;
-	}
-
-	public int getId() {
-		return 1_000_000 * x + 1_000 * y + z;
 	}
 
 	@Override

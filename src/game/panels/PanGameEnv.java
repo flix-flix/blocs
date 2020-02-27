@@ -178,10 +178,17 @@ public class PanGameEnv extends PanEnvironment {
 
 	// =========================================================================================================================
 
-	public void updateEnvBounds() {
+	protected void updateEnvironmentSize() {
+		updateEnvironmentSize(getWidth(), getHeight());
+	}
+
+	@Override
+	protected void updateEnvironmentSize(int width, int height) {
 		startXEnv = game.cameraMode == CameraMode.CLASSIC ? menuWidth : 0;
 
 		help.setBottomLeftCorner(startXEnv + 25, getHeight() - 35);
+
+		super.updateEnvironmentSize(width - startXEnv, height);
 	}
 
 	// =========================================================================================================================
@@ -189,8 +196,6 @@ public class PanGameEnv extends PanEnvironment {
 	@Override
 	public void setSize(int width, int height) {
 		super.setSize(width, height);
-
-		updateEnvBounds();
 
 		pause.setSize(width, height);
 	}

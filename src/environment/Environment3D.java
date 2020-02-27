@@ -111,7 +111,7 @@ public class Environment3D {
 	}
 
 	public void setTargetCenter() {
-		setTarget(panel.envCenterW, panel.envCenterH);
+		setTarget(panel.envWidth / 2, panel.envHeight / 2);
 	}
 
 	public void setTargetNull() {

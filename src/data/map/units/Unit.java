@@ -1,6 +1,7 @@
 package data.map.units;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import data.Gamer;
@@ -226,7 +227,7 @@ public class Unit implements Serializable {
 	// =========================================================================================================================
 
 	/** Initialize a rotation to an adjacent position */
-	protected void setDirection(Orientation dir) {
+	protected void rollAdjacent(Orientation dir) {
 		movingTo = coord.face(dir.face);
 
 		nextRotation = orientation.next() == dir ? rotation.nextX() : rotation.previousX();
@@ -248,7 +249,7 @@ public class Unit implements Serializable {
 	}
 
 	/** Initialize a rotation to a diagonal position */
-	public void setDiago(int x) {
+	public void rollDiago(int x) {
 		rotationPoint = x;
 
 		switch (x) {
@@ -296,12 +297,12 @@ public class Unit implements Serializable {
 	}
 
 	/** Initialize a rotation to the upper position */
-	public void setUp(Orientation dir) {
+	public void rollUp(Orientation connection) {
 		movingTo = coord.face(Face.UP);
 
-		nextRotation = orientation.next() == dir ? rotation.nextX() : rotation.previousX();
+		nextRotation = orientation.next() == connection ? rotation.nextX() : rotation.previousX();
 
-		switch (dir) {
+		switch (connection) {
 		case NORTH:
 			rotationPoint = 6;
 			break;
@@ -318,12 +319,12 @@ public class Unit implements Serializable {
 	}
 
 	/** Initialize a rotation to the position below */
-	public void setDown(Orientation dir) {
+	public void rollDown(Orientation connection) {
 		movingTo = coord.face(Face.DOWN);
 
-		nextRotation = orientation.next() == dir ? rotation.nextX() : rotation.previousX();
-		// TODO Crash if diago before
-		switch (dir) {
+		nextRotation = orientation.next() == connection ? rotation.nextX() : rotation.previousX();
+
+		switch (connection) {
 		case NORTH:
 			rotationPoint = 1;
 			break;
@@ -356,33 +357,32 @@ public class Unit implements Serializable {
 	// =========================================================================================================================
 
 	/**
-	 * The unit will roll to reach the coordinates
+	 * Generates and returns the path to the end
+	 */
+	public LinkedList<Coord> generatePath(Map map, Coord end) {
+		return PathFinding.generatePathTo(this, map, destination == null ? coord : movingTo, end);
+	}
+
+	/**
+	 * The unit will go to the coordinates
 	 * 
 	 * @return true if coords are reachable
 	 */
 	public boolean goTo(Map map, Coord end) {
-		return setPath(PathFinding.generatePathTo(this, map, destination == null ? coord : movingTo, end));
+		return setPath(generatePath(map, end));
 	}
 
-	/** The unit will goto the closest bloc next to the target (not on top) */
+	/** The unit will go to the closest bloc next to the target (not on top) */
 	public boolean goAround(Map map, Coord end) {
-		System.out.println("end: " + end.toString());
-		LinkedList<Coord> path = null, temp;
+		ArrayList<Coord> ends = new ArrayList<>();
 
 		for (Face face : new Face[] { Face.DOWN, Face.NORTH, Face.EAST, Face.SOUTH, Face.WEST })
-			if ((temp = PathFinding.generatePathTo(this, map, destination == null ? coord : movingTo,
-					end.face(face))) != null)
-				if (path == null || temp.size() < path.size())
-					path = temp;
+			ends.add(end.face(face));
 
-		if (path != null)
-			for (Coord c : path)
-				System.out.println(c);
-
-		return setPath(path);
+		return setPath(PathFinding.generatePathTo(this, map, destination == null ? coord : movingTo, ends));
 	}
 
-	private boolean setPath(LinkedList<Coord> path) {
+	public boolean setPath(LinkedList<Coord> path) {
 		if (isTraveling()) {
 			newPath = path;
 			hasNewPath = true;
@@ -441,26 +441,96 @@ public class Unit implements Serializable {
 
 	// =========================================================================================================================
 
-	public void doNextMove() {
-		Orientation dir = coord.getOrientation(path.peekFirst());
+	protected void doNextMove() {
+		// Going up
+		if (coord.y + 1 == path.peekFirst().y) {
+			// We need to know where the unit is going to smoothify the rotation
+			if (path.size() < 2) {
+				Utils.debug("Unit go up without other movements");
+				return;
+			}
+			Orientation connection = path.get(0).getConnection(path.get(1));
+
+			if (connection == null)
+				if (orientation == Orientation.NORTH || orientation == Orientation.SOUTH)
+					connection = path.get(1).z > coord.z ? Orientation.WEST : Orientation.EAST;
+				else
+					connection = path.get(1).x > coord.x ? Orientation.NORTH : Orientation.SOUTH;
+
+			if (orientation.isSameAxe(connection))
+				rotation();
+			else {
+				path.removeFirst();
+				rollUp(connection);
+			}
+		}
+		// Going down
+		else if (coord.y - 1 == path.peekFirst().y) {
+			Orientation connection = comingFrom.getConnection(coord);
+
+			if (connection == null)
+				if (orientation == Orientation.NORTH || orientation == Orientation.SOUTH)
+					connection = comingFrom.z > coord.z ? Orientation.WEST : Orientation.EAST;
+				else
+					connection = comingFrom.x > coord.x ? Orientation.SOUTH : Orientation.NORTH;
+
+			path.removeFirst();
+			rollDown(connection);
+		}
+		// Do adjacent rotation
+		else if (coord.getConnection(path.peekFirst()) != null) {
+			Orientation connection = coord.getConnection(path.peekFirst());
+
+			if (orientation.isSameAxe(connection))
+				rotation();
+			else {
+				path.removeFirst();
+				rollAdjacent(connection);
+			}
+		}
+		// In-place rotation
+		else if (coord.equals(path.peekFirst())) {
+			path.removeFirst();
+			rotation();
+		}
+		// Diagonal rotation
+		else {
+			if (coord.getRotationPointDiago(path.peekFirst()) == -1) {
+				System.out.println(">>> " + coord.toString() + " -> " + path.peekFirst());
+				Utils.debug("Unit diagonal rotation without rotation point");
+				return;
+			}
+			if (coord.getRotationPointDiago(path.peekFirst()) >= 4) {
+				Utils.debug("Unit diagonal rotation point is on top of the bloc");
+				return;
+			}
+
+			rollDiago(coord.getRotationPointDiago(path.removeFirst()));
+		}
+	}
+
+	// =========================================================================================================================
+
+	public void doNextMove2() {
+		Orientation dir = coord.getConnection(path.peekFirst());
 
 		if (path.size() >= 2 && coord.y + 1 == path.peekFirst().y) {// Going up
-			Orientation nextDir = path.get(0).getOrientation(path.get(1));
+			Orientation nextDir = path.get(0).getConnection(path.get(1));
 
 			if (orientation.isSameAxe(nextDir))
 				rotation();
 			else {
 				path.removeFirst();
-				setUp(nextDir);
+				rollUp(nextDir);
 			}
 		} else if (coord.y - 1 == path.peekFirst().y) {// Going down
-			Orientation prevDir = comingFrom.getOrientation(coord);
+			Orientation prevDir = comingFrom.getConnection(coord);
 
 			if (orientation.isSameAxe(prevDir))
 				rotation();
 			else {
 				path.removeFirst();
-				setDown(prevDir);
+				rollDown(prevDir);
 			}
 		} else {
 			// Diagonal rotation
@@ -468,7 +538,7 @@ public class Unit implements Serializable {
 					&& coord.getRotationPointDiago(path.get(1)) < 4) {
 
 				path.removeFirst();
-				setDiago(coord.getRotationPointDiago(path.removeFirst()));
+				rollDiago(coord.getRotationPointDiago(path.removeFirst()));
 
 			}
 			// Do adjacent rotation
@@ -478,7 +548,7 @@ public class Unit implements Serializable {
 				else {
 					path.removeFirst();
 
-					setDirection(dir);
+					rollAdjacent(dir);
 				}
 			}
 		}

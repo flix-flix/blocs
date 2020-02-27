@@ -391,13 +391,23 @@ public class CubeClient extends Cube implements Modelisable {
 	}
 
 	private void drawFaces(int nb, int[] faces) {
+		Point3D point = points[0];
+		double dist = point.distToOrigin(), _dist;
+
+		for (int i = 0; i < 8; i++) {
+			_dist = points[i].distToOrigin();
+			if (_dist < dist) {
+				dist = _dist;
+				point = points[i];
+			}
+		}
 		for (int j = 6; j >= 6 - nb; j--)
 			// Draw the faces from the closest to the farthest
 			for (int i = 0; i < 6; i++)
 				if (faces[i] == j)
 					// Ignore the face hidden by a bloc (except for unit cause they can be rolling)
 					if (!hideFace[i] || unit != null) {
-						draws.add(new DrawCubeFace(this, Face.faces[i], centerDecal, index + 10 + 6 - j));
+						draws.add(new DrawCubeFace(this, Face.faces[i], point, index + 10 + 6 - j));
 						break;
 					}
 	}

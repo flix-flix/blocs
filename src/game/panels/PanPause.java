@@ -70,7 +70,6 @@ public class PanPause extends PopUp {
 	public void setSize(int width, int height) {
 		super.setSize(width, height);
 
-		// TODO [Improve] Pause buttons centered
 		int start = (height - 3 * 50 - 2 * 100) / 2;
 
 		resume.setLocation(getWidth() / 2 - 100, start);

@@ -1,6 +1,7 @@
 package server.send;
 
 import java.io.Serializable;
+import java.util.LinkedList;
 
 import data.map.Coord;
 import data.map.Cube;
@@ -16,6 +17,9 @@ public class SendAction implements Serializable {
 	public int id1 = -1, id2 = -1;
 
 	public boolean done = false;
+
+	// =============== Data ===============
+	public LinkedList<Coord> path;
 
 	// =========================================================================================================================
 
@@ -82,6 +86,12 @@ public class SendAction implements Serializable {
 
 	public static SendAction goTo(Unit unit, Coord coord) {
 		return new SendAction(Action.UNIT_GOTO, unit.getId(), coord);
+	}
+
+	public static SendAction goTo(Unit unit, LinkedList<Coord> path) {
+		SendAction send = new SendAction(Action.UNIT_GOTO, unit.getId());
+		send.path = path;
+		return send;
 	}
 
 	public static SendAction arrive(Unit unit) {

@@ -103,8 +103,8 @@ public class UnitClient extends Unit {
 
 	/** Initialize a rotation to an adjacent position */
 	@Override
-	public void setDirection(Orientation dir) {
-		super.setDirection(dir);
+	public void rollAdjacent(Orientation dir) {
+		super.rollAdjacent(dir);
 
 		switch (dir) {
 		case NORTH:
@@ -124,8 +124,8 @@ public class UnitClient extends Unit {
 
 	/** Initialize a rotation to a diagonal position */
 	@Override
-	public void setDiago(int x) {
-		super.setDiago(x);
+	public void rollDiago(int x) {
+		super.rollDiago(x);
 		switch (x) {
 		case 0:
 			if (orientation == Orientation.NORTH || orientation == Orientation.SOUTH) {
@@ -168,8 +168,8 @@ public class UnitClient extends Unit {
 
 	/** Initialize a rotation to the upper position */
 	@Override
-	public void setUp(Orientation dir) {
-		super.setUp(dir);
+	public void rollUp(Orientation dir) {
+		super.rollUp(dir);
 
 		switch (dir) {
 		case NORTH:
@@ -189,10 +189,9 @@ public class UnitClient extends Unit {
 
 	/** Initialize a rotation to the position below */
 	@Override
-	public void setDown(Orientation dir) {
-		super.setDown(dir);
+	public void rollDown(Orientation dir) {
+		super.rollDown(dir);
 
-		// TODO Crash if diago before
 		switch (dir) {
 		case NORTH:
 			movingAngleZ = -90;

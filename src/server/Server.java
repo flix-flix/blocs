@@ -2,6 +2,7 @@ package server;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.LinkedList;
 
 import data.dynamic.TickClock;
 import data.generation.WorldGeneration;
@@ -14,6 +15,7 @@ import server.game.Player;
 import server.game.messages.CommandExecutor;
 import server.game.messages.Message;
 import server.model.ServerAbstract;
+import server.send.Action;
 import server.send.SendAction;
 import utils.Utils;
 
@@ -82,7 +84,11 @@ public class Server extends ServerAbstract {
 		System.out.println("[Server RECEIVE] " + send.action);
 		switch (send.action) {
 		case UNIT_GOTO:
-			map.getUnit(send.id1).goTo(map, send.coord);
+			Unit unit = map.getUnit(send.id1);
+			LinkedList<Coord> path = unit.generatePath(map, send.coord);
+
+			unit.setPath(new LinkedList<>(path));
+			sendToAll(SendAction.goTo(unit, path));
 			break;
 		case UNIT_BUILD:
 			map.getUnit(send.id1).building(map, map.getBuilding(send.id2));
@@ -96,7 +102,9 @@ public class Server extends ServerAbstract {
 		default:
 			break;
 		}
-		sendToAll(send);
+
+		if (send.action != Action.UNIT_GOTO)
+			sendToAll(send);
 	}
 
 	// =========================================================================================================================

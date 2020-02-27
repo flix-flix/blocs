@@ -20,6 +20,8 @@ import window.KeyBoard;
 
 public abstract class KeyboardEnvironment3D implements KeyBoard {
 
+	protected boolean started = false;
+
 	// ================== Mouse ===========================
 	/** Keep the mouse cursor in the center of the component */
 	private Robot robot;
@@ -79,6 +81,8 @@ public abstract class KeyboardEnvironment3D implements KeyBoard {
 	public void start() {
 		if (!run)
 			return;
+
+		started = true;
 
 		map = env.getMap();
 		camera = env.getCamera();
@@ -165,7 +169,7 @@ public abstract class KeyboardEnvironment3D implements KeyBoard {
 
 		if (isDestroying()) {
 			if (targetedCube != null)
-				remove(targetedCube);
+				map.remove(targetedCube);
 		} else if (isSelecting())
 			selectCube(targetedCube);
 	}
@@ -256,16 +260,6 @@ public abstract class KeyboardEnvironment3D implements KeyBoard {
 	@Override
 	public void mouseDraged(MouseEvent e) {
 		mouseMoved(e);
-	}
-
-	// =========================================================================================================================
-	// TODO [Move] -> Map
-
-	public void remove(Cube cube) {
-		if (cube.unit != null)
-			map.removeUnit(cube.unit);
-		else
-			map.remove((CubeClient) cube);
 	}
 
 	// =========================================================================================================================

@@ -433,7 +433,7 @@ public class Game extends Environment3D implements Displayable {
 			break;
 
 		case UNIT_GOTO:
-			map.getUnit(send.id1).goTo(map, send.coord);
+			map.getUnit(send.id1).setPath(send.path);
 			break;
 		case UNIT_ARRIVE:
 			map.getUnit(send.id1).arrive(map);
@@ -589,7 +589,7 @@ public class Game extends Environment3D implements Displayable {
 					// Unit
 					else if (cube.unit != null)
 						if (cube.unit.getGamer().equals(gamer)) // Own
-							;
+							unitAction = Action.UNIT_FRIEND_UNIT;
 						else // Opponent
 							unitAction = Action.UNIT_ATTACK;
 

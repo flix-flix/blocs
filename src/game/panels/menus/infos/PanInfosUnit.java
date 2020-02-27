@@ -68,13 +68,14 @@ public class PanInfosUnit extends FPanel {
 		if (img != null)
 			g.drawImage(img, 15, 15, null);
 
+		if (unit == null)
+			return;
+
 		g.setFont(font);
 		g.setColor(Color.WHITE);
-		g.drawString(unit.getName(), img == null ? 15 : img.getWidth(null) + 15, 50);
 
-		if (unit != null) {
-			g.drawString(unit.toString(), img == null ? 15 : img.getWidth(null) + 15, 70);
-		}
+		g.drawString(unit.getName(), img == null ? 15 : img.getWidth(null) + 15, 50);
+		g.drawString(unit.toString(), img == null ? 15 : img.getWidth(null) + 15, 70);
 	}
 
 	// =========================================================================================================================
@@ -91,6 +92,8 @@ public class PanInfosUnit extends FPanel {
 		// Resources
 		res.update(unit.getResource());
 		res.setVisible(!res.isEmpty());
+
+		repaint();
 	}
 
 	public void setCube(Cube cube) {

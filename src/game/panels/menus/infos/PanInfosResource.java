@@ -27,7 +27,7 @@ public class PanInfosResource extends FPanel {
 	@Override
 	protected void paintCenter(Graphics g) {
 		super.paintCenter(g);
-
+System.out.println("repaint res");
 		if (resource != null) {
 			g.setFont(font);
 

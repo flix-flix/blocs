@@ -40,8 +40,11 @@ public class Map implements Tickable, Serializable {
 		for (int index : map.getChunks().keySet())
 			chunks.put(index, createChunk(map.getChunks().get(index)));
 
-		for (Cube c : map.getUnits().values())
-			units.put(c.unit.getId(), createUnit(c.unit));
+		for (Cube c : map.getUnits().values()) {
+			Cube newUnit = createUnit(c.unit);
+			units.put(c.unit.getId(), newUnit);
+			gridGet(newUnit.gridCoord).unit = newUnit.unit;
+		}
 
 		for (Cube c : map.getBuilds().values())
 			builds.put(c.build.getId(), createBuilding(c.build));
@@ -142,11 +145,12 @@ public class Map implements Tickable, Serializable {
 
 	public void remove(Cube cube) {
 		if (containsChunkAtCoord(cube)) {
-			MultiBloc m = cube.multibloc;
-			if (m == null)
-				removeCube(cube);
+			if (cube.unit != null)
+				removeUnit(cube.unit);
+			else if (cube.multibloc != null)
+				removeMulti(cube.multibloc);
 			else
-				removeMulti(m);
+				removeCube(cube);
 		}
 	}
 
