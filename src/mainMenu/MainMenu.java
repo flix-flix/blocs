@@ -155,7 +155,7 @@ public class MainMenu extends JPanel implements Displayable {
 		panServer = new PanServer(this);
 		panServer.setLocation(0, 0);
 		panServer.setSize(getWidth(), getHeight());
-		panServer.setVisible(true);
+		panServer.setVisible(false);
 
 		this.add(panServer);
 

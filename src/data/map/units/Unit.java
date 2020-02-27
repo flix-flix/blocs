@@ -7,11 +7,13 @@ import java.util.LinkedList;
 import data.Gamer;
 import data.id.ItemTableClient;
 import data.map.Coord;
+import data.map.Cube;
 import data.map.Map;
 import data.map.buildings.Building;
 import data.map.enumerations.Face;
 import data.map.enumerations.Orientation;
 import data.map.enumerations.Rotation;
+import data.map.multiblocs.MultiBloc;
 import data.map.resources.Resource;
 import server.send.Action;
 import utils.Utils;
@@ -67,6 +69,9 @@ public class Unit implements Serializable {
 	protected LinkedList<Coord> newPath;
 	/** true : path should be replaced by newPath */
 	protected boolean hasNewPath = false;
+
+	/** List of all possible destinations */
+	protected ArrayList<Coord> destinations;
 
 	// ========== Action ==========
 	/** Action to do at the end of the deplacement */
@@ -357,10 +362,43 @@ public class Unit implements Serializable {
 	// =========================================================================================================================
 
 	/**
+	 * Generates and returns the path to one the ends
+	 */
+	public LinkedList<Coord> generatePath(Map map, ArrayList<Coord> ends) {
+		if (destination == null)
+			return PathFinding.generatePathTo(this, map, coord, orientation, ends);
+		else
+			return PathFinding.generatePathTo(this, map, movingTo, nextOrientation, ends);
+	}
+
+	/**
 	 * Generates and returns the path to the end
 	 */
 	public LinkedList<Coord> generatePath(Map map, Coord end) {
-		return PathFinding.generatePathTo(this, map, destination == null ? coord : movingTo, end);
+		ArrayList<Coord> ends = new ArrayList<>();
+		ends.add(end);
+		return generatePath(map, ends);
+	}
+
+	// =========================================================================================================================
+
+	/**
+	 * The unit will go to the coordinates
+	 * 
+	 * @return true if coords are reachable
+	 */
+	public boolean goToCube(Map map, Coord end) {
+		return setPath(generatePath(map, end));
+	}
+
+	/** The unit will go to the closest bloc next to the target (not on top) */
+	public boolean goAroundCube(Map map, Coord end) {
+		ArrayList<Coord> ends = new ArrayList<>();
+
+		for (Face face : new Face[] { Face.DOWN, Face.NORTH, Face.EAST, Face.SOUTH, Face.WEST })
+			ends.add(end.face(face));
+
+		return setPath(generatePath(map, ends));
 	}
 
 	/**
@@ -368,19 +406,22 @@ public class Unit implements Serializable {
 	 * 
 	 * @return true if coords are reachable
 	 */
-	public boolean goTo(Map map, Coord end) {
-		return setPath(generatePath(map, end));
-	}
-
-	/** The unit will go to the closest bloc next to the target (not on top) */
-	public boolean goAround(Map map, Coord end) {
+	public boolean goAroundMulti(Map map, MultiBloc multi) {
 		ArrayList<Coord> ends = new ArrayList<>();
 
-		for (Face face : new Face[] { Face.DOWN, Face.NORTH, Face.EAST, Face.SOUTH, Face.WEST })
-			ends.add(end.face(face));
+		for (Cube cube : multi.list)
+			for (Face face : Face.faces)
+				ends.add(cube.gridCoord.face(face));
 
-		return setPath(PathFinding.generatePathTo(this, map, destination == null ? coord : movingTo, ends));
+		LinkedList<Coord> path = generatePath(map, ends);
+
+		if (path != null)
+			this.destinations = ends;
+
+		return setPath(path);
 	}
+
+	// =========================================================================================================================
 
 	public boolean setPath(LinkedList<Coord> path) {
 		if (isTraveling()) {
@@ -400,7 +441,7 @@ public class Unit implements Serializable {
 	// =========================================================================================================================
 
 	public boolean doAction(Action action, Map map, Coord coord) {
-		if (!goAround(map, coord))
+		if (!goAroundCube(map, coord))
 			return false;
 
 		this.action = action;
@@ -410,7 +451,7 @@ public class Unit implements Serializable {
 	}
 
 	public boolean building(Map map, Building build) {
-		if (!goAround(map, build.getCube().coords()))
+		if (!goAroundMulti(map, build.getMulti()))
 			return false;
 
 		this.action = Action.UNIT_BUILD;
@@ -420,7 +461,12 @@ public class Unit implements Serializable {
 	}
 
 	public boolean harvest(Map map, Coord coord) {
-		if (!goAround(map, coord))
+		MultiBloc multi = map.gridGet(coord).multibloc;
+
+		if (multi != null) {
+			if (!goAroundMulti(map, multi))
+				return false;
+		} else if (!goAroundCube(map, coord))
 			return false;
 
 		this.action = Action.UNIT_HARVEST;
@@ -430,7 +476,7 @@ public class Unit implements Serializable {
 	}
 
 	public boolean store(Map map, Building build) {
-		if (!goAround(map, build.getCube().coords()))
+		if (!goAroundMulti(map, build.getMulti()))
 			return false;
 
 		this.action = Action.UNIT_STORE;
@@ -496,8 +542,8 @@ public class Unit implements Serializable {
 		// Diagonal rotation
 		else {
 			if (coord.getRotationPointDiago(path.peekFirst()) == -1) {
-				System.out.println(">>> " + coord.toString() + " -> " + path.peekFirst());
-				Utils.debug("Unit diagonal rotation without rotation point");
+				Utils.debug("Unit diagonal rotation without rotation point (" + coord.toString() + " -> "
+						+ path.peekFirst() + ")");
 				return;
 			}
 			if (coord.getRotationPointDiago(path.peekFirst()) >= 4) {
@@ -506,51 +552,6 @@ public class Unit implements Serializable {
 			}
 
 			rollDiago(coord.getRotationPointDiago(path.removeFirst()));
-		}
-	}
-
-	// =========================================================================================================================
-
-	public void doNextMove2() {
-		Orientation dir = coord.getConnection(path.peekFirst());
-
-		if (path.size() >= 2 && coord.y + 1 == path.peekFirst().y) {// Going up
-			Orientation nextDir = path.get(0).getConnection(path.get(1));
-
-			if (orientation.isSameAxe(nextDir))
-				rotation();
-			else {
-				path.removeFirst();
-				rollUp(nextDir);
-			}
-		} else if (coord.y - 1 == path.peekFirst().y) {// Going down
-			Orientation prevDir = comingFrom.getConnection(coord);
-
-			if (orientation.isSameAxe(prevDir))
-				rotation();
-			else {
-				path.removeFirst();
-				rollDown(prevDir);
-			}
-		} else {
-			// Diagonal rotation
-			if (path.size() >= 2 && coord.getRotationPointDiago(path.get(1)) >= 0
-					&& coord.getRotationPointDiago(path.get(1)) < 4) {
-
-				path.removeFirst();
-				rollDiago(coord.getRotationPointDiago(path.removeFirst()));
-
-			}
-			// Do adjacent rotation
-			else {
-				if (orientation.isSameAxe(dir))
-					rotation();
-				else {
-					path.removeFirst();
-
-					rollAdjacent(dir);
-				}
-			}
 		}
 	}
 

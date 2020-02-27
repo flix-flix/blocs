@@ -4,7 +4,7 @@ import utilsBlocks.help.Tip;
 
 public enum TipGame implements Tip<TipGame> {
 
-	CAMERA, USER_ACTION, MOUSE, ADD, REMOVE, F3, CHAT;
+	CAMERA, USER_ACTION, MOUSE, UNIT, ADD, REMOVE, F3, CAMERA_MODE, CHAT;
 
 	@Override
 	public String getPath() {

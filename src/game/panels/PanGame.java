@@ -206,6 +206,7 @@ public class PanGame extends JPanel {
 		// Can't be displayed if currently loading
 		if (loading && visible)
 			return;
+
 		panEnv.help.setVisible(visible);
 		menu.setVisible(visible);
 	}

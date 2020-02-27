@@ -6,7 +6,6 @@ import java.util.TreeMap;
 
 import data.id.Item;
 import data.id.ItemTableClient;
-import data.map.Cube;
 import environment.extendsData.CubeClient;
 import utils.panels.FPanel;
 
@@ -44,7 +43,7 @@ public class PanItemLine extends FPanel {
 
 		// =============== Texture ===============
 		PanLinePart pan = new PanLinePart();
-		pan.setModel(new CubeClient(new Cube(itemID)));
+		pan.setModel(new CubeClient(ItemTableClient.create(itemID)));
 		addLinePart(pan, LineType.MINIATURE);
 	}
 

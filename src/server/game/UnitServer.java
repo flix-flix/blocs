@@ -1,5 +1,7 @@
 package server.game;
 
+import java.util.LinkedList;
+
 import data.map.Coord;
 import data.map.Map;
 import data.map.buildings.Building;
@@ -7,6 +9,7 @@ import data.map.enumerations.Orientation;
 import data.map.units.Unit;
 import server.Server;
 import server.send.Action;
+import server.send.SendAction;
 
 public class UnitServer extends Unit {
 	private static final long serialVersionUID = -296462819753986938L;
@@ -80,11 +83,28 @@ public class UnitServer extends Unit {
 	}
 
 	// =========================================================================================================================
+	// Path
+
+	@Override
+	public boolean setPath(LinkedList<Coord> path) {
+		if (path != null)
+			server.sendToAll(SendAction.goTo(this, new LinkedList<>(path)));
+
+		return super.setPath(path);
+	}
+
+	// =========================================================================================================================
+	// Roll/Rotation
 
 	/** Initialize a rotation to an adjacent position */
 	@Override
 	protected void rollAdjacent(Orientation dir) {
 		// TODO test if cube is walkable (and set phantom cube)
+		Coord movingTo = coord.face(dir.face);
+
+		if (server.map.gridContains(movingTo))
+			;
+		// else
 		super.rollAdjacent(dir);
 	}
 

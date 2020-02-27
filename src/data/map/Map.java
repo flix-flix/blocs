@@ -353,8 +353,8 @@ public class Map implements Tickable, Serializable {
 
 	// =========================================================================================================================
 
-	public int getPixelMapRepresentation(int x, int z) {
-		return getChunkAtCoord(x, z).getHighestCubeID(x, z);
+	public Cube getPixelMapRepresentation(int x, int z) {
+		return getChunkAtCoord(x, z).getHighestCube(x, z);
 	}
 	// =========================================================================================================================
 

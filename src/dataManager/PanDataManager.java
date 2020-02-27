@@ -73,15 +73,15 @@ public class PanDataManager extends FPanel {
 		// =============== Lines ===============
 		ArrayList<Integer> list = ItemTableClient.getItemIDList();
 		for (int i = 0; i < list.size(); i++) {
+			if (ItemTableClient.isDevelopment(list.get(i)))
+				continue;
+
 			PanItemLine panel = new PanItemLine(list.get(i));
-			panel.setBackground(i % 2 == 0 ? Color.LIGHT_GRAY : Color.GRAY);
+			panel.setBackground(panels.size() % 2 == 0 ? Color.LIGHT_GRAY : Color.GRAY);
 			panel.setBounds(menuWidth + 1, i * lineHeight, getWidth() - menuWidth, lineHeight);
 
 			addLine(panel);
 		}
-
-		;
-
 	}
 
 	// =========================================================================================================================

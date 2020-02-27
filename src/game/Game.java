@@ -13,6 +13,7 @@ import data.map.Coord;
 import data.map.Cube;
 import data.map.Map;
 import data.map.buildings.Building;
+import data.map.resources.Resource;
 import data.map.resources.ResourceType;
 import data.map.units.Unit;
 import environment.Environment3D;
@@ -71,12 +72,6 @@ public class Game extends Environment3D implements Displayable {
 	public KeyboardGame keyboard;
 
 	private TickClock clock;
-
-	// =============== Devlop Data (F3) ===============
-	/** Number of state-checks of the mouse and keyboard */
-	public int ticksKeyBoard;
-	/** Number of steps of the simulated environment */
-	public int ticksPhys;
 
 	/** State of the window [GAME, PAUSE, DIALOG, ...] */
 	private StateHUD stateHUD = StateHUD.GAME;
@@ -143,7 +138,7 @@ public class Game extends Environment3D implements Displayable {
 	}
 
 	public void connexionLost(String errorMsg) {
-		stateHUD = StateHUD.ERROR;
+		setStateHUD(StateHUD.ERROR);
 		this.errorMsg = errorMsg;
 		stop();
 
@@ -154,7 +149,6 @@ public class Game extends Environment3D implements Displayable {
 	// =========================================================================================================================
 
 	public void start() {
-		panel.setGUIVisible(true);
 		messages = new MessageManager(this);
 
 		super.start();
@@ -268,7 +262,11 @@ public class Game extends Environment3D implements Displayable {
 				else if (unitAction == Action.UNIT_BUILD)
 					return cursorBuild;
 
-				else if (unitAction == Action.UNIT_STORE)
+				else if (unitAction == Action.UNIT_STORE) {
+					Resource res = selectedUnit.getResource();
+					if (res == null || res.getType() == null)
+						return ItemTableClient.defaultCursor;
+
 					switch (selectedUnit.getResource().getType()) {
 					case WOOD:
 						return cursorDropWood;
@@ -279,6 +277,7 @@ public class Game extends Environment3D implements Displayable {
 					default:
 						return cursorDrop;
 					}
+				}
 
 				else if (unitAction == Action.UNIT_ATTACK)
 					return cursorAttack;
@@ -312,7 +311,7 @@ public class Game extends Environment3D implements Displayable {
 	// =========================================================================================================================
 
 	public void pause() {
-		stateHUD = StateHUD.PAUSE;
+		setStateHUD(StateHUD.PAUSE);
 		keyboard.setPaused(true);
 
 		setCursorVisible(true);
@@ -322,7 +321,7 @@ public class Game extends Environment3D implements Displayable {
 	}
 
 	public void resume() {
-		stateHUD = StateHUD.GAME;
+		setStateHUD(StateHUD.GAME);
 		keyboard.setPaused(false);
 
 		if (cameraMode == CameraMode.FIRST_PERSON) {
@@ -497,7 +496,7 @@ public class Game extends Environment3D implements Displayable {
 	}
 
 	public void setStateHUD(StateHUD stateHUD) {
-		panel.panEnv.help.setVisible(stateHUD != StateHUD.DIALOG);
+		panel.panEnv.help.setVisible(map != null && stateHUD != StateHUD.DIALOG && cameraMode == CameraMode.CLASSIC);
 		this.stateHUD = stateHUD;
 	}
 

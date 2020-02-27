@@ -24,7 +24,7 @@ public class MapServer extends Map {
 	}
 
 	// =========================================================================================================================
-	// Create displayable-data
+	// Create server-data
 
 	@Override
 	protected Cube createUnit(Unit unit) {
@@ -58,6 +58,14 @@ public class MapServer extends Map {
 
 	public void store(Unit unit, Building build) {
 		server.unitStore(unit, build);
+	}
+
+	// =========================================================================================================================
+	// Cast
+
+	@Override
+	public UnitServer getUnit(int id) {
+		return (UnitServer) super.getUnit(id);
 	}
 
 	// =========================================================================================================================

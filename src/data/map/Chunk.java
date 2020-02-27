@@ -3,10 +3,12 @@ package data.map;
 import java.io.Serializable;
 import java.util.HashSet;
 
+import data.id.ItemID;
+
 public class Chunk implements Serializable {
 	private static final long serialVersionUID = -8763834020086820609L;
 
-	public static final int VOID = -1;
+	public static final Cube VOID = new Cube(-1, -1, -1, ItemID.ERROR);
 
 	// Size of a chunk
 	public static final int X = 10, Y = 50, Z = 10;
@@ -90,12 +92,12 @@ public class Chunk implements Serializable {
 
 	// =========================================================================================================================
 
-	public int getHighestCubeID(int _x, int _z) {
+	public Cube getHighestCube(int _x, int _z) {
 		int x = toInChunkCoord(_x), z = toInChunkCoord(_z);
 
 		for (int y = Y - 1; y >= 0; y--)
 			if (grid[x][y][z] != null)
-				return grid[x][y][z].getItemID();
+				return grid[x][y][z];
 		return VOID;
 	}
 

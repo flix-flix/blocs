@@ -35,6 +35,103 @@ public class WorldGeneration {
 					map.add(new Cube(x, ground - 1, z, ItemID.GRASS));
 				}
 
+		// ========== Flat ==========
+		int arc = 46;
+		for (int i = 0; i < 90; i++)
+			for (int z = 0; z < (int) (arc * Math.sin(i * Utils.toRadian)); z++)
+				map.add(new Cube((int) (arc * Math.cos(i * Utils.toRadian)), ground - 1, z, ItemID.GRASS));
+
+		// ========== Forest ==========
+		for (int x = 1; x < 30; x++)
+			for (int z = 1; z < 30; z++)
+				if (x / 2 + z < 15 || x + z / 2 < 15)
+					map.set(new Cube(x, ground - 1, z, ItemID.DIRT));
+
+		map.add(new Tree(2, ground, 4).getCube());
+		map.add(new Tree(2, ground, 17).getCube());
+		map.add(new Tree(3, ground, 11).getCube());
+		map.add(new Tree(5, ground, 6).getCube());
+		map.add(new Tree(5, ground, 15).getCube());
+		map.add(new Tree(8, ground, 8).getCube());
+		map.add(new Tree(10, ground, 5).getCube());
+		map.add(new Tree(14, ground, 5).getCube());
+		map.add(new Tree(18, ground, 4).getCube());
+		map.add(new Tree(20, ground, 10).getCube());
+		map.add(new Tree(25, ground, 10).getCube());
+
+		// ========== Mountain ==========
+		for (int i = 5; i < 45; i++) {
+			if (i % 3 == 0)
+				addMountain(map, 50 - i, ground, i);
+			if (i % 4 == 0) {
+				addMountain(map, 50 - i + 2, ground, i + 2);
+				addMountain(map, 50 - i, ground, i);
+			}
+		}
+
+		// ========== River ==========
+		for (int i = 0; i < 90; i++)
+			river(map, (int) (50 * Math.cos(i * Utils.toRadian)), ground - 1,
+					(int) (50 * Math.sin(i * Utils.toRadian)));
+
+		// ========== Dig ==========
+		for (int x = 10; x < 20; x++)
+			for (int z = 6; z < 15; z++)
+				map.remove(x, ground - 1, z);
+
+		// ========== Lake ==========
+		for (int x = 13; x < 17; x++)
+			for (int z = 9; z < 12; z++) {
+				map.remove(x, ground - 2, z);
+				map.add(new Cube(x, ground - 2, z, ItemID.WATER));
+			}
+
+		// =========================================================================================================================
+		// Units
+
+		// Felix
+		map.addUnit(new Unit(ItemID.UNIT, felix, 5, ground, 5));
+		map.addUnit(new Unit(ItemID.UNIT, felix, 6, ground, 2));
+		map.addUnit(new Unit(ItemID.UNIT, felix, 4, ground, 2));
+		map.addUnit(new Unit(ItemID.UNIT, felix, 5, ground, 2));
+
+		// IA
+		map.addUnit(new Unit(ItemID.UNIT, ia, 7, ground, 4));
+
+		// =========================================================================================================================
+		// Buildings
+
+		map.addBuilding(new Building(felix, ItemID.CASTLE, 13, ground, 3, false));
+		map.addBuilding(new Building(felix, ItemID.CASTLE, 21, ground, 3, true));
+		map.addBuilding(new Building(ia, ItemID.CASTLE, 9, ground, 19, true));
+		map.addBuilding(new Building(ia, ItemID.CASTLE, 16, ground, 21, false));
+
+		return map;
+	}
+
+	// =========================================================================================================================
+
+	public static Map generateMapTest() {
+		Map map = new Map();
+
+		Gamer felix = new Gamer(1, "Félix");
+		Gamer ia = new Gamer(2, "IA");
+
+		int ground = 10;
+		int size = 20;
+
+		// ========== Ground and Borders ==========
+		for (int x = 0; x < size; x++)
+			for (int z = 0; z < size; z++)
+				if (x % 99 == 0 || z % 99 == 0)
+					for (int y = 0; y <= ground + 3; y++)
+						map.add(new Cube(x, y, z, ItemID.BORDER));
+				else {
+					for (int y = 0; y < ground - 1; y++)
+						map.add(new Cube(x, y, z, ItemID.DIRT));
+					map.add(new Cube(x, ground - 1, z, ItemID.GRASS));
+				}
+
 		// ========== Forest ==========
 		for (int x = 1; x < 30; x++)
 			for (int z = 1; z < 30; z++)
@@ -68,6 +165,23 @@ public class WorldGeneration {
 				addMountain(map, 50 - i, ground, i);
 			}
 		}
+
+		// ========== River ==========
+		for (int i = 0; i < 90; i++)
+			river(map, (int) (50 * Math.cos(i * Utils.toRadian)), ground - 1,
+					(int) (50 * Math.sin(i * Utils.toRadian)));
+
+		// ========== Dig ==========
+		for (int x = 10; x < 20; x++)
+			for (int z = 6; z < 15; z++)
+				map.remove(x, ground - 1, z);
+
+		// ========== Lake ==========
+		for (int x = 13; x < 17; x++)
+			for (int z = 9; z < 12; z++) {
+				map.remove(x, ground - 2, z);
+				map.add(new Cube(x, ground - 2, z, ItemID.WATER));
+			}
 
 		// Off-grid cube
 		Cube off = new Cube(-2, 2, -4, 0, 45, 45, 1, 1, 1, ItemID.TEST);
@@ -105,25 +219,16 @@ public class WorldGeneration {
 		testBig.setCoords(15, ground, 19);
 		map.add(testBig.getCube());
 
-		// Add River
-		for (int i = 0; i < 90; i++)
-			dig(map, (int) (50 * Math.cos(i * Utils.toRadian)), ground - 1, (int) (50 * Math.sin(i * Utils.toRadian)));
-
 		// =========================================================================================================================
 		// Units
 
-		// Dig
-		for (int x = 10; x < 20; x++)
-			for (int z = 6; z < 15; z++)
-				map.remove(x, ground - 1, z);
-
-		// Add Units
+		// Felix
 		map.addUnit(new Unit(ItemID.UNIT, felix, 5, ground, 5));
 		map.addUnit(new Unit(ItemID.UNIT, felix, 6, ground, 2));
 		map.addUnit(new Unit(ItemID.UNIT, felix, 4, ground, 2));
 		map.addUnit(new Unit(ItemID.UNIT, felix, 5, ground, 2));
 
-		// Add Unit to IA
+		// IA
 		map.addUnit(new Unit(ItemID.UNIT, ia, 7, ground, 4));
 
 		// =========================================================================================================================
@@ -152,7 +257,7 @@ public class WorldGeneration {
 		}
 	}
 
-	private static void dig(Map map, int x, int y, int z) {
+	private static void river(Map map, int x, int y, int z) {
 		for (int _y = 0; _y < 7; _y++) {
 			int a = (7 - _y) / 2;
 			for (int _x = -a; _x <= a; _x++)

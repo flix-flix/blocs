@@ -128,6 +128,13 @@ public class PanInfosBuilding extends FPanel {
 		spawn.setVisible(visible);
 		upgrade.setVisible(visible);
 
+		int index = 0;
+		for (ResourceType type : ResourceType.values())
+			if (build.hasStock(type)) {
+				PanResource res = (PanResource) stocks.get(index++);
+				res.update(build.getStocks(type));
+			}
+
 		repaint();
 	}
 

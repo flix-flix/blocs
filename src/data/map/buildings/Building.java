@@ -101,6 +101,10 @@ public class Building implements Serializable {
 		return itemID;
 	}
 
+	public MultiBloc getMulti() {
+		return multi;
+	}
+
 	public Cube getCube() {
 		return multi.getCube();
 	}
@@ -129,6 +133,6 @@ public class Building implements Serializable {
 
 	@Override
 	public String toString() {
-		return "I'm a building of " + (gamer == null ? "[null]" : gamer.getName());
+		return "Player: " + (gamer == null ? "[null]" : gamer.getName());
 	}
 }

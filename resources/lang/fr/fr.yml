@@ -66,11 +66,13 @@ tips:
         global:
             camera: Utilisez ~FORWARD, ~LEFT, ~BACKWARD, ~RIGHT pour deplacer le point de vue et la molette pour modifier l'altitude
             user_action: En haut a gauche de l'écran se trouve 3 boutons permettant de selectionner l'action souhaitée (Selectionner, Ajouter, Detruire)
-            mouse: Le curseur permet de selectionner une ressource, un batiment ou une unitée. Si une unitée est selectionnée, il est possible de la déplacer en effectuant un clic droit sur la destination souhaitée
+            mouse: Le curseur permet de selectionner une ressource, un batiment ou une unitée. Une description de la selection sera affichée en dessous des 3 boutons
+            unit: Si une unitée est selectionnée: Il est possible de la déplacer en effectuant un clic droit sur la destination souhaitée. (Elle peut également récolter des ressources et construire des batiments)
             add: Le bloc permet d'ajouter le bloc ou structure selectionné en effectuant un clic droit a l'emplacement souhaité
             remove: La croix rouge permet de detruire un cube ou une structure en effectuant un clic gauche dessus
             f3: Appuyez sur ~DEVLOP pour afficher les informations du moteur graphique
             chat: Appuyez sur ~DIALOG pour ouvrir le chat. Entrée pour envoyer le message, "Echap" pour fermer l'interface. Tapez !help pour afficher la liste des commandes disponibles
+            camera_mode: Utilisez ~ACCESS_1 pour utiliser la caméra en première personne, ~ACCESS_2 pour utiliser la caméra classique
 
 text:
     game:

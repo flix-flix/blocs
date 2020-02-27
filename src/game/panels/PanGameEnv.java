@@ -74,6 +74,7 @@ public class PanGameEnv extends PanEnvironment {
 		help.setBorderColor(Color.LIGHT_GRAY);
 		help.setForeground(Color.DARK_GRAY);
 		help.setLocation(25, getHeight() - 25);
+		help.setVisible(false);
 		this.add(help);
 	}
 

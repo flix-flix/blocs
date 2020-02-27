@@ -2,7 +2,6 @@ package server;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.LinkedList;
 
 import data.dynamic.TickClock;
 import data.generation.WorldGeneration;
@@ -24,7 +23,7 @@ public class Server extends ServerAbstract {
 	public static final int defaultPort = 1212;
 
 	// =============== Data ===============
-	MapServer map;
+	public MapServer map;
 	CommandExecutor commands;
 
 	// =========================================================================================================================
@@ -84,11 +83,7 @@ public class Server extends ServerAbstract {
 		System.out.println("[Server RECEIVE] " + send.action);
 		switch (send.action) {
 		case UNIT_GOTO:
-			Unit unit = map.getUnit(send.id1);
-			LinkedList<Coord> path = unit.generatePath(map, send.coord);
-
-			unit.setPath(new LinkedList<>(path));
-			sendToAll(SendAction.goTo(unit, path));
+			map.getUnit(send.id1).goToCube(map, send.coord);
 			break;
 		case UNIT_BUILD:
 			map.getUnit(send.id1).building(map, map.getBuilding(send.id2));

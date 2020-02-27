@@ -39,6 +39,10 @@ public class Gamer implements Serializable {
 		return name;
 	}
 
+	public int getNb() {
+		return nb;
+	}
+
 	// =========================================================================================================================
 	public int getNbUnits() {
 		return units.size();

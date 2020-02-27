@@ -18,6 +18,18 @@ public class PathFinding {
 	private static final int[] ewMoves = new int[] { 1_000_000, -1_000_000, 1_000, -1_000 };
 	private static final int[] diagoMoves = new int[] { 999_999, 1_000_001, -1_000_001, -999_999 };
 
+	public static LinkedList<Coord> generatePathAround(Unit unit, Map map, Coord start, Orientation startOri,
+			ArrayList<Coord> around) {
+
+		ArrayList<Coord> ends = new ArrayList<>();
+
+		for (Coord coord : around)
+			for (Face face : Face.faces)
+				ends.add(coord.face(face));
+
+		return generatePathTo(unit, map, start, startOri, ends);
+	}
+
 	/**
 	 * Path-finding algorithm<br>
 	 * 
@@ -26,11 +38,14 @@ public class PathFinding {
 	 * Generates a list of Coords linking start coord to one of the indicated
 	 * locations
 	 * 
+	 * @param ends
+	 *            - List of ends
+	 * 
 	 * @return the list of Coord from start to end (or null if no path exist)
 	 */
-	public static LinkedList<Coord> generatePathTo(Unit unit, Map map, Coord start, ArrayList<Coord> ends) {
-		// List of the coords to the destination
-		LinkedList<Coord> path = new LinkedList<>();
+	public static LinkedList<Coord> generatePathTo(Unit unit, Map map, Coord start, Orientation startOri,
+			ArrayList<Coord> ends) {
+
 		// Travelled Coords (with number of minimum steps to reach)
 		HashMap<Integer, Integer> travelled = new HashMap<>();
 
@@ -42,14 +57,26 @@ public class PathFinding {
 
 				// Test if the start is the end
 				if (start.equals(end))
-					return path;
+					return new LinkedList<>();
 			}
 
 		// Test if one of the destination is walkable
 		if (travelled.isEmpty())
 			return null;
 
-		int startID = getID(start, unit.orientation == Orientation.NORTH || unit.orientation == Orientation.SOUTH);
+		return generatePathTo(unit, map, start, startOri, travelled);
+	}
+
+	/**
+	 * @param travelled
+	 *            - Map with end-points set to {@link #END}
+	 */
+	private static LinkedList<Coord> generatePathTo(Unit unit, Map map, Coord start, Orientation startOri,
+			HashMap<Integer, Integer> travelled) {
+		// List of the coords to the destination
+		LinkedList<Coord> path = new LinkedList<>();
+
+		int startID = getID(start, startOri == Orientation.NORTH || startOri == Orientation.SOUTH);
 
 		travelled.put(startID, 0);
 
@@ -148,12 +175,6 @@ public class PathFinding {
 			System.out.println(c);
 
 		return path;
-	}
-
-	public static LinkedList<Coord> generatePathTo(Unit unit, Map map, Coord start, Coord end) {
-		ArrayList<Coord> list = new ArrayList<>();
-		list.add(end);
-		return generatePathTo(unit, map, start, list);
 	}
 
 	// =========================================================================================================================

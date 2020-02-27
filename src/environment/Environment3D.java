@@ -18,7 +18,10 @@ public class Environment3D {
 	/** Number of chunks and faces displayed */
 	public int nbChunks, nbFaces;
 
-	public int ticksPhys, ticksKeyBoard;
+	/** Number of state-checks of the mouse and keyboard */
+	public int ticksKeyBoard;
+	/** Number of steps of the simulated environment */
+	public int ticksPhys;
 
 	// =============== Options ===============
 	/** Max frames/seconde allowed */
