@@ -2,6 +2,7 @@ package environment.extendsData;
 
 import java.util.ArrayList;
 
+import data.id.ItemID;
 import data.id.ItemTableClient;
 import data.map.Chunk;
 import data.map.Coord;
@@ -222,9 +223,10 @@ public class MapClient extends Map implements Modelisable {
 		if (!gridContains(x, y, z))
 			return;
 
-		gridGet(x, y, z).setVisible(!(isOpaque(x, y, z, x + 1, y, z) && isOpaque(x, y, z, x - 1, y, z)
-				&& isOpaque(x, y, z, x, y + 1, z) && isOpaque(x, y, z, x, y - 1, z) && isOpaque(x, y, z, x, y, z + 1)
-				&& isOpaque(x, y, z, x, y, z - 1)));
+		gridGet(x, y, z).setVisible(!(isOpaqueExceptTransparent(x, y, z, x + 1, y, z)
+				&& isOpaqueExceptTransparent(x, y, z, x - 1, y, z) && isOpaqueExceptTransparent(x, y, z, x, y + 1, z)
+				&& isOpaqueExceptTransparent(x, y, z, x, y - 1, z) && isOpaqueExceptTransparent(x, y, z, x, y, z + 1)
+				&& isOpaqueExceptTransparent(x, y, z, x, y, z - 1)));
 	}
 
 	// =========================================================================================================================
@@ -232,18 +234,62 @@ public class MapClient extends Map implements Modelisable {
 	/**
 	 * Returns true if a face of the cube at coords x,y,z is hidden by an opaque
 	 * bloc at coords x2,y2,z2
+	 * 
+	 * <br>
+	 * Faces of transparent cube are always displayed
 	 */
 	private boolean isOpaque(int x, int y, int z, int x2, int y2, int z2) {
-		// Must contain a cube to be opaque
-		return gridContains(x2, y2, z2)
-				// The cube must be opaque...
-				&& (ItemTableClient.isOpaque(gridGet(x2, y2, z2).getItemID())
-						// ... or having the same ID than the next one
-						|| gridGet(x, y, z).getItemID() == gridGet(x2, y2, z2).getItemID())
-				// The cube musn't be a preview ... or the next one must be one too
-				&& (!gridGet(x2, y2, z2).isPreview() || gridGet(x, y, z).isPreview())
-				// The cube musn't be a building in construction
-				&& !(gridGet(x2, y2, z2).build != null && !gridGet(x2, y2, z2).build.isBuild());
+		return _isOpaque(x, y, z, x2, y2, z2, true);
+	}
+
+	/**
+	 * Returns true if a face of the cube at coords x,y,z is hidden by an opaque
+	 * bloc at coords x2,y2,z2
+	 *
+	 * <br>
+	 * Ignore [Faces of transparent cube are always displayed]
+	 */
+	private boolean isOpaqueExceptTransparent(int x, int y, int z, int x2, int y2, int z2) {
+		return _isOpaque(x, y, z, x2, y2, z2, false);
+	}
+
+	/**
+	 * Returns true if a face of the cube at coords x,y,z is hidden by an opaque
+	 * bloc at coords x2,y2,z2
+	 *
+	 * @param careTransparency
+	 *            - true: [Faces of transparent cube are always displayed]
+	 */
+	private boolean _isOpaque(int x, int y, int z, int x2, int y2, int z2, boolean careTransparency) {
+		CubeClient cube = gridGet(x, y, z), adjacent = gridGet(x2, y2, z2);
+
+		// The face must have an adjacent cube to be opaque
+		if (adjacent == null)
+			return false;
+
+		int id = cube.getItemID(), aID = adjacent.getItemID();
+
+		// The cube musn't be a preview ... or the adjacent must be one too
+		if (adjacent.isPreview() && !cube.isPreview())
+			return false;
+
+		// The cube musn't be a building in construction
+		if (adjacent.build != null && !adjacent.build.isBuild())
+			return false;
+
+		// Cubes with same ID doesn't hide each others (glass, water)
+		if (id == aID)
+			return true;
+
+		// The adjacent cube must be opaque...
+		if (!ItemTableClient.isOpaque(aID))
+			return false;
+
+		// A transparent bloc always show it's faces
+		if (careTransparency && !ItemTableClient.isOpaque(id) && id != ItemID.WATER)
+			return false;
+
+		return true;
 	}
 
 	// =========================================================================================================================

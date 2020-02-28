@@ -98,4 +98,10 @@ public class Item {
 		if (yaml.contains("minimap"))
 			mapColor = yaml.getHexa("minimap.color");
 	}
+
+	// =========================================================================================================================
+
+	public boolean isOpaque() {
+		return opaque;
+	}
 }

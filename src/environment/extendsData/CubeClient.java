@@ -384,7 +384,12 @@ public class CubeClient extends Cube implements Modelisable {
 		// If it's an unit the cube can be rolling
 		if (unit != null)
 			return true;
-		//
+
+		// Transparent
+		if (!ItemTable.get(getItemID()).isOpaque() && getItemID() != ItemID.WATER)
+			return true;
+
+		// Can be transparent
 		if (getItemID() == ItemID.EDITOR_PREVIEW)
 			return true;
 		return false;
