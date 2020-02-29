@@ -169,11 +169,6 @@ public class PathFinding {
 		}
 
 		path.removeFirst(); // Remove the start
-
-		System.out.println("===== PATH ===== (" + path.size() + ")");
-		for (Coord c : path)
-			System.out.println(c);
-
 		return path;
 	}
 

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import data.Gamer;
 import data.dynamic.Tickable;
 import data.map.buildings.Building;
 import data.map.multiblocs.MultiBloc;
@@ -13,6 +14,8 @@ public class Map implements Tickable, Serializable {
 	private static final long serialVersionUID = 6432334760443087967L;
 
 	protected String name = "Default Map Name";
+
+	protected HashMap<Integer, Gamer> gamers = new HashMap<>();
 
 	/** Chunks of the map (see {@link Map#getNumero(int, int)}) */
 	protected HashMap<Integer, Chunk> chunks = new HashMap<>();
@@ -59,6 +62,8 @@ public class Map implements Tickable, Serializable {
 
 			multi.list = list;
 		}
+
+		gamers = map.gamers;
 	}
 
 	// =========================================================================================================================
@@ -137,16 +142,23 @@ public class Map implements Tickable, Serializable {
 	// =========================================================================================================================
 	// Universal Add/Remove
 
+	/** Returns true if the bloc has been added */
 	public boolean add(Cube cube) {
-		if (cube.multibloc == null)
-			return addCube(cube) != null;
-		return addMulti(cube.multibloc, true);
+		if (cube.unit != null)
+			return addUnit(cube.unit);
+		if (cube.build != null)
+			return addBuilding(cube.build);
+		if (cube.multibloc != null)
+			return addMulti(cube.multibloc, true);
+		return addCube(cube) != null;
 	}
 
 	public void remove(Cube cube) {
 		if (containsChunkAtCoord(cube)) {
 			if (cube.unit != null)
 				removeUnit(cube.unit);
+			else if (cube.build != null)
+				removeBuilding(cube.build);
 			else if (cube.multibloc != null)
 				removeMulti(cube.multibloc);
 			else
@@ -178,8 +190,8 @@ public class Map implements Tickable, Serializable {
 			remove(gridGet(x, y, z));
 	}
 
-	public void remove(Coord tuple) {
-		remove(tuple.x, tuple.y, tuple.z);
+	public void remove(Coord coord) {
+		remove(coord.x, coord.y, coord.z);
 	}
 
 	// =========================================================================================================================
@@ -229,7 +241,7 @@ public class Map implements Tickable, Serializable {
 	// =========================================================================================================================
 	// Cubes Add/Remove
 
-	protected Cube addCube(Cube cube) {
+	private Cube addCube(Cube cube) {
 		if (cube.onGrid)
 			return gridAdd(cube);
 
@@ -253,7 +265,7 @@ public class Map implements Tickable, Serializable {
 		return getChunkAtCoord(x, z).gridGet(x, y, z);
 	}
 
-	/** Retruns the added cube or null if it can't be added */
+	/** Returns the added cube or null if it can't be added */
 	protected Cube gridAdd(Cube cube) {
 		if (gridContains(cube.gridCoord))
 			return null;
@@ -278,33 +290,43 @@ public class Map implements Tickable, Serializable {
 	}
 
 	// =========================================================================================================================
-	// Allow tuple for coordinates
+	// Allow Coord for coordinates
 
-	public Cube gridGet(Coord tuple) {
-		return gridGet(tuple.x, tuple.y, tuple.z);
+	public Cube gridGet(Coord coord) {
+		return gridGet(coord.x, coord.y, coord.z);
 	}
 
-	public void gridRemove(Coord tuple) {
-		gridRemove(tuple.x, tuple.y, tuple.z);
+	public void gridRemove(Coord coord) {
+		gridRemove(coord.x, coord.y, coord.z);
 	}
 
-	public boolean gridContains(Coord tuple) {
-		if (tuple == null)
+	public boolean gridContains(Coord coord) {
+		if (coord == null)
 			return false;
-		return gridContains(tuple.x, tuple.y, tuple.z);
+		return gridContains(coord.x, coord.y, coord.z);
 	}
 
 	// =========================================================================================================================
 	// Units
 
+	/** Use this function to move unit */
 	public Cube gridAdd(Unit unit) {
 		return gridAdd(createUnit(unit));
 	}
 
-	public void addUnit(Unit unit) {
+	/**
+	 * <strong>/!\ This function must only be used one time by unit</strong><br>
+	 * (to move units use {@link #gridRemove(Coord)} and {@link #gridAdd(Unit)})
+	 * 
+	 * @return true if the unit has been added
+	 */
+	public boolean addUnit(Unit unit) {
 		Cube c = createUnit(unit);
-		units.put(unit.getId(), c);
-		gridAdd(c);
+		if ((c = gridAdd(c)) != null) {
+			units.put(unit.getId(), c);
+			return true;
+		}
+		return false;
 	}
 
 	public void removeUnit(Unit unit) {
@@ -323,15 +345,16 @@ public class Map implements Tickable, Serializable {
 	// =========================================================================================================================
 	// Buildings
 
-	public void addBuilding(Building build) {
+	/** Returns true if the building has been added */
+	public boolean addBuilding(Building build) {
 		Cube c = createBuilding(build);
 		builds.put(build.getId(), c);
-		add(c);
+		return addMulti(build.getMulti(), true);
 	}
 
 	public void removeBuilding(Building build) {
 		if (builds.containsKey(build.getId()))
-			remove(builds.remove(build.getId()).coords());
+			removeMulti(builds.remove(build.getId()).build.getMulti());
 	}
 
 	public Building getBuilding(int id) {
@@ -346,6 +369,17 @@ public class Map implements Tickable, Serializable {
 	}
 
 	// =========================================================================================================================
+	// Gamers
+
+	public void addGamer(Gamer gamer) {
+		gamers.put(gamer.getNumber(), gamer);
+	}
+
+	public Gamer getGamer(int index) {
+		return gamers.get(index);
+	}
+
+	// =========================================================================================================================
 
 	public boolean isOnFloor(Coord c) {
 		return gridContains(c.x, c.y - 1, c.z);
@@ -356,6 +390,7 @@ public class Map implements Tickable, Serializable {
 	public Cube getPixelMapRepresentation(int x, int z) {
 		return getChunkAtCoord(x, z).getHighestCube(x, z);
 	}
+
 	// =========================================================================================================================
 
 	public String getName() {

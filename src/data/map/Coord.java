@@ -127,6 +127,6 @@ public class Coord implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Tuple [x=" + x + ", y=" + y + ", z=" + z + "]";
+		return "Coord [x=" + x + ", y=" + y + ", z=" + z + "]";
 	}
 }

@@ -13,6 +13,7 @@ import data.map.enumerations.Face;
 import environment.extendsData.CubeClient;
 import environment.extendsData.MapClient;
 import graphicEngine.calcul.Camera;
+import server.send.SendAction;
 import utils.Utils;
 import window.Fen;
 import window.Key;
@@ -20,7 +21,12 @@ import window.KeyBoard;
 
 public abstract class KeyboardEnvironment3D implements KeyBoard {
 
-	protected boolean started = false;
+	// =============== ? ===============
+	protected Fen fen;
+	protected Environment3D env;
+
+	protected MapClient map;
+	protected Camera camera;
 
 	// ================== Mouse ===========================
 	/** Keep the mouse cursor in the center of the component */
@@ -44,20 +50,17 @@ public abstract class KeyboardEnvironment3D implements KeyBoard {
 	// =============== Options ===============
 	protected int speedModifier = 1;
 
-	// =========================== Infos Dev ===========================
+	// =============== Engine data ===============
 	/** Ticks count (camera movements/sec) */
 	public int ticks = 0;
 
+	// =============== Status ===============
+	protected boolean started = false;
 	protected boolean paused = false;
 
-	protected Fen fen;
-	protected Environment3D env;
-
-	protected MapClient map;
-	protected Camera camera;
-
-	// ====
+	// =============== Target ===============
 	protected Cube targetedCube;
+	protected Coord targetedCoord;
 	protected Face targetedFace;
 
 	// =============== Thread ===============
@@ -98,14 +101,18 @@ public abstract class KeyboardEnvironment3D implements KeyBoard {
 
 	// =========================================================================================================================
 
-	public abstract boolean isDestroying();
-
 	public abstract boolean isSelecting();
 
-	public abstract boolean isForceAdding();
+	public abstract boolean isAdding();
 
-	public abstract boolean isPreview();
+	public abstract boolean isDestroying();
 
+	/** true: The cube was in preview state */
+	public abstract boolean wasPreviewed();
+
+	/**
+	 * Set {@link #targetedCube}, {@link #targetedCoord} and {@link #targetedFace}
+	 */
 	public abstract void cacheTarget();
 
 	// =========================================================================================================================
@@ -127,38 +134,42 @@ public abstract class KeyboardEnvironment3D implements KeyBoard {
 		cacheTarget();
 
 		// Add a cube to the map
-		if (isForceAdding()) {
+		if (isAdding()) {
+			if (targetedCoord == null || targetedFace == null)
+				return;
+
+			// Cube adjacent to the pointed face (in the air)
+			Coord targetedAir = targetedCoord.face(targetedFace);
+
 			Cube cubeToAdd = getCubeToAdd();
-			if (targetedCube != null && targetedFace != null && cubeToAdd != null) {
-				cubeToAdd.setCoords(new Coord(targetedCube).face(targetedFace));
 
-				map.add(cubeToAdd);
+			if (cubeToAdd == null)
+				return;
+
+			// ===== Remove the preview cube =====
+			if (wasPreviewed()) {
+				CubeClient previewed = map.gridGet(targetedAir);
+				if (previewed == null || !previewed.isPreview())
+					return;
+
+				// Check if multibloc can be added at this position
+				if (previewed.multibloc != null && !previewed.multibloc.valid)
+					return;
+
+				map.remove(previewed);
 			}
+
+			// ===== Add the cube to the server =====
+			if (cubeToAdd.unit != null)
+				cubeToAdd.unit.coord = targetedAir;
+			cubeToAdd.setCoords(targetedAir);
+
+			env.send(SendAction.add(cubeToAdd));
+
 		}
-
-		else {
-			if (targetedCube != null && targetedFace != null) {
-
-				// Set the previewed cube as real one
-				if (isPreview()) {
-					// TODO [Fix] Add Unit
-					CubeClient model = map.gridGet(new Coord(targetedCube).face(targetedFace));
-					if (model != null && model.isPreview()) {
-						// Check if multibloc can be added at this position
-						if (model.multibloc != null && !model.multibloc.valid)
-							return;
-
-						map.setHighlight(model, false);
-						map.setPreview(model, false);
-						map.setTargetable(model, true);
-					}
-				}
-				// If any
-				else
-					applyAction();
-			}
-			return;
-		}
+		// Do an action
+		else
+			applyAction();
 	}
 
 	@Override
@@ -168,8 +179,8 @@ public abstract class KeyboardEnvironment3D implements KeyBoard {
 		cacheTarget();
 
 		if (isDestroying()) {
-			if (targetedCube != null)
-				map.remove(targetedCube);
+			if (targetedCoord != null)
+				env.send(SendAction.remove(targetedCoord));
 		} else if (isSelecting())
 			selectCube(targetedCube);
 	}

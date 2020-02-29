@@ -9,6 +9,7 @@ import data.map.enumerations.Rotation;
 import data.map.multiblocs.MultiBloc;
 import data.map.resources.Resource;
 import data.map.units.Unit;
+import environment.extendsData.UnitClient;
 import graphicEngine.calcul.Point3D;
 
 public class Cube implements Serializable {
@@ -55,6 +56,30 @@ public class Cube implements Serializable {
 
 	// =========================================================================================================================
 
+	public Cube(Cube c) {
+		this(c.x, c.y, c.z, c.rotaX, c.rotaY, c.rotaZ, c.sizeX, c.sizeY, c.sizeZ, c.getItemID());
+
+		this.onGrid = c.onGrid;
+
+		this.shiftX = c.shiftX;
+		this.shiftY = c.shiftY;
+		this.shiftZ = c.shiftZ;
+
+		this.rotation = c.rotation;
+		this.orientation = c.orientation;
+
+		this.minedAlready = c.minedAlready;
+
+		this.multibloc = c.multibloc;
+		this.unit = c.unit == null ? null : (c.unit instanceof UnitClient ? c.unit : new UnitClient(c.unit));
+		this.build = c.build;
+		this.resource = c.resource;
+
+		this.multiblocX = c.multiblocX;
+		this.multiblocY = c.multiblocY;
+		this.multiblocZ = c.multiblocZ;
+	}
+
 	public Cube(double x, double y, double z, double rotaX, double rotaY, double rotaZ, double sizeX, double sizeY,
 			double sizeZ, int itemID) {
 		this.itemID = itemID;
@@ -88,8 +113,8 @@ public class Cube implements Serializable {
 		onGrid = true;
 	}
 
-	public Cube(Coord cube, int itemID) {
-		this(cube.x, cube.y, cube.z, itemID);
+	public Cube(Coord coord, int itemID) {
+		this(coord.x, coord.y, coord.z, itemID);
 	}
 
 	public Cube(int itemID) {
@@ -109,8 +134,8 @@ public class Cube implements Serializable {
 		return new Coord(this);
 	}
 
-	public void setCoords(Coord tuple) {
-		setCoords(tuple.x, tuple.y, tuple.z);
+	public void setCoords(Coord coord) {
+		setCoords(coord.x, coord.y, coord.z);
 	}
 
 	public void setCoords(int x, int y, int z) {
@@ -207,6 +232,11 @@ public class Cube implements Serializable {
 	}
 
 	// =========================================================================================================================
+
+	@Override
+	public Cube clone() {
+		return new Cube(this);
+	}
 
 	@Override
 	public boolean equals(Object obj) {

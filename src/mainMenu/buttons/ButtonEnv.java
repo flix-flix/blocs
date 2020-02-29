@@ -145,7 +145,7 @@ public class ButtonEnv extends PanEnvironment {
 
 	private static Env generateEnvPlay(MainMenu main) {
 		MapClient map = new MapClient();
-		Gamer player1 = new Gamer(1);
+		Gamer player1 = null;
 
 		int ground = 2;
 

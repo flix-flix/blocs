@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 import javax.swing.JPanel;
 
 import data.map.Map;
+import data.map.enumerations.Orientation;
 import graphicEngine.calcul.Camera;
 
 public class PanEnvironment extends JPanel {
@@ -84,7 +85,7 @@ public class PanEnvironment extends JPanel {
 			writeLeft(String.format("Camera: X = %.1f  Y = %.1f  Z = %.1f", camera.vue.x, camera.vue.y, camera.vue.z));
 			writeLeft("Chunk: " + "X = " + Map.toChunkCoord(camera.vue.x) + " Z = " + Map.toChunkCoord(camera.vue.z));
 			writeLeft("View: X = " + camera.getVx() + " Y = " + camera.getVy());
-			writeLeft("Orientation: " + env.getCameraOrientation().toString());
+			writeLeft("Orientation: " + Orientation.getOrientation(env.getCamera().getVx()).toString());
 
 			left++;
 

@@ -12,7 +12,7 @@ public class Gamer implements Serializable {
 	public static final Gamer nullGamer = new Gamer(-1, "_null");
 
 	// =============== ? ===============
-	int nb;
+	int number;
 	String name;
 
 	// =============== Data ===============
@@ -29,7 +29,7 @@ public class Gamer implements Serializable {
 	}
 
 	public Gamer(int nb, String name) {
-		this.nb = nb;
+		this.number = nb;
 		this.name = name;
 	}
 
@@ -39,8 +39,8 @@ public class Gamer implements Serializable {
 		return name;
 	}
 
-	public int getNb() {
-		return nb;
+	public int getNumber() {
+		return number;
 	}
 
 	// =========================================================================================================================
@@ -74,6 +74,6 @@ public class Gamer implements Serializable {
 	// =========================================================================================================================
 
 	public boolean equals(Gamer gamer) {
-		return nb == gamer.nb;
+		return number == gamer.number;
 	}
 }

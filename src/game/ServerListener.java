@@ -1,33 +1,29 @@
 package game;
 
-import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.SocketException;
 import java.net.UnknownHostException;
 
-import data.id.ItemTableClient;
+import environment.Client;
 import server.ServerDescription;
 
-public class Client implements Runnable {
+public class ServerListener implements Runnable {
 
-	public static final int port = 1212;
+	private Client client;
 
 	private boolean run = true;
 
-	Socket server;
-	ObjectInputStream in;
-	public ObjectOutputStream out;
-
-	Game game;
+	private Socket server;
+	private ObjectInputStream in;
+	private ObjectOutputStream out;
 
 	// =========================================================================================================================
 
-	public Client(Game game, ServerDescription description) throws IOException {
-		this.game = game;
+	public ServerListener(Client client, ServerDescription description) throws IOException {
+		this.client = client;
 
 		InetAddress inetAdr;
 		try {
@@ -47,7 +43,7 @@ public class Client implements Runnable {
 		// ====================
 
 		Thread t = new Thread(this);
-		t.setName("Client");
+		t.setName("Server Listener");
 		t.start();
 	}
 
@@ -57,16 +53,11 @@ public class Client implements Runnable {
 	public void run() {
 		while (run) {
 			try {
-				game.receive(in.readObject());
+				receive(in.readObject());
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
-				if (e instanceof SocketException || e instanceof EOFException) {
-					if (run)
-						game.connexionLost(ItemTableClient.getText("game.error.connexion_lost"));
-					break;
-				}
-				e.printStackTrace();
+				client.exception(e);
 			}
 		}
 	}
@@ -81,5 +72,26 @@ public class Client implements Runnable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	// =========================================================================================================================
+
+	public void send(Object obj) {
+		try {
+			out.writeObject(obj);
+			out.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void receive(Object obj) {
+		client.receive(obj);
+	}
+
+	// =========================================================================================================================
+
+	public boolean isRunning() {
+		return run;
 	}
 }

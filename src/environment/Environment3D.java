@@ -1,11 +1,12 @@
 package environment;
 
-import data.map.enumerations.Orientation;
 import environment.extendsData.MapClient;
 import graphicEngine.calcul.Camera;
 import graphicEngine.calcul.Engine;
+import server.send.SendAction;
+import utils.Utils;
 
-public class Environment3D {
+public class Environment3D implements Client {
 
 	protected PanEnvironment panel;
 
@@ -77,36 +78,69 @@ public class Environment3D {
 		run = false;
 	}
 
-	public void setPaused(boolean paused) {
-		this.paused = paused;
+	// =========================================================================================================================
+	// Client
+
+	@Override
+	public void send(Object obj) {
+		receive(obj);
 	}
 
-	public boolean isPaused() {
-		return paused;
+	@Override
+	public void receive(Object obj) {
+		if (obj instanceof SendAction)
+			receiveAction((SendAction) obj);
+		else
+			Utils.debug("[Receive] Unknown object (" + (obj == null ? "null" : obj.getClass()) + ")");
+	}
+
+	public void receiveAction(SendAction send) {
+		System.out.println("[Client Receive] " + send.action + " done: " + send.done);
+
+		switch (send.action) {
+		case ADD:
+			map.add(send.cube);
+			break;
+		case REMOVE:
+			map.remove(send.coord);
+			break;
+
+		case UNIT_GOTO:
+			map.getUnit(send.id1).setPath(send.path);
+			break;
+		case UNIT_ARRIVE:
+			map.getUnit(send.id1).arrive(map);
+			break;
+
+		case UNIT_BUILD:
+			map.getUnit(send.id1).building(map, map.getBuilding(send.id2));
+			break;
+
+		case UNIT_HARVEST:
+			if (send.done)
+				map.getUnit(send.id1)._doHarvest(map);
+			else
+				map.getUnit(send.id1).harvest(map, send.coord);
+			break;
+
+		case UNIT_STORE:
+			if (send.done)
+				map.getUnit(send.id1)._doStore(map, map.getBuilding(send.id2));
+			else
+				map.getUnit(send.id1).store(map, map.getBuilding(send.id2));
+			break;
+		default:
+			Utils.debug("[Client] missing receiveSend(): " + send.action);
+			break;
+		}
 	}
 
 	// =========================================================================================================================
+	// Engine setters
 
 	public void setEngineBackground(int x) {
 		engine.setBackground(x);
 	}
-
-	// =========================================================================================================================
-
-	public Orientation getCameraOrientation() {
-		Orientation orientation = null;
-		if (camera.getVx() >= 45 && camera.getVx() < 135)
-			orientation = Orientation.EAST;
-		else if (camera.getVx() >= 315 || camera.getVx() < 45)
-			orientation = Orientation.NORTH;
-		else if (camera.getVx() < 225)
-			orientation = Orientation.SOUTH;
-		else
-			orientation = Orientation.WEST;
-		return orientation;
-	}
-
-	// =========================================================================================================================
 
 	/** Set target location (e.g. mouse location or cross-indicator) */
 	public void setTarget(int x, int y) {
@@ -123,7 +157,7 @@ public class Environment3D {
 
 	// =========================================================================================================================
 
-	public void targetUpdate() {
+	public void updateTarget() {
 		Target target = new Target(engine);
 
 		boolean sameTarget = target.equals(this.target, isNeededQuadriPrecision());
@@ -179,6 +213,7 @@ public class Environment3D {
 	}
 
 	// =========================================================================================================================
+	// Getters/Setters
 
 	public PanEnvironment getPanel() {
 		return panel;
@@ -196,15 +231,23 @@ public class Environment3D {
 		return map;
 	}
 
+	public void setPaused(boolean paused) {
+		this.paused = paused;
+	}
+
+	public boolean isPaused() {
+		return paused;
+	}
+
 	// =========================================================================================================================
 	// Repaint
 
-	private void generatesNewImage() {
+	private void generateNewImage() {
 		if (panel.envWidth > 0 && panel.envHeight > 0)
 			panel.setImage(engine.getImage(panel.envWidth, panel.envHeight));
 
 		updateTimeDev();
-		targetUpdate();
+		updateTarget();
 
 		repaintEnvironment();
 	}
@@ -244,7 +287,8 @@ public class Environment3D {
 
 					waitTill = System.currentTimeMillis() + 1000 / FPSmax;
 
-					Thread thread = new Thread(new GeneratesImage());
+					Thread thread = new Thread(new ImageGenerator());
+					thread.setName("Image generator");
 					thread.start();
 
 					fps++;
@@ -254,9 +298,9 @@ public class Environment3D {
 	}
 
 	/** Generates a new image */
-	class GeneratesImage implements Runnable {
+	class ImageGenerator implements Runnable {
 		public void run() {
-			generatesNewImage();
+			generateNewImage();
 			processing = false;
 		}
 	}

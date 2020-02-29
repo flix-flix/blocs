@@ -151,23 +151,15 @@ public class MapClient extends Map implements Modelisable {
 		update(cube.coords());
 	}
 
-	public void setTargetable(CubeClient cube, boolean b) {
-		cube.setTargetable(b);
-	}
-
 	// =========================================================================================================================
 	// Allow coords for status modifications
 
-	public void setHighlight(Coord tuple, boolean b) {
-		setHighlight(gridGet(tuple), b);
+	public void setHighlight(Coord coord, boolean b) {
+		setHighlight(gridGet(coord), b);
 	}
 
-	public void setPreview(Coord tuple, boolean b) {
-		setPreview(gridGet(tuple), b);
-	}
-
-	public void setTargetable(Coord tuple, boolean b) {
-		setTargetable(gridGet(tuple), b);
+	public void setPreview(Coord coord, boolean b) {
+		setPreview(gridGet(coord), b);
 	}
 
 	// =========================================================================================================================

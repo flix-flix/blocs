@@ -3,6 +3,8 @@ package data.map.enumerations;
 public enum Orientation {
 	NORTH(Face.NORTH), EAST(Face.EAST), SOUTH(Face.SOUTH), WEST(Face.WEST);
 
+	// =========================================================================================================================
+
 	public Face face;
 
 	Orientation(Face f) {
@@ -45,5 +47,20 @@ public enum Orientation {
 	 */
 	public boolean isSameAxe(Orientation ori) {
 		return ori == this || ori == opposite();
+	}
+
+	// =========================================================================================================================
+
+	/**
+	 * Given the degree orientation [0-360] returns the corresponding Orientation
+	 */
+	public static Orientation getOrientation(double d) {
+		if (d >= 315 || d < 45)
+			return Orientation.NORTH;
+		else if (d >= 45 && d < 135)
+			return Orientation.EAST;
+		else if (d < 225)
+			return Orientation.SOUTH;
+		return Orientation.WEST;
 	}
 }

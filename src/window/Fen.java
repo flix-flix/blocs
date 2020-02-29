@@ -70,6 +70,7 @@ public class Fen extends JFrame {
 
 			@Override
 			public void mouseExited(MouseEvent e) {
+				display.getKeyBoard().mouseExited(e);
 			}
 
 			@Override

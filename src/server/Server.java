@@ -14,7 +14,6 @@ import server.game.Player;
 import server.game.messages.CommandExecutor;
 import server.game.messages.Message;
 import server.model.ServerAbstract;
-import server.send.Action;
 import server.send.SendAction;
 import utils.Utils;
 
@@ -60,7 +59,7 @@ public class Server extends ServerAbstract {
 	// =========================================================================================================================
 
 	public void sendToAllSeeing(Object obj) {
-
+		sendToAll(obj);
 	}
 
 	// =========================================================================================================================
@@ -72,34 +71,42 @@ public class Server extends ServerAbstract {
 		else if (obj instanceof Message)
 			receiveMessage((Message) obj, id);
 		else if (obj instanceof SendAction)
-			receiveSend((SendAction) obj, id);
+			receiveAction((SendAction) obj, id);
 		else
 			Utils.debug("[Server RECEIVE] Unknown object");
 	}
 
 	// =========================================================================================================================
 
-	public void receiveSend(SendAction send, int id) {
+	public void receiveAction(SendAction send, int id) {
 		System.out.println("[Server RECEIVE] " + send.action);
 		switch (send.action) {
+		case ADD:
+			if (send.cube != null)
+				map.add(send.cube);
+			break;
+		case REMOVE:
+			map.remove(send.coord);
+			break;
+
 		case UNIT_GOTO:
-			map.getUnit(send.id1).goToCube(map, send.coord);
+			map.getUnit(send.id1).setPath(send.path);
 			break;
 		case UNIT_BUILD:
 			map.getUnit(send.id1).building(map, map.getBuilding(send.id2));
+			sendToAllSeeing(send);
 			break;
 		case UNIT_HARVEST:
 			map.getUnit(send.id1).harvest(map, send.coord);
+			sendToAllSeeing(send);
 			break;
 		case UNIT_STORE:
 			map.getUnit(send.id1).store(map, map.getBuilding(send.id2));
+			sendToAllSeeing(send);
 			break;
 		default:
 			break;
 		}
-
-		if (send.action != Action.UNIT_GOTO)
-			sendToAll(send);
 	}
 
 	// =========================================================================================================================
@@ -120,13 +127,11 @@ public class Server extends ServerAbstract {
 	// =========================================================================================================================
 
 	public void addCube(Cube c) {
-		System.out.println("[SERVER] Add : " + c.toString());
-		sendToAll(SendAction.add(c));
+		if (c != null)
+			sendToAll(SendAction.add(c));
 	}
 
 	public void removeCube(int x, int y, int z) {
-		System.out.println("[SERVER] Remove : " + new Coord(x, y, z).toString());
-		new Coord(x, y, z);
 		sendToAll(SendAction.remove(new Coord(x, y, z)));
 	}
 

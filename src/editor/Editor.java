@@ -14,6 +14,7 @@ import data.id.ItemTable;
 import data.id.ItemTableClient;
 import data.map.Cube;
 import data.map.enumerations.Face;
+import data.map.enumerations.Orientation;
 import data.map.resources.ResourceType;
 import editor.history.History;
 import editor.history.HistoryList;
@@ -934,7 +935,7 @@ public class Editor extends Environment3D implements Displayable {
 			return Face.DOWN;
 		if (camera.getVy() < -45)
 			return Face.UP;
-		return getCameraOrientation().face;
+		return Orientation.getOrientation(camera.getVx()).face;
 	}
 
 	// =========================================================================================================================

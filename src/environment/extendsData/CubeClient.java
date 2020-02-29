@@ -1,4 +1,3 @@
-
 package environment.extendsData;
 
 import java.util.ArrayList;
@@ -82,36 +81,12 @@ public class CubeClient extends Cube implements Modelisable {
 
 	// =========================================================================================================================
 
-	public CubeClient(double x, double y, double z, double rotaX, double rotaY, double rotaZ, double sizeX,
-			double sizeY, double sizeZ, int itemID) {
-		super(x, y, z, rotaX, rotaY, rotaZ, sizeX, sizeY, sizeZ, itemID);
+	public CubeClient(Cube c) {
+		super(c);
 
 		centerDecal = new Point3D(x, y, z);
-	}
 
-	public CubeClient(Cube c) {
-		this(c.x, c.y, c.z, c.rotaX, c.rotaY, c.rotaZ, c.sizeX, c.sizeY, c.sizeZ, c.getItemID());
-
-		this.onGrid = c.onGrid;
-
-		this.shiftX = c.shiftX;
-		this.shiftY = c.shiftY;
-		this.shiftZ = c.shiftZ;
-
-		this.rotation = c.rotation;
-		this.orientation = c.orientation;
-
-		this.minedAlready = c.minedAlready;
 		updateMiningState();
-
-		this.multibloc = c.multibloc;
-		this.unit = c.unit == null ? null : (c.unit instanceof UnitClient ? c.unit : new UnitClient(c.unit));
-		this.build = c.build;
-		this.resource = c.resource;
-
-		this.multiblocX = c.multiblocX;
-		this.multiblocY = c.multiblocY;
-		this.multiblocZ = c.multiblocZ;
 	}
 
 	// =========================================================================================================================

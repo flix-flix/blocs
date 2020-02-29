@@ -37,18 +37,19 @@ public class KeyboardGame extends KeyboardEnvironment3D {
 	}
 
 	@Override
-	public boolean isPreview() {
+	public boolean isAdding() {
 		return game.getAction() == UserAction.CREA_ADD;
 	}
 
 	@Override
-	public boolean isForceAdding() {
-		return game.gameMode == GameMode.CREATIVE;
+	public boolean wasPreviewed() {
+		return game.gameMode == GameMode.CLASSIC;
 	}
 
 	@Override
 	public void cacheTarget() {
 		targetedCube = game.getTarget().cube;
+		targetedCoord = targetedCube == null ? null : targetedCube.coords();
 		targetedFace = game.getTarget().face;
 	}
 
@@ -61,13 +62,12 @@ public class KeyboardGame extends KeyboardEnvironment3D {
 
 	@Override
 	public Cube getCubeToAdd() {
-		return game.getNextCube();
+		return game.cloneCubeToAdd();
 	}
 
 	@Override
 	public void applyAction() {
-		if (game.selectedUnit != null)
-			game.unitDoAction();
+		game.sendUnitAction();
 	}
 
 	@Override
@@ -105,6 +105,11 @@ public class KeyboardGame extends KeyboardEnvironment3D {
 			rotateCamera(e.getX(), e.getY());
 			getEnvironment().setTargetCenter();
 		}
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		getEnvironment().setTargetNull();
 	}
 
 	public void setTargetOnMouse() {

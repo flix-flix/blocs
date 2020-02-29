@@ -73,7 +73,7 @@ public class ItemTableClient extends ItemTable {
 	}
 
 	public static int getGamerColor(Gamer gamer) {
-		switch (gamer.getNb()) {
+		switch (gamer.getNumber()) {
 		case 1:
 			return 0x0000ff;
 		case 2:

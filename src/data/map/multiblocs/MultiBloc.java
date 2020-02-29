@@ -90,7 +90,10 @@ public class MultiBloc implements Serializable {
 
 	public MultiBloc clone() {
 		MultiBloc m = new MultiBloc(itemID, x, y, z);
+		nextID--;
+		m.id = id;
 		m.list.addAll(list);
+		m.valid = valid;
 		return m;
 	}
 

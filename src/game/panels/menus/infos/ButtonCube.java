@@ -41,6 +41,6 @@ public class ButtonCube extends ButtonBlocks {
 
 	@Override
 	public void eventClick() {
-		game.setNextCube(cube);
+		game.setCubeToAdd(cube);
 	}
 }

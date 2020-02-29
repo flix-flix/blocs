@@ -17,8 +17,10 @@ public class WorldGeneration {
 	public static Map generateMap() {
 		Map map = new Map();
 
-		Gamer felix = new Gamer(1, "Félix");
-		Gamer ia = new Gamer(2, "IA");
+		Gamer felix, ia;
+
+		map.addGamer(felix = new Gamer(1, "Félix"));
+		map.addGamer(ia = new Gamer(2, "IA"));
 
 		int ground = 10;
 		int size = 20;

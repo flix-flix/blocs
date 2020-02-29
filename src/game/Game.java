@@ -1,7 +1,10 @@
 package game;
 
 import java.awt.Cursor;
+import java.io.EOFException;
 import java.io.IOException;
+import java.net.SocketException;
+import java.util.LinkedList;
 
 import javax.swing.JPanel;
 
@@ -18,7 +21,6 @@ import data.map.resources.ResourceType;
 import data.map.units.Unit;
 import environment.Environment3D;
 import environment.Target;
-import environment.extendsData.CubeClient;
 import environment.extendsData.MapClient;
 import environment.textures.TexturePack;
 import game.panels.PanGame;
@@ -42,7 +44,7 @@ public class Game extends Environment3D implements Displayable {
 	// =============== Pan ===============
 	PanGame panel;
 
-	// ============= Cursor ===================
+	// =============== Cursor ===============
 	private Cursor cursorGoto, cursorBuild, cursorAttack;
 	private Cursor cursorDrop, cursorDropWood, cursorDropStone, cursorDropWater;
 	private Cursor cursorAxe, cursorPickaxe, cursorBucket;
@@ -50,13 +52,13 @@ public class Game extends Environment3D implements Displayable {
 	private boolean cursorVisible = true;
 
 	// =============== Server ===============
-	private Client client;
+	private ServerListener client;
 	/** Local server if not online play */
 	private Server server;
 	public Player player = new Player("Felix");
 
 	// =============== Data ===============
-	public Gamer gamer = new Gamer(1);
+	public Gamer gamer;
 	private UserAction userAction;
 	public CameraMode cameraMode = CameraMode.CLASSIC;
 	public GameMode gameMode = GameMode.CLASSIC;
@@ -66,7 +68,7 @@ public class Game extends Environment3D implements Displayable {
 	public Building selectedBuilding;
 	public Action unitAction;
 
-	// =============== ===============
+	// =============== ? ===============
 	public transient TexturePack texturePack;
 
 	public KeyboardGame keyboard;
@@ -76,14 +78,14 @@ public class Game extends Environment3D implements Displayable {
 	/** State of the window [GAME, PAUSE, DIALOG, ...] */
 	private StateHUD stateHUD = StateHUD.GAME;
 
-	// =============== Adding ===============
-	public String errorMsg = "UNKNOWN";
+	// =============== Error ===============
+	public String errorMsg = "UNKNOWN ERROR";
 
 	// =============== Adding ===============
-	/** Next cube to add (its coords aren't valid) */
-	private Cube nextCube;
+	/** Next cube(s) to add (its coords aren't valid) */
+	private Cube cubeToAdd;
 	/** Coord of the preview cube */
-	public Coord previousPreview;
+	public Coord preview;
 
 	// =============== Dialog ===============
 	public MessageManager messages;
@@ -97,7 +99,7 @@ public class Game extends Environment3D implements Displayable {
 
 	public Game(Fen fen, ServerDescription description) throws IOException {
 		this.fen = fen;
-		client = new Client(this, description);
+		client = new ServerListener(this, description);
 
 		// ======================================
 
@@ -137,15 +139,6 @@ public class Game extends Environment3D implements Displayable {
 		return game;
 	}
 
-	public void connexionLost(String errorMsg) {
-		setStateHUD(StateHUD.ERROR);
-		this.errorMsg = errorMsg;
-		stop();
-
-		panel.error();
-		fen.updateCursor();
-	}
-
 	// =========================================================================================================================
 
 	public void start() {
@@ -176,6 +169,7 @@ public class Game extends Environment3D implements Displayable {
 
 	public void setMap(MapClient map) {
 		this.map = map;
+		this.gamer = map.getGamer(1);
 
 		clock.add(map);
 
@@ -216,7 +210,7 @@ public class Game extends Environment3D implements Displayable {
 			break;
 		}
 
-		targetUpdate();
+		updateTarget();
 	}
 
 	public void setUserAction(UserAction action) {
@@ -353,17 +347,32 @@ public class Game extends Environment3D implements Displayable {
 		return userAction;
 	}
 
-	public void setNextCube(Cube cube) {
-		nextCube = cube;
+	public void setCubeToAdd(Cube cube) {
+		cubeToAdd = cube;
 	}
 
-	public Cube getNextCube() {
-		if (nextCube != null && nextCube.multibloc != null) {
-			if (nextCube.build != null)
-				return ItemTable.createBuilding(nextCube.build).getCube();
-			return nextCube.multibloc.clone().getCube();
+	public Cube cloneCubeToAdd() {
+		if (cubeToAdd == null)
+			return null;
+
+		if (cubeToAdd.unit != null) {
+			Unit u = cubeToAdd.unit;
+			Unit unit = new Unit(u.getItemID(), gamer, u.coord.x, u.coord.y, u.coord.z);
+			Cube cube = cubeToAdd.clone();
+			cube.unit = unit;
+			return cube;
 		}
-		return nextCube;
+
+		if (cubeToAdd.build != null) {
+			Building build = ItemTable.create(cubeToAdd.build.getItemID()).build;
+			build.setGamer(gamer);
+			return build.getCube();
+		}
+
+		if (cubeToAdd.multibloc != null)
+			return cubeToAdd.multibloc.clone().getCube();
+
+		return cubeToAdd.clone();
 	}
 
 	// =========================================================================================================================
@@ -385,7 +394,43 @@ public class Game extends Environment3D implements Displayable {
 		select(null);
 	}
 
-	public void unitDoAction() {
+	// =========================================================================================================================
+	// Client
+
+	@Override
+	public void exception(Exception e) {
+		if (e instanceof SocketException || e instanceof EOFException) {
+			if (client.isRunning())
+				connexionLost();
+		} else
+			e.printStackTrace();
+	}
+
+	public void connexionLost() {
+		setStateHUD(StateHUD.ERROR);
+		errorMsg = ItemTableClient.getText("game.error.connexion_lost");
+		stop();
+
+		panel.error();
+		fen.updateCursor();
+	}
+
+	@Override
+	public void receive(Object obj) {
+		if (obj instanceof Map)
+			setMap(new MapClient((Map) obj));
+		else if (obj instanceof Message)
+			messages.receive((Message) obj);
+		else
+			super.receive(obj);
+	}
+
+	@Override
+	public void send(Object obj) {
+		client.send(obj);
+	}
+
+	public void sendUnitAction() {
 		if (selectedUnit == null)
 			return;
 		if (unitAction == null) {
@@ -400,7 +445,8 @@ public class Game extends Environment3D implements Displayable {
 
 		switch (unitAction) {
 		case UNIT_GOTO:
-			send(SendAction.goTo(selectedUnit, cubeAir));
+			LinkedList<Coord> path = selectedUnit.generatePath(map, cubeAir);
+			send(SendAction.goTo(selectedUnit, path));
 			break;
 		case UNIT_BUILD:
 			send(SendAction.build(selectedUnit, map.getBuilding(cube)));
@@ -415,73 +461,6 @@ public class Game extends Environment3D implements Displayable {
 			Utils.debug("[Client] Missing unitDoAction(): " + unitAction);
 			break;
 		}
-	}
-
-	// =========================================================================================================================
-	// Receive
-
-	public void receiveSend(SendAction send) {
-		System.out.println("[Client RECEIVE] " + send.action + " done: " + send.done);
-
-		switch (send.action) {
-		case ADD:
-			// map.add(send.cube);
-			break;
-		case REMOVE:
-			map.remove(send.coord);
-			break;
-
-		case UNIT_GOTO:
-			map.getUnit(send.id1).setPath(send.path);
-			break;
-		case UNIT_ARRIVE:
-			map.getUnit(send.id1).arrive(map);
-			break;
-
-		case UNIT_BUILD:
-			map.getUnit(send.id1).building(map, map.getBuilding(send.id2));
-			break;
-
-		case UNIT_HARVEST:
-			if (send.done)
-				map.getUnit(send.id1)._doHarvest(map);
-			else
-				map.getUnit(send.id1).harvest(map, send.coord);
-			break;
-
-		case UNIT_STORE:
-			if (send.done)
-				map.getUnit(send.id1)._doStore(map, map.getBuilding(send.id2));
-			else
-				map.getUnit(send.id1).store(map, map.getBuilding(send.id2));
-			break;
-		default:
-			Utils.debug("[Client] missing receiveSend(): " + send.action);
-			break;
-		}
-	}
-
-	// =========================================================================================================================
-	// Send
-
-	public void send(Object obj) {
-		try {
-			client.out.writeObject(obj);
-			client.out.flush();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public void receive(Object obj) {
-		if (obj instanceof Map)
-			setMap(new MapClient((Map) obj));
-		else if (obj instanceof Message)
-			messages.receive((Message) obj);
-		else if (obj instanceof SendAction)
-			receiveSend((SendAction) obj);
-		else
-			Utils.debug("[Receive] Unknown object");
 	}
 
 	// =========================================================================================================================
@@ -504,8 +483,8 @@ public class Game extends Environment3D implements Displayable {
 	// Environment3D
 
 	@Override
-	public void targetUpdate() {
-		super.targetUpdate();
+	public void updateTarget() {
+		super.updateTarget();
 		fen.updateCursor();
 	}
 
@@ -515,41 +494,26 @@ public class Game extends Environment3D implements Displayable {
 			if (target.cube != null)
 				if (userAction == UserAction.CREA_ADD) {
 
-					// Test if there is a cube(s) to add
-					Cube cubeToAdd = getNextCube();
+					// Get cube(s) to add
+					Cube cubeToAdd = cloneCubeToAdd();
 					if (cubeToAdd == null)
 						return;
 
-					previousPreview = new Coord(target.cube).face(target.face);
+					preview = new Coord(target.cube).face(target.face);
 
-					// TODO [Fix] Add unit
-					// Add unit
-					if (cubeToAdd.unit != null) {
-						// Calcul coords of the new cube(s)
-						cubeToAdd.unit.coord = previousPreview.clone();
+					// ===== Set coords of the cube(s) =====
+					cubeToAdd.setCoords(preview);
+					if (cubeToAdd.unit != null)
+						cubeToAdd.unit.coord = preview;
 
-						map.addUnit(cubeToAdd.unit);
+					// Test if there is place for the cube(s) at the coords
+					if (!map.add(cubeToAdd))
+						return;
 
-						CubeClient unit = map.getUnitCube(cubeToAdd.unit.getId());
-
-						unit.setPreview(true);
-						unit.setTargetable(false);
-						unit.setHighlight(true);
-					}
-					// Add cube
-					else {
-						// Calcul coords of the new cube(s)
-						cubeToAdd.setCoords(previousPreview);
-
-						// Test if there is place for the cube(s) at the coords
-						if (!map.add(cubeToAdd))
-							return;
-
-						// Mark cube(s) as "preview display"
-						map.setPreview(previousPreview, true);
-						map.setTargetable(previousPreview, false);
-						map.setHighlight(previousPreview, true);
-					}
+					// ===== Mark cube(s) as "preview display" =====
+					map.setPreview(preview, true);
+					map.gridGet(preview).setTargetable(false);
+					map.setHighlight(preview, true);
 				}
 
 				else if (userAction == UserAction.CREA_DESTROY) {
@@ -604,8 +568,8 @@ public class Game extends Environment3D implements Displayable {
 		map.setHighlight(target.cube, false);
 
 		// Removes preview cubes
-		if (map.gridContains(previousPreview) && map.gridGet(previousPreview).isPreview())
-			map.remove(previousPreview);
+		if (map.gridContains(preview) && map.gridGet(preview).isPreview())
+			map.remove(preview);
 
 		unitAction = null;
 	}

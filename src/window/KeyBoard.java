@@ -38,4 +38,9 @@ public interface KeyBoard {
 
 	public default void mouseDraged(MouseEvent e) {
 	}
+
+	// =========================================================================================================================
+
+	public default void mouseExited(MouseEvent e) {
+	}
 }

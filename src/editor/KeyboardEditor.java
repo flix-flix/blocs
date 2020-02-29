@@ -69,13 +69,13 @@ public class KeyboardEditor extends KeyboardEnvironment3D {
 	}
 
 	@Override
-	public boolean isForceAdding() {
+	public boolean wasPreviewed() {
 		return false;
 	}
 
 	@Override
-	public boolean isPreview() {
-		return false;
+	public boolean isAdding() {
+		return true;
 	}
 
 	@Override

@@ -39,7 +39,8 @@ public class MapServer extends Map {
 	@Override
 	protected Cube gridAdd(Cube cube) {
 		Cube c = super.gridAdd(cube);
-		server.addCube(c);
+		if (cube.multibloc == null)
+			server.addCube(c);
 		return c;
 	}
 
@@ -91,6 +92,14 @@ public class MapServer extends Map {
 
 	@Override
 	protected boolean addMulti(MultiBloc multi, boolean full) {
-		return super.addMulti(multi, full);
+		boolean added = super.addMulti(multi, full);
+		if (added)
+			server.addCube(multi.getCube());
+		return added;
+	}
+
+	@Override
+	public boolean addBuilding(Building build) {
+		return super.addBuilding(build);
 	}
 }

@@ -15,9 +15,10 @@ import data.map.resources.ResourceType;
 public class Building implements Serializable {
 	private static final long serialVersionUID = -1662130293196731466L;
 
+	private static final int NO_ID = -1;
 	private static int nextID = 0;
 
-	private int id;
+	private int id = NO_ID;
 	public Coord coord;
 	private Gamer gamer;
 	private int itemID;
@@ -34,6 +35,7 @@ public class Building implements Serializable {
 
 	public Building(Gamer gamer, int itemID, int x, int y, int z, boolean isBuild) {
 		id = nextID++;
+
 		coord = new Coord(x, y, z);
 		this.gamer = gamer;
 		this.itemID = itemID;
@@ -130,9 +132,16 @@ public class Building implements Serializable {
 	}
 
 	// =========================================================================================================================
+	// Setters
+
+	public void setGamer(Gamer gamer) {
+		this.gamer = gamer;
+	}
+
+	// =========================================================================================================================
 
 	@Override
 	public String toString() {
-		return "Player: " + (gamer == null ? "[null]" : gamer.getName());
+		return "Player: " + (gamer == null ? "[null]" : gamer.getName()) + " ID: " + id;
 	}
 }
