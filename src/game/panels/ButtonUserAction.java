@@ -21,14 +21,17 @@ public class ButtonUserAction extends ButtonBlocks {
 		this.game = game;
 		this.action = action;
 
+		setSelectable(true, false);
+		setPadding(5);
+
+		if (action == UserAction.MOUSE)
+			setSelected(true);
+
 		if (action == UserAction.CREA_ADD)
 			setModel(new CubeClient(new Cube(ItemID.GRASS)));
 		else
 			setImage(Utils.getImage(
 					ItemTableClient.getTexturePack().getFolder() + "menu/game/" + action.name().toLowerCase()));
-
-		setSelectable(true, false);
-		setPadding(5);
 	}
 
 	// =========================================================================================================================

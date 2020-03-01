@@ -64,6 +64,8 @@ public class MapClient extends Map implements Modelisable {
 
 	@Override
 	protected CubeClient createCube(Cube c) {
+		if (c instanceof CubeClient)
+			return (CubeClient) c;
 		return new CubeClient(c);
 	}
 
@@ -160,6 +162,41 @@ public class MapClient extends Map implements Modelisable {
 
 	public void setPreview(Coord coord, boolean b) {
 		setPreview(gridGet(coord), b);
+	}
+
+	// =========================================================================================================================
+
+	public CubeClient addPreview(Cube cube) {
+		synchronized (lock) {
+			CubeClient created;
+
+			// ===== Delete data =====
+			if (cube.build != null)
+				cube.multibloc.setBuild(null);
+			cube.unit = null;
+
+			if (cube.multibloc != null) {
+				super.addMulti(cube.multibloc, true, false);
+				for (Cube c : cube.multibloc.list)
+					c.onGrid = false;
+				created = (CubeClient) cube.multibloc.getCube();
+			} else {
+				created = createCube(cube);
+				created.onGrid = false;
+				getChunkAtCoord(cube).addCube(created);
+			}
+
+			// ===== Mark as preview =====
+			created.setPreview(true);
+			created.setTargetable(false);
+			created.setHighlight(true);
+
+			return created;
+		}
+	}
+
+	public void removePreview() {
+
 	}
 
 	// =========================================================================================================================

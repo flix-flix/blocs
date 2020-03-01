@@ -10,7 +10,6 @@ import java.awt.event.MouseWheelEvent;
 import data.map.Coord;
 import data.map.Cube;
 import data.map.enumerations.Face;
-import environment.extendsData.CubeClient;
 import environment.extendsData.MapClient;
 import graphicEngine.calcul.Camera;
 import server.send.SendAction;
@@ -107,8 +106,9 @@ public abstract class KeyboardEnvironment3D implements KeyBoard {
 
 	public abstract boolean isDestroying();
 
-	/** true: The cube was in preview state */
-	public abstract boolean wasPreviewed();
+	public boolean isAddable() {
+		return true;
+	}
 
 	/**
 	 * Set {@link #targetedCube}, {@link #targetedCoord} and {@link #targetedFace}
@@ -138,26 +138,13 @@ public abstract class KeyboardEnvironment3D implements KeyBoard {
 			if (targetedCoord == null || targetedFace == null)
 				return;
 
+			if (!isAddable())
+				return;
+
 			// Cube adjacent to the pointed face (in the air)
 			Coord targetedAir = targetedCoord.face(targetedFace);
 
 			Cube cubeToAdd = getCubeToAdd();
-
-			if (cubeToAdd == null)
-				return;
-
-			// ===== Remove the preview cube =====
-			if (wasPreviewed()) {
-				CubeClient previewed = map.gridGet(targetedAir);
-				if (previewed == null || !previewed.isPreview())
-					return;
-
-				// Check if multibloc can be added at this position
-				if (previewed.multibloc != null && !previewed.multibloc.valid)
-					return;
-
-				map.remove(previewed);
-			}
 
 			// ===== Add the cube to the server =====
 			if (cubeToAdd.unit != null)
@@ -165,7 +152,6 @@ public abstract class KeyboardEnvironment3D implements KeyBoard {
 			cubeToAdd.setCoords(targetedAir);
 
 			env.send(SendAction.add(cubeToAdd));
-
 		}
 		// Do an action
 		else

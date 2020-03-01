@@ -3,7 +3,6 @@ package game.panels.menus.infos;
 import java.awt.Color;
 import java.awt.Font;
 
-import data.id.ItemID;
 import data.id.ItemTableClient;
 import data.map.Cube;
 import environment.extendsData.CubeClient;
@@ -27,9 +26,6 @@ public class ButtonCube extends ButtonBlocks {
 		setPadding(5);
 
 		setModel(new CubeClient(cube));
-
-		if (cube.getItemID() == ItemID.UNIT)
-			setWIP();
 
 		setFont(new Font("monospace", Font.PLAIN, 12));
 		setText(ItemTableClient.getName(cube));

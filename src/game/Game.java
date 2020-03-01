@@ -21,6 +21,7 @@ import data.map.resources.ResourceType;
 import data.map.units.Unit;
 import environment.Environment3D;
 import environment.Target;
+import environment.extendsData.CubeClient;
 import environment.extendsData.MapClient;
 import environment.textures.TexturePack;
 import game.panels.PanGame;
@@ -86,6 +87,7 @@ public class Game extends Environment3D implements Displayable {
 	private Cube cubeToAdd;
 	/** Coord of the preview cube */
 	public Coord preview;
+	public CubeClient previewed;
 
 	// =============== Dialog ===============
 	public MessageManager messages;
@@ -351,6 +353,7 @@ public class Game extends Environment3D implements Displayable {
 		cubeToAdd = cube;
 	}
 
+	// TODO [Optimise] Avoid clone of cubeToAdd on each target update
 	public Cube cloneCubeToAdd() {
 		if (cubeToAdd == null)
 			return null;
@@ -474,6 +477,10 @@ public class Game extends Environment3D implements Displayable {
 		return stateHUD;
 	}
 
+	public UserAction getUserAction() {
+		return userAction;
+	}
+
 	public void setStateHUD(StateHUD stateHUD) {
 		panel.panEnv.help.setVisible(map != null && stateHUD != StateHUD.DIALOG && cameraMode == CameraMode.CLASSIC);
 		this.stateHUD = stateHUD;
@@ -507,13 +514,7 @@ public class Game extends Environment3D implements Displayable {
 						cubeToAdd.unit.coord = preview;
 
 					// Test if there is place for the cube(s) at the coords
-					if (!map.add(cubeToAdd))
-						return;
-
-					// ===== Mark cube(s) as "preview display" =====
-					map.setPreview(preview, true);
-					map.gridGet(preview).setTargetable(false);
-					map.setHighlight(preview, true);
+					previewed = map.addPreview(cubeToAdd);
 				}
 
 				else if (userAction == UserAction.CREA_DESTROY) {
@@ -567,9 +568,9 @@ public class Game extends Environment3D implements Displayable {
 		// Removes highlight
 		map.setHighlight(target.cube, false);
 
-		// Removes preview cubes
-		if (map.gridContains(preview) && map.gridGet(preview).isPreview())
-			map.remove(preview);
+		// Removes preview cube(s)
+		if (previewed != null)
+			map.remove(previewed);
 
 		unitAction = null;
 	}

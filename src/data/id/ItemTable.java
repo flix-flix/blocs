@@ -70,7 +70,7 @@ public class ItemTable {
 		else if (itemID == ItemID.UNIT)
 			cube = new Cube(new Unit(ItemID.UNIT, Gamer.nullGamer, 0, 0, 0));
 		else if (itemID == ItemID.CASTLE)
-			cube = createBuilding(new Building(Gamer.nullGamer, ItemID.CASTLE, 0, 0, 0, true)).getCube();
+			cube = new Building(Gamer.nullGamer, ItemID.CASTLE, 0, 0, 0, true).getMulti().getCube();
 
 		return cube;
 	}
@@ -93,12 +93,6 @@ public class ItemTable {
 
 	// =========================================================================================================================
 	// Multibloc
-
-	public static MultiBloc createBuilding(Building build) {
-		MultiBloc multi = createMulti(build.getItemID());
-		multi.setBuild(build);
-		return multi;
-	}
 
 	public static MultiBloc createMulti(int itemID) {
 		if (!isMultiBloc(itemID)) {

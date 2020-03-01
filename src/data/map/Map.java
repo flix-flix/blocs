@@ -26,6 +26,8 @@ public class Map implements Tickable, Serializable {
 	protected HashMap<Integer, Cube> units = new HashMap<>();
 	protected HashMap<Integer, Cube> builds = new HashMap<>();
 
+	public Cube lock = new Cube(0);
+
 	// =========================================================================================================================
 
 	public Map() {
@@ -144,13 +146,15 @@ public class Map implements Tickable, Serializable {
 
 	/** Returns true if the bloc has been added */
 	public boolean add(Cube cube) {
-		if (cube.unit != null)
-			return addUnit(cube.unit);
-		if (cube.build != null)
-			return addBuilding(cube.build);
-		if (cube.multibloc != null)
-			return addMulti(cube.multibloc, true);
-		return addCube(cube) != null;
+		synchronized (lock) {
+			if (cube.unit != null)
+				return addUnit(cube.unit);
+			if (cube.build != null)
+				return addBuilding(cube.build);
+			if (cube.multibloc != null)
+				return addMulti(cube.multibloc, true);
+			return addCube(cube) != null;
+		}
 	}
 
 	public void remove(Cube cube) {
@@ -207,25 +211,49 @@ public class Map implements Tickable, Serializable {
 	 * @return true if the multibloc have been added
 	 */
 	protected boolean addMulti(MultiBloc multi, boolean full) {
-		// All blocs have been added
-		boolean all = true;
-		LinkedList<Cube> added = new LinkedList<>();
+		return addMulti(multi, full, true);
+	}
 
-		Cube c;
-		while ((c = multi.list.pollFirst()) != null)
-			if ((c = addCube(c)) != null)
-				added.add(c);
-			else
-				all = false;
+	/**
+	 * 
+	 * @param multi
+	 *            - multibloc to add
+	 * @param full
+	 *            - true : add blocs only if all can be added. false : add blocs
+	 *            where grid is empty.
+	 * @param onGrid
+	 *            - true: the cubes are added on the grid (false: added on floating
+	 *            cubes)
+	 * @return true if the multibloc have been added
+	 */
+	protected boolean addMulti(MultiBloc multi, boolean full, boolean onGrid) {
+		synchronized (lock) {
+			// All blocs have been added
+			boolean all = true;
+			LinkedList<Cube> added = new LinkedList<>();
 
-		multi.list = added;
+			Cube c;
+			while ((c = multi.list.pollFirst()) != null)
+				if (!c.onGrid || !gridContains(c.gridCoord)) {
+					if (onGrid)
+						added.add(addCube(c));
+					else {
+						Cube created = createCube(c);
+						getChunkAtCoord(c).addCube(created);
+						added.add(created);
+					}
+				} else
+					all = false;
 
-		if (full && !all)
-			addMultiError(multi);
-		else
+			multi.valid = all;
+			multi.list = added;
 			multis.put(multi.getId(), multi);
 
-		return all;
+			if (full && !all)
+				addMultiError(multi);
+
+			return all;
+		}
 	}
 
 	protected void addMultiError(MultiBloc multi) {
@@ -331,7 +359,7 @@ public class Map implements Tickable, Serializable {
 
 	public void removeUnit(Unit unit) {
 		if (units.containsKey(unit.getId()))
-			gridRemove(units.remove(unit.getId()).coords());
+			gridRemove(units.remove(unit.getId()).unit.coord);
 	}
 
 	public Unit getUnit(int id) {

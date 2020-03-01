@@ -85,6 +85,7 @@ public class Server extends ServerAbstract {
 			if (send.cube != null)
 				map.add(send.cube);
 			break;
+		// TODO [Fix] Remove off-grid cubes
 		case REMOVE:
 			map.remove(send.coord);
 			break;

@@ -41,7 +41,8 @@ public class Building implements Serializable {
 		this.itemID = itemID;
 		this.isBuild = isBuild;
 
-		multi = ItemTable.createBuilding(this);
+		multi = ItemTable.createMulti(itemID);
+		multi.setBuild(this);
 		multi.setCoords(x, y, z);
 
 		addStock(new Resource(ResourceType.WOOD, 0, 100));

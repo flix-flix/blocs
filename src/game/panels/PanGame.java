@@ -209,6 +209,9 @@ public class PanGame extends JPanel {
 
 		panEnv.help.setVisible(visible);
 		menu.setVisible(visible);
+
+		if (visible && game.getUserAction() == UserAction.CREA_ADD)
+			infos.showCubes();
 	}
 
 	// =========================================================================================================================

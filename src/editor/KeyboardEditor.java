@@ -69,11 +69,6 @@ public class KeyboardEditor extends KeyboardEnvironment3D {
 	}
 
 	@Override
-	public boolean wasPreviewed() {
-		return false;
-	}
-
-	@Override
 	public boolean isAdding() {
 		return true;
 	}

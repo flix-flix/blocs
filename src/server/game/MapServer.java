@@ -46,8 +46,21 @@ public class MapServer extends Map {
 
 	@Override
 	protected void gridRemove(int x, int y, int z) {
+		boolean update = true;
+
+		if (!gridContains(x, y, z))
+			return;
+
+		if (gridGet(x, y, z).multibloc != null) {
+			if (!gridGet(x, y, z).multibloc.valid)
+				update = false;
+			gridGet(x, y, z).multibloc.valid = false;
+		}
+
 		super.gridRemove(x, y, z);
-		server.removeCube(x, y, z);
+
+		if (update)
+			server.removeCube(x, y, z);
 	}
 
 	// =========================================================================================================================

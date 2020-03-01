@@ -42,8 +42,14 @@ public class KeyboardGame extends KeyboardEnvironment3D {
 	}
 
 	@Override
-	public boolean wasPreviewed() {
-		return game.gameMode == GameMode.CLASSIC;
+	public boolean isAddable() {
+		if (game.previewed == null)
+			return false;
+
+		if (game.previewed.multibloc != null && !game.previewed.multibloc.valid)
+			return false;
+
+		return true;
 	}
 
 	@Override
