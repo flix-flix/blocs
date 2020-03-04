@@ -7,48 +7,36 @@ import graphicEngine.calcul.Engine;
 import graphicEngine.calcul.Point3D;
 import graphicEngine.calcul.Quadri;
 
-public abstract class Drawable implements Comparable<Drawable> {
-
-	/** false : this model won't be drawn */
-	protected boolean visible = true;
-
-	/** Center of the Draw (used to calculate the distance to the camera) */
-	public Point3D center;
-	/** Used to sort the Draws that are at the same distance from the camera */
-	public int index = 0;
-
-	// =========================================================================================================================
+public interface Drawable extends Comparable<Drawable> {
 
 	/** Returns the list of quadri corresponding to this Draw */
-	public abstract ArrayList<Quadri> getQuadri(Engine engine);
+	public ArrayList<Quadri> getQuadri(Engine engine);
 
 	/** Returns the on-screen polygon representative of this draw */
-	public abstract Polygon getPoly(Engine engine);
+	public Polygon getPoly(Engine engine);
 
 	/** Returns true if at least one point appear on the screen */
-	public abstract boolean appearIn(Engine engine, int imgWidth, int imgHeight);
+	public boolean appearIn(Engine engine, int imgWidth, int imgHeight);
 
 	/** Returns true if the Draw can be targeted */
-	public abstract boolean isTargetable();
+	public boolean isTargetable();
 
 	// =========================================================================================================================
 
 	@Override
-	public int compareTo(Drawable d) {
-		if (center.distToOrigin() != d.center.distToOrigin())
-			return center.distToOrigin() > d.center.distToOrigin() ? 1 : -1;
-		else if (index != d.index)
-			return index - d.index;
+	public default int compareTo(Drawable d) {
+		if (getCenter().distToOrigin() != d.getCenter().distToOrigin())
+			return getCenter().distToOrigin() > d.getCenter().distToOrigin() ? 1 : -1;
+		else if (getIndex() != d.getIndex())
+			return getIndex() - d.getIndex();
 		return 0;
 	}
 
 	// =========================================================================================================================
 
-	public boolean isVisible() {
-		return visible;
-	}
+	/** Center of the Draw (used to calculate the distance to the camera) */
+	public Point3D getCenter();
 
-	public void setVisible(boolean visible) {
-		this.visible = visible;
-	}
+	/** Used to sort the Draws that are at the same distance from the camera */
+	public int getIndex();
 }

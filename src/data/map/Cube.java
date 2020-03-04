@@ -280,6 +280,12 @@ public class Cube implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Cube [coord=" + gridCoord + ", itemID=" + getItemID() + "]";
+		String name;
+		if (ItemTable.get(itemID) != null)
+			name = "tag=" + ItemTable.get(itemID).tag;
+		else
+			name = "itemID=" + getItemID();
+
+		return "Cube [coord=" + gridCoord + ", " + name + "]";
 	}
 }

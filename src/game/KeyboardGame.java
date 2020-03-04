@@ -9,6 +9,7 @@ import java.awt.event.MouseWheelEvent;
 import data.map.Cube;
 import environment.Environment3D;
 import environment.KeyboardEnvironment3D;
+import environment.extendsData.CubeClient;
 import server.game.GameMode;
 import window.Key;
 
@@ -62,7 +63,7 @@ public class KeyboardGame extends KeyboardEnvironment3D {
 	// =========================================================================================================================
 
 	@Override
-	public void selectCube(Cube cube) {
+	public void selectCube(CubeClient cube) {
 		game.select(cube);
 	}
 
@@ -133,6 +134,9 @@ public class KeyboardGame extends KeyboardEnvironment3D {
 
 	@Override
 	public void keyPressed(KeyEvent e) {
+		if (!started)
+			return;
+
 		if (game.getStateHUD() == StateHUD.PAUSE) {
 			if (Key.get(e.getKeyCode()) != null)
 				switch (Key.get(e.getKeyCode())) {

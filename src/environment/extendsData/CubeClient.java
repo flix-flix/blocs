@@ -74,7 +74,8 @@ public class CubeClient extends Cube implements Modelisable {
 	// =============== Model ===============
 	/**
 	 * false: the cube won't be displayed<br>
-	 * (Will be set to false only if the 6 adjacent blocs are opaque)
+	 * (Handled in MapClient : Will be set to false only if the 6 adjacent blocs are
+	 * opaque)
 	 */
 	private boolean visible = true;
 	private ArrayList<Drawable> draws = new ArrayList<>();
@@ -410,12 +411,10 @@ public class CubeClient extends Cube implements Modelisable {
 
 	// =========================================================================================================================
 
-	@Override
 	public boolean isVisible() {
 		return visible;
 	}
 
-	@Override
 	public void setVisible(boolean visible) {
 		this.visible = visible;
 	}

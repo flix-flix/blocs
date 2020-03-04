@@ -1,0 +1,22 @@
+colors: 
+    down: 
+        - [00000000]
+    east: 
+        - [00000000]
+    north: 
+        - [00000000]
+    south: 
+        - [00000000]
+    up: 
+        - [00000000]
+    west: 
+        - [00000000]
+id: 1000
+minimap: 
+    color: 888888
+name: INVISIBLE
+pixels: 
+    x: 1
+    y: 1
+    z: 1
+contour: false

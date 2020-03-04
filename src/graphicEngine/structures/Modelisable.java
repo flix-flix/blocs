@@ -11,9 +11,4 @@ public interface Modelisable {
 
 	public abstract void init(Camera camera, Matrix matrix);
 
-	// =========================================================================================================================
-
-	public abstract boolean isVisible();
-
-	public abstract void setVisible(boolean visible);
 }

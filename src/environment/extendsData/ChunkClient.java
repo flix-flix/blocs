@@ -15,8 +15,7 @@ public class ChunkClient extends Chunk implements Modelisable {
 
 	public Engine moteur;
 
-	// ========== Model ===========
-	public boolean visible = true;
+	// =============== Model ===============
 	private ArrayList<Drawable> draws = new ArrayList<>();
 
 	// =========================================================================================================================
@@ -67,18 +66,5 @@ public class ChunkClient extends Chunk implements Modelisable {
 
 		for (Cube cube : cubes)
 			((CubeClient) cube).init(camera, matrix);
-	}
-
-	// =========================================================================================================================
-
-	@Override
-	public boolean isVisible() {
-		return visible;
-	}
-
-	@Override
-	public void setVisible(boolean visible) {
-		this.visible = visible;
-
 	}
 }

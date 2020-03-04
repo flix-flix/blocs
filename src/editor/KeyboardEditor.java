@@ -8,6 +8,7 @@ import data.map.Cube;
 import data.map.enumerations.Face;
 import environment.Environment3D;
 import environment.KeyboardEnvironment3D;
+import environment.extendsData.CubeClient;
 import graphicEngine.calcul.Quadri;
 import utils.Utils;
 
@@ -82,7 +83,7 @@ public class KeyboardEditor extends KeyboardEnvironment3D {
 	// Override abstract actions
 
 	@Override
-	public void selectCube(Cube cube) {
+	public void selectCube(CubeClient cube) {
 	}
 
 	@Override

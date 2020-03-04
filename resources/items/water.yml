@@ -3,3 +3,4 @@ tag: WATER
 opaque: false
 resource:
     type: WATER
+floor: false

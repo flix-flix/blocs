@@ -84,11 +84,23 @@ public class ItemTable {
 		case ItemID.TEST_TRANSPARENT:
 		case ItemID.MAGIC_BLOC:
 		case ItemID.ERROR:
+		case ItemID.INVISIBLE:
 
 			return true;
 		default:
 			return false;
 		}
+	}
+
+	// =========================================================================================================================
+	// Data
+
+	public static boolean isOpaque(int itemID) {
+		return get(itemID).opaque;
+	}
+
+	public static boolean isFloor(int itemID) {
+		return get(itemID).floor;
 	}
 
 	// =========================================================================================================================
@@ -138,14 +150,14 @@ public class ItemTable {
 	}
 
 	// =========================================================================================================================
-	// Build
+	// Buildings
 
 	public static int getBuildingTime(int itemID) {
 		return get(itemID).buildingTime;
 	}
 
 	// =========================================================================================================================
-	// Resource
+	// Resources
 
 	public static boolean isResource(int itemID) {
 		return getResourceType(itemID) != null;

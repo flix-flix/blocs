@@ -14,10 +14,13 @@ import graphicEngine.calcul.Vector;
 
 public class DrawLayer {
 
-	ArrayList<Data> dataList = new ArrayList<>();
+	private ArrayList<Data> dataList = new ArrayList<>();
 
-	CubeClient cube;
-	Face face;
+	private CubeClient cube;
+	private Face face;
+
+	// Path
+	private ArrayList<Face> connectedPath;
 
 	// =========================================================================================================================
 
@@ -196,6 +199,24 @@ public class DrawLayer {
 
 	public void drawFace() {
 		drawString(face.name());
+	}
+
+	// =========================================================================================================================
+
+	public void drawPathEnd() {
+		for (int x = 3; x < 7; x++)
+			for (int y = 3; y < 7; y++)
+				fillSquare(x, y, 0xff0000ff, false, 10, -3);
+	}
+
+	public void drawPath() {
+	}
+
+	public void connectPath(Face connect) {
+		if (connectedPath == null)
+			connectedPath = new ArrayList<>();
+
+		connectedPath.add(connect);
 	}
 
 	// =========================================================================================================================

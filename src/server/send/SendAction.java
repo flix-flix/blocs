@@ -15,6 +15,7 @@ public class SendAction implements Serializable {
 	public Cube cube;
 	public Coord coord;
 	public int id1 = -1, id2 = -1;
+	public int ticks = -1;
 
 	public boolean done = false;
 
@@ -112,5 +113,13 @@ public class SendAction implements Serializable {
 
 	public static SendAction harvest(Unit unit, Coord coord) {
 		return new SendAction(Action.UNIT_HARVEST, unit.getId(), coord);
+	}
+
+	// =========================================================================================================================
+
+	public static SendAction ticksPhys(int ticks) {
+		SendAction send = new SendAction(Action.SERVER_TICKS_PHYS);
+		send.ticks = ticks;
+		return send;
 	}
 }

@@ -3,6 +3,7 @@ package data.map.multiblocs;
 import java.io.Serializable;
 import java.util.LinkedList;
 
+import data.id.ItemID;
 import data.map.Coord;
 import data.map.Cube;
 import data.map.buildings.Building;
@@ -16,7 +17,7 @@ public class MultiBloc implements Serializable {
 	public LinkedList<Cube> list = new LinkedList<>();
 
 	protected int id;
-	public int itemID;
+	public int itemID = ItemID.ERROR;
 	protected int x, y, z;
 
 	public boolean valid = true;
@@ -33,6 +34,9 @@ public class MultiBloc implements Serializable {
 
 	public MultiBloc(int itemID) {
 		this(itemID, 0, 0, 0);
+	}
+
+	public MultiBloc() {
 	}
 
 	// =========================================================================================================================

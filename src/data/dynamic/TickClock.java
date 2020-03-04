@@ -4,15 +4,10 @@ import java.util.ArrayList;
 
 public class TickClock implements Runnable {
 
-	boolean run = true;
-
-	public int ticks;
-
-	private long lastTime;
-
-	ArrayList<Tickable> tickables = new ArrayList<>();
-
+	private boolean run = true;
 	private boolean paused = false;
+
+	private ArrayList<Tickable> tickables = new ArrayList<>();
 
 	private String threadName;
 
@@ -30,7 +25,8 @@ public class TickClock implements Runnable {
 
 	@Override
 	public void run() {
-		lastTime = System.currentTimeMillis();
+		long lastTime = System.currentTimeMillis();
+
 		while (run) {
 			if (System.currentTimeMillis() - lastTime < 50) {
 				try {
@@ -44,8 +40,6 @@ public class TickClock implements Runnable {
 
 			if (paused)
 				continue;
-
-			ticks++;
 
 			for (Tickable t : tickables) {
 				t.tick();

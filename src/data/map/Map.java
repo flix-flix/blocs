@@ -6,6 +6,7 @@ import java.util.LinkedList;
 
 import data.Gamer;
 import data.dynamic.Tickable;
+import data.id.ItemTable;
 import data.map.buildings.Building;
 import data.map.multiblocs.MultiBloc;
 import data.map.units.Unit;
@@ -410,7 +411,7 @@ public class Map implements Tickable, Serializable {
 	// =========================================================================================================================
 
 	public boolean isOnFloor(Coord c) {
-		return gridContains(c.x, c.y - 1, c.z);
+		return gridContains(c.x, c.y - 1, c.z) && ItemTable.isFloor(gridGet(c.x,c.y-1,c.z).getItemID());
 	}
 
 	// =========================================================================================================================

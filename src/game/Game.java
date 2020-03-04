@@ -23,6 +23,7 @@ import environment.Environment3D;
 import environment.Target;
 import environment.extendsData.CubeClient;
 import environment.extendsData.MapClient;
+import environment.extendsData.UnitClient;
 import environment.textures.TexturePack;
 import game.panels.PanGame;
 import graphicEngine.calcul.Camera;
@@ -65,7 +66,7 @@ public class Game extends Environment3D implements Displayable {
 	public GameMode gameMode = GameMode.CLASSIC;
 
 	// =============== Action ===============
-	public Unit selectedUnit;
+	public UnitClient selectedUnit;
 	public Building selectedBuilding;
 	public Action unitAction;
 
@@ -381,16 +382,23 @@ public class Game extends Environment3D implements Displayable {
 	// =========================================================================================================================
 	// Selected
 
-	public void select(Cube cube) {
+	public void select(CubeClient cube) {
+		if (selectedUnit != null)
+			selectedUnit.hidePath(map);
+
 		selectedUnit = null;
 		selectedBuilding = null;
 		panel.displayInfosOf(cube);
 
 		if (cube != null)
 			if (cube.unit != null)
-				selectedUnit = cube.unit;
+				selectedUnit = (UnitClient) cube.unit;
 			else if (cube.build != null)
 				selectedBuilding = cube.build;
+
+		// Display path
+		if (selectedUnit != null)
+			selectedUnit.showPath(map);
 	}
 
 	public void clearSelected() {
@@ -585,9 +593,7 @@ public class Game extends Environment3D implements Displayable {
 		ticksKeyBoard = keyboard.ticks;
 		keyboard.ticks = 0;
 
-		// TODO get ticks from server
-		// session.ticksPhys = session.clock.ticks;
-		// session.clock.ticks = 0;
+		send(SendAction.ticksPhys(0));
 
 		panel.updateMap();
 	}

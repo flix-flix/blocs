@@ -23,7 +23,7 @@ public class WorldGeneration {
 		map.addGamer(ia = new Gamer(2, "IA"));
 
 		int ground = 10;
-		int size = 20;
+		int size = 65;
 
 		// ========== Ground and Borders ==========
 		for (int x = 0; x < size; x++)
@@ -63,6 +63,8 @@ public class WorldGeneration {
 
 		// ========== Mountain ==========
 		for (int i = 5; i < 45; i++) {
+			if (i >= 22 && i < 30)
+				continue;
 			if (i % 3 == 0)
 				addMountain(map, 50 - i, ground, i);
 			if (i % 4 == 0) {
@@ -72,9 +74,9 @@ public class WorldGeneration {
 		}
 
 		// ========== River ==========
-		for (int i = 0; i < 90; i++)
-			river(map, (int) (50 * Math.cos(i * Utils.toRadian)), ground - 1,
-					(int) (50 * Math.sin(i * Utils.toRadian)));
+		for (int i = 0; i <= 90; i++)
+			river(map, (int) (60 * Math.cos(i * Utils.toRadian)), ground - 1,
+					(int) (60 * Math.sin(i * Utils.toRadian)));
 
 		// ========== Dig ==========
 		for (int x = 10; x < 20; x++)
@@ -265,9 +267,10 @@ public class WorldGeneration {
 			for (int _x = -a; _x <= a; _x++)
 				for (int _z = -a; _z <= a; _z++)
 					if (!((_x == -a || _x == a) && (_z == -a || _z == a) && (7 - _y) % 2 == 0)) {
-						map.remove(x + _x, y - _y, z + _z);
+						if (x + _x != 0 && z + _z != 0)
+							map.remove(x + _x, y - _y, z + _z);
 						if (_y == 0) {
-							Cube c = new Cube(x + _x, y - _y, z + _z, 1, .8, 1, ItemID.WATER);
+							Cube c = new Cube(Math.max(1, x + _x), y - _y, Math.max(1, z + _z), 1, .8, 1, ItemID.WATER);
 							c.onGrid = true;
 							map.add(c);
 						}

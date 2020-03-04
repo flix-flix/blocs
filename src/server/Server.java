@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.Socket;
 
 import data.dynamic.TickClock;
+import data.dynamic.Tickable;
 import data.generation.WorldGeneration;
 import data.map.Coord;
 import data.map.Cube;
@@ -14,16 +15,22 @@ import server.game.Player;
 import server.game.messages.CommandExecutor;
 import server.game.messages.Message;
 import server.model.ServerAbstract;
+import server.send.Action;
 import server.send.SendAction;
 import utils.Utils;
 
-public class Server extends ServerAbstract {
+public class Server extends ServerAbstract implements Tickable {
 
-	public static final int defaultPort = 1212;
+	private static final int defaultPort = 1212;
 
 	// =============== Data ===============
 	public MapServer map;
-	CommandExecutor commands;
+	private CommandExecutor commands;
+
+	// =============== Ticks ===============
+	private int ticks = 0;
+	private int lastSecondTicks = 0;
+	private long lastSecond = System.currentTimeMillis();
 
 	// =========================================================================================================================
 
@@ -34,6 +41,7 @@ public class Server extends ServerAbstract {
 		commands = new CommandExecutor(this);
 
 		TickClock clock = new TickClock("Server Clock");
+		clock.add(this);
 		clock.add(map);
 
 		clock.start();
@@ -79,7 +87,9 @@ public class Server extends ServerAbstract {
 	// =========================================================================================================================
 
 	public void receiveAction(SendAction send, int id) {
-		System.out.println("[Server RECEIVE] " + send.action);
+		if (send.action != Action.SERVER_TICKS_PHYS)
+			System.out.println("[Server RECEIVE] " + send.action);
+
 		switch (send.action) {
 		case ADD:
 			if (send.cube != null)
@@ -104,6 +114,9 @@ public class Server extends ServerAbstract {
 		case UNIT_STORE:
 			map.getUnit(send.id1).store(map, map.getBuilding(send.id2));
 			sendToAllSeeing(send);
+			break;
+		case SERVER_TICKS_PHYS:
+			sendToPlayer(SendAction.ticksPhys(lastSecondTicks), id);
 			break;
 		default:
 			break;
@@ -155,5 +168,18 @@ public class Server extends ServerAbstract {
 
 	public PlayerListener getPlayer(int id) {
 		return (PlayerListener) getClient(id);
+	}
+
+	// =========================================================================================================================
+	// Tickable
+
+	@Override
+	public void tick() {
+		if (System.currentTimeMillis() > lastSecond + 1_000) {
+			lastSecond = System.currentTimeMillis();
+			lastSecondTicks = ticks;
+			ticks = 0;
+		}
+		ticks++;
 	}
 }

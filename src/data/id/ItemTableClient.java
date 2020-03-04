@@ -52,10 +52,6 @@ public class ItemTableClient extends ItemTable {
 	// =========================================================================================================================
 	// Graphic Engine
 
-	public static boolean isOpaque(int itemID) {
-		return get(itemID).opaque;
-	}
-
 	public static boolean drawContour(int itemID) {
 		return get(itemID).contour;
 	}
@@ -91,7 +87,7 @@ public class ItemTableClient extends ItemTable {
 			return getGamerColor(cube.unit.getGamer());
 		if (cube.build != null)
 			return getGamerColor(cube.build.getGamer());
-		
+
 		return get(cube.getItemID()).mapColor;
 	}
 

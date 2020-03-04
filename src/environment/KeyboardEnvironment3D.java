@@ -10,6 +10,7 @@ import java.awt.event.MouseWheelEvent;
 import data.map.Coord;
 import data.map.Cube;
 import data.map.enumerations.Face;
+import environment.extendsData.CubeClient;
 import environment.extendsData.MapClient;
 import graphicEngine.calcul.Camera;
 import server.send.SendAction;
@@ -58,7 +59,7 @@ public abstract class KeyboardEnvironment3D implements KeyBoard {
 	protected boolean paused = false;
 
 	// =============== Target ===============
-	protected Cube targetedCube;
+	protected CubeClient targetedCube;
 	protected Coord targetedCoord;
 	protected Face targetedFace;
 
@@ -117,7 +118,7 @@ public abstract class KeyboardEnvironment3D implements KeyBoard {
 
 	// =========================================================================================================================
 
-	public abstract void selectCube(Cube cube);
+	public abstract void selectCube(CubeClient cube);
 
 	public abstract Cube getCubeToAdd();
 

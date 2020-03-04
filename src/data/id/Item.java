@@ -18,6 +18,7 @@ public class Item {
 
 	// ==================== Properties ====================
 	boolean opaque = true;
+	boolean floor = true;
 
 	// ==================== Multibloc ====================
 	boolean multibloc = false;
@@ -53,6 +54,9 @@ public class Item {
 
 		if (yaml.contains("opaque"))
 			opaque = yaml.getBoolean("opaque");
+
+		if (yaml.contains("floor"))
+			floor = yaml.getBoolean("floor");
 
 		if (yaml.contains("type"))
 			type = yaml.getString("type");

@@ -35,4 +35,5 @@ public class ItemID {
 	public static final int TEST_TRANSPARENT = 997;
 	public static final int TEST = 998;
 	public static final int ERROR = 999;
+	public static final int INVISIBLE = 1000;
 }

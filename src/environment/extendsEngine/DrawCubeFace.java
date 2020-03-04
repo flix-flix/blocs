@@ -14,13 +14,21 @@ import graphicEngine.calcul.Quadri;
 import graphicEngine.calcul.Vector;
 import graphicEngine.structures.Drawable;
 
-public class DrawCubeFace extends Drawable {
+public class DrawCubeFace implements Drawable {
 
+	// =============== Data ===============
 	/** Reference to the "data" */
 	public CubeClient cube;
 	/** Face to draw */
 	public Face face;
 
+	// =============== Drawable ===============
+	/** Center of the Draw (used to calculate the distance to the camera) */
+	private Point3D center;
+	/** Used to sort the Draws that are at the same distance from the camera */
+	private int index;
+
+	// =============== Transparency ===============
 	public final static int DEFAULT_ALPHA = -1;
 	private int forcedAlpha;
 
@@ -181,5 +189,17 @@ public class DrawCubeFace extends Drawable {
 	@Override
 	public boolean isTargetable() {
 		return cube.isTargetable();
+	}
+
+	// =========================================================================================================================
+
+	@Override
+	public Point3D getCenter() {
+		return center;
+	}
+
+	@Override
+	public int getIndex() {
+		return index;
 	}
 }

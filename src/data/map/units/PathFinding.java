@@ -117,19 +117,20 @@ public class PathFinding {
 				if (isRollable(fromID(current), map, unit))
 					for (int move : diagoMoves) {
 						// Test if diago is empty
-						boolean diagoEmpty = false;
+						boolean diagoRollable = false;
 						if (current > 0)// oriented N/S
 							if (Math.abs(move + 1) == 1_000_000)// rolling to W
-								diagoEmpty = !map.gridContains(fromID(current - 1));
+								diagoRollable = !map.gridContains(fromID(current - 1))
+										&& isRollable(fromID(current - 1), map, unit);
 							else// rolling to E
-								diagoEmpty = !map.gridContains(fromID(current + 1));
+								diagoRollable = !map.gridContains(fromID(current + 1))&& isRollable(fromID(current + 1), map, unit);
 						else // oriented E/W
 						if (move > 0)// rolling to N
-							diagoEmpty = !map.gridContains(fromID(current + 1_000_000));
+							diagoRollable = !map.gridContains(fromID(current + 1_000_000))&& isRollable(fromID(current + 1_000_000), map, unit);
 						else// rolling to S
-							diagoEmpty = !map.gridContains(fromID(current - 1_000_000));
+							diagoRollable = !map.gridContains(fromID(current - 1_000_000))&& isRollable(fromID(current - 1_000_000), map, unit);
 
-						if (diagoEmpty)
+						if (diagoRollable)
 							addToTravelled(current, -(current + move), map, travelled, queueNext, unit);
 					}
 			}

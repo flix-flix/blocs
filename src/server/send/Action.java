@@ -4,6 +4,9 @@ public enum Action {
 	// Server
 	SERVER_NAME, SERVER_NB_PLAYERS,
 
+	/** Number of ticks/sec of the TickClock */
+	SERVER_TICKS_PHYS,
+
 	// Cube
 	ADD, REMOVE,
 

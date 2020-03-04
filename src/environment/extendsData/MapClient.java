@@ -19,15 +19,14 @@ import graphicEngine.structures.Modelisable;
 public class MapClient extends Map implements Modelisable {
 	private static final long serialVersionUID = 1111592162081077768L;
 
-	// ===== Model =====
-	public boolean visible = true;
+	// =============== Model ===============
 	private ArrayList<Drawable> draws = new ArrayList<>();
 
-	// ======== Parameters ========
+	// =============== Parameters ===============
 	/** Range of chunks to draw */
 	int range = 4;
 
-	// ===== Infos =====
+	// =============== Infos ===============
 	public int nbFaces, nbChunks;
 
 	// =========================================================================================================================
@@ -358,18 +357,5 @@ public class MapClient extends Map implements Modelisable {
 
 		for (Cube c : units.values())
 			((CubeClient) c).init(camera, matrix);
-	}
-
-	// =========================================================================================================================
-	// Modele
-
-	@Override
-	public boolean isVisible() {
-		return visible;
-	}
-
-	@Override
-	public void setVisible(boolean visible) {
-		this.visible = visible;
 	}
 }

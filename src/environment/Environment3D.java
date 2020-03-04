@@ -3,6 +3,7 @@ package environment;
 import environment.extendsData.MapClient;
 import graphicEngine.calcul.Camera;
 import graphicEngine.calcul.Engine;
+import server.send.Action;
 import server.send.SendAction;
 import utils.Utils;
 
@@ -95,7 +96,8 @@ public class Environment3D implements Client {
 	}
 
 	public void receiveAction(SendAction send) {
-		System.out.println("[Client Receive] " + send.action + " done: " + send.done);
+		if (send.action != Action.SERVER_TICKS_PHYS)
+			System.out.println("[Client Receive] " + send.action + " done: " + send.done);
 
 		switch (send.action) {
 		case ADD:
@@ -128,6 +130,10 @@ public class Environment3D implements Client {
 				map.getUnit(send.id1)._doStore(map, map.getBuilding(send.id2));
 			else
 				map.getUnit(send.id1).store(map, map.getBuilding(send.id2));
+			break;
+
+		case SERVER_TICKS_PHYS:
+			ticksPhys = send.ticks;
 			break;
 		default:
 			Utils.debug("[Client] missing receiveSend(): " + send.action);
