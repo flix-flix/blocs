@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.util.TreeMap;
 
 import data.id.ItemTable;
+import data.id.ItemType;
 import data.map.enumerations.Face;
 import data.map.enumerations.Orientation;
 import data.map.enumerations.Rotation;
@@ -23,15 +24,15 @@ public class TexturePack {
 	public TreeMap<Integer, YAML> yamls = new TreeMap<>();
 
 	/** Map to store the textures of the cubes (access by id) */
-	TreeMap<Integer, TextureCube> texturesCubes = new TreeMap<>();
+	private TreeMap<Integer, TextureCube> texturesCubes = new TreeMap<>();
 	/** Map to store the textures of the cubes (access by id) */
-	TreeMap<Integer, TextureMulti> texturesMulti = new TreeMap<>();
+	private TreeMap<Integer, TextureMulti> texturesMulti = new TreeMap<>();
 
 	/** Array to store mining animations (intact to broken) */
-	TextureSquare[] miningFrames = new TextureSquare[nbAnim];
+	private TextureSquare[] miningFrames = new TextureSquare[nbAnim];
 
 	/** Default missing texture */
-	TextureSquare faceError = TextureSquare.generateSquare((BufferedImage) Utils.imgError);
+	private TextureSquare faceError = TextureSquare.generateSquare((BufferedImage) Utils.imgError);
 
 	public TexturePack(String folder) {
 		this.folder = folder;
@@ -47,7 +48,7 @@ public class TexturePack {
 			YAML yaml = YAML.parseFile(file);
 			yamls.put(yaml.getInt("id"), yaml);
 
-			if (!ItemTable.getType(yaml.getInt("id")).equals("multibloc"))
+			if (ItemTable.getType(yaml.getInt("id")) != ItemType.MULTIBLOC)
 				continue;
 
 			YAMLTextureMulti texture = new YAMLTextureMulti(yaml);

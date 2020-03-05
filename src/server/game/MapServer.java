@@ -3,8 +3,8 @@ package server.game;
 import data.map.Coord;
 import data.map.Cube;
 import data.map.Map;
+import data.map.MultiCube;
 import data.map.buildings.Building;
-import data.map.multiblocs.MultiBloc;
 import data.map.units.Unit;
 import server.Server;
 
@@ -39,7 +39,7 @@ public class MapServer extends Map {
 	@Override
 	protected Cube gridAdd(Cube cube) {
 		Cube c = super.gridAdd(cube);
-		if (cube.multibloc == null)
+		if (cube.multicube == null)
 			server.addCube(c);
 		return c;
 	}
@@ -51,10 +51,10 @@ public class MapServer extends Map {
 		if (!gridContains(x, y, z))
 			return;
 
-		if (gridGet(x, y, z).multibloc != null) {
-			if (!gridGet(x, y, z).multibloc.valid)
+		if (gridGet(x, y, z).multicube != null) {
+			if (!gridGet(x, y, z).multicube.valid)
 				update = false;
-			gridGet(x, y, z).multibloc.valid = false;
+			gridGet(x, y, z).multicube.valid = false;
 		}
 
 		super.gridRemove(x, y, z);
@@ -104,7 +104,7 @@ public class MapServer extends Map {
 	// =========================================================================================================================
 
 	@Override
-	protected boolean addMulti(MultiBloc multi, boolean full) {
+	protected boolean addMulti(MultiCube multi, boolean full) {
 		boolean added = super.addMulti(multi, full);
 		if (added)
 			server.addCube(multi.getCube());

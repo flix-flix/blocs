@@ -3,12 +3,11 @@ package data.generation;
 import data.Gamer;
 import data.id.ItemID;
 import data.id.ItemTable;
+import data.map.Coord;
 import data.map.Cube;
 import data.map.Map;
+import data.map.MultiCube;
 import data.map.buildings.Building;
-import data.map.multiblocs.E;
-import data.map.multiblocs.MultiBloc;
-import data.map.multiblocs.Tree;
 import data.map.units.Unit;
 import utils.Utils;
 
@@ -23,7 +22,7 @@ public class WorldGeneration {
 		map.addGamer(ia = new Gamer(2, "IA"));
 
 		int ground = 10;
-		int size = 65;
+		int size = 20;// 65;
 
 		// ========== Ground and Borders ==========
 		for (int x = 0; x < size; x++)
@@ -49,17 +48,16 @@ public class WorldGeneration {
 				if (x / 2 + z < 15 || x + z / 2 < 15)
 					map.set(new Cube(x, ground - 1, z, ItemID.DIRT));
 
-		map.add(new Tree(2, ground, 4).getCube());
-		map.add(new Tree(2, ground, 17).getCube());
-		map.add(new Tree(3, ground, 11).getCube());
-		map.add(new Tree(5, ground, 6).getCube());
-		map.add(new Tree(5, ground, 15).getCube());
-		map.add(new Tree(8, ground, 8).getCube());
-		map.add(new Tree(10, ground, 5).getCube());
-		map.add(new Tree(14, ground, 5).getCube());
-		map.add(new Tree(18, ground, 4).getCube());
-		map.add(new Tree(20, ground, 10).getCube());
-		map.add(new Tree(25, ground, 10).getCube());
+		Coord[] trees = new Coord[] { new Coord(2, ground, 4), new Coord(2, ground, 17), new Coord(3, ground, 11),
+				new Coord(5, ground, 6), new Coord(5, ground, 15), new Coord(8, ground, 8), new Coord(10, ground, 5),
+				new Coord(14, ground, 5), new Coord(18, ground, 4), new Coord(20, ground, 10),
+				new Coord(25, ground, 10) };
+
+		for (Coord tree : trees) {
+			Cube cube = ItemTable.create(ItemID.TREE);
+			cube.setCoords(tree);
+			map.add(cube);
+		}
 
 		// ========== Mountain ==========
 		for (int i = 5; i < 45; i++) {
@@ -142,23 +140,16 @@ public class WorldGeneration {
 				if (x / 2 + z < 15 || x + z / 2 < 15)
 					map.set(new Cube(x, ground - 1, z, ItemID.DIRT));
 
-		// Add multibloc
-		map.add(new Tree(20, ground, 10).getCube());
+		Coord[] trees = new Coord[] { new Coord(2, ground, 4), new Coord(2, ground, 17), new Coord(3, ground, 11),
+				new Coord(5, ground, 6), new Coord(5, ground, 15), new Coord(8, ground, 8), new Coord(10, ground, 5),
+				new Coord(14, ground, 5), new Coord(18, ground, 4), new Coord(20, ground, 10),
+				new Coord(25, ground, 10) };
 
-		// Add shifted multibloc
-		Tree t = new Tree();
-		t.setCoords(25, ground, 10);
-		map.add(t.getCube());
-
-		map.add(new Tree(2, ground, 4).getCube());
-		map.add(new Tree(2, ground, 17).getCube());
-		map.add(new Tree(3, ground, 11).getCube());
-		map.add(new Tree(5, ground, 6).getCube());
-		map.add(new Tree(5, ground, 15).getCube());
-		map.add(new Tree(8, ground, 8).getCube());
-		map.add(new Tree(10, ground, 5).getCube());
-		map.add(new Tree(14, ground, 5).getCube());
-		map.add(new Tree(18, ground, 4).getCube());
+		for (Coord tree : trees) {
+			Cube cube = ItemTable.create(ItemID.TREE);
+			cube.setCoords(tree);
+			map.add(cube);
+		}
 
 		// ========== Mountain ==========
 		for (int i = 5; i < 45; i++) {
@@ -213,13 +204,15 @@ public class WorldGeneration {
 		map.add(new Cube(14, ground, 16, ItemID.GLASS_RED));
 
 		// Add multibloc (mixed on-grid/off-grid cubes)
-		map.add(new E(10, ground, 20).getCube());
+		Cube e = ItemTable.create(ItemID.E);
+		e.setCoords(10, ground, 20);
+		map.add(e);
 
 		// Add off-grid cube
 		map.add(new Cube(19, ground, 19, 0, 0, 0, 3, 2, 2, ItemID.TEST_BIG));
 
 		// Add Multibloc
-		MultiBloc testBig = ItemTable.createMulti(ItemID.TEST_BIG);
+		MultiCube testBig = ItemTable.createMultiBloc(ItemID.TEST_BIG);
 		testBig.setCoords(15, ground, 19);
 		map.add(testBig.getCube());
 

@@ -22,9 +22,9 @@ public class CubeClient extends Cube implements Modelisable {
 
 	// =============== Draw order ===============
 	/** The center point after map rotation */
-	public Point3D centerDecal;
+	private Point3D centerDecal;
 	/** Index of the cube (used to sort when centers are at the same location) */
-	int index;
+	private int index;
 
 	// =============== Graphic generation ===============
 	/** The cube will be generate with vectors from this point */
@@ -134,23 +134,22 @@ public class CubeClient extends Cube implements Modelisable {
 
 	public void setPreview(boolean b) {
 		preview = b;
-		if (multibloc != null)
-			for (Cube c : multibloc.list) {
+		if (multicube != null)
+			for (Cube c : multicube.list)
 				((CubeClient) c).preview = b;
-			}
 	}
 
 	public void setTargetable(boolean b) {
 		targetable = b;
-		if (multibloc != null)
-			for (Cube c : multibloc.list)
+		if (multicube != null)
+			for (Cube c : multicube.list)
 				((CubeClient) c).targetable = b;
 	}
 
 	public void setHighlight(boolean b) {
 		highlight = b;
-		if (multibloc != null) {
-			for (Cube c : multibloc.list) {
+		if (multicube != null) {
+			for (Cube c : multicube.list) {
 				((CubeClient) c).highlight = b;
 			}
 		}

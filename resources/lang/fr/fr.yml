@@ -13,9 +13,9 @@ items:
     glass_red: Verre rouge
     glass_gray: Verre gris
     
-    unit: Unité
+    unit: Unitée
     
-    castle: Chateau
+    castle: Château
     
     tree: Chêne
     e: E
@@ -48,28 +48,28 @@ tips:
             undo: Utilisez "Ctrl+Z" pour annuler la dernière modification et "Ctrl+Y" pour l'appliquer de nouveau
             
         pencil:
-            new_color: Selecteur de couleurs: cliquez sur la barre verticale pour choisir la couleur puis utilisez le carré pour ajuster la teinte
+            new_color: Sélecteur de couleurs: cliquez sur la barre verticale pour choisir la couleur puis utilisez le carré pour ajuster la teinte
             alpha: Utilisez la molette sur le bouton "100%" pour augmenter/diminuer la transparence de la couleur
             memory: Les 5 dernières couleurs sont affichées en dessous de celle actuelle: cliquez dessus pour les réutiliser
             pick_color: Sur le cube, maintenez "Ctrl" pour récuperer la couleur de la case ciblée
             line_square: Maintenez "Maj" pour dessiner une ligne depuis la dernière case peinte. "Maj + Ctrl" pour remplir un carré
             
         calk:
-            select_rect: Selectionnez une zone sur une face en maintenant le clic gauche
-            copy_paste: Utilisez "Ctrl+C" pour copier la selection. Pour coller: cliquez sur la face souhaité puis appuyez sur "Ctrl+V"
-            move: Maintenez clic gauche sur le calque flottant pour le déplacer
+            select_rect: Sélectionnez une zone sur une face en maintenant le clic gauche
+            copy_paste: Utilisez "Ctrl+C" pour copier la sélection. Pour coller: cliquez sur la face souhaitée puis appuyez sur "Ctrl+V"
+            move: Maintenez le clic gauche sur le calque flottant pour le déplacer
             rotate: Appuyez sur "◄" ou "►" pour faire tourner le calque
             apply_delete: Appuyez sur "Entrée" pour appliquer le calque ou sur "Echap" pour le supprimer
-            select_all: "Ctrl+A" selectionne toute la face. "Ctrl+Maj+A" annule la selection
+            select_all: "Ctrl+A" sélectionne toute la face. "Ctrl+Maj+A" annule la sélection
 
     game:
         global:
-            camera: Utilisez ~FORWARD, ~LEFT, ~BACKWARD, ~RIGHT pour deplacer le point de vue et la molette pour modifier l'altitude
-            user_action: En haut a gauche de l'écran se trouve 3 boutons permettant de selectionner l'action souhaitée (Selectionner, Ajouter, Detruire)
-            mouse: Le curseur permet de selectionner une ressource, un batiment ou une unitée. Une description de la selection sera affichée en dessous des 3 boutons
-            unit: Si une unitée est selectionnée: Il est possible de la déplacer en effectuant un clic droit sur la destination souhaitée. (Elle peut également récolter des ressources et construire des batiments)
-            add: Le bloc permet d'ajouter le bloc ou structure selectionné en effectuant un clic droit a l'emplacement souhaité
-            remove: La croix rouge permet de detruire un cube ou une structure en effectuant un clic gauche dessus
+            camera: Utilisez ~FORWARD, ~LEFT, ~BACKWARD, ~RIGHT pour déplacer le point de vue et la molette pour modifier l'altitude
+            user_action: En haut à gauche de l'écran se trouve 3 boutons permettant de sélectionner l'action souhaitée (Sélectionner, Ajouter, Détruire)
+            mouse: Le curseur permet de sélectionner une ressource, un bâtiment ou une unitée. Une description de la sélection sera affichée en dessous des 3 boutons
+            unit: Si une unitée est sélectionnée: Il est possible de la déplacer en effectuant un clic droit sur la destination souhaitée. (Elle peut également récolter des ressources et construire des bâtiments)
+            add: Le bloc permet d'ajouter le bloc ou structure selectionnée en effectuant un clic droit à l'emplacement souhaité
+            remove: La croix rouge permet de détruire un cube ou une structure en effectuant un clic gauche dessus
             f3: Appuyez sur ~DEVLOP pour afficher les informations du moteur graphique
             chat: Appuyez sur ~DIALOG pour ouvrir le chat. Entrée pour envoyer le message, "Echap" pour fermer l'interface. Tapez !help pour afficher la liste des commandes disponibles
             camera_mode: Utilisez ~ACCESS_1 pour utiliser la caméra en première personne, ~ACCESS_2 pour utiliser la caméra classique

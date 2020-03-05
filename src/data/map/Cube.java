@@ -6,7 +6,6 @@ import data.id.ItemTable;
 import data.map.buildings.Building;
 import data.map.enumerations.Orientation;
 import data.map.enumerations.Rotation;
-import data.map.multiblocs.MultiBloc;
 import data.map.resources.Resource;
 import data.map.units.Unit;
 import environment.extendsData.UnitClient;
@@ -42,7 +41,7 @@ public class Cube implements Serializable {
 	// =========================================================================================================================
 	// Data
 
-	public MultiBloc multibloc;
+	public MultiCube multicube;
 	/** Coords of the bloc in the multiblocs struct */
 	public int multiblocX, multiblocY, multiblocZ;
 	public Unit unit;
@@ -70,7 +69,7 @@ public class Cube implements Serializable {
 
 		this.minedAlready = c.minedAlready;
 
-		this.multibloc = c.multibloc;
+		this.multicube = c.multicube;
 		this.unit = c.unit == null ? null : (c.unit instanceof UnitClient ? c.unit : new UnitClient(c.unit));
 		this.build = c.build;
 		this.resource = c.resource;
@@ -138,19 +137,26 @@ public class Cube implements Serializable {
 		setCoords(coord.x, coord.y, coord.z);
 	}
 
+	public void _setCoords(int x, int y, int z) {
+		this.x = x;
+		this.y = y;
+		this.z = z;
+
+		gridCoord.x = x;
+		gridCoord.y = y;
+		gridCoord.z = z;
+
+		center = new Point3D(x, y, z);
+
+		if (unit != null)
+			unit.coord = new Coord(x, y, z);
+	}
+
 	public void setCoords(int x, int y, int z) {
-		if (multibloc == null) {
-			this.x = x;
-			this.y = y;
-			this.z = z;
-
-			gridCoord.x = x;
-			gridCoord.y = y;
-			gridCoord.z = z;
-
-			center = new Point3D(x, y, z);
-		} else
-			multibloc.setCoords(x, y, z);
+		if (multicube == null)
+			_setCoords(x, y, z);
+		else
+			multicube.setCoords(x, y, z);
 	}
 
 	public void shiftCoords(int x, int y, int z) {
@@ -187,8 +193,8 @@ public class Cube implements Serializable {
 	public boolean hasResource() {
 		if (resource != null)
 			return true;
-		if (multibloc != null)
-			for (Cube c : multibloc.list)
+		if (multicube != null)
+			for (Cube c : multicube.list)
 				if (c.resource != null)
 					return true;
 		return false;
@@ -197,9 +203,9 @@ public class Cube implements Serializable {
 	public Resource getResource() {
 		Resource res;
 
-		if (multibloc != null) {
+		if (multicube != null) {
 			res = new Resource();
-			for (Cube c : multibloc.list)
+			for (Cube c : multicube.list)
 				if (c.resource != null)
 					res.regroup(c.resource);
 		} else
@@ -213,8 +219,8 @@ public class Cube implements Serializable {
 	}
 
 	public int resourceTake(int x) {
-		if (multibloc != null)
-			for (Cube c : multibloc.list)
+		if (multicube != null)
+			for (Cube c : multicube.list)
 				if (c.resource != null && !c.resource.isEmpty())
 					return c.resource.remove(x);
 

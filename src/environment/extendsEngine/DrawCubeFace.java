@@ -115,7 +115,7 @@ public class DrawCubeFace implements Drawable {
 					if (cube.isPreview() || (cube.build != null && !cube.build.isBuild())) {
 						color = (127 << 24) + (color & 0xffffff);
 						// If the multibloc is invalid : its color will have a red hue
-						if (cube.multibloc != null && !cube.multibloc.valid)
+						if (cube.multicube != null && !cube.multicube.valid)
 							color = Engine.addHue(color, Engine.createColor(255, 255, 0, 0), .4);
 					}
 				}

@@ -5,10 +5,8 @@ import java.util.TreeMap;
 
 import data.Gamer;
 import data.map.Cube;
+import data.map.MultiCube;
 import data.map.buildings.Building;
-import data.map.multiblocs.E;
-import data.map.multiblocs.MultiBloc;
-import data.map.multiblocs.Tree;
 import data.map.resources.ResourceType;
 import data.map.units.Unit;
 import environment.textures.TexturePack;
@@ -17,9 +15,9 @@ import utils.yaml.YAML;
 
 public class ItemTable {
 
-	static TreeMap<Integer, Item> items = new TreeMap<>();
+	protected static TreeMap<Integer, Item> items = new TreeMap<>();
 
-	static ArrayList<String> tags = new ArrayList<>();
+	protected static ArrayList<String> tags = new ArrayList<>();
 
 	// =========================================================================================================================
 
@@ -54,25 +52,35 @@ public class ItemTable {
 
 	// =========================================================================================================================
 
-	public static String getType(int itemID) {
+	public static ItemType getType(Cube cube) {
+		return getType(cube.multicube != null ? cube.multicube.itemID : cube.getItemID());
+	}
+
+	public static ItemType getType(int itemID) {
 		return get(itemID).type;
 	}
 
 	// =========================================================================================================================
 
 	public static Cube create(int itemID) {
-		Cube cube = new Cube(itemID);
+		Item item = get(itemID);
 
-		if (itemID == ItemID.TREE)
-			cube = new Tree().getCube();
-		else if (itemID == ItemID.E)
-			cube = new E().getCube();
-		else if (itemID == ItemID.UNIT)
-			cube = new Cube(new Unit(ItemID.UNIT, Gamer.nullGamer, 0, 0, 0));
-		else if (itemID == ItemID.CASTLE)
-			cube = new Building(Gamer.nullGamer, ItemID.CASTLE, 0, 0, 0, true).getMulti().getCube();
+		if (item.type == ItemType.MULTICUBE) {
+			MultiCube multi = new MultiCube(itemID);
 
-		return cube;
+			for (Cube c : item.multi.list)
+				multi.add(new Cube((int) c.x, (int) c.y, (int) c.z, c.getItemID()));
+
+			return multi.getCube();
+		}
+
+		if (itemID == ItemID.UNIT)
+			return new Cube(new Unit(ItemID.UNIT, Gamer.nullGamer, 0, 0, 0));
+
+		if (itemID == ItemID.CASTLE)
+			return new Building(Gamer.nullGamer, ItemID.CASTLE, 0, 0, 0, true).getMulti().getCube();
+
+		return new Cube(itemID);
 	}
 
 	/** Retruns true if it's a cube for development process */
@@ -106,13 +114,13 @@ public class ItemTable {
 	// =========================================================================================================================
 	// Multibloc
 
-	public static MultiBloc createMulti(int itemID) {
+	public static MultiCube createMultiBloc(int itemID) {
 		if (!isMultiBloc(itemID)) {
 			Utils.debugBefore(itemID + " isn't a multibloc");
 			return null;
 		}
 
-		MultiBloc multi = new MultiBloc(itemID);
+		MultiCube multi = new MultiCube(itemID);
 
 		for (int x = 0; x < getXSize(itemID); x++)
 			for (int y = 0; y < getYSize(itemID); y++)
@@ -123,7 +131,7 @@ public class ItemTable {
 	}
 
 	public static boolean isMultiBloc(int itemID) {
-		return get(itemID).multibloc;
+		return get(itemID).type == ItemType.MULTIBLOC;
 	}
 
 	public static int getXSize(int itemID) {

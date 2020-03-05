@@ -2,6 +2,8 @@ package data.id;
 
 import java.util.TreeMap;
 
+import data.map.Cube;
+import data.map.MultiCube;
 import data.map.resources.ResourceType;
 import graphicEngine.calcul.Camera;
 import graphicEngine.calcul.Point3D;
@@ -19,11 +21,13 @@ public class Item {
 	// ==================== Properties ====================
 	boolean opaque = true;
 	boolean floor = true;
+	ItemType type = ItemType.CUBE;
 
 	// ==================== Multibloc ====================
-	boolean multibloc = false;
 	int sizeX, sizeY, sizeZ;
-	String type;
+
+	// ==================== Multicube ====================
+	MultiCube multi;
 
 	// ==================== Resource ====================
 	int miningTime = -1;
@@ -58,13 +62,19 @@ public class Item {
 		if (yaml.contains("floor"))
 			floor = yaml.getBoolean("floor");
 
-		if (yaml.contains("type"))
-			type = yaml.getString("type");
-
-		if (multibloc = yaml.contains("multibloc")) {
+		if (yaml.contains("multibloc")) {
+			type = ItemType.MULTIBLOC;
 			sizeX = yaml.getInt("multibloc.size.x");
 			sizeY = yaml.getInt("multibloc.size.y");
 			sizeZ = yaml.getInt("multibloc.size.z");
+		}
+
+		if (yaml.contains("multicube")) {
+			type = ItemType.MULTICUBE;
+			multi = new MultiCube();
+			multi.itemID = id;
+			for (YAML cube : yaml.getList("multicube.cubes"))
+				multi.add(new Cube(cube.getInt("x"), cube.getInt("y"), cube.getInt("z"), cube.getInt("id")));
 		}
 
 		if (yaml.contains("mining"))

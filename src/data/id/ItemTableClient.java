@@ -64,7 +64,7 @@ public class ItemTableClient extends ItemTable {
 	}
 
 	public static Camera getCamera(Cube cube) {
-		int itemID = cube.multibloc == null ? cube.getItemID() : cube.multibloc.itemID;
+		int itemID = cube.multicube == null ? cube.getItemID() : cube.multicube.itemID;
 		return getCamera(itemID);
 	}
 
@@ -121,7 +121,7 @@ public class ItemTableClient extends ItemTable {
 	}
 
 	public static String getName(Cube cube) {
-		String name = getName(cube.multibloc == null ? cube.getItemID() : cube.multibloc.itemID);
+		String name = getName(cube.multicube == null ? cube.getItemID() : cube.multicube.itemID);
 
 		if (name == null)
 			name = "NULL";

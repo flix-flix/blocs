@@ -8,7 +8,6 @@ import data.Gamer;
 import data.dynamic.Tickable;
 import data.id.ItemTable;
 import data.map.buildings.Building;
-import data.map.multiblocs.MultiBloc;
 import data.map.units.Unit;
 
 public class Map implements Tickable, Serializable {
@@ -22,7 +21,7 @@ public class Map implements Tickable, Serializable {
 	protected HashMap<Integer, Chunk> chunks = new HashMap<>();
 
 	/** Used to update references on cast */
-	protected HashMap<Integer, MultiBloc> multis = new HashMap<>();
+	protected HashMap<Integer, MultiCube> multis = new HashMap<>();
 
 	protected HashMap<Integer, Cube> units = new HashMap<>();
 	protected HashMap<Integer, Cube> builds = new HashMap<>();
@@ -57,7 +56,7 @@ public class Map implements Tickable, Serializable {
 
 		multis = map.multis;
 
-		for (MultiBloc multi : multis.values()) {
+		for (MultiCube multi : multis.values()) {
 			LinkedList<Cube> list = new LinkedList<>();
 
 			for (Cube c : multi.list)
@@ -152,8 +151,8 @@ public class Map implements Tickable, Serializable {
 				return addUnit(cube.unit);
 			if (cube.build != null)
 				return addBuilding(cube.build);
-			if (cube.multibloc != null)
-				return addMulti(cube.multibloc, true);
+			if (cube.multicube != null)
+				return addMulti(cube.multicube, true);
 			return addCube(cube) != null;
 		}
 	}
@@ -164,8 +163,8 @@ public class Map implements Tickable, Serializable {
 				removeUnit(cube.unit);
 			else if (cube.build != null)
 				removeBuilding(cube.build);
-			else if (cube.multibloc != null)
-				removeMulti(cube.multibloc);
+			else if (cube.multicube != null)
+				removeMulti(cube.multicube);
 			else
 				removeCube(cube);
 		}
@@ -211,7 +210,7 @@ public class Map implements Tickable, Serializable {
 	 *            where grid is empty.
 	 * @return true if the multibloc have been added
 	 */
-	protected boolean addMulti(MultiBloc multi, boolean full) {
+	protected boolean addMulti(MultiCube multi, boolean full) {
 		return addMulti(multi, full, true);
 	}
 
@@ -227,7 +226,7 @@ public class Map implements Tickable, Serializable {
 	 *            cubes)
 	 * @return true if the multibloc have been added
 	 */
-	protected boolean addMulti(MultiBloc multi, boolean full, boolean onGrid) {
+	protected boolean addMulti(MultiCube multi, boolean full, boolean onGrid) {
 		synchronized (lock) {
 			// All blocs have been added
 			boolean all = true;
@@ -257,11 +256,11 @@ public class Map implements Tickable, Serializable {
 		}
 	}
 
-	protected void addMultiError(MultiBloc multi) {
+	protected void addMultiError(MultiCube multi) {
 		removeMulti(multi);
 	}
 
-	protected void removeMulti(MultiBloc multi) {
+	protected void removeMulti(MultiCube multi) {
 		multis.remove(multi.getId());
 		for (Cube c : multi.list)
 			removeCube(c);
@@ -392,7 +391,7 @@ public class Map implements Tickable, Serializable {
 
 	public Building getBuilding(Coord coord) {
 		for (Cube cube : builds.values())
-			if (cube.multibloc.contains(coord))
+			if (cube.multicube.contains(coord))
 				return cube.build;
 		return null;
 	}
@@ -411,7 +410,7 @@ public class Map implements Tickable, Serializable {
 	// =========================================================================================================================
 
 	public boolean isOnFloor(Coord c) {
-		return gridContains(c.x, c.y - 1, c.z) && ItemTable.isFloor(gridGet(c.x,c.y-1,c.z).getItemID());
+		return gridContains(c.x, c.y - 1, c.z) && ItemTable.isFloor(gridGet(c.x, c.y - 1, c.z).getItemID());
 	}
 
 	// =========================================================================================================================

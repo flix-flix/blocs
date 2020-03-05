@@ -8,7 +8,7 @@ import data.id.ItemTable;
 import data.id.ItemTableClient;
 import data.map.Coord;
 import data.map.Cube;
-import data.map.multiblocs.MultiBloc;
+import data.map.MultiCube;
 import data.map.resources.Resource;
 import data.map.resources.ResourceType;
 
@@ -22,7 +22,7 @@ public class Building implements Serializable {
 	public Coord coord;
 	private Gamer gamer;
 	private int itemID;
-	private MultiBloc multi;
+	private MultiCube multi;
 
 	/** false : the building isn't ready to be used */
 	private boolean isBuild;
@@ -41,7 +41,7 @@ public class Building implements Serializable {
 		this.itemID = itemID;
 		this.isBuild = isBuild;
 
-		multi = ItemTable.createMulti(itemID);
+		multi = ItemTable.createMultiBloc(itemID);
 		multi.setBuild(this);
 		multi.setCoords(x, y, z);
 
@@ -104,7 +104,7 @@ public class Building implements Serializable {
 		return itemID;
 	}
 
-	public MultiBloc getMulti() {
+	public MultiCube getMulti() {
 		return multi;
 	}
 

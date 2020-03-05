@@ -8,8 +8,8 @@ import data.map.Chunk;
 import data.map.Coord;
 import data.map.Cube;
 import data.map.Map;
+import data.map.MultiCube;
 import data.map.enumerations.Face;
-import data.map.multiblocs.MultiBloc;
 import data.map.units.Unit;
 import graphicEngine.calcul.Camera;
 import graphicEngine.calcul.Matrix;
@@ -123,12 +123,12 @@ public class MapClient extends Map implements Modelisable {
 	// Intercept invalid multibloc position. Force to display it with a red hue
 
 	@Override
-	protected void addMultiError(MultiBloc multi) {
+	protected void addMultiError(MultiCube multi) {
 		multi.valid = false;
 	}
 
 	@Override
-	protected boolean addMulti(MultiBloc multi, boolean full) {
+	protected boolean addMulti(MultiCube multi, boolean full) {
 		super.addMulti(multi, full);
 
 		// If all the cubes are out of bounds
@@ -171,15 +171,19 @@ public class MapClient extends Map implements Modelisable {
 
 			// ===== Delete data =====
 			if (cube.build != null)
-				cube.multibloc.setBuild(null);
+				cube.multicube.setBuild(null);
 			cube.unit = null;
 
-			if (cube.multibloc != null) {
-				super.addMulti(cube.multibloc, true, false);
-				for (Cube c : cube.multibloc.list)
+			// Multi cubes
+			if (cube.multicube != null) {
+				super.addMulti(cube.multicube, true, false);
+				for (Cube c : cube.multicube.list) {
 					c.onGrid = false;
-				created = (CubeClient) cube.multibloc.getCube();
-			} else {
+				}
+				created = (CubeClient) cube.multicube.getCube();
+			}
+			// Single cube
+			else {
 				created = createCube(cube);
 				created.onGrid = false;
 				getChunkAtCoord(cube).addCube(created);
@@ -209,8 +213,8 @@ public class MapClient extends Map implements Modelisable {
 	}
 
 	private void update(int x, int y, int z) {
-		if (gridContains(x, y, z) && gridGet(x, y, z).multibloc != null)
-			for (Cube c : gridGet(x, y, z).multibloc.list)
+		if (gridContains(x, y, z) && gridGet(x, y, z).multicube != null)
+			for (Cube c : gridGet(x, y, z).multicube.list)
 				_update(c.gridCoord);
 		else
 			_update(x, y, z);

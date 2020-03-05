@@ -1,3 +1,103 @@
 id: 401
 tag: E
-type: structure
+multicube:
+    # Vertical
+    cubes[0]:
+        id: 0
+        x: 0
+        y: 0
+        z: 0
+    cubes[1]:
+        id: 0
+        x: 0
+        y: 1
+        z: 0
+    cubes[2]:
+        id: 0
+        x: 0
+        y: 2
+        z: 0
+    cubes[3]:
+        id: 0
+        x: 0
+        y: 3
+        z: 0
+    cubes[4]:
+        id: 0
+        x: 0
+        y: 4
+        z: 0
+    cubes[5]:
+        id: 0
+        x: 0
+        y: 5
+        z: 0
+    cubes[6]:
+        id: 0
+        x: 0
+        y: 6
+        z: 0
+    # Horizontal Bottom
+    cubes[7]:
+        id: 0
+        x: -1
+        y: 0
+        z: 0
+    cubes[8]:
+        id: 0
+        x: -2
+        y: 0
+        z: 0
+    cubes[9]:
+        id: 0
+        x: -3
+        y: 0
+        z: 0
+    # Horizontal Middle
+    cubes[10]:
+        id: 0
+        x: -1
+        y: 3
+        z: 0
+    cubes[11]:
+        id: 0
+        x: -2
+        y: 3
+        z: 0
+    # Horizontal Top
+    cubes[12]:
+        id: 0
+        x: -1
+        y: 6
+        z: 0
+    cubes[13]:
+        id: 0
+        x: -2
+        y: 6
+        z: 0
+    cubes[14]:
+        id: 0
+        x: -3
+        y: 6
+        z: 0
+    # Accent
+    cubes[15]:
+        id: 0
+        x: -1
+        y: 7
+        z: 0
+    cubes[16]:
+        id: 0
+        x: -2
+        y: 8
+        z: 0
+    cubes[17]:
+        id: 0
+        x: -3
+        y: 9
+        z: 0
+
+#  a = 60 | b = 90 - a
+# x, y + 7.3, z, 0, 0, a, 1, 1, 1
+# x - Math.cos(b * Utils.toRadian), y + 7.3 + Math.sin(b * Utils.toRadian), z, 0, 0, a, 1, 1, 1
+# x - 2 * Math.cos(b * Utils.toRadian), y + 7.3 + 2 * Math.sin(b * Utils.toRadian), z, 0, 0, a, 1, 1

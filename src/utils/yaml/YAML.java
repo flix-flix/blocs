@@ -3,6 +3,7 @@ package utils.yaml;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Set;
 import java.util.TreeMap;
 
 import utils.Utils;
@@ -11,7 +12,7 @@ public class YAML {
 	/** Number of spaces shifted for each child node */
 	private static int shiftStep = 4;
 	/** Data */
-	TreeMap<String, Object> tree;
+	private TreeMap<String, Object> tree;
 
 	// =========================================================================================================================
 
@@ -19,8 +20,14 @@ public class YAML {
 		this(new TreeMap<>());
 	}
 
-	YAML(TreeMap<String, Object> tree) {
+	private YAML(TreeMap<String, Object> tree) {
 		this.tree = tree;
+	}
+
+	// =========================================================================================================================
+
+	public Set<String> keySet() {
+		return tree.keySet();
 	}
 
 	// =========================================================================================================================
@@ -150,20 +157,10 @@ public class YAML {
 
 	// =========================================================================================================================
 	// =========================================================================================================================
-
-	static class Int {
-		int value;
-
-		Int(int i) {
-			this.value = i;
-		}
-	}
-
-	// =========================================================================================================================
 	// Parser
 
 	public static YAML decode(ArrayList<String> lines) {
-		return decode(lines, new Int(0), 0);
+		return decode(lines, new int[] { 0 }, 0);
 	}
 
 	/**
@@ -174,14 +171,13 @@ public class YAML {
 	 * @param shift
 	 *            - number of spaces shifted of the current node
 	 */
-	public static YAML decode(ArrayList<String> lines, Int index, int shift) {
+	public static YAML decode(ArrayList<String> lines, int[] index, int shift) {
 		YAML yaml = new YAML();
-
-		for (; index.value < lines.size(); index.value++) {
+		for (; index[0] < lines.size(); index[0]++) {
 			if (!isAligned(lines, index, shift))
 				break;
 
-			String line = lines.get(index.value).trim();
+			String line = lines.get(index[0]).trim();
 			int colon = line.indexOf(':');
 
 			if (colon == -1) {
@@ -194,25 +190,24 @@ public class YAML {
 			// Line with only "<Key>:"
 			if (colon == line.length() - 1) {
 				// Double Array
-				if (isADoubleArray(lines, index.value)) {
+				if (isADoubleArray(lines, index[0])) {
 					yaml.put(key, decodeDoubleArray(lines, index, shift + shiftStep));
 					continue;
 				}
 				// Dashed Array
-				else if (isADashedArray(lines, index.value)) {
+				else if (isADashedArray(lines, index[0])) {
 					yaml.put(key, decodeDashedArray(lines, index, shift + shiftStep));
 					continue;
 				}
 				// Child node
 				else {
-					index.value++;
+					index[0]++;
 					YAML node = decode(lines, index, shift + shiftStep);
-					index.value--;
+					index[0]--;
 
 					// List
 					if (key.contains("[")) {
 						key = key.substring(0, key.indexOf('['));
-
 						if (!yaml.contains(key))
 							yaml.put(key, new ArrayList<YAML>());
 						yaml.getList(key).add(node);
@@ -236,22 +231,20 @@ public class YAML {
 		if (lines.size() <= index + 1)
 			return false;
 		String content = lines.get(index + 1).trim();
-		if (content.isEmpty())
-			return false;
 		return content.charAt(0) == '-';
 	}
 
-	public static Object decodeDashedArray(ArrayList<String> lines, Int index, int shift) {
-		index.value++;
+	public static Object decodeDashedArray(ArrayList<String> lines, int[] index, int shift) {
+		index[0]++;
 
 		ArrayList<Object> array = new ArrayList<>();
 		String line;
 
-		for (; index.value < lines.size(); index.value++) {
+		for (; index[0] < lines.size(); index[0]++) {
 			if (!isAligned(lines, index, shift))
 				break;
 
-			line = lines.get(index.value);
+			line = lines.get(index[0]);
 
 			if (!line.contains("-"))
 				break;
@@ -259,32 +252,32 @@ public class YAML {
 			array.add(decodeLine(line.substring(line.indexOf('-'))));
 		}
 
-		index.value--;
+		index[0]--;
 		return array.toArray();
 	}
 
 	// =========================================================================================================================
 
 	public static boolean isADoubleArray(ArrayList<String> lines, int index) {
-		return lines.size() > index + 1 && lines.get(index + 1).contains("[");
+		return lines.size() > index + 1 && lines.get(index + 1).contains("-") && lines.get(index + 1).contains("[");
 	}
 
-	public static Object decodeDoubleArray(ArrayList<String> lines, Int index, int shift) {
-		index.value++;
+	public static Object decodeDoubleArray(ArrayList<String> lines, int[] index, int shift) {
+		index[0]++;
 
 		ArrayList<Object> array = new ArrayList<>();
 
-		for (; index.value < lines.size(); index.value++) {
+		for (; index[0] < lines.size(); index[0]++) {
 			if (!isAligned(lines, index, shift))
 				break;
 
-			if (!lines.get(index.value).contains("-"))
+			if (!lines.get(index[0]).contains("-"))
 				break;
 
-			array.add(decodeLine(lines.get(index.value)));
+			array.add(decodeLine(lines.get(index[0])));
 		}
 
-		index.value--;
+		index[0]--;
 		return array.toArray();
 	}
 
@@ -303,9 +296,9 @@ public class YAML {
 		return line.contains("[") ? decodeInlineArray(line) : line.trim();
 	}
 
-	public static boolean isAligned(ArrayList<String> lines, Int index, int shift) {
+	public static boolean isAligned(ArrayList<String> lines, int[] index, int shift) {
 		for (int i = 0; i < shift; i++)
-			if (lines.get(index.value).charAt(i) != ' ')
+			if (lines.get(index[0]).charAt(i) != ' ')
 				return false;
 		return true;
 	}

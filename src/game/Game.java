@@ -12,6 +12,7 @@ import data.Gamer;
 import data.dynamic.TickClock;
 import data.id.ItemTable;
 import data.id.ItemTableClient;
+import data.id.ItemType;
 import data.map.Coord;
 import data.map.Cube;
 import data.map.Map;
@@ -373,8 +374,8 @@ public class Game extends Environment3D implements Displayable {
 			return build.getCube();
 		}
 
-		if (cubeToAdd.multibloc != null)
-			return cubeToAdd.multibloc.clone().getCube();
+		if (ItemTable.getType(cubeToAdd) == ItemType.MULTICUBE)
+			return ItemTable.create(cubeToAdd.multicube.itemID);
 
 		return cubeToAdd.clone();
 	}
@@ -518,8 +519,6 @@ public class Game extends Environment3D implements Displayable {
 
 					// ===== Set coords of the cube(s) =====
 					cubeToAdd.setCoords(preview);
-					if (cubeToAdd.unit != null)
-						cubeToAdd.unit.coord = preview;
 
 					// Test if there is place for the cube(s) at the coords
 					previewed = map.addPreview(cubeToAdd);

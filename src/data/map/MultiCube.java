@@ -1,15 +1,13 @@
-package data.map.multiblocs;
+package data.map;
 
 import java.io.Serializable;
 import java.util.LinkedList;
 
 import data.id.ItemID;
-import data.map.Coord;
-import data.map.Cube;
 import data.map.buildings.Building;
 import data.map.units.Unit;
 
-public class MultiBloc implements Serializable {
+public class MultiCube implements Serializable {
 	private static final long serialVersionUID = 6445228941735562941L;
 
 	private static int nextID = 0;
@@ -24,19 +22,21 @@ public class MultiBloc implements Serializable {
 
 	// =========================================================================================================================
 
-	public MultiBloc(int itemID, int x, int y, int z) {
-		id = nextID++;
+	public MultiCube(int itemID, int x, int y, int z) {
+		this();
 		this.itemID = itemID;
 		this.x = x;
 		this.y = y;
 		this.z = z;
 	}
 
-	public MultiBloc(int itemID) {
+	public MultiCube(int itemID) {
 		this(itemID, 0, 0, 0);
 	}
 
-	public MultiBloc() {
+	public MultiCube() {
+		// TODO [Fix] ID generation on clone()
+		id = nextID++;
 	}
 
 	// =========================================================================================================================
@@ -50,7 +50,7 @@ public class MultiBloc implements Serializable {
 	}
 
 	public void add(Cube cube) {
-		cube.multibloc = this;
+		cube.multicube = this;
 
 		if (cube.onGrid) {
 			cube.multiblocX = cube.gridCoord.x;
@@ -88,17 +88,6 @@ public class MultiBloc implements Serializable {
 	public void setUnit(Unit unit) {
 		for (Cube c : list)
 			c.unit = unit;
-	}
-
-	// =========================================================================================================================
-
-	public MultiBloc clone() {
-		MultiBloc m = new MultiBloc(itemID, x, y, z);
-		nextID--;
-		m.id = id;
-		m.list.addAll(list);
-		m.valid = valid;
-		return m;
 	}
 
 	// =========================================================================================================================

@@ -148,8 +148,6 @@ public abstract class KeyboardEnvironment3D implements KeyBoard {
 			Cube cubeToAdd = getCubeToAdd();
 
 			// ===== Add the cube to the server =====
-			if (cubeToAdd.unit != null)
-				cubeToAdd.unit.coord = targetedAir;
 			cubeToAdd.setCoords(targetedAir);
 
 			env.send(SendAction.add(cubeToAdd));

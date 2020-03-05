@@ -1,6 +1,7 @@
 package environment.textures;
 
 import data.id.ItemTable;
+import data.id.ItemType;
 import data.map.Cube;
 import data.map.enumerations.Face;
 import utils.yaml.YAML;
@@ -78,10 +79,10 @@ public class TextureMulti {
 	// =========================================================================================================================
 
 	public TextureSquare getFace(Cube cube, Face face) {
-		if (cube.multibloc == null)
-			return textures[face.ordinal()];
-		return cubes[cube.multiblocX][cube.multiblocY][cube.multiblocZ].getTexture(face, cube.rotation,
-				cube.orientation);
+		if (ItemTable.getType(cube.getItemID()) == ItemType.MULTIBLOC)
+			return cubes[cube.multiblocX][cube.multiblocY][cube.multiblocZ].getTexture(face, cube.rotation,
+					cube.orientation);
+		return textures[face.ordinal()];
 	}
 
 	// =========================================================================================================================

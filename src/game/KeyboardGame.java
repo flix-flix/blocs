@@ -47,7 +47,7 @@ public class KeyboardGame extends KeyboardEnvironment3D {
 		if (game.previewed == null)
 			return false;
 
-		if (game.previewed.multibloc != null && !game.previewed.multibloc.valid)
+		if (game.previewed.multicube != null && !game.previewed.multicube.valid)
 			return false;
 
 		return true;

@@ -9,11 +9,11 @@ import data.id.ItemTableClient;
 import data.map.Coord;
 import data.map.Cube;
 import data.map.Map;
+import data.map.MultiCube;
 import data.map.buildings.Building;
 import data.map.enumerations.Face;
 import data.map.enumerations.Orientation;
 import data.map.enumerations.Rotation;
-import data.map.multiblocs.MultiBloc;
 import data.map.resources.Resource;
 import server.send.Action;
 import utils.Utils;
@@ -406,7 +406,7 @@ public class Unit implements Serializable {
 	 * 
 	 * @return true if coords are reachable
 	 */
-	public boolean goAroundMulti(Map map, MultiBloc multi) {
+	public boolean goAroundMulti(Map map, MultiCube multi) {
 		ArrayList<Coord> ends = new ArrayList<>();
 
 		for (Cube cube : multi.list)
@@ -461,7 +461,7 @@ public class Unit implements Serializable {
 	}
 
 	public boolean harvest(Map map, Coord coord) {
-		MultiBloc multi = map.gridGet(coord).multibloc;
+		MultiCube multi = map.gridGet(coord).multicube;
 
 		if (multi != null) {
 			if (!goAroundMulti(map, multi))

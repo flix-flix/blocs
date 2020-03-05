@@ -9,13 +9,14 @@ import java.awt.event.MouseListener;
 
 import data.Gamer;
 import data.id.ItemID;
+import data.id.ItemTable;
 import data.id.ItemTableClient;
+import data.map.Coord;
 import data.map.Cube;
 import data.map.buildings.Building;
 import data.map.enumerations.Face;
 import data.map.enumerations.Orientation;
 import data.map.enumerations.Rotation;
-import data.map.multiblocs.Tree;
 import data.map.units.Unit;
 import environment.Environment3D;
 import environment.PanEnvironment;
@@ -167,12 +168,15 @@ public class ButtonEnv extends PanEnvironment {
 				if (x / 2 + z < 15 || x + z / 2 < 15)
 					map.set(new Cube(x, ground - 1, z, ItemID.DIRT));
 
-		map.add(new Tree(10, ground, 5).getCube());
-		map.add(new Tree(14, ground, 5).getCube());
-		map.add(new Tree(18, ground, 4).getCube());
+		Coord[] trees = new Coord[] { new Coord(2, ground, 4), new Coord(5, ground, 6), new Coord(10, ground, 5),
+				new Coord(14, ground, 5), new Coord(18, ground, 4), new Coord(20, ground, 10),
+				new Coord(25, ground, 10) };
 
-		map.add(new Tree(20, ground, 10).getCube());
-		map.add(new Tree(25, ground, 10).getCube());
+		for (Coord tree : trees) {
+			Cube cube = ItemTable.create(ItemID.TREE);
+			cube.setCoords(tree);
+			map.add(cube);
+		}
 
 		// =========================================================================================================================
 		// Units
@@ -246,15 +250,15 @@ public class ButtonEnv extends PanEnvironment {
 				if (x / 2 + z < 15 || x + z / 2 < 15)
 					map.set(new Cube(x, ground - 1, z, ItemID.DIRT));
 
-		map.add(new Tree(10, ground, 5).getCube());
-		map.add(new Tree(14, ground, 5).getCube());
-		map.add(new Tree(18, ground, 4).getCube());
-		map.add(new Tree(20, ground, 10).getCube());
-		map.add(new Tree(25, ground, 10).getCube());
+		Coord[] trees = new Coord[] { new Coord(10, ground, 5), new Coord(14, ground, 5), new Coord(18, ground, 4),
+				new Coord(20, ground, 10), new Coord(25, ground, 10), new Coord(20, ground, 3),
+				new Coord(24, ground, 9) };
 
-		map.add(new Tree(20, ground, 3).getCube());
-
-		map.add(new Tree(24, ground, 9).getCube());
+		for (Coord tree : trees) {
+			Cube cube = ItemTable.create(ItemID.TREE);
+			cube.setCoords(tree);
+			map.add(cube);
+		}
 
 		// =========================================================================================================================
 		// Units

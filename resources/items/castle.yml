@@ -1,6 +1,5 @@
 id: 300
 tag : CASTLE
-type: multibloc
 multibloc:
     size:
         x: 3

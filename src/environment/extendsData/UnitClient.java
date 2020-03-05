@@ -4,10 +4,10 @@ import data.id.ItemID;
 import data.map.Coord;
 import data.map.Cube;
 import data.map.Map;
+import data.map.MultiCube;
 import data.map.buildings.Building;
 import data.map.enumerations.Face;
 import data.map.enumerations.Orientation;
-import data.map.multiblocs.MultiBloc;
 import data.map.resources.Resource;
 import data.map.units.Unit;
 import environment.extendsEngine.DrawLayer;
@@ -22,7 +22,7 @@ public class UnitClient extends Unit {
 	/** For each axe : the current rotation of the unit */
 	public double ax = 0, ay = 0, az = 0;
 
-	private MultiBloc displayedPath;
+	private MultiCube displayedPath;
 	// =========================================================================================================================
 
 	public UnitClient(Unit unit) {
@@ -41,7 +41,7 @@ public class UnitClient extends Unit {
 		if (path == null)
 			return;
 
-		displayedPath = new MultiBloc();
+		displayedPath = new MultiCube();
 
 		for (Coord coord : path) {
 			CubeClient cube = new CubeClient(new Cube(coord, ItemID.INVISIBLE));
@@ -129,7 +129,7 @@ public class UnitClient extends Unit {
 
 		if (displayedPath != null && !displayedPath.list.isEmpty()) {
 			Cube cube = displayedPath.list.pollFirst();
-			cube.multibloc = null;
+			cube.multicube = null;
 			map.remove(cube);
 		}
 	}

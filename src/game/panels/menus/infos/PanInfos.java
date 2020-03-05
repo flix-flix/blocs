@@ -53,10 +53,10 @@ public class PanInfos extends PanCard {
 		// gridCubes
 
 		for (int itemID : ItemTable.getItemIDList()) {
-			Cube cube = ItemTable.create(itemID);
-
-			if (ItemTable.isDevelopment(cube.getItemID()))
+			if (ItemTable.isDevelopment(itemID))
 				continue;
+
+			Cube cube = ItemTable.create(itemID);
 
 			ButtonBlocks button = new ButtonCube(game, cube);
 			buttonsCubes.add(button);
