@@ -46,6 +46,8 @@ public class MultiCube implements Serializable {
 	}
 
 	public Cube getCube() {
+		if (list.isEmpty())
+			return null;
 		return list.getFirst();
 	}
 
@@ -69,6 +71,16 @@ public class MultiCube implements Serializable {
 
 	// =========================================================================================================================
 
+	public void remove(Coord coord) {
+		for (int i = 0; i < list.size(); i++)
+			if (list.get(i).coords().equals(coord)) {
+				list.remove(i);
+				return;
+			}
+	}
+
+	// =========================================================================================================================
+
 	public void setCoords(int x, int y, int z) {
 		for (Cube c : list)
 			c.shiftCoords(x - this.x, y - this.y, z - this.z);
@@ -88,6 +100,18 @@ public class MultiCube implements Serializable {
 	public void setUnit(Unit unit) {
 		for (Cube c : list)
 			c.unit = unit;
+	}
+
+	// =========================================================================================================================
+
+	public int getMaxHeight() {
+		int max = -1;
+
+		for (Cube cube : list)
+			if (max < cube.gridCoord.y)
+				max = cube.gridCoord.y;
+
+		return max;
 	}
 
 	// =========================================================================================================================

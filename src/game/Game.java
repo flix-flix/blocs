@@ -8,20 +8,16 @@ import java.util.LinkedList;
 
 import javax.swing.JPanel;
 
-import data.Gamer;
 import data.dynamic.TickClock;
 import data.id.ItemTable;
 import data.id.ItemTableClient;
-import data.id.ItemType;
 import data.map.Coord;
 import data.map.Cube;
 import data.map.Map;
 import data.map.buildings.Building;
 import data.map.resources.Resource;
 import data.map.resources.ResourceType;
-import data.map.units.Unit;
 import environment.Environment3D;
-import environment.Target;
 import environment.extendsData.CubeClient;
 import environment.extendsData.MapClient;
 import environment.extendsData.UnitClient;
@@ -61,7 +57,6 @@ public class Game extends Environment3D implements Displayable {
 	public Player player = new Player("Felix");
 
 	// =============== Data ===============
-	public Gamer gamer;
 	private UserAction userAction;
 	public CameraMode cameraMode = CameraMode.CLASSIC;
 	public GameMode gameMode = GameMode.CLASSIC;
@@ -83,13 +78,6 @@ public class Game extends Environment3D implements Displayable {
 
 	// =============== Error ===============
 	public String errorMsg = "UNKNOWN ERROR";
-
-	// =============== Adding ===============
-	/** Next cube(s) to add (its coords aren't valid) */
-	private Cube cubeToAdd;
-	/** Coord of the preview cube */
-	public Coord preview;
-	public CubeClient previewed;
 
 	// =============== Dialog ===============
 	public MessageManager messages;
@@ -351,35 +339,6 @@ public class Game extends Environment3D implements Displayable {
 		return userAction;
 	}
 
-	public void setCubeToAdd(Cube cube) {
-		cubeToAdd = cube;
-	}
-
-	// TODO [Optimise] Avoid clone of cubeToAdd on each target update
-	public Cube cloneCubeToAdd() {
-		if (cubeToAdd == null)
-			return null;
-
-		if (cubeToAdd.unit != null) {
-			Unit u = cubeToAdd.unit;
-			Unit unit = new Unit(u.getItemID(), gamer, u.coord.x, u.coord.y, u.coord.z);
-			Cube cube = cubeToAdd.clone();
-			cube.unit = unit;
-			return cube;
-		}
-
-		if (cubeToAdd.build != null) {
-			Building build = ItemTable.create(cubeToAdd.build.getItemID()).build;
-			build.setGamer(gamer);
-			return build.getCube();
-		}
-
-		if (ItemTable.getType(cubeToAdd) == ItemType.MULTICUBE)
-			return ItemTable.create(cubeToAdd.multicube.itemID);
-
-		return cubeToAdd.clone();
-	}
-
 	// =========================================================================================================================
 	// Selected
 
@@ -478,10 +437,6 @@ public class Game extends Environment3D implements Displayable {
 	// =========================================================================================================================
 	// Getters
 
-	public Target getTarget() {
-		return target;
-	}
-
 	public StateHUD getStateHUD() {
 		return stateHUD;
 	}
@@ -509,19 +464,7 @@ public class Game extends Environment3D implements Displayable {
 		if (cameraMode == CameraMode.CLASSIC)
 			if (target.cube != null)
 				if (userAction == UserAction.CREA_ADD) {
-
-					// Get cube(s) to add
-					Cube cubeToAdd = cloneCubeToAdd();
-					if (cubeToAdd == null)
-						return;
-
-					preview = new Coord(target.cube).face(target.face);
-
-					// ===== Set coords of the cube(s) =====
-					cubeToAdd.setCoords(preview);
-
-					// Test if there is place for the cube(s) at the coords
-					previewed = map.addPreview(cubeToAdd);
+					addPreview();
 				}
 
 				else if (userAction == UserAction.CREA_DESTROY) {
@@ -571,13 +514,11 @@ public class Game extends Environment3D implements Displayable {
 
 	/** Removes previous selection display */
 	@Override
-	public void looseTarget() {
-		// Removes highlight
-		map.setHighlight(target.cube, false);
+	public void loseTarget() {
+		removePreview();
 
-		// Removes preview cube(s)
-		if (previewed != null)
-			map.remove(previewed);
+		// Removes light
+		map.setHighlight(target.cube, false);
 
 		unitAction = null;
 	}

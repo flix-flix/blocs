@@ -1,5 +1,6 @@
 package environment;
 
+import data.map.Coord;
 import data.map.enumerations.Face;
 import environment.extendsData.CubeClient;
 import environment.extendsEngine.DrawCubeFace;
@@ -47,5 +48,14 @@ public class Target {
 
 	public boolean hasQuadri() {
 		return quadri != Quadri.NOT_NUMBERED;
+	}
+
+	// =========================================================================================================================
+
+	/**
+	 * @return The cube in the air next to the targeted face of the targeted cube
+	 */
+	public Coord getAir() {
+		return new Coord(cube).face(face);
 	}
 }

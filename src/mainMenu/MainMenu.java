@@ -12,7 +12,7 @@ import javax.swing.JPanel;
 
 import data.id.ItemTableClient;
 import dataManager.DataManager;
-import editor.Editor;
+import editor.EditorManager;
 import game.Game;
 import mainMenu.buttons.ButtonAction;
 import mainMenu.buttons.ButtonEnv;
@@ -209,7 +209,7 @@ public class MainMenu extends JPanel implements Displayable {
 			break;
 
 		case EDITOR:
-			fen.setDisplay(new Editor(fen));
+			fen.setDisplay(new EditorManager(fen));
 			break;
 		case DATA_MANAGER:
 			fen.setDisplay(new DataManager(fen));

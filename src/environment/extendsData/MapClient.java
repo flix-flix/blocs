@@ -22,9 +22,9 @@ public class MapClient extends Map implements Modelisable {
 	// =============== Model ===============
 	private ArrayList<Drawable> draws = new ArrayList<>();
 
-	// =============== Parameters ===============
+	// =============== Options ===============
 	/** Range of chunks to draw */
-	int range = 4;
+	public int range = 4;
 
 	// =============== Infos ===============
 	public int nbFaces, nbChunks;
@@ -101,6 +101,11 @@ public class MapClient extends Map implements Modelisable {
 	@Override
 	public CubeClient getUnitCube(int unitID) {
 		return (CubeClient) super.getUnitCube(unitID);
+	}
+
+	@Override
+	public CubeClient get(Cube c) {
+		return (CubeClient) super.get(c);
 	}
 
 	// =========================================================================================================================
@@ -181,6 +186,8 @@ public class MapClient extends Map implements Modelisable {
 					c.onGrid = false;
 				}
 				created = (CubeClient) cube.multicube.getCube();
+				if (created == null)
+					return null;
 			}
 			// Single cube
 			else {
@@ -301,6 +308,11 @@ public class MapClient extends Map implements Modelisable {
 
 		int id = cube.getItemID(), aID = adjacent.getItemID();
 
+		// Cubes with same ID hide each others (glass, water)
+		if (id == aID)
+			return true;
+
+		// TODO [Fix] isOpaque() for previews
 		// The cube musn't be a preview ... or the adjacent must be one too
 		if (adjacent.isPreview() && !cube.isPreview())
 			return false;
@@ -309,15 +321,11 @@ public class MapClient extends Map implements Modelisable {
 		if (adjacent.build != null && !adjacent.build.isBuild())
 			return false;
 
-		// Cubes with same ID doesn't hide each others (glass, water)
-		if (id == aID)
-			return true;
-
 		// The adjacent cube must be opaque...
 		if (!ItemTableClient.isOpaque(aID))
 			return false;
 
-		// A transparent bloc always show it's faces
+		// A transparent bloc always show it's faces (except liquid)
 		if (careTransparency && !ItemTableClient.isOpaque(id) && id != ItemID.WATER)
 			return false;
 

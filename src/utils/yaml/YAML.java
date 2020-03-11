@@ -379,7 +379,11 @@ public class YAML {
 	// =========================================================================================================================
 
 	public static YAML parseFile(String file) {
-		String[] _lines = Utils.read(file).split("\r\n");
+		return parseText(Utils.read(file));
+	}
+
+	public static YAML parseText(String content) {
+		String[] _lines = content.split("\r\n");
 		ArrayList<String> lines = new ArrayList<>();
 
 		for (String line : _lines) {

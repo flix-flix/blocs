@@ -8,9 +8,11 @@ import data.id.ItemTable;
 import data.map.Cube;
 import game.Game;
 import game.StateHUD;
+import utils.panels.ClickListener;
 import utils.panels.PanCard;
 import utils.panels.PanGrid;
 import utilsBlocks.ButtonBlocks;
+import utilsBlocks.ButtonCube;
 
 public class PanInfos extends PanCard {
 	private static final long serialVersionUID = -7621681231232278749L;
@@ -58,7 +60,15 @@ public class PanInfos extends PanCard {
 
 			Cube cube = ItemTable.create(itemID);
 
-			ButtonBlocks button = new ButtonCube(game, cube);
+			ButtonBlocks button = new ButtonCube(cube);
+
+			button.setClickListener(new ClickListener() {
+				@Override
+				public void leftClick() {
+					game.setCubeToAdd(cube);
+				}
+			});
+
 			buttonsCubes.add(button);
 			gridCubes.gridAdd(button);
 		}

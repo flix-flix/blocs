@@ -128,11 +128,10 @@ public class TextureCube {
 
 	// =========================================================================================================================
 
-	public YAML getYAML(int id, String name, int miniMapColor) {
+	public YAML getYAML(int id, int miniMapColor) {
 		YAML yaml = new YAML();
 
 		yaml.put("id", id);
-		yaml.put("name", name);
 
 		yaml.put("pixels.x", textures[0].normal.height);
 		yaml.put("pixels.y", textures[2].normal.height);

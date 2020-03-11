@@ -246,7 +246,7 @@ public class FButton extends FPanel {
 	// =========================================================================================================================
 	// Group
 
-	public static void _group(ArrayList<FButton> list) {
+	private static void _group(ArrayList<FButton> list) {
 		for (FButton button : list)
 			button.group = list;
 	}

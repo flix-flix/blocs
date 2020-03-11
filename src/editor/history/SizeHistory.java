@@ -1,8 +1,8 @@
 package editor.history;
 
-import editor.Editor;
+import editor.EditorCubeTexture;
 
-public class SizeHistory implements History {
+public class SizeHistory implements History<EditorCubeTexture> {
 
 	int oldSize, newSize;
 
@@ -12,12 +12,12 @@ public class SizeHistory implements History {
 	}
 
 	@Override
-	public void undo(Editor editor) {
+	public void undo(EditorCubeTexture editor) {
 		editor.setTextureSize(oldSize);
 	}
 
 	@Override
-	public void redo(Editor editor) {
+	public void redo(EditorCubeTexture editor) {
 		editor.setTextureSize(newSize);
 	}
 }

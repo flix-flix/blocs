@@ -1,10 +1,10 @@
 package editor.history;
 
-import editor.Editor;
+import editor.EditorAbstract;
 
-public interface History {
+public interface History<E extends EditorAbstract> {
 
-	public void undo(Editor editor);
+	public void undo(E editorAbstract);
 
-	public void redo(Editor editor);
+	public void redo(E editor);
 }

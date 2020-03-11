@@ -1,9 +1,9 @@
 package editor.history;
 
 import data.map.enumerations.Face;
-import editor.Editor;
+import editor.EditorCubeTexture;
 
-public class PixelHistory implements History {
+public class PixelHistory implements History<EditorCubeTexture> {
 
 	public Face face;
 	public int x, y;
@@ -28,13 +28,13 @@ public class PixelHistory implements History {
 	}
 
 	@Override
-	public void undo(Editor editor) {
+	public void undo(EditorCubeTexture editor) {
 		editor.setPixel(face, x, y, oldColor);
 		editor.setLastPixel(face, prevX, prevY);
 	}
 
 	@Override
-	public void redo(Editor editor) {
+	public void redo(EditorCubeTexture editor) {
 		editor.setPixel(face, x, y, newColor);
 		editor.setLastPixel(face, nextX, nextY);
 	}

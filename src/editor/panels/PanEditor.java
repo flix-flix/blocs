@@ -1,65 +1,91 @@
 package editor.panels;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.swing.JPanel;
 
+import data.id.ItemTable;
+import data.map.Cube;
 import editor.ActionEditor;
-import editor.Editor;
+import editor.EditorCubeTexture;
+import editor.EditorManager;
 import editor.tips.TipCalk;
 import editor.tips.TipEditor;
+import editor.tips.TipMultiCube;
 import editor.tips.TipPencil;
 import environment.PanEnvironment;
 import utils.panels.ClickListener;
+import utils.panels.PanCard;
 import utils.panels.PanCol;
 import utils.panels.PanGrid;
 import utils.panels.popUp.PopUpConfirm;
+import utilsBlocks.ButtonBlocks;
+import utilsBlocks.ButtonCube;
 import utilsBlocks.help.PanHelp;
 import utilsBlocks.help.PanHelp.Mark;
 
 public class PanEditor extends JPanel {
 	private static final long serialVersionUID = -7092208608285186782L;
 
-	private Editor editor;
+	private EditorManager editor;
 
 	private PanEnvironment panel;
 
 	// =============== Menu ===============
-	private int menuWidth = 400;
+	public int menuWidth = 400;
 
 	private PanCol menu;
+	public PanCard cardsActions;
 
-	private ActionEditor[] _buttonsTop = { ActionEditor.EDIT_CUBE, ActionEditor.EDIT_MULTI_CUBE,
-			ActionEditor.EDIT_MULTI_TEXTURE, ActionEditor.QUIT };
-	private ActionEditor[] _buttonsAction = {
+	private ActionEditor[] _buttonsTop = { ActionEditor.EDIT_CUBE_TEXTURE, ActionEditor.EDIT_MULTI_CUBE,
+			ActionEditor.EDIT_MULTI_TEXTURE, ActionEditor.EDIT_CUBE, ActionEditor.CLOSE_EDITOR };
+
+	private ActionEditor[] _buttonsItemID = { ActionEditor.ITEM_TAG, ActionEditor.ITEM_ID, ActionEditor.ITEM_COLOR,
+			ActionEditor.ITEM_SAVE, ActionEditor.ITEM_CLEAR };
+
+	private HashMap<ActionEditor, ButtonEditor> buttonsTop = new HashMap<>(), buttonsItemID = new HashMap<>();
+	private PanGrid topActions, gridItemID;
+
+	// =============== Cube Texture ===============
+	private ActionEditor[] _buttonsCubeTexture = {
 			// Line 1
 			ActionEditor.ALONE, ActionEditor.DECOR, ActionEditor.PAINT, ActionEditor.FILL,
 			// Line 2
 			ActionEditor.SQUARE_SELECTION, ActionEditor.GRID, ActionEditor.MINIATURE, ActionEditor.SAVE,
 			// Line 3
 			ActionEditor.PLAYER_COLOR };
-	private ActionEditor[] _buttonsItemID = { ActionEditor.ITEM_TAG, ActionEditor.ITEM_ID, ActionEditor.ITEM_COLOR,
-			ActionEditor.ITEM_SAVE, ActionEditor.ITEM_CLEAR };
 
-	private HashMap<ActionEditor, ButtonEditor> buttonsTop = new HashMap<>(), buttonsAction = new HashMap<>(),
-			buttonsItemID = new HashMap<>();
+	private PanGrid gridCubeTexture;
+	private HashMap<ActionEditor, ButtonEditor> buttonsCubeTexture = new HashMap<>();
 
-	private PanGrid topActions, gridActions, gridItemID;
-
-	public PanColor panColor;
+	// =============== Multi-Cubes ===============
+	private ActionEditor[] _buttonsMultiCubes = { ActionEditor.DELETE_CUBE, ActionEditor.MINIATURE, ActionEditor.SAVE };
+	private PanGrid gridMultiCubes;
+	private HashMap<ActionEditor, ButtonEditor> buttonsMultiCubes = new HashMap<>();
 
 	// =============== Help ===============
 	private PanHelp<TipEditor> help;
 	public PanHelp<TipCalk> helpCalk;
 	public PanHelp<TipPencil> helpPencil;
+	public PanHelp<TipMultiCube> helpMultiCube;
+
+	// =============== Square ===============
+	public static final String COLOR = "Color";
+	public static final String CUBES = "Cubes";
+	public PanCard cardsSquare;
+	public PanColor panColor;
+
+	public PanGrid gridCubes;
+	public ArrayList<ButtonBlocks> buttonsCubes;
 
 	// =============== Pop-Up ===============
 	private PopUpConfirm popUpExit, popUpSaveOnExistant;
 
 	// =========================================================================================================================
 
-	public PanEditor(Editor editor) {
+	public PanEditor(EditorManager editor) {
 		this.editor = editor;
 
 		this.setLayout(null);
@@ -99,7 +125,7 @@ public class PanEditor extends JPanel {
 		popUpSaveOnExistant.setConfirmAction(new ClickListener() {
 			@Override
 			public void leftClick() {
-				editor.saveTextureSaved();
+				((EditorCubeTexture) editor.editors.get(ActionEditor.EDIT_CUBE_TEXTURE)).saveTextureSaved();
 				popUpSaveOnExistant.close();
 			}
 		});
@@ -135,37 +161,47 @@ public class PanEditor extends JPanel {
 		help.setLocation(25, 25);
 		panel.add(help);
 
-		helpCalk = new PanHelp<>(Mark.EXCLAMATION, 450, 60, 7, TipCalk.values()[0]);
+		helpCalk = new PanHelp<>(Mark.EXCLAMATION, 500, 60, 7, TipCalk.values()[0]);
 		helpCalk.setBackground(new Color(0xff4068c4));
 		helpCalk.setLocation(25, 25);
 		helpCalk.setVisible(false);
 		panel.add(helpCalk);
 
-		helpPencil = new PanHelp<>(Mark.EXCLAMATION, 450, 60, 7, TipPencil.values()[0]);
+		helpPencil = new PanHelp<>(Mark.EXCLAMATION, 500, 60, 7, TipPencil.values()[0]);
 		helpPencil.setBackground(new Color(0xff4068c4));
 		helpPencil.setLocation(25, 25);
 		helpPencil.setVisible(false);
 		panel.add(helpPencil);
 
+		helpMultiCube = new PanHelp<>(Mark.EXCLAMATION, 500, 60, 7, TipMultiCube.values()[0]);
+		helpMultiCube.setBackground(new Color(0xff4068c4));
+		helpMultiCube.setLocation(25, 25);
+		helpMultiCube.setVisible(false);
+		panel.add(helpMultiCube);
+
 		// ========================================================================================
 		// Top
 
-		menu.addTop(topActions = new PanGrid(), 100);
+		menu.addTop(topActions = new PanGrid(), 75);
+		topActions.setCols(5);
 
 		for (ActionEditor action : _buttonsTop) {
 			buttonsTop.put(action, new ButtonEditor(editor, action));
 			topActions.gridAdd(buttonsTop.get(action));
 		}
 
+		get(ActionEditor.EDIT_CUBE_TEXTURE).setSelectable(true, false);
+		get(ActionEditor.EDIT_MULTI_CUBE).setSelectable(true, false);
+		// get(ActionEditor.EDIT_MULTI_TEXTURE).setSelectable(true);
+		// get(ActionEditor.EDIT_CUBE).setSelectable(true);
+
+		get(ActionEditor.EDIT_CUBE_TEXTURE).setSelected(true);
+
+		ButtonEditor.group(get(ActionEditor.EDIT_CUBE_TEXTURE), get(ActionEditor.EDIT_MULTI_CUBE),
+				get(ActionEditor.EDIT_MULTI_TEXTURE), get(ActionEditor.EDIT_CUBE));
+
 		get(ActionEditor.EDIT_CUBE).setWIP();
-		get(ActionEditor.EDIT_MULTI_CUBE).setWIP();
 		get(ActionEditor.EDIT_MULTI_TEXTURE).setWIP();
-
-		// ========================================================================================
-		// Color
-
-		menu.addBottom(panColor = new PanColor(editor), PanCol.WIDTH);
-		panColor.setVisible(false);
 
 		// ========================================================================================
 		// ItemID
@@ -190,17 +226,70 @@ public class PanEditor extends JPanel {
 		get(ActionEditor.ITEM_ID).setWheelStep(0);
 
 		// ========================================================================================
-		// Actions
+		// Square
 
-		menu.addTop(gridActions = new PanGrid(), PanCol.REMAINING);
+		menu.addBottom(cardsSquare = new PanCard(), PanCol.WIDTH);
+		cardsSquare.put(COLOR, panColor = new PanColor(editor));
+		cardsSquare.put(CUBES, gridCubes = new PanGrid());
 
-		for (ActionEditor action : _buttonsAction) {
-			buttonsAction.put(action, new ButtonEditor(editor, action));
-			gridActions.gridAdd(buttonsAction.get(action));
+		buttonsCubes = new ArrayList<>();
+
+		for (int itemID : ItemTable.getItemIDList()) {
+			if (ItemTable.isDevelopment(itemID))
+				continue;
+
+			Cube cube = ItemTable.create(itemID);
+			if (cube.multicube != null)
+				continue;
+
+			ButtonBlocks button = new ButtonCube(cube);
+
+			button.setClickListener(new ClickListener() {
+				@Override
+				public void leftClick() {
+					editor.editor.clickCube(cube);
+				}
+			});
+
+			buttonsCubes.add(button);
+			gridCubes.gridAdd(button);
+		}
+
+		ButtonBlocks.group(buttonsCubes);
+		cardsSquare.setBackground(Color.LIGHT_GRAY);
+		cardsSquare.hide();
+
+		// ========================================================================================
+		// Cards Actions
+
+		menu.addTop(cardsActions = new PanCard(), PanCol.REMAINING);
+
+		// ========================================================================================
+		// Multi-Cubes
+
+		cardsActions.put(ActionEditor.EDIT_MULTI_CUBE.name(), gridMultiCubes = new PanGrid());
+
+		for (ActionEditor action : _buttonsMultiCubes) {
+			buttonsMultiCubes.put(action, new ButtonEditor(editor, action));
+			gridMultiCubes.gridAdd(buttonsMultiCubes.get(action));
+		}
+
+		buttonsMultiCubes.get(ActionEditor.DELETE_CUBE).setSelectable(true);
+		buttonsMultiCubes.get(ActionEditor.SAVE).setWIP();
+
+		// ========================================================================================
+		// Cube texture
+
+		cardsActions.put(ActionEditor.EDIT_CUBE_TEXTURE.name(), gridCubeTexture = new PanGrid());
+
+		for (ActionEditor action : _buttonsCubeTexture) {
+			buttonsCubeTexture.put(action, new ButtonEditor(editor, action));
+			gridCubeTexture.gridAdd(buttonsCubeTexture.get(action));
 		}
 
 		get(ActionEditor.GRID).listenWheel();
-		get(ActionEditor.GRID).setWheelStep(editor.getTextureSize());
+		// TODO 3 -> editor.getTextureSize()
+		get(ActionEditor.GRID).setWheelStep(3);
 		get(ActionEditor.GRID).setWheelMinMax(1, 16);
 		get(ActionEditor.GRID).setSelectable(true);
 
@@ -213,19 +302,24 @@ public class PanEditor extends JPanel {
 
 		get(ActionEditor.ALONE).setWIP();
 		get(ActionEditor.DECOR).setWIP();
-		get(ActionEditor.SAVE).setWIP();
 		get(ActionEditor.PLAYER_COLOR).setWIP();
+
+		// ========================================================================================
+
+		cardsActions.show(ActionEditor.EDIT_CUBE_TEXTURE.name());
 	}
 
 	// =========================================================================================================================
 
 	public ButtonEditor get(ActionEditor action) {
-		if (buttonsAction.containsKey(action))
-			return buttonsAction.get(action);
+		if (buttonsCubeTexture.containsKey(action))
+			return buttonsCubeTexture.get(action);
 		else if (buttonsItemID.containsKey(action))
 			return buttonsItemID.get(action);
 		else if (buttonsTop.containsKey(action))
 			return buttonsTop.get(action);
+		else if (buttonsMultiCubes.containsKey(action))
+			return buttonsMultiCubes.get(action);
 		return null;
 	}
 
@@ -252,6 +346,7 @@ public class PanEditor extends JPanel {
 
 		helpPencil.setBottomLeftCorner(25, getHeight() - 26 - help.getSize().height - 25);
 		helpCalk.setBottomLeftCorner(25, getHeight() - 26 - help.getSize().height - 25);
+		helpMultiCube.setBottomLeftCorner(25, getHeight() - 26 - help.getSize().height - 25);
 		help.setBottomLeftCorner(25, getHeight() - 26);
 
 		popUpExit.setSize(width, height);

@@ -6,7 +6,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 
-import data.map.Cube;
 import environment.Environment3D;
 import environment.KeyboardEnvironment3D;
 import environment.extendsData.CubeClient;
@@ -37,29 +36,6 @@ public class KeyboardGame extends KeyboardEnvironment3D {
 		return game.getAction() == UserAction.MOUSE;
 	}
 
-	@Override
-	public boolean isAdding() {
-		return game.getAction() == UserAction.CREA_ADD;
-	}
-
-	@Override
-	public boolean isAddable() {
-		if (game.previewed == null)
-			return false;
-
-		if (game.previewed.multicube != null && !game.previewed.multicube.valid)
-			return false;
-
-		return true;
-	}
-
-	@Override
-	public void cacheTarget() {
-		targetedCube = game.getTarget().cube;
-		targetedCoord = targetedCube == null ? null : targetedCube.coords();
-		targetedFace = game.getTarget().face;
-	}
-
 	// =========================================================================================================================
 
 	@Override
@@ -68,18 +44,23 @@ public class KeyboardGame extends KeyboardEnvironment3D {
 	}
 
 	@Override
-	public Cube getCubeToAdd() {
-		return game.cloneCubeToAdd();
-	}
-
-	@Override
-	public void applyAction() {
-		game.sendUnitAction();
-	}
-
-	@Override
 	public Environment3D getEnvironment() {
 		return game;
+	}
+
+	// =========================================================================================================================
+
+	@Override
+	public void rightClickPressed(MouseEvent e) {
+		super.rightClickPressed(e);
+
+		// Add a cube to the map
+		if (game.getAction() == UserAction.CREA_ADD)
+			addCube();
+
+		// Do an action
+		else
+			game.sendUnitAction();
 	}
 
 	// =========================================================================================================================

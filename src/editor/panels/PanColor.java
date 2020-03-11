@@ -10,7 +10,7 @@ import java.awt.image.BufferedImage;
 
 import data.id.ItemTableClient;
 import editor.ActionEditor;
-import editor.Editor;
+import editor.EditorManager;
 import utils.panels.FPanel;
 
 public class PanColor extends FPanel {
@@ -69,7 +69,7 @@ public class PanColor extends FPanel {
 
 	// =========================================================================================================================
 
-	public PanColor(Editor editor) {
+	public PanColor(EditorManager editor) {
 		setBackground(Color.GRAY);
 
 		int[] tab = new int[] { 0, 255, 0 };// B, R, G

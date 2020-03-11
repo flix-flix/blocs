@@ -41,15 +41,15 @@ keys:
 tips:
     editor:
         global:
-            face_name: Maintenez "Alt" pour voir l'orientation de chaque face
+            face_name: Appuyez sur "Alt" pour afficher / masquer l'orientation de chaque face
             rotate: Maintenez le clic droit enfoncé en déplaçant la souris pour faire tourner le cube (ou ~FORWARD, ~LEFT, ~BACKWARD, ~RIGHT )
-            grid: Utilisez la molette sur le bouton "Grille" pour augmenter/diminuer la résolution de la face
-            zoom: Utilisez la molette pour zoomer/dézoomer
+            grid: Utilisez la molette sur le bouton "Grille" pour augmenter / diminuer la résolution de la face
+            zoom: Utilisez la molette pour zoomer / dézoomer
             undo: Utilisez "Ctrl+Z" pour annuler la dernière modification et "Ctrl+Y" pour l'appliquer de nouveau
             
         pencil:
             new_color: Sélecteur de couleurs: cliquez sur la barre verticale pour choisir la couleur puis utilisez le carré pour ajuster la teinte
-            alpha: Utilisez la molette sur le bouton "100%" pour augmenter/diminuer la transparence de la couleur
+            alpha: Utilisez la molette sur le bouton "100%" pour augmenter / diminuer la transparence de la couleur
             memory: Les 5 dernières couleurs sont affichées en dessous de celle actuelle: cliquez dessus pour les réutiliser
             pick_color: Sur le cube, maintenez "Ctrl" pour récuperer la couleur de la case ciblée
             line_square: Maintenez "Maj" pour dessiner une ligne depuis la dernière case peinte. "Maj + Ctrl" pour remplir un carré
@@ -61,6 +61,11 @@ tips:
             rotate: Appuyez sur "◄" ou "►" pour faire tourner le calque
             apply_delete: Appuyez sur "Entrée" pour appliquer le calque ou sur "Echap" pour le supprimer
             select_all: "Ctrl+A" sélectionne toute la face. "Ctrl+Maj+A" annule la sélection
+            
+        multi_cubes:
+            add_cube: Sélectionnez le cube à ajouter dans la liste en bas a gauche puis placer le avec un clic gauche. (Impossible d'ajouter en dessous du socle)
+            remove_cube: La croix rouge permet de détruire un cube en effectuant un clic gauche dessus
+            altitude: Maintenez "Ctrl" en utilisant la molette pour faire monter / descendre la caméra
 
     game:
         global:

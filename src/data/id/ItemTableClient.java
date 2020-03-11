@@ -8,6 +8,7 @@ import java.util.Locale;
 import data.Gamer;
 import data.map.Chunk;
 import data.map.Cube;
+import data.map.resources.ResourceType;
 import environment.textures.TexturePack;
 import graphicEngine.calcul.Camera;
 import utils.yaml.YAML;
@@ -39,6 +40,7 @@ public class ItemTableClient extends ItemTable {
 
 	public static void setTexturePack(TexturePack texturePack) {
 		ItemTableClient.texturePack = texturePack;
+		ResourceType.setTextureFolder(texturePack.getFolder());
 
 		for (int i : items.keySet())
 			if (texturePack.yamls.get(i) != null)
@@ -117,7 +119,9 @@ public class ItemTableClient extends ItemTable {
 	// Text
 
 	public static String getName(int itemID) {
-		return get(itemID).name;
+		if (get(itemID).name != null)
+			return get(itemID).name;
+		return get(itemID).tag;
 	}
 
 	public static String getName(Cube cube) {

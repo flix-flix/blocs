@@ -7,10 +7,10 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
 import data.id.ItemID;
+import data.id.ItemTable;
 import data.id.ItemTableClient;
-import data.map.Cube;
 import editor.ActionEditor;
-import editor.Editor;
+import editor.EditorManager;
 import environment.extendsData.CubeClient;
 import utils.Utils;
 import utilsBlocks.ButtonBlocks;
@@ -18,7 +18,7 @@ import utilsBlocks.ButtonBlocks;
 public class ButtonEditor extends ButtonBlocks {
 	private static final long serialVersionUID = 8368480819248766526L;
 
-	private Editor editor;
+	private EditorManager editor;
 	private ActionEditor action;
 
 	// =============== Wheel ===============
@@ -42,7 +42,7 @@ public class ButtonEditor extends ButtonBlocks {
 
 	// =========================================================================================================================
 
-	public ButtonEditor(Editor editor, ActionEditor action) {
+	public ButtonEditor(EditorManager editor, ActionEditor action) {
 		this.editor = editor;
 		this.action = action;
 
@@ -59,11 +59,17 @@ public class ButtonEditor extends ButtonBlocks {
 				itemID = ItemID.EDITOR_PREVIEW;
 				break;
 
-			default:
+			case EDIT_CUBE:
 				itemID = ItemID.BORDER;
 				break;
+			case EDIT_MULTI_CUBE:
+				itemID = ItemID.TREE;
+				break;
+			default:
+				itemID = ItemID.GRASS;
+				break;
 			}
-			setModel(new CubeClient(new Cube(itemID)));
+			setModel(new CubeClient(ItemTable.create(itemID)));
 		}
 
 		else {
@@ -164,6 +170,9 @@ public class ButtonEditor extends ButtonBlocks {
 	// =========================================================================================================================
 
 	public boolean hasImage() {
+		if (hasEngine())
+			return false;
+
 		switch (action) {
 		case ITEM_CLEAR:
 		case ITEM_COLOR:
@@ -171,10 +180,8 @@ public class ButtonEditor extends ButtonBlocks {
 		case ITEM_TAG:
 		case ITEM_SAVE:
 		case SELECT_ALPHA:
-
-		case EDIT_CUBE:
-		case MINIATURE:
 			return false;
+
 		default:
 			return true;
 		}
@@ -184,6 +191,7 @@ public class ButtonEditor extends ButtonBlocks {
 		switch (action) {
 		case MINIATURE:
 		case EDIT_CUBE:
+		case EDIT_MULTI_CUBE:
 			return true;
 		default:
 			return false;
@@ -272,7 +280,7 @@ public class ButtonEditor extends ButtonBlocks {
 
 	@Override
 	public void eventClick() {
-		editor.buttonClick(action);
+		editor.action(action);
 		repaint();
 	}
 }

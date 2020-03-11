@@ -1,5 +1,12 @@
 package environment;
 
+import data.Gamer;
+import data.id.ItemTable;
+import data.id.ItemType;
+import data.map.Cube;
+import data.map.buildings.Building;
+import data.map.units.Unit;
+import environment.extendsData.CubeClient;
 import environment.extendsData.MapClient;
 import graphicEngine.calcul.Camera;
 import graphicEngine.calcul.Engine;
@@ -10,6 +17,34 @@ import utils.Utils;
 public class Environment3D implements Client {
 
 	protected PanEnvironment panel;
+
+	// =============== Engine ===============
+	protected Engine engine;
+	protected MapClient map;
+	protected Camera camera;
+
+	// =============== Target ===============
+	public Target target = new Target();
+
+	// =============== Adding ===============
+	/** Next cube(s) to add (its coords aren't valid) */
+	private Cube cubeToAdd;
+	public Gamer gamer = Gamer.nullGamer;
+
+	// =============== Preview ===============
+	/** Previewed cube */
+	public CubeClient previewed;
+
+	// =============== Thread ===============
+	boolean run = true;
+	/** true : currently processing a new image */
+	private boolean processing = false;
+	/** true : suspend the generation of new images */
+	private boolean paused = false;
+
+	// =============== Options ===============
+	/** Max frames/seconde allowed */
+	public int FPSmax = 30;
 
 	// =============== F3 (Dev infos) ===============
 	/** Number of frames displayed the last second */
@@ -24,25 +59,6 @@ public class Environment3D implements Client {
 	public int ticksKeyBoard;
 	/** Number of steps of the simulated environment */
 	public int ticksPhys;
-
-	// =============== Options ===============
-	/** Max frames/seconde allowed */
-	public int FPSmax = 30;
-
-	// =============== Thread ===============
-	boolean run = true;
-	/** true : currently processing a new image */
-	private boolean processing = false;
-	/** true : suspend the generation of new images */
-	private boolean paused = false;
-
-	// =============== Engine ===============
-	protected Engine engine;
-	protected MapClient map;
-	protected Camera camera;
-
-	// =============== Target ===============
-	public Target target = new Target();
 
 	// =========================================================================================================================
 
@@ -161,6 +177,67 @@ public class Environment3D implements Client {
 		setTarget(-10_000, -10_000);
 	}
 
+	public void setMap(MapClient map) {
+		this.map = map;
+		engine.setModelCamera(map, camera);
+	}
+
+	public void setCamera(Camera camera) {
+		this.camera = camera;
+		engine.setModelCamera(map, camera);
+	}
+
+	// =========================================================================================================================
+
+	public void setCubeToAdd(Cube cube) {
+		cubeToAdd = cube;
+	}
+
+	// TODO [Optimise] Avoid clone of cubeToAdd on each target update
+	public Cube cloneCubeToAdd() {
+		if (cubeToAdd == null)
+			return null;
+
+		if (cubeToAdd.unit != null) {
+			Unit u = cubeToAdd.unit;
+			Unit unit = new Unit(u.getItemID(), gamer, u.coord.x, u.coord.y, u.coord.z);
+			Cube cube = cubeToAdd.clone();
+			cube.unit = unit;
+			return cube;
+		}
+
+		if (cubeToAdd.build != null) {
+			Building build = ItemTable.create(cubeToAdd.build.getItemID()).build;
+			build.setGamer(gamer);
+			return build.getCube();
+		}
+
+		if (ItemTable.getType(cubeToAdd) == ItemType.MULTICUBE)
+			return ItemTable.create(cubeToAdd.multicube.itemID);
+
+		return cubeToAdd.clone();
+	}
+
+	// =========================================================================================================================
+
+	public void addPreview() {
+		// Get cube(s) to add
+		Cube cubeToAdd = cloneCubeToAdd();
+		if (cubeToAdd == null)
+			return;
+
+		// ===== Set coords of the cube(s) =====
+		cubeToAdd.setCoords(target.getAir());
+
+		// Test if there is place for the cube(s) at the coords
+		previewed = map.addPreview(cubeToAdd);
+	}
+
+	public void removePreview() {
+		if (previewed != null)
+			map.remove(previewed);
+	}
+
 	// =========================================================================================================================
 
 	public void updateTarget() {
@@ -172,7 +249,7 @@ public class Environment3D implements Client {
 		if (!sameTarget) {
 			// If it replace an existant one => Update
 			if (this.target.isValid())
-				looseTarget();
+				loseTarget();
 
 			this.target = target;
 
@@ -201,7 +278,7 @@ public class Environment3D implements Client {
 	}
 
 	/** Called on new Target (if previous was non-null) */
-	public void looseTarget() {
+	public void loseTarget() {
 	}
 
 	/** Ask if the target must take care of the quadri id */
@@ -245,6 +322,10 @@ public class Environment3D implements Client {
 		return paused;
 	}
 
+	public Target getTarget() {
+		return target;
+	}
+
 	// =========================================================================================================================
 	// Repaint
 
@@ -255,7 +336,8 @@ public class Environment3D implements Client {
 		updateTimeDev();
 		updateTarget();
 
-		repaintEnvironment();
+		if (!paused)
+			repaintEnvironment();
 	}
 
 	/** Refresh the image "FPSmax times" per second and when panel is resized */

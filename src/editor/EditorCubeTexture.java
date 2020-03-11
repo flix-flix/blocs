@@ -1,69 +1,38 @@
 package editor;
 
 import java.awt.Cursor;
-import java.awt.event.KeyEvent;
 import java.io.File;
-import java.util.ArrayList;
 
-import javax.swing.JPanel;
-
-import data.dynamic.TickClock;
 import data.id.Item;
 import data.id.ItemID;
 import data.id.ItemTable;
-import data.id.ItemTableClient;
 import data.map.Cube;
 import data.map.enumerations.Face;
 import data.map.enumerations.Orientation;
-import data.map.resources.ResourceType;
-import editor.history.History;
-import editor.history.HistoryList;
 import editor.history.PixelHistory;
 import editor.history.SizeHistory;
-import editor.panels.ButtonEditor;
 import editor.panels.PanEditor;
 import editor.tips.TipCalk;
 import editor.tips.TipPencil;
-import environment.Environment3D;
 import environment.extendsData.CubeClient;
-import environment.extendsData.MapClient;
 import environment.extendsEngine.DrawLayer;
 import environment.textures.TextureCube;
 import environment.textures.TextureFace;
-import environment.textures.TexturePack;
 import environment.textures.TextureSquare;
-import graphicEngine.calcul.Camera;
-import graphicEngine.calcul.Engine;
 import graphicEngine.calcul.Line;
-import graphicEngine.calcul.Point3D;
 import graphicEngine.calcul.Quadri;
 import utils.Utils;
+import utils.panels.ClickListener;
 import utils.yaml.YAML;
-import window.Displayable;
-import window.Fen;
-import window.KeyBoard;
+import utilsBlocks.ButtonCube;
 
-public class Editor extends Environment3D implements Displayable {
+public class EditorCubeTexture extends EditorAbstract {
 
-	private TexturePack texturePack;
-
-	public Fen fen;
-	private PanEditor panel;
+	// =============== Buttons ===============
+	private ActionEditor action = null;
 
 	// =============== World ===============
-	private TickClock clock;
-
 	private CubeClient cube;
-
-	// =============== Rotation ===============
-	double rotateSpeed = .2;
-
-	// =============== Cursor ===============
-	private Cursor cursorPaint;
-	private Cursor cursorFill;
-	private Cursor cursorSelectColor;
-	private Cursor cursorSquareSelection;
-	private Cursor cursorMoveSelection;
 
 	// =============== Texture generation ===============
 	private TextureCube textureCube;
@@ -71,38 +40,6 @@ public class Editor extends Environment3D implements Displayable {
 	/** Colors of the quadri <strong>([face][x][y])</strong> */
 	private int[][][] texture = new int[6][MAX_SIZE][MAX_SIZE];
 	private int textureSize = 3;
-
-	// =============== Buttons ===============
-	private ActionEditor action = null;
-	private ActionEditor buttonListeningKey = null;
-
-	// =============== Paint Line/Square ===============
-	private Face lastPaintFace = null;
-	private int lastPaintX = -1, lastPaintY = -1;
-
-	// =============== History ===============
-	/** Store the modifications */
-	private ArrayList<History> history = new ArrayList<>();
-	/**
-	 * Store the modifications to be packed together before insertion to #history
-	 */
-	private ArrayList<History> historyPack = new ArrayList<>();
-	/** Index of the last modification (-1 means no previous modif) */
-	private int historyPosition = -1;
-
-	// =============== Layer ===============
-	private static final int lineSquareLayer = 12;
-	private static final int selectionLayer = 13;
-	private static final int calkLayer = 14;
-
-	// =============== Keys ===============
-	private KeyboardEditor keyboard;
-
-	// =============== Write ===============
-	/** Store the value of the string being written */
-	private String writingString = "";
-	/** Store the value of the string before being modified (in case of undo) */
-	private String realString = "";
 
 	// =============== Calk ===============
 	/** The full face copy of the copied face <strong>([x][y])</strong> */
@@ -130,43 +67,40 @@ public class Editor extends Environment3D implements Displayable {
 	// =============== Save ===============
 	/** YAML representation of the texture to save */
 	private YAML yaml;
-	private int saveId;
-	private String saveTag;
-	private int saveColor;
+	private int savedId;
+	private String savedTag;
+	private int savedColor;
+	private String savedFileName;
+
+	// =============== Cursor ===============
+	private Cursor cursorPaint, cursorFill, cursorSelectColor, cursorSquareSelection, cursorMoveSelection;
+
+	// =============== Paint Line/Square ===============
+	private Face lastPaintFace = null;
+	private int lastPaintX = -1, lastPaintY = -1;
+
+	// =============== Layer ===============
+	private static final int lineSquareLayer = 12;
+	private static final int selectionLayer = 13;
+	private static final int calkLayer = 14;
+
+	private boolean showFaceName = false;
+
+	// =============== Inputs ===============
+	public KeyboardEditorCubeTexture keyboard;
 
 	// =========================================================================================================================
 
-	public Editor(Fen fen) {
-		super(new MapClient(), new Camera(new Point3D(4, 2, -4), 60.5, -20.5));
-		this.fen = fen;
-
-		texturePack = ItemTableClient.getTexturePack();
-
-		ResourceType.setTextureFolder(texturePack.getFolder());
-
-		generateCursor();
-
-		// ========================================================================================
-
-		engine.setBackground(Engine.FILL);
-
-		// ========================================================================================
-
-		panel = new PanEditor(this);
-		updateButtonsItem();
-
-		keyboard = new KeyboardEditor(this);
-		keyboard.start();
-
-		clock = new TickClock("Editor Clock");
-		clock.add(map);
-		clock.start();
-
-		// ========================================================================================
+	public EditorCubeTexture(EditorManager editor) {
+		super(editor, ActionEditor.EDIT_CUBE_TEXTURE);
 
 		initTextureFrame();
 		map.add(new Cube(ItemID.EDITOR_PREVIEW));
 		cube = map.gridGet(0, 0, 0);
+
+		// ========================================================================================
+
+		keyboard = new KeyboardEditorCubeTexture(this);
 
 		// ========================================================================================
 
@@ -177,52 +111,130 @@ public class Editor extends Environment3D implements Displayable {
 		// 13 : calk
 		for (int i = 0; i <= 14; i++)
 			cube.addLayer(null);
-
-		start();
 	}
 
 	// =========================================================================================================================
 
 	@Override
-	public void stop() {
-		super.stop();
+	public void show() {
+		if (action == null)
+			return;
 
-		keyboard.stop();
-		clock.stop();
+		ActionEditor _action = action;
+		action = null;
+		action(_action);
+
+		panel.get(ActionEditor.ITEM_COLOR).setVisible(true);
+	}
+
+	@Override
+	public void hide() {
+		panel.cardsSquare.hide();
+		panel.helpPencil.setVisible(false);
+		panel.helpCalk.setVisible(false);
+
+		panel.get(ActionEditor.ITEM_COLOR).setVisible(false);
+	}
+
+	@Override
+	public boolean isSaved() {
+		// TODO [Feature] Is texture saved ?
+		return history.isEmpty();
 	}
 
 	// =========================================================================================================================
-	// History
 
-	/** Cancel the previous action */
-	void undo() {
-		if (!historyPack.isEmpty())
-			historyPack();
+	@Override
+	public void action(ActionEditor action) {
+		switch (action) {
+		// ================== GRID ======================
+		case ALONE:
+			break;
+		case DECOR:
+			break;
 
-		if (historyPosition == -1)
-			return;
+		case PAINT:
+		case SQUARE_SELECTION:
+		case FILL:
+		case PLAYER_COLOR:
+			panel.helpCalk.setVisible(false);
+			panel.helpPencil.setVisible(false);
+			panel.cardsSquare.hide();
 
-		history.get(historyPosition--).undo(this);
+			if (action == this.action)
+				this.action = null;
+			else {
+				if (action == ActionEditor.PAINT || action == ActionEditor.FILL)
+					panel.cardsSquare.show(PanEditor.COLOR);
+				if (action == ActionEditor.SQUARE_SELECTION) {
+					panel.helpCalk.setTip(TipCalk.values()[0]);
+					panel.helpCalk.setVisible(true);
+				} else if (action == ActionEditor.PAINT) {
+					panel.helpPencil.setTip(TipPencil.values()[0]);
+					panel.helpPencil.setVisible(true);
+				}
+				this.action = action;
+			}
+			editorMan.fen.updateCursor();
+			break;
+
+		case GRID:
+			refreshLayerGrid();
+			break;
+
+		// ================== PanItem ======================
+		case ITEM_COLOR:
+			panel.get(ActionEditor.ITEM_COLOR).setValue(panel.panColor.getColor() & 0xffffffff);
+			break;
+
+		case ITEM_SAVE:
+			saveTextureConfirm();
+			break;
+		case ITEM_CLEAR:
+			initTextureFrame();
+			panel.get(ActionEditor.ITEM_TAG).reinit();
+			panel.get(ActionEditor.ITEM_ID).reinit();
+			panel.get(ActionEditor.ITEM_COLOR).reinit();
+			break;
+
+		// ================== SAVE ======================
+		case SAVE:
+			if (savedTag != null)
+				saveTextureSaved();
+			break;
+
+		default:
+			break;
+		}
+
 	}
 
-	/** Cancel the previous cancel */
-	void redo() {
-		if (historyPosition + 1 >= history.size())
-			return;
+	@Override
+	public void wheel(ActionEditor action) {
+		switch (action) {
+		// ================== ? ======================
+		case ALONE:
+			break;
+		case DECOR:
+			break;
 
-		history.get(++historyPosition).redo(this);
-	}
+		case GRID:
+			historyPack.add(new SizeHistory(textureSize, textureSize = panel.get(ActionEditor.GRID).getWheelStep()));
+			updatePreviewTexture();
+			refreshLayerGrid();
+			break;
+		case MINIATURE:
+			break;
+		case PLAYER_COLOR:
+			break;
 
-	void historyPack() {
-		if (historyPack.isEmpty())
-			return;
+		// ================== PanColor ======================
+		case SELECT_ALPHA:
+			break;
 
-		history.add(++historyPosition, new HistoryList(historyPack));
-
-		while (history.size() > historyPosition + 1)
-			history.remove(historyPosition + 1);
-
-		historyPack = new ArrayList<>();
+		default:
+			break;
+		}
 	}
 
 	// =========================================================================================================================
@@ -272,46 +284,62 @@ public class Editor extends Environment3D implements Displayable {
 	}
 
 	/**
-	 * Call {@link #saveT(int, String, int)} <br>
+	 * Call {@link #saveTexture(int, String, int)} <br>
 	 * If file already exists ask confirmation to user
 	 */
 	private void saveTextureConfirm() {
-		saveId = panel.get(ActionEditor.ITEM_ID).getWheelStep();
-		saveTag = panel.get(ActionEditor.ITEM_TAG).getString();
-		saveColor = panel.get(ActionEditor.ITEM_COLOR).getValue();
+		int saveId = panel.get(ActionEditor.ITEM_ID).getWheelStep();
+		String saveTag = panel.get(ActionEditor.ITEM_TAG).getString();
 
 		// TODO [Feature] Allow replace existant Data
 		// Ignore if already exists
 		if (ItemTable.getItemIDList().contains(saveId) || ItemTable.getItemTagList().contains(saveTag))
 			return;
 
-		String fileName = "resources/temp/" + saveTag.toLowerCase() + ".yml";
+		this.savedId = saveId;
+		this.savedTag = saveTag;
+		savedColor = panel.get(ActionEditor.ITEM_COLOR).getValue();
 
-		if (new File(fileName).exists())
+		savedFileName = "edited/cubeTextures/" + saveTag.toLowerCase() + ".yml";
+
+		if (new File(savedFileName).exists())
 			panel.confirmSaveOnExistant();
 		else
 			saveTextureSaved();
 	}
 
-	/** Call {@link #saveT(int, String, int)} with saved data */
+	/** Call {@link #saveTexture(int, String, int)} with saved data */
 	public void saveTextureSaved() {
-		saveT(saveId, saveTag, saveColor);
+		saveTexture(savedId, savedTag, savedColor);
 	}
 
 	/** Save texture in YAML and load it in {@link ItemTable} */
-	public void saveT(int id, String tag, int color) {
-
-		yaml = textureCube.getYAML(saveId, saveTag, color);
-		String fileName = "resources/temp/" + saveTag.toLowerCase() + ".yml";
+	public void saveTexture(int id, String tag, int color) {
+		yaml = textureCube.getYAML(id, color);
 
 		// Add to ItemTable
-		ItemTable.addItem(new Item(saveId, saveTag));
+		ItemTable.addItem(new Item(id, tag));
+
+		// TODO [Improve] Add cubes to other editors
+		// Add to Multibloc Editor
+		ButtonCube button = new ButtonCube(new Cube(id));
+		button.setClickListener(new ClickListener() {
+			@Override
+			public void leftClick() {
+				editorMan.editor.clickCube(new Cube(id));
+			}
+		});
+
+		panel.gridCubes.gridAdd(button);
+		panel.buttonsCubes.add(button);
+		ButtonCube.group(panel.buttonsCubes);
+
 		// Create and set textureCube | Update preview
-		updatePreviewTexture(createTexture(), saveId);
+		updatePreviewTexture(createTexture(), id);
 
-		YAML.encodeFile(yaml, fileName);
+		YAML.encodeFile(yaml, savedFileName);
 
-		updateButtonsItem();
+		editorMan.updateButtonsItem();
 	}
 
 	// =========================================================================================================================
@@ -454,7 +482,7 @@ public class Editor extends Environment3D implements Displayable {
 		calkCornerY += y;
 		refreshLayerCalk();
 		updateCursorInCalk();
-		fen.updateCursor();
+		editorMan.fen.updateCursor();
 	}
 
 	void updateCursorInCalk() {
@@ -542,280 +570,6 @@ public class Editor extends Environment3D implements Displayable {
 	}
 
 	// =========================================================================================================================
-	// Buttons events
-
-	public void buttonClick(ActionEditor action) {
-		mayLooseListeningKey(action);
-
-		switch (action) {
-		case QUIT:// Close Editor
-			// TODO [Feature] Count modifications since last save
-			if (history.isEmpty())
-				fen.returnToMainMenu();
-			else {
-				setPaused(true);
-				panel.confirmReturnToMainMenu();
-			}
-			break;
-
-		// ================== EDIT TYPE ======================
-		case EDIT_CUBE:
-			break;
-		case EDIT_MULTI_CUBE:
-			break;
-		case EDIT_MULTI_TEXTURE:
-			break;
-
-		// ================== GRID ======================
-		case ALONE:
-			break;
-		case DECOR:
-			break;
-
-		case PAINT:
-		case SQUARE_SELECTION:
-		case FILL:
-		case PLAYER_COLOR:
-			panel.helpCalk.setVisible(false);
-			panel.helpPencil.setVisible(false);
-			panel.panColor.setVisible(false);
-
-			if (action == this.action)
-				setAction(null);
-			else {
-				panel.panColor.setVisible(action == ActionEditor.PAINT || action == ActionEditor.FILL);
-				if (action == ActionEditor.SQUARE_SELECTION) {
-					panel.helpCalk.setTip(TipCalk.values()[0]);
-					panel.helpCalk.setVisible(true);
-				} else if (action == ActionEditor.PAINT) {
-					panel.helpPencil.setTip(TipPencil.values()[0]);
-					panel.helpPencil.setVisible(true);
-				}
-				setAction(action);
-			}
-			break;
-
-		case GRID:
-			refreshLayerGrid();
-			break;
-		case MINIATURE:
-			break;
-		case CANCEL:
-			break;
-
-		// ================== PanItem ======================
-		case ITEM_TAG:
-			if (panel.get(action).isSelected())
-				setListeningKey(action);
-			break;
-		case ITEM_COLOR:
-			panel.get(ActionEditor.ITEM_COLOR).setValue(panel.panColor.getColor() & 0xffffffff);
-			break;
-
-		case ITEM_SAVE:
-			saveTextureConfirm();
-			break;
-		case ITEM_CLEAR:
-			initTextureFrame();
-			panel.get(ActionEditor.ITEM_TAG).reinit();
-			panel.get(ActionEditor.ITEM_ID).reinit();
-			panel.get(ActionEditor.ITEM_COLOR).reinit();
-			break;
-
-		// ================== SAVE ======================
-		case SAVE:
-			break;
-		default:
-			break;
-		}
-	}
-
-	public void buttonWheel(ActionEditor action) {
-		mayLooseListeningKey(action);
-
-		switch (action) {
-		// ================== EDIT TYPE ======================
-		case EDIT_CUBE:
-			break;
-		case EDIT_MULTI_CUBE:
-			break;
-		case EDIT_MULTI_TEXTURE:
-			break;
-
-		// ================== EDIT TYPE ======================
-		case ALONE:
-			break;
-		case DECOR:
-			break;
-
-		case GRID:
-			historyPack.add(new SizeHistory(textureSize, textureSize = panel.get(ActionEditor.GRID).getWheelStep()));
-			updatePreviewTexture();
-			refreshLayerGrid();
-			break;
-		case MINIATURE:
-			break;
-		case PLAYER_COLOR:
-			break;
-
-		// ================== PanColor ======================
-		case SELECT_ALPHA:
-			break;
-
-		// ================== PanItem ======================
-		case ITEM_ID:
-			updateButtonsItem();
-			break;
-
-		// ================== Not handled ======================
-		case EDITOR:
-		case QUIT:
-		case SAVE:
-			break;
-		default:
-			break;
-		}
-	}
-
-	// =========================================================================================================================
-	// Write
-
-	void write(KeyEvent e) {
-		int code = e.getKeyCode();
-
-		if (code == 27)
-			esc();
-		else if (code == 8) { // Delete
-			if (!writingString.isEmpty())
-				writeName(writingString = writingString.substring(0, writingString.length() - 1));
-		} else if (code == 10)
-			enter();
-
-		else {
-			char c = e.getKeyChar();
-
-			if ('a' <= c && c <= 'z')
-				c -= 32;
-
-			if (c == ' ')
-				c = '_';
-
-			if (('A' <= c && c <= 'Z') || c == '_')
-				writeName(writingString += c);
-		}
-	}
-
-	private void writeName(String str) {
-		boolean valid = true;
-
-		for (String name : ItemTable.getItemTagList())
-			if (str.equals(name)) {
-				valid = false;
-				break;
-			}
-
-		panel.get(buttonListeningKey).setString(str);
-		panel.get(buttonListeningKey).setBool(valid);
-		panel.get(buttonListeningKey).updateData();
-	}
-
-	private void updateButtonsItem() {
-		ButtonEditor id = panel.get(ActionEditor.ITEM_ID);
-		id.setBool(!ItemTable.getItemIDList().contains(id.getWheelStep()));
-
-		ButtonEditor tag = panel.get(ActionEditor.ITEM_TAG);
-		tag.setBool(!ItemTable.getItemTagList().contains(tag.getString()));
-	}
-
-	private void esc() {
-		writeName(realString);
-		panel.get(buttonListeningKey).setSelected(false);
-		buttonListeningKey = null;
-	}
-
-	private void enter() {
-		realString = writingString;
-		esc();
-	}
-
-	private void setListeningKey(ActionEditor action) {
-		if (buttonListeningKey != null && buttonListeningKey != action)
-			looseListeningKey();
-
-		buttonListeningKey = action;
-		realString = panel.get(action).getString();
-		writingString = panel.get(action).getString();
-	}
-
-	void looseListeningKey() {
-		if (buttonListeningKey == null)
-			return;
-
-		esc();
-	}
-
-	private void mayLooseListeningKey(ActionEditor action) {
-		if (buttonListeningKey == null)
-			return;
-		// Valid writting button
-		if (action == ActionEditor.ITEM_SAVE || action == ActionEditor.ITEM_ID || action == buttonListeningKey)
-			enter();
-		else // Loose focus on writing button
-			looseListeningKey();
-	}
-
-	// =========================================================================================================================
-	// Rotate-Mode
-
-	public void lookCube() {
-		camera.setVx(Utils.toDegres * Math.atan((camera.vue.x - .5) / -(camera.vue.z - .5)) + 90
-				+ (camera.vue.z - .5 >= 0 ? 180 : 0));
-		camera.setVy(Utils.toDegres * Math.atan(Math.hypot(camera.vue.x - .5, camera.vue.z - .5) / (camera.vue.y - .5))
-				- 90 + (camera.vue.y - .5 <= 0 ? 180 : 0));
-	}
-
-	public void rotateCamera(int x, int y) {
-		double distY = camera.vue.dist(0.5, 0.5, 0.5);
-		double angleY = camera.getVy() + y * -rotateSpeed;
-
-		if (angleY >= 60)
-			angleY = 59.9;
-		else if (angleY <= -60)
-			angleY = -59.9;
-
-		camera.vue.y = .5 - Math.sin(Utils.toRadian * angleY) * distY;
-		double distX = Math.cos(Utils.toRadian * angleY) * distY;
-
-		double angleX = Utils.toRadian * (camera.getVx() + x * rotateSpeed);
-
-		camera.vue.x = .5 - distX * Math.cos(angleX);
-		camera.vue.z = .5 - distX * Math.sin(angleX);
-
-		lookCube();
-	}
-
-	public void rotateCamera(boolean forward, boolean backward, boolean right, boolean left) {
-		int x = 0, y = 0;
-		int speed = 15;
-
-		// Slow down with shift
-		if (keyboard.shiftDown)
-			speed = 5;
-
-		if (right)
-			x += speed;
-		if (left)
-			x -= speed;
-
-		if (forward)
-			y -= speed;
-		if (backward)
-			y += speed;
-
-		rotateCamera(x, y);
-	}
-
-	// =========================================================================================================================
 	// Layers
 
 	public void refreshLayerGrid() {
@@ -828,9 +582,11 @@ public class Editor extends Environment3D implements Displayable {
 				cube.removeLayer(face.ordinal() + 6);
 	}
 
-	void refreshLayerFace() {
+	void switchFaceName() {
+		showFaceName = !showFaceName;
+
 		for (Face face : Face.faces)
-			if (keyboard.altDown) {
+			if (showFaceName) {
 				DrawLayer layer = new DrawLayer(cube, face);
 				layer.drawFace();
 				cube.setLayer(face.ordinal(), layer);
@@ -886,41 +642,6 @@ public class Editor extends Environment3D implements Displayable {
 	}
 
 	// =========================================================================================================================
-	// Cursor
-
-	public Cursor getCursor() {
-		Cursor cursor = Cursor.getDefaultCursor();
-
-		if (getAction() == ActionEditor.PAINT)
-			cursor = (keyboard.controlDown && (!keyboard.shiftDown || !isPreviewCube())) ? cursorSelectColor
-					: cursorPaint;
-		else if (getAction() == ActionEditor.FILL)
-			cursor = keyboard.controlDown ? cursorSelectColor : cursorFill;
-		else if (getAction() == ActionEditor.SQUARE_SELECTION)
-			if (hasCalk) {
-				if (cursorInCalk)
-					cursor = cursorMoveSelection;
-			} else
-				cursor = cursorSquareSelection;
-
-		return cursor;
-	}
-
-	private void generateCursor() {
-		String folder = texturePack.getFolder() + "cursor/editor/";
-		cursorPaint = Utils.createCursor(folder + "cursorPaint");
-		cursorFill = Utils.createCursor(folder + "cursorFill");
-		cursorSelectColor = Utils.createCursor(folder + "cursorSelectColor");
-		cursorSquareSelection = Utils.createCursor(folder + "cursorSquareSelection");
-		cursorMoveSelection = Utils.createCursor(folder + "cursorMoveSelection");
-	}
-
-	// =========================================================================================================================
-	// Mode getters
-
-	public boolean isRotateMode() {
-		return true;
-	}
 
 	public boolean isPreviewCube() {
 		if (target.cube == null)
@@ -930,22 +651,12 @@ public class Editor extends Environment3D implements Displayable {
 
 	// =========================================================================================================================
 
-	Face getFrontFace() {
-		if (camera.getVy() > 45)
-			return Face.DOWN;
-		if (camera.getVy() < -45)
-			return Face.UP;
-		return Orientation.getOrientation(camera.getVx()).face;
-	}
-
-	// =========================================================================================================================
-
 	int getTargetedX() {
-		return target.quadri % textureSize;
+		return editorMan.target.quadri % textureSize;
 	}
 
 	int getTargetedY() {
-		return target.quadri / textureSize;
+		return editorMan.target.quadri / textureSize;
 	}
 
 	// =========================================================================================================================
@@ -955,21 +666,12 @@ public class Editor extends Environment3D implements Displayable {
 		return action;
 	}
 
-	public void setAction(ActionEditor action) {
-		this.action = action;
-		fen.updateCursor();
-	}
-
 	public boolean hasCalk() {
 		return hasCalk;
 	}
 
 	public boolean isCursorInCalk() {
 		return cursorInCalk;
-	}
-
-	public ActionEditor getButtonListeningKey() {
-		return buttonListeningKey;
 	}
 
 	public Face getCalkFace() {
@@ -981,12 +683,31 @@ public class Editor extends Environment3D implements Displayable {
 	}
 
 	// =========================================================================================================================
-	// Environment
+
+	Face getFrontFace() {
+		if (editorMan.getCamera().getVy() > 45)
+			return Face.DOWN;
+		if (editorMan.getCamera().getVy() < -45)
+			return Face.UP;
+		return Orientation.getOrientation(editorMan.getCamera().getVx()).face;
+	}
+
+	// =========================================================================================================================
+
+	@Override
+	public void updateAfterUndoRedo() {
+		updatePreviewTexture();
+		refreshLayerGrid();
+	}
+
+	// =========================================================================================================================
 
 	@Override
 	public void gainTarget() {
+		super.gainTarget();
+
 		if (keyboard.pressR) {
-			looseTarget();
+			loseTarget();
 			return;
 		}
 
@@ -1011,24 +732,17 @@ public class Editor extends Environment3D implements Displayable {
 			refreshLineSquareLayer();
 		} else if (action == ActionEditor.FILL)
 			target.cube.setSelectedQuadri(target.face, target.quadri);
-
-		fen.updateCursor();
 	}
 
 	@Override
-	public void looseTarget() {
+	public void loseTarget() {
+		super.loseTarget();
 		// Removes highlight of previous selected quadri
 		target.cube.setSelectedQuadri(null, CubeClient.NO_QUADRI);
 		// Removes line/square preview
 		target.cube.removeLayer(lineSquareLayer);
 
 		cursorInCalk = false;
-
-		fen.updateCursor();
-	}
-
-	@Override
-	public void oneSecondTick() {
 	}
 
 	@Override
@@ -1048,20 +762,36 @@ public class Editor extends Environment3D implements Displayable {
 	}
 
 	// =========================================================================================================================
-	// Displayable
 
 	@Override
-	public JPanel getContentPane() {
-		return panel;
+	public Cursor getCursor() {
+		if (getAction() == ActionEditor.PAINT)
+			return (keyboard.controlDown && (!keyboard.shiftDown || !isPreviewCube())) ? cursorSelectColor
+					: cursorPaint;
+		else if (getAction() == ActionEditor.FILL)
+			return keyboard.controlDown ? cursorSelectColor : cursorFill;
+		else if (getAction() == ActionEditor.SQUARE_SELECTION)
+			if (hasCalk) {
+				if (cursorInCalk)
+					return cursorMoveSelection;
+			} else
+				return cursorSquareSelection;
+
+		return Cursor.getDefaultCursor();
 	}
 
 	@Override
-	public void updateSize(int x, int y) {
-		panel.setSize(x, y);
+	protected void generateCursor() {
+		String folder = texturePack.getFolder() + "cursor/editor/";
+		cursorPaint = Utils.createCursor(folder + "cursorPaint");
+		cursorFill = Utils.createCursor(folder + "cursorFill");
+		cursorSelectColor = Utils.createCursor(folder + "cursorSelectColor");
+		cursorSquareSelection = Utils.createCursor(folder + "cursorSquareSelection");
+		cursorMoveSelection = Utils.createCursor(folder + "cursorMoveSelection");
 	}
 
 	@Override
-	public KeyBoard getKeyBoard() {
+	public KeyboardEditor getKeyBoard() {
 		return keyboard;
 	}
 }

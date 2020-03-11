@@ -61,10 +61,12 @@ public class PanInfosBuilding extends FPanel {
 
 		spawn = new ButtonGameAction(game, Action.BUILDING_SPAWN);
 		spawn.setBounds(15, imgSize + 20, 75, 75);
+		spawn.setSelectable(false);
 		add(spawn);
 
 		upgrade = new ButtonGameAction(game, Action.BUILDING_RESEARCH);
 		upgrade.setBounds(105, imgSize + 20, 75, 75);
+		upgrade.setSelectable(false);
 		add(upgrade);
 
 		ButtonGameAction.group(spawn, upgrade);

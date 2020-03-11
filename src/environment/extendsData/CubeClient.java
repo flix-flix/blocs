@@ -367,6 +367,10 @@ public class CubeClient extends Cube implements Modelisable {
 		// Can be transparent
 		if (getItemID() == ItemID.EDITOR_PREVIEW)
 			return true;
+
+		// To display face name
+		if (getItemID() == ItemID.EDITOR_SOCLE)
+			return true;
 		return false;
 	}
 

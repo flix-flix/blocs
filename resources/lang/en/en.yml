@@ -42,15 +42,15 @@ keys:
 tips:
     editor:
         global:
-            face_name: Maintain "Alt" to see the direction of each face
+            face_name: Press "Alt" to show / hide the direction of each face
             rotate: Maintain the right click while moving the mouse to rotate the cube (or ~FORWARD, ~LEFT, ~BACKWARD, ~RIGHT )
-            grid: Use the mouse wheel on the "Grid" button to increase/decrease the resolution of the face
-            zoom: Use the mouse wheel to zoom in/zoom out
+            grid: Use the mouse wheel on the "Grid" button to increase / decrease the resolution of the face
+            zoom: Use the mouse wheel to zoom in / zoom out
             undo: Use "Ctrl+Z" to undo the last modification and "Ctrl+Y" to redo it
             
         pencil:
             new_color: Color selector: click on the vertical line to select the color, then use the square to adjust the hue
-            alpha: Use the mouse wheel on the "100%" button to increase/decrease the transparency of the selected color
+            alpha: Use the mouse wheel on the "100%" button to increase / decrease the transparency of the selected color
             memory: The last 5 used colors are displayed bellow the current one: Click on it to re-use them
             pick_color: On the cube, maintain "Ctrl" to pick up the color of the selected cell
             line_square: Maintain "Shift" to draw a line from the last drawed cell. "Shift + Ctrl" to fill a square
@@ -62,6 +62,12 @@ tips:
             rotate: Press "◄" or "►" to rotate the calk
             apply_delete: Press "Enter" to apply the calk or "Esc" to delete it
             select_all: "Ctrl+A" select the full face. "Ctrl+Shift+A" cancel the selection
+            
+        multi_cubes:
+            add_cube: Select the cube to add in the list on the bottom left then add it with a left click. (It is impossible to add bellow the socle)
+            remove_cube: The red cross allow to remove a cube by left-clicking on it
+            altitude: Maintain "Ctrl" using the mouse wheel to make the camera go up / down
+            
     game:
         global:
             camera: Use ~FORWARD, ~LEFT, ~BACKWARD, ~RIGHT to move the point of view and use the mouse wheel to modify the altitude

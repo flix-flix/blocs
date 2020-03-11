@@ -103,26 +103,34 @@ public abstract class KeyboardEnvironment3D implements KeyBoard {
 
 	public abstract boolean isSelecting();
 
-	public abstract boolean isAdding();
-
 	public abstract boolean isDestroying();
 
 	public boolean isAddable() {
+		if (env.previewed == null)
+			return false;
+
+		if (env.previewed.multicube != null && !env.previewed.multicube.valid)
+			return false;
+
 		return true;
 	}
 
 	/**
 	 * Set {@link #targetedCube}, {@link #targetedCoord} and {@link #targetedFace}
 	 */
-	public abstract void cacheTarget();
+	public void cacheTarget() {
+		targetedCube = env.getTarget().cube;
+		targetedCoord = targetedCube == null ? null : targetedCube.coords();
+		targetedFace = env.getTarget().face;
+	}
 
 	// =========================================================================================================================
 
 	public abstract void selectCube(CubeClient cube);
 
-	public abstract Cube getCubeToAdd();
-
-	public abstract void applyAction();
+	public Cube getCubeToAdd() {
+		return env.cloneCubeToAdd();
+	}
 
 	public abstract Environment3D getEnvironment();
 
@@ -133,28 +141,6 @@ public abstract class KeyboardEnvironment3D implements KeyBoard {
 		pressR = true;
 
 		cacheTarget();
-
-		// Add a cube to the map
-		if (isAdding()) {
-			if (targetedCoord == null || targetedFace == null)
-				return;
-
-			if (!isAddable())
-				return;
-
-			// Cube adjacent to the pointed face (in the air)
-			Coord targetedAir = targetedCoord.face(targetedFace);
-
-			Cube cubeToAdd = getCubeToAdd();
-
-			// ===== Add the cube to the server =====
-			cubeToAdd.setCoords(targetedAir);
-
-			env.send(SendAction.add(cubeToAdd));
-		}
-		// Do an action
-		else
-			applyAction();
 	}
 
 	@Override
@@ -182,8 +168,41 @@ public abstract class KeyboardEnvironment3D implements KeyBoard {
 
 	// =========================================================================================================================
 
+	/** @return The added cube or null if it hasn't been added */
+	protected Cube addCube() {
+		if (targetedCoord == null || targetedFace == null)
+			return null;
+
+		if (!isAddable())
+			return null;
+
+		// Cube adjacent to the pointed face (in the air)
+		Coord targetedAir = targetedCoord.face(targetedFace);
+
+		Cube cubeToAdd = getCubeToAdd();
+
+		// ===== Add the cube to the server =====
+		cubeToAdd.setCoords(targetedAir);
+
+		env.send(SendAction.add(cubeToAdd));
+		return cubeToAdd;
+	}
+
+	// =========================================================================================================================
+
 	@Override
 	public void keyPressed(KeyEvent e) {
+		enableAction(e);
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		stopAction(e);
+	}
+
+	// =========================================================================================================================
+
+	protected void enableAction(KeyEvent e) {
 		if (Key.get(e.getKeyCode()) != null)
 			switch (Key.get(e.getKeyCode())) {
 			case FORWARD:
@@ -217,8 +236,7 @@ public abstract class KeyboardEnvironment3D implements KeyBoard {
 			}
 	}
 
-	@Override
-	public void keyReleased(KeyEvent e) {
+	protected void stopAction(KeyEvent e) {
 		if (Key.get(e.getKeyCode()) != null)
 			switch (Key.get(e.getKeyCode())) {
 			case FORWARD:
@@ -308,15 +326,10 @@ public abstract class KeyboardEnvironment3D implements KeyBoard {
 	// =========================================================================================================================
 
 	public void cameraMovement() {
-		double x, z;
-
-		x = cameraMovementX(camera.getVx(), forwardKeyEnabled, backwardKeyEnabled, rightKeyEnabled, leftKeyEnabled);
-		z = cameraMovementZ(camera.getVx(), forwardKeyEnabled, backwardKeyEnabled, rightKeyEnabled, leftKeyEnabled);
-
-		if (jumpKeyEnabled)
-			camera.moveY(.4);
-		if (sneakKeyEnabled)
-			camera.moveY(-.4);
+		double x = getCameraMovementX(camera.getVx(), forwardKeyEnabled, backwardKeyEnabled, rightKeyEnabled,
+				leftKeyEnabled);
+		double z = getCameraMovementZ(camera.getVx(), forwardKeyEnabled, backwardKeyEnabled, rightKeyEnabled,
+				leftKeyEnabled);
 
 		// Slow down the camera if moving in 2 directions
 		if ((rightKeyEnabled || leftKeyEnabled) && (forwardKeyEnabled || backwardKeyEnabled)) {
@@ -331,9 +344,18 @@ public abstract class KeyboardEnvironment3D implements KeyBoard {
 		}
 
 		camera.move(x * speedModifier, z * speedModifier);
+
+		if (jumpKeyEnabled)
+			camera.moveY(.4);
+		if (sneakKeyEnabled)
+			camera.moveY(-.4);
 	}
 
-	public double cameraMovementX(double vx, boolean forward, boolean backward, boolean right, boolean left) {
+	/**
+	 * Given current orientation and enabled keys returns the deplacement on the X
+	 * axe
+	 */
+	public double getCameraMovementX(double vx, boolean forward, boolean backward, boolean right, boolean left) {
 		double x = 0;
 
 		if (forward)
@@ -348,7 +370,11 @@ public abstract class KeyboardEnvironment3D implements KeyBoard {
 		return x;
 	}
 
-	public double cameraMovementZ(double vx, boolean forward, boolean backward, boolean right, boolean left) {
+	/**
+	 * Given current orientation and enabled keys returns the deplacement on the Z
+	 * axe
+	 */
+	public double getCameraMovementZ(double vx, boolean forward, boolean backward, boolean right, boolean left) {
 		double z = 0;
 
 		if (forward)

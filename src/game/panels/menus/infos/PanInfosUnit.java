@@ -50,10 +50,12 @@ public class PanInfosUnit extends FPanel {
 
 		destroy = new ButtonGameAction(game, Action.UNIT_DESTROY);
 		destroy.setBounds(280, 90, 75, 75);
+		destroy.setSelectable(false);
 		add(destroy);
 
 		harvest = new ButtonGameAction(game, Action.UNIT_HARVEST);
 		harvest.setBounds(190, 90, 75, 75);
+		harvest.setSelectable(false);
 		add(harvest);
 
 		ButtonGameAction.group(destroy, harvest);

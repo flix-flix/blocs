@@ -256,6 +256,9 @@ public class FPanel extends JPanel {
 		this.borderColor = color;
 	}
 
+	// =========================================================================================================================
+	// Color
+
 	/** setBackground(), setForeground() and setBorder() in one function */
 	public void setColor(Color back, Color fore, int size, Color border) {
 		setBackground(back);
@@ -266,6 +269,10 @@ public class FPanel extends JPanel {
 	/** setBackground() and setForeground() */
 	public void setColor(Color back, Color fore) {
 		setColor(back, fore, 0, null);
+	}
+	
+	public void setScrollBarColor(Color color) {
+		scrollBar.setBackground(color);
 	}
 
 	// =========================================================================================================================
