@@ -117,14 +117,14 @@ public class EditorCubeTexture extends EditorAbstract {
 
 	@Override
 	public void show() {
+		panel.get(ActionEditor.ITEM_COLOR).setVisible(true);
+
 		if (action == null)
 			return;
 
 		ActionEditor _action = action;
 		action = null;
 		action(_action);
-
-		panel.get(ActionEditor.ITEM_COLOR).setVisible(true);
 	}
 
 	@Override
@@ -241,11 +241,12 @@ public class EditorCubeTexture extends EditorAbstract {
 	// Texture management
 
 	private void initTextureFrame() {
-		for (int face = 0; face < 6; face++)
+		for (Face face : Face.faces)
 			for (int x = 0; x < MAX_SIZE; x++)
 				for (int y = 0; y < MAX_SIZE; y++)
-					texture[face][x][y] = (x + y) % 2 == 0 ? 0xff888888 : 0xff555555;
+					drawPixel(face, x, y, (x + y) % 2 == 0 ? 0xff888888 : 0xff555555);
 
+		historyPack();
 		updatePreviewTexture();
 	}
 

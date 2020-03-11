@@ -10,6 +10,8 @@ import data.map.Chunk;
 import data.map.Cube;
 import data.map.MultiCube;
 import data.map.enumerations.Face;
+import editor.history.HistoryAddCube;
+import editor.history.HistoryRemoveCube;
 import editor.panels.PanEditor;
 import environment.extendsData.CubeClient;
 import environment.extendsEngine.DrawLayer;
@@ -24,7 +26,7 @@ public class EditorMultiCubes extends EditorAbstract {
 
 	public double modifiedAltitude = 0;
 
-	MultiCube multi = new MultiCube();
+	public MultiCube multi = new MultiCube();
 
 	private boolean showFaceName = false;
 
@@ -73,6 +75,28 @@ public class EditorMultiCubes extends EditorAbstract {
 
 	// =========================================================================================================================
 
+	public void addCube() {
+		Cube added;
+		if ((added = editorMan.addCube()) == null)
+			return;
+
+		historyPack.add(new HistoryAddCube(target.getAir(), added.getItemID()));
+		historyPack();
+
+		multi.add(added);
+	}
+
+	public void removeCube() {
+		if (target != null && target.cube != null) {
+			historyPack.add(new HistoryRemoveCube(target.cube.coords(), target.cube.getItemID()));
+			historyPack();
+			map.remove(target.cube.coords());
+			multi.remove(target.cube.coords());
+		}
+	}
+
+	// =========================================================================================================================
+
 	@Override
 	public void action(ActionEditor action) {
 
@@ -90,8 +114,11 @@ public class EditorMultiCubes extends EditorAbstract {
 
 		// ================== PanItem ======================
 		case ITEM_CLEAR:
-			if (!multi.list.isEmpty())
-				map.remove(multi.getCube());
+			for (Cube cube : multi.list)
+				historyPack.add(new HistoryRemoveCube(cube.coords(), cube.getItemID()));
+
+			historyPack();
+			map.remove(multi.getCube());
 			break;
 		case ITEM_SAVE:
 			saveMulti(panel.get(ActionEditor.ITEM_ID).getWheelStep(), panel.get(ActionEditor.ITEM_TAG).getString());

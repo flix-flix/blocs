@@ -8,7 +8,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 
 import data.map.Coord;
-import data.map.Cube;
 import data.map.enumerations.Face;
 import environment.extendsData.CubeClient;
 import environment.extendsData.MapClient;
@@ -105,16 +104,6 @@ public abstract class KeyboardEnvironment3D implements KeyBoard {
 
 	public abstract boolean isDestroying();
 
-	public boolean isAddable() {
-		if (env.previewed == null)
-			return false;
-
-		if (env.previewed.multicube != null && !env.previewed.multicube.valid)
-			return false;
-
-		return true;
-	}
-
 	/**
 	 * Set {@link #targetedCube}, {@link #targetedCoord} and {@link #targetedFace}
 	 */
@@ -127,10 +116,6 @@ public abstract class KeyboardEnvironment3D implements KeyBoard {
 	// =========================================================================================================================
 
 	public abstract void selectCube(CubeClient cube);
-
-	public Cube getCubeToAdd() {
-		return env.cloneCubeToAdd();
-	}
 
 	public abstract Environment3D getEnvironment();
 
@@ -164,28 +149,6 @@ public abstract class KeyboardEnvironment3D implements KeyBoard {
 	@Override
 	public void leftClickReleased() {
 		pressL = false;
-	}
-
-	// =========================================================================================================================
-
-	/** @return The added cube or null if it hasn't been added */
-	protected Cube addCube() {
-		if (targetedCoord == null || targetedFace == null)
-			return null;
-
-		if (!isAddable())
-			return null;
-
-		// Cube adjacent to the pointed face (in the air)
-		Coord targetedAir = targetedCoord.face(targetedFace);
-
-		Cube cubeToAdd = getCubeToAdd();
-
-		// ===== Add the cube to the server =====
-		cubeToAdd.setCoords(targetedAir);
-
-		env.send(SendAction.add(cubeToAdd));
-		return cubeToAdd;
 	}
 
 	// =========================================================================================================================

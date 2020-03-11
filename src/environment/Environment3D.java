@@ -220,6 +220,37 @@ public class Environment3D implements Client {
 
 	// =========================================================================================================================
 
+	public boolean isAddable() {
+		if (previewed == null)
+			return false;
+
+		if (previewed.multicube != null && !previewed.multicube.valid)
+			return false;
+
+		return true;
+	}
+
+	/**
+	 * Add {@link #cubeToAdd} next to : {@link Target}
+	 * 
+	 * @return The added cube or null if it hasn't been added
+	 */
+	public Cube addCube() {
+		if (target == null || target.face == null)
+			return null;
+
+		if (!isAddable())
+			return null;
+
+		Cube cubeToAdd = cloneCubeToAdd();
+		cubeToAdd.setCoords(target.getAir());
+
+		// ===== Add the cube to the server =====
+		send(SendAction.add(cubeToAdd));
+		return cubeToAdd;
+	}
+	// =========================================================================================================================
+
 	public void addPreview() {
 		// Get cube(s) to add
 		Cube cubeToAdd = cloneCubeToAdd();

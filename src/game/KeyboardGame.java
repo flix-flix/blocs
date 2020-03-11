@@ -56,7 +56,7 @@ public class KeyboardGame extends KeyboardEnvironment3D {
 
 		// Add a cube to the map
 		if (game.getAction() == UserAction.CREA_ADD)
-			addCube();
+			game.addCube();
 
 		// Do an action
 		else

@@ -205,10 +205,6 @@ public class MapClient extends Map implements Modelisable {
 		}
 	}
 
-	public void removePreview() {
-
-	}
-
 	// =========================================================================================================================
 
 	private void update(Coord t) {

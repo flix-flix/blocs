@@ -4,8 +4,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 
-import data.map.Cube;
-
 public class KeyboardEditorMultiCubes extends KeyboardEditor {
 
 	EditorMultiCubes editor;
@@ -26,8 +24,20 @@ public class KeyboardEditorMultiCubes extends KeyboardEditor {
 	public void keyPressed(KeyEvent e) {
 		super.keyPressed(e);
 
-		if (e.getKeyCode() == ALT)
+		int code = e.getKeyCode();
+
+		if (code == ALT)
 			editor.switchFaceName();
+
+		// Undo/Redo
+		if (e.isControlDown())
+			if (code == 'Z') {
+				editor.undo();
+				return;
+			} else if (code == 'Y') {
+				editor.redo();
+				return;
+			}
 
 		// Writing
 		if (editorMan.getButtonListeningKey() == ActionEditor.ITEM_TAG) {
@@ -54,30 +64,12 @@ public class KeyboardEditorMultiCubes extends KeyboardEditor {
 			if (pressR)
 				return;
 
-			Cube added;
-			if ((added = addCube()) == null)
-				return;
-
-			editor.multi.add(added);
+			editor.addCube();
 		}
 		// Remove
 		else if (editor.action == ActionEditor.DELETE_CUBE) {
-			if (targetedCoord != null)
-				editor.map.remove(targetedCoord);
-
-			editor.multi.remove(targetedCoord);
+			editor.removeCube();
 		}
-
-		// updateCameraLocation();
-	}
-
-	// =========================================================================================================================
-
-	public void updateCameraLocation() {
-		// rotationPoint.y = .5 + editor.multi.getMaxHeight() / 2. +
-		// editor.modifiedAltitude;
-		editor.rotationPoint.y = .5 + editor.modifiedAltitude;
-		camera.look(editor.rotationPoint);
 	}
 
 	// =========================================================================================================================
@@ -93,7 +85,8 @@ public class KeyboardEditorMultiCubes extends KeyboardEditor {
 				camera.moveY(-upDownSpeed);
 			}
 
-			updateCameraLocation();
+			editor.rotationPoint.y = .5 + editor.modifiedAltitude;
+			camera.look(editor.rotationPoint);
 		}
 
 		else
@@ -107,14 +100,10 @@ public class KeyboardEditorMultiCubes extends KeyboardEditor {
 
 	@Override
 	public double farest() {
-		return Math.max(super.farest(), editor.multi.getMaxHeight() + 10);
-	}
+		int height = editor.multi.getMaxY();
+		int width = Math.max(editor.multi.getMaxX() - editor.multi.getMinX(),
+				editor.multi.getMaxZ() - editor.multi.getMinZ());
 
-	// =========================================================================================================================
-
-	@Override
-	public void cameraMovement() {
-		super.cameraMovement();
-
+		return Math.max(super.farest(), Math.max(height, width) + 20);
 	}
 }

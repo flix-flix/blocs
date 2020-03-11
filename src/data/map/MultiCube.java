@@ -104,7 +104,27 @@ public class MultiCube implements Serializable {
 
 	// =========================================================================================================================
 
-	public int getMaxHeight() {
+	public int getMaxX() {
+		int max = -1;
+
+		for (Cube cube : list)
+			if (max < cube.gridCoord.x)
+				max = cube.gridCoord.x;
+
+		return max;
+	}
+
+	public int getMinX() {
+		int min = 10_000;
+
+		for (Cube cube : list)
+			if (min > cube.gridCoord.x)
+				min = cube.gridCoord.x;
+
+		return min;
+	}
+
+	public int getMaxY() {
 		int max = -1;
 
 		for (Cube cube : list)
@@ -112,6 +132,26 @@ public class MultiCube implements Serializable {
 				max = cube.gridCoord.y;
 
 		return max;
+	}
+
+	public int getMaxZ() {
+		int max = -1;
+
+		for (Cube cube : list)
+			if (max < cube.gridCoord.z)
+				max = cube.gridCoord.z;
+
+		return max;
+	}
+
+	public int getMinZ() {
+		int min = 10_000;
+
+		for (Cube cube : list)
+			if (min > cube.gridCoord.z)
+				min = cube.gridCoord.z;
+
+		return min;
 	}
 
 	// =========================================================================================================================
