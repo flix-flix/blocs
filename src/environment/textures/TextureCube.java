@@ -8,7 +8,7 @@ import utils.yaml.YAML;
 public class TextureCube {
 
 	/** Textures of the cube (up, down, north, south, east, west) */
-	private TextureFace[] textures = new TextureFace[6];
+	TextureFace[] textures = new TextureFace[6];
 	/** Textures of the cube with simulated rotation/orientation */
 	private TextureFace[] preview = new TextureFace[6];
 
@@ -28,8 +28,7 @@ public class TextureCube {
 
 	public TextureSquare getTexture(Face face, Rotation rota, Orientation ori) {
 		for (int i = 0; i < 6; i++) {
-			if (textures[i] != null)
-				textures[i].rotation = 0;
+			textures[i].rotation = 0;
 			preview[i] = textures[i];
 		}
 

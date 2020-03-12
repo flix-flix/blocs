@@ -461,7 +461,13 @@ public class Unit implements Serializable {
 	}
 
 	public boolean harvest(Map map, Coord coord) {
-		MultiCube multi = map.gridGet(coord).multicube;
+		Cube cube;
+		if ((cube = map.gridGet(coord)) == null) {
+			Utils.debug("Map doesn't contains: " + coord);
+			return false;
+		}
+
+		MultiCube multi = cube.multicube;
 
 		if (multi != null) {
 			if (!goAroundMulti(map, multi))

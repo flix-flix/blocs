@@ -9,6 +9,7 @@ import data.map.Coord;
 import data.map.Cube;
 import data.map.Map;
 import data.map.MultiCube;
+import data.map.buildings.Building;
 import data.map.enumerations.Face;
 import data.map.units.Unit;
 import graphicEngine.calcul.Camera;
@@ -135,7 +136,6 @@ public class MapClient extends Map implements Modelisable {
 	@Override
 	protected boolean addMulti(MultiCube multi, boolean full) {
 		super.addMulti(multi, full);
-
 		// If all the cubes are out of bounds
 		if (!multi.exist())
 			return false;
@@ -174,26 +174,33 @@ public class MapClient extends Map implements Modelisable {
 		synchronized (lock) {
 			CubeClient created;
 
-			// ===== Delete data =====
-			if (cube.build != null)
-				cube.multicube.setBuild(null);
-			cube.unit = null;
+			Cube _cube = cube.clone();
+			// ===== Delete data ===== (Will only add physical cubes)
+			if (_cube.build != null) {
+				_cube.build = _cube.build.clone();
+				_cube.multicube = _cube.build.getMulti();
+				_cube.multicube.setBuild(null);
+			} else if (_cube.multicube != null) {
+				_cube.multicube = _cube.multicube.cloneAndCast();
+				_cube.multicube.setBuild(null);
+			}
+			_cube.unit = null;
 
 			// Multi cubes
-			if (cube.multicube != null) {
-				super.addMulti(cube.multicube, true, false);
-				for (Cube c : cube.multicube.list) {
+			if (_cube.multicube != null) {
+				super.addMulti(_cube.multicube, true, false);
+				for (Cube c : _cube.multicube.list) {
 					c.onGrid = false;
 				}
-				created = (CubeClient) cube.multicube.getCube();
+				created = (CubeClient) _cube.multicube.getCube();
 				if (created == null)
 					return null;
 			}
 			// Single cube
 			else {
-				created = createCube(cube);
+				created = createCube(_cube);
 				created.onGrid = false;
-				getChunkAtCoord(cube).addCube(created);
+				getChunkAtCoord(_cube).addCube(created);
 			}
 
 			// ===== Mark as preview =====
@@ -329,6 +336,13 @@ public class MapClient extends Map implements Modelisable {
 	}
 
 	// =========================================================================================================================
+
+	@Override
+	public synchronized void setBuildingID(Building build) {
+		// Leave ID Management to the server
+	}
+
+	// =========================================================================================================================
 	// Model
 
 	@Override
@@ -363,6 +377,7 @@ public class MapClient extends Map implements Modelisable {
 				if (_containsChunk(camChunkX + x, camChunkZ + z))
 					_getChunk(camChunkX + x, camChunkZ + z).init(camera, matrix);
 
+		// TODO ConcurrentModificationException
 		for (Cube c : units.values())
 			((CubeClient) c).init(camera, matrix);
 	}

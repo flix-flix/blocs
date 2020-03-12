@@ -13,6 +13,7 @@ import graphicEngine.calcul.Point3D;
 import graphicEngine.calcul.Quadri;
 import graphicEngine.calcul.Vector;
 import graphicEngine.structures.Drawable;
+import utils.Utils;
 
 public class DrawCubeFace implements Drawable {
 
@@ -113,7 +114,7 @@ public class DrawCubeFace implements Drawable {
 
 					// If the cube is preview (or building in construction) makes it transparent
 					if (cube.isPreview() || (cube.build != null && !cube.build.isBuild())) {
-						color = (127 << 24) + (color & 0xffffff);
+						color = ((Utils.getAlpha(color) * 2 / 3) << 24) + (color & 0xffffff);
 						// If the multibloc is invalid : its color will have a red hue
 						if (cube.multicube != null && !cube.multicube.valid)
 							color = Engine.addHue(color, Engine.createColor(255, 255, 0, 0), .4);

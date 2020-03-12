@@ -5,6 +5,7 @@ import java.util.LinkedList;
 
 import data.map.Coord;
 import data.map.Cube;
+import data.map.MultiCube;
 import data.map.buildings.Building;
 import data.map.units.Unit;
 
@@ -76,6 +77,18 @@ public class SendAction implements Serializable {
 	// =========================================================================================================================
 
 	public static SendAction add(Cube c) {
+		// TODO [Improve] Only send itemID, coord and orientation
+		// (Avoid list<Cube> sending)
+
+		if (c.multicube != null) {
+			MultiCube multi = c.multicube.cloneAndCast();
+			c = new Cube(c);
+			c.multicube = multi;
+
+			if (c.build != null)
+				c.build.setMulti(multi);
+		}
+
 		return new SendAction(Action.ADD, c);
 	}
 

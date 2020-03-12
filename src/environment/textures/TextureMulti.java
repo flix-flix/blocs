@@ -4,6 +4,7 @@ import data.id.ItemTable;
 import data.id.ItemType;
 import data.map.Cube;
 import data.map.enumerations.Face;
+import graphicEngine.calcul.Engine;
 import utils.yaml.YAML;
 
 public class TextureMulti {
@@ -34,11 +35,24 @@ public class TextureMulti {
 
 		cubes = new TextureCube[resX][resY][resZ];
 
+		// ===== Empty =====
+		int pix = pixelsX / resX;
+		int[] empty = new int[pix * pix];
+
+		for (int x = 0; x < pix; x++)
+			for (int y = 0; y < pix; y++)
+				empty[x * pix + y] = Engine.createColor(0, 0, 0, 0);
+
+		TextureFace[] emptyFaces = new TextureFace[6];
+		for (int i = 0; i < 6; i++)
+			emptyFaces[i] = new TextureFace(new TextureSquare(empty, pix));
+
 		for (int x = 0; x < resX; x++)
 			for (int y = 0; y < resY; y++)
 				for (int z = 0; z < resZ; z++)
-					cubes[x][y][z] = new TextureCube();
+					cubes[x][y][z] = new TextureCube(emptyFaces);
 
+		// ===== Textures =====
 		// UP
 		for (int x = 0; x < resX; x++)
 			for (int z = 0; z < resZ; z++)

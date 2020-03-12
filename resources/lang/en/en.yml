@@ -67,6 +67,7 @@ tips:
             add_cube: Select the cube to add in the list on the bottom left then add it with a left click. (It is impossible to add bellow the socle)
             remove_cube: The red cross allow to remove a cube by left-clicking on it
             altitude: Maintain "Ctrl" using the mouse wheel to make the camera go up / down
+            rotate: Press "◄" or "►" to rotate the selected cube
             
     game:
         global:
@@ -74,7 +75,7 @@ tips:
             user_action: In the top left corner there are 3 buttons allowing to select the wanted action (Select, Add, Remove)
             mouse: The cursor allow to select a resource, a building or an unit. A description of the selection will be displayed bellow the 3 buttons.
             unit: If an unit is selected : It's possible to make it move with a right click at the desired destination. (It can recolt resources and build buildings)
-            add: The cube allow to add a cube or a structure with a right click at the desired location
+            add: The cube allow to add a cube or a structure with a right click at the desired location. (Press "◄" or "►" to rotate the selected cube)
             remove: The red cross allow to remove cube or structure with a left click on it
             f3: Press ~DEVLOP to display the graphic engine infos
             chat: Press ~DIALOG to open the chat. Enter to send the message, "Esc" to close the interface. Send !help to display the list of available commands   

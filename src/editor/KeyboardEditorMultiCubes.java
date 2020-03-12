@@ -39,6 +39,13 @@ public class KeyboardEditorMultiCubes extends KeyboardEditor {
 				return;
 			}
 
+		// Rotate Cube
+		if (editor.action == ActionEditor.ADD_CUBE)
+			if (code == 37) // Left
+				editorMan.rotateCubeToAdd(false);
+			else if (code == 39) // Right
+				editorMan.rotateCubeToAdd(true);
+
 		// Writing
 		if (editorMan.getButtonListeningKey() == ActionEditor.ITEM_TAG) {
 			editorMan.write(e);

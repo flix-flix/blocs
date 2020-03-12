@@ -129,6 +129,7 @@ public class Cube implements Serializable {
 	// =========================================================================================================================
 	// Coords
 
+	/** Retruns a copy of the Coord of this cube */
 	public Coord coords() {
 		return new Coord(this);
 	}
@@ -227,6 +228,37 @@ public class Cube implements Serializable {
 		if (resource != null)
 			return resource.remove(x);
 		return -1;
+	}
+
+	// =========================================================================================================================
+
+	/**
+	 * Rotate the cube (or multicube if part of it)
+	 * 
+	 * @param clockWise
+	 *            - true: North will face East (false: West)
+	 */
+	public void rotate(boolean clockWise) {
+		if (clockWise) {
+			if (multicube != null)
+				multicube.rotate();
+			else
+				setOrientation(orientation.next());
+
+		} else {
+			if (multicube != null) {
+				multicube.rotate();
+				multicube.rotate();
+				multicube.rotate();
+			} else
+				setOrientation(orientation.previous());
+		}
+	}
+
+	public void setOrientation(Orientation ori) {
+		if (unit != null)
+			unit.orientation = ori;
+		orientation = ori;
 	}
 
 	// =========================================================================================================================

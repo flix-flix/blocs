@@ -189,6 +189,15 @@ public class KeyboardGame extends KeyboardEnvironment3D {
 			if (Key.get(e.getKeyCode()) != null)
 				switch (Key.get(e.getKeyCode())) {
 
+				case ARROW_RIGHT:
+					if (game.getAction() == UserAction.CREA_ADD)
+						game.rotateCubeToAdd(true);
+					break;
+				case ARROW_LEFT:
+					if (game.getAction() == UserAction.CREA_ADD)
+						game.rotateCubeToAdd(false);
+					break;
+
 				case ACCESS_1:
 					game.setCameraMode(CameraMode.FIRST_PERSON);
 					break;

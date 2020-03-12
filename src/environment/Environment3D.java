@@ -5,6 +5,7 @@ import data.id.ItemTable;
 import data.id.ItemType;
 import data.map.Cube;
 import data.map.buildings.Building;
+import data.map.enumerations.Orientation;
 import data.map.units.Unit;
 import environment.extendsData.CubeClient;
 import environment.extendsData.MapClient;
@@ -191,29 +192,56 @@ public class Environment3D implements Client {
 
 	public void setCubeToAdd(Cube cube) {
 		cubeToAdd = cube;
+		cubeToAdd = cloneCubeToAdd();
 	}
 
-	// TODO [Optimise] Avoid clone of cubeToAdd on each target update
+	/**
+	 * @param clockWise
+	 *            - true: North will face East (false: West)
+	 */
+	public void rotateCubeToAdd(boolean clockWise) {
+		cubeToAdd.rotate(clockWise);
+
+		if (previewed != null) {
+			removePreview();
+			addPreview();
+		}
+	}
+
 	public Cube cloneCubeToAdd() {
 		if (cubeToAdd == null)
 			return null;
 
+		// TODO [Improve] Cube, MultiBlock and MultiCube clone() (separated from data)
+
 		if (cubeToAdd.unit != null) {
 			Unit u = cubeToAdd.unit;
 			Unit unit = new Unit(u.getItemID(), gamer, u.coord.x, u.coord.y, u.coord.z);
+			unit.rotation = u.rotation;
+			unit.orientation = u.orientation;
+
 			Cube cube = cubeToAdd.clone();
 			cube.unit = unit;
 			return cube;
 		}
 
 		if (cubeToAdd.build != null) {
+			Orientation ori = cubeToAdd.multicube.getOrientation();
+
 			Building build = ItemTable.create(cubeToAdd.build.getItemID()).build;
 			build.setGamer(gamer);
+
+			build.getMulti().rotate(ori);
+
 			return build.getCube();
 		}
 
-		if (ItemTable.getType(cubeToAdd) == ItemType.MULTICUBE)
-			return ItemTable.create(cubeToAdd.multicube.itemID);
+		if (ItemTable.getType(cubeToAdd) == ItemType.MULTICUBE) {
+			Orientation ori = cubeToAdd.multicube.getOrientation();
+			Cube cube = ItemTable.create(cubeToAdd.multicube.itemID);
+			cube.multicube.rotate(ori);
+			return cube;
+		}
 
 		return cubeToAdd.clone();
 	}
@@ -242,18 +270,18 @@ public class Environment3D implements Client {
 		if (!isAddable())
 			return null;
 
-		Cube cubeToAdd = cloneCubeToAdd();
-		cubeToAdd.setCoords(target.getAir());
-
-		// ===== Add the cube to the server =====
+		// Add the cube to the server
 		send(SendAction.add(cubeToAdd));
-		return cubeToAdd;
+
+		// Clone to avoid issue with identical datas
+		Cube added = cubeToAdd;
+		cubeToAdd = cloneCubeToAdd();
+
+		return added;
 	}
 	// =========================================================================================================================
 
 	public void addPreview() {
-		// Get cube(s) to add
-		Cube cubeToAdd = cloneCubeToAdd();
 		if (cubeToAdd == null)
 			return;
 
@@ -265,8 +293,10 @@ public class Environment3D implements Client {
 	}
 
 	public void removePreview() {
-		if (previewed != null)
+		if (previewed != null) {
 			map.remove(previewed);
+			previewed = null;
+		}
 	}
 
 	// =========================================================================================================================

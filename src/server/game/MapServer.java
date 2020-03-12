@@ -63,6 +63,14 @@ public class MapServer extends Map {
 			server.removeCube(x, y, z);
 	}
 
+	@Override
+	protected boolean addMulti(MultiCube multi, boolean full) {
+		boolean added = super.addMulti(multi, full);
+		if (added)
+			server.addCube(multi.getCube());
+		return added;
+	}
+
 	// =========================================================================================================================
 
 	public void harvest(Unit unit, Coord coord) {
@@ -99,20 +107,5 @@ public class MapServer extends Map {
 
 	protected void _gridRemove(Coord coord) {
 		super.gridRemove(coord.x, coord.y, coord.z);
-	}
-
-	// =========================================================================================================================
-
-	@Override
-	protected boolean addMulti(MultiCube multi, boolean full) {
-		boolean added = super.addMulti(multi, full);
-		if (added)
-			server.addCube(multi.getCube());
-		return added;
-	}
-
-	@Override
-	public boolean addBuilding(Building build) {
-		return super.addBuilding(build);
 	}
 }

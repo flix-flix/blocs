@@ -85,7 +85,8 @@ public abstract class ServerAbstract implements Runnable {
 		}
 
 		for (int index : clients.keySet())
-			clients.get(index).close();
+			if (clients.get(index) != null)
+				clients.get(index).close();
 	}
 
 	// =========================================================================================================================

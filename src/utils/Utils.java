@@ -130,6 +130,10 @@ public class Utils {
 		return -16_777_216 + red * 256 * 256 + green * 256 + blue;
 	}
 
+	public static int getAlpha(int color) {
+		return (color >> 24) & 0xff;
+	}
+
 	// =========================================================================================================================
 	// Debug
 

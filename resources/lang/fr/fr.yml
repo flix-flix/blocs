@@ -63,9 +63,10 @@ tips:
             select_all: "Ctrl+A" sélectionne toute la face. "Ctrl+Maj+A" annule la sélection
             
         multi_cubes:
-            add_cube: Sélectionnez le cube à ajouter dans la liste en bas a gauche puis placer le avec un clic gauche. (Impossible d'ajouter en dessous du socle)
+            add_cube: Sélectionnez le cube à ajouter dans la liste en bas à gauche puis placer le avec un clic gauche. (Impossible d'ajouter en dessous du socle)
             remove_cube: La croix rouge permet de détruire un cube en effectuant un clic gauche dessus
             altitude: Maintenez "Ctrl" en utilisant la molette pour faire monter / descendre la caméra
+            rotate: Appuyez sur "◄" ou "►" pour faire tourner le cube sélectionné
 
     game:
         global:
@@ -73,7 +74,7 @@ tips:
             user_action: En haut à gauche de l'écran se trouve 3 boutons permettant de sélectionner l'action souhaitée (Sélectionner, Ajouter, Détruire)
             mouse: Le curseur permet de sélectionner une ressource, un bâtiment ou une unitée. Une description de la sélection sera affichée en dessous des 3 boutons
             unit: Si une unitée est sélectionnée: Il est possible de la déplacer en effectuant un clic droit sur la destination souhaitée. (Elle peut également récolter des ressources et construire des bâtiments)
-            add: Le bloc permet d'ajouter le bloc ou structure selectionnée en effectuant un clic droit à l'emplacement souhaité
+            add: Le bloc permet d'ajouter le bloc ou structure selectionnée en effectuant un clic droit à l'emplacement souhaité. (Appuyez sur "◄" ou "►" pour faire tourner le cube sélectionné)
             remove: La croix rouge permet de détruire un cube ou une structure en effectuant un clic gauche dessus
             f3: Appuyez sur ~DEVLOP pour afficher les informations du moteur graphique
             chat: Appuyez sur ~DIALOG pour ouvrir le chat. Entrée pour envoyer le message, "Echap" pour fermer l'interface. Tapez !help pour afficher la liste des commandes disponibles
@@ -111,7 +112,7 @@ text:
             previous: Précédente :
         pop_up:
             close: Voulez vous vraiment fermer l'éditeur? Les modifications non sauvegardées seront perdues!
-            save_on_existant: Un fichier existe déja a cet emplacement : Voulez vous vraiment l'effacer ?
+            save_on_existant: Un fichier existe déja à cet emplacement : Voulez vous vraiment l'effacer ?
             
     data_manager:
         type:

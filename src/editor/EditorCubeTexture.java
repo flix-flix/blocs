@@ -246,7 +246,8 @@ public class EditorCubeTexture extends EditorAbstract {
 				for (int y = 0; y < MAX_SIZE; y++)
 					drawPixel(face, x, y, (x + y) % 2 == 0 ? 0xff888888 : 0xff555555);
 
-		historyPack();
+		if (!history.isEmpty())
+			historyPack();
 		updatePreviewTexture();
 	}
 

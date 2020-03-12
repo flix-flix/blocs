@@ -24,7 +24,9 @@ public class Map implements Tickable, Serializable {
 	protected HashMap<Integer, MultiCube> multis = new HashMap<>();
 
 	protected HashMap<Integer, Cube> units = new HashMap<>();
-	protected HashMap<Integer, Cube> builds = new HashMap<>();
+	protected HashMap<Integer, Building> builds = new HashMap<>();
+
+	private int buildID = 0;
 
 	public Cube lock = new Cube(0);
 
@@ -40,19 +42,20 @@ public class Map implements Tickable, Serializable {
 	// =========================================================================================================================
 
 	public void copyFromMap(Map map) {
-		name = map.getName();
+		name = map.name;
 
-		for (int index : map.getChunks().keySet())
-			chunks.put(index, createChunk(map.getChunks().get(index)));
+		for (int index : map.chunks.keySet())
+			chunks.put(index, createChunk(map.chunks.get(index)));
 
-		for (Cube c : map.getUnits().values()) {
+		for (Cube c : map.units.values()) {
 			Cube newUnit = createUnit(c.unit);
 			units.put(c.unit.getId(), newUnit);
 			gridGet(newUnit.gridCoord).unit = newUnit.unit;
 		}
 
-		for (Cube c : map.getBuilds().values())
-			builds.put(c.build.getId(), createBuilding(c.build));
+		buildID = map.buildID;
+		for (Building build : map.builds.values())
+			builds.put(build.getId(), build);
 
 		multis = map.multis;
 
@@ -91,10 +94,6 @@ public class Map implements Tickable, Serializable {
 
 	protected Cube createUnit(Unit unit) {
 		return new Cube(unit);
-	}
-
-	protected Cube createBuilding(Building build) {
-		return build.getCube();
 	}
 
 	// =========================================================================================================================
@@ -375,24 +374,31 @@ public class Map implements Tickable, Serializable {
 
 	/** Returns true if the building has been added */
 	public boolean addBuilding(Building build) {
-		Cube c = createBuilding(build);
-		builds.put(build.getId(), c);
-		return addMulti(build.getMulti(), true);
+		setBuildingID(build);
+		if (addMulti(build.getMulti(), true)) {
+			builds.put(build.getId(), build);
+			return true;
+		}
+		return false;
 	}
 
 	public void removeBuilding(Building build) {
 		if (builds.containsKey(build.getId()))
-			removeMulti(builds.remove(build.getId()).build.getMulti());
+			removeMulti(builds.remove(build.getId()).getMulti());
+	}
+
+	public synchronized void setBuildingID(Building build) {
+		build.setID(buildID++);
 	}
 
 	public Building getBuilding(int id) {
-		return builds.get(id).build;
+		return builds.get(id);
 	}
 
 	public Building getBuilding(Coord coord) {
-		for (Cube cube : builds.values())
-			if (cube.multicube.contains(coord))
-				return cube.build;
+		for (Building build : builds.values())
+			if (build.getMulti().contains(coord))
+				return build;
 		return null;
 	}
 
@@ -421,20 +427,8 @@ public class Map implements Tickable, Serializable {
 
 	// =========================================================================================================================
 
-	public String getName() {
-		return name;
-	}
-
 	public HashMap<Integer, Chunk> getChunks() {
 		return chunks;
-	}
-
-	public HashMap<Integer, Cube> getUnits() {
-		return units;
-	}
-
-	public HashMap<Integer, Cube> getBuilds() {
-		return builds;
 	}
 
 	// =========================================================================================================================

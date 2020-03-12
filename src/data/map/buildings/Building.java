@@ -16,9 +16,8 @@ public class Building implements Serializable {
 	private static final long serialVersionUID = -1662130293196731466L;
 
 	private static final int NO_ID = -1;
-	private static int nextID = 0;
-
 	private int id = NO_ID;
+
 	public Coord coord;
 	private Gamer gamer;
 	private int itemID;
@@ -34,8 +33,6 @@ public class Building implements Serializable {
 	// =========================================================================================================================
 
 	public Building(Gamer gamer, int itemID, int x, int y, int z, boolean isBuild) {
-		id = nextID++;
-
 		coord = new Coord(x, y, z);
 		this.gamer = gamer;
 		this.itemID = itemID;
@@ -108,6 +105,10 @@ public class Building implements Serializable {
 		return multi;
 	}
 
+	public void setMulti(MultiCube multi) {
+		this.multi = multi;
+	}
+
 	public Cube getCube() {
 		return multi.getCube();
 	}
@@ -122,6 +123,10 @@ public class Building implements Serializable {
 
 	public int getAlreadyBuild() {
 		return alreadyBuild;
+	}
+
+	public void setID(int id) {
+		this.id = id;
 	}
 
 	public int getId() {
@@ -140,6 +145,16 @@ public class Building implements Serializable {
 	}
 
 	// =========================================================================================================================
+
+	@Override
+	public Building clone() {
+		Building build = new Building(gamer, itemID, 0, 0, 0, isBuild);
+		build.coord = coord.clone();
+		build.multi = multi.cloneAndCast();
+		build.alreadyBuild = alreadyBuild;
+
+		return build;
+	}
 
 	@Override
 	public String toString() {

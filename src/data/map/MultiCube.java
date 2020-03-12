@@ -5,6 +5,7 @@ import java.util.LinkedList;
 
 import data.id.ItemID;
 import data.map.buildings.Building;
+import data.map.enumerations.Orientation;
 import data.map.units.Unit;
 
 public class MultiCube implements Serializable {
@@ -19,6 +20,8 @@ public class MultiCube implements Serializable {
 	protected int x, y, z;
 
 	public boolean valid = true;
+
+	private Orientation orientation = Orientation.NORTH;
 
 	// =========================================================================================================================
 
@@ -92,6 +95,56 @@ public class MultiCube implements Serializable {
 
 	// =========================================================================================================================
 
+	public void rotate() {
+		if (list.isEmpty())
+			return;
+
+		Coord start = list.get(0).coords();
+
+		for (Cube cube : list) {
+			Coord c = cube.coords();
+			cube._setCoords(start.x + (start.z - c.z), c.y, start.z - (start.x - c.x));
+			cube.setOrientation(cube.orientation.next());
+		}
+		orientation = orientation.next();
+	}
+
+	public void rotate(Orientation ori) {
+		switch (ori) {
+		case WEST:
+			rotate();
+		case SOUTH:
+			rotate();
+		case EAST:
+			rotate();
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	// =========================================================================================================================
+
+	/** Returns a copy of this multicube (CubeClient are casted to Cube) */
+	public MultiCube cloneAndCast() {
+		MultiCube multi = new MultiCube(itemID, x, y, z);
+		LinkedList<Cube> cubes = new LinkedList<>();
+
+		for (Cube cube : list) {
+			Cube newCube = new Cube(cube);
+			// TODO onGrid=true is forced here
+			newCube.onGrid = true;
+			newCube.multicube = multi;
+			cubes.add(newCube);
+		}
+		multi.list = cubes;
+
+		return multi;
+	}
+
+	// =========================================================================================================================
+
 	public void setBuild(Building build) {
 		for (Cube c : list)
 			c.build = build;
@@ -158,5 +211,9 @@ public class MultiCube implements Serializable {
 
 	public int getId() {
 		return id;
+	}
+
+	public Orientation getOrientation() {
+		return orientation;
 	}
 }

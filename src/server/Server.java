@@ -108,12 +108,12 @@ public class Server extends ServerAbstract implements Tickable {
 			sendToAllSeeing(send);
 			break;
 		case UNIT_HARVEST:
-			map.getUnit(send.id1).harvest(map, send.coord);
-			sendToAllSeeing(send);
+			if (map.getUnit(send.id1).harvest(map, send.coord))
+				sendToAllSeeing(send);
 			break;
 		case UNIT_STORE:
-			map.getUnit(send.id1).store(map, map.getBuilding(send.id2));
-			sendToAllSeeing(send);
+			if (map.getUnit(send.id1).store(map, map.getBuilding(send.id2)))
+				sendToAllSeeing(send);
 			break;
 		case SERVER_TICKS_PHYS:
 			sendToPlayer(SendAction.ticksPhys(lastSecondTicks), id);
