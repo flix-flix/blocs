@@ -191,6 +191,8 @@ public class MapClient extends Map implements Modelisable {
 				super.addMulti(_cube.multicube, true, false);
 				for (Cube c : _cube.multicube.list) {
 					c.onGrid = false;
+					if (c.y >= Chunk.Y)
+						_cube.multicube.valid = false;
 				}
 				created = (CubeClient) _cube.multicube.getCube();
 				if (created == null)
@@ -314,11 +316,6 @@ public class MapClient extends Map implements Modelisable {
 		// Cubes with same ID hide each others (glass, water)
 		if (id == aID)
 			return true;
-
-		// TODO [Fix] isOpaque() for previews
-		// The cube musn't be a preview ... or the adjacent must be one too
-		if (adjacent.isPreview() && !cube.isPreview())
-			return false;
 
 		// The cube musn't be a building in construction
 		if (adjacent.build != null && !adjacent.build.isBuild())

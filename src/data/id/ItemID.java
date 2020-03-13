@@ -30,6 +30,7 @@ public class ItemID {
 
 	public static final int EDITOR_PREVIEW = 900;
 	public static final int EDITOR_SOCLE = 901;
+	public static final int EDITOR_PREVIEW_MULTI = 902;
 
 	public static final int MAGIC_BLOC = 995;
 	public static final int TEST_BIG = 996;

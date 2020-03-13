@@ -69,8 +69,11 @@ public class Engine {
 
 	// =========================================================================================================================
 
-	public void setModelCamera(Modelisable model, Camera camera) {
+	public void setModel(Modelisable model) {
 		newModel = model;
+	}
+
+	public void setCamera(Camera camera) {
 		newCamera = camera;
 	}
 

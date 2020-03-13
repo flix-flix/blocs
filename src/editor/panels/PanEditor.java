@@ -53,7 +53,7 @@ public class PanEditor extends JPanel {
 			// Line 1
 			ActionEditor.ALONE, ActionEditor.DECOR, ActionEditor.PAINT, ActionEditor.FILL,
 			// Line 2
-			ActionEditor.SQUARE_SELECTION, ActionEditor.GRID, ActionEditor.MINIATURE, ActionEditor.SAVE,
+			ActionEditor.SQUARE_SELECTION, ActionEditor.GRID, ActionEditor.MINIATURE_CUBE_TEXTURE, ActionEditor.SAVE,
 			// Line 3
 			ActionEditor.PLAYER_COLOR };
 
@@ -61,7 +61,8 @@ public class PanEditor extends JPanel {
 	private HashMap<ActionEditor, ButtonEditor> buttonsCubeTexture = new HashMap<>();
 
 	// =============== Multi-Cubes ===============
-	private ActionEditor[] _buttonsMultiCubes = { ActionEditor.DELETE_CUBE, ActionEditor.MINIATURE, ActionEditor.SAVE };
+	private ActionEditor[] _buttonsMultiCubes = { ActionEditor.DELETE_CUBE, ActionEditor.MINIATURE_MULTICUBE,
+			ActionEditor.SAVE };
 	private PanGrid gridMultiCubes;
 	private HashMap<ActionEditor, ButtonEditor> buttonsMultiCubes = new HashMap<>();
 
@@ -275,6 +276,8 @@ public class PanEditor extends JPanel {
 		}
 
 		buttonsMultiCubes.get(ActionEditor.DELETE_CUBE).setSelectable(true);
+		buttonsMultiCubes.get(ActionEditor.MINIATURE_MULTICUBE).setSelectable(true);
+		ButtonCube.group(get(ActionEditor.DELETE_CUBE), get(ActionEditor.MINIATURE_MULTICUBE));
 		buttonsMultiCubes.get(ActionEditor.SAVE).setWIP();
 
 		// ========================================================================================

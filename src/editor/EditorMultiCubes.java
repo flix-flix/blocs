@@ -17,6 +17,7 @@ import environment.extendsData.CubeClient;
 import environment.extendsEngine.DrawLayer;
 import graphicEngine.calcul.Point3D;
 import utils.yaml.YAML;
+import utilsBlocks.YAMLBlocks;
 
 public class EditorMultiCubes extends EditorAbstract {
 
@@ -26,7 +27,7 @@ public class EditorMultiCubes extends EditorAbstract {
 
 	public double modifiedAltitude = 0;
 
-	public MultiCube multi = new MultiCube();
+	public MultiCube multi = new MultiCube(ItemID.EDITOR_PREVIEW_MULTI);
 
 	private boolean showFaceName = false;
 
@@ -73,6 +74,20 @@ public class EditorMultiCubes extends EditorAbstract {
 		return multi.list.isEmpty();
 	}
 
+	@Override
+	public void repainted() {
+		if (action == ActionEditor.MINIATURE_MULTICUBE) {
+			ItemTable.get(ItemID.EDITOR_PREVIEW_MULTI).camera = camera.clone();
+			updatePreview();
+		}
+	}
+
+	@Override
+	void historyPack() {
+		super.historyPack();
+		panel.get(ActionEditor.EDIT_MULTI_CUBE).setSaved(false);
+	}
+
 	// =========================================================================================================================
 
 	public void addCube() {
@@ -84,6 +99,8 @@ public class EditorMultiCubes extends EditorAbstract {
 		historyPack();
 
 		multi.add(added);
+
+		updatePreview();
 	}
 
 	public void removeCube() {
@@ -93,37 +110,63 @@ public class EditorMultiCubes extends EditorAbstract {
 			map.remove(target.cube.coords());
 			multi.remove(target.cube.coords());
 		}
+		updatePreview();
+	}
+
+	public void updatePreview() {
+		Item item = new Item(ItemID.EDITOR_PREVIEW_MULTI, "EDITOR_PREVIEW_MULTI");
+		item.multi = multi.cloneAndCast();
+		item.camera = ItemTable.get(ItemID.EDITOR_PREVIEW_MULTI).camera;
+
+		ItemTable.addItem(item);
+
+		panel.get(ActionEditor.MINIATURE_MULTICUBE).setModel(multi.getCube());
 	}
 
 	// =========================================================================================================================
 
 	@Override
 	public void action(ActionEditor action) {
-
+		// =============== Save ===============
 		switch (action) {
-		case DELETE_CUBE:
-			if (this.action == action)
-				this.action = null;
-			else
-				this.action = action;
-
-			editorMan.panel.buttonsCubes.get(0).unselectAll();
-			break;
-		case MINIATURE:
-			break;
-
-		// ================== PanItem ======================
 		case ITEM_CLEAR:
 			for (Cube cube : multi.list)
 				historyPack.add(new HistoryRemoveCube(cube.coords(), cube.getItemID()));
 
 			historyPack();
 			map.remove(multi.getCube());
-			break;
+			multi.list.clear();
+			updatePreview();
+			return;
 		case ITEM_SAVE:
 			saveMulti(panel.get(ActionEditor.ITEM_ID).getWheelStep(), panel.get(ActionEditor.ITEM_TAG).getString());
-			break;
+			return;
 
+		default:
+			break;
+		}
+
+		// =============== Tools ===============
+		if (this.action == action) {
+			this.action = null;
+			return;
+		} else
+			this.action = action;
+
+		editorMan.panel.buttonsCubes.get(0).unselectAll();
+
+		switch (action) {
+		case DELETE_CUBE:
+			break;
+		case MINIATURE_MULTICUBE:
+			Item item = new Item(ItemID.EDITOR_PREVIEW_MULTI, "EDITOR_PREVIEW_MULTI");
+			item.multi = multi;
+			item.camera = camera.clone();
+
+			ItemTable.addItem(item);
+
+			panel.get(ActionEditor.MINIATURE_MULTICUBE).setCamera(camera.clone());
+			break;
 		default:
 			break;
 		}
@@ -132,7 +175,7 @@ public class EditorMultiCubes extends EditorAbstract {
 	@Override
 	public void clickCube(Cube cube) {
 		action = ActionEditor.ADD_CUBE;
-		editorMan.panel.get(ActionEditor.DELETE_CUBE).setSelected(false);
+		editorMan.panel.get(ActionEditor.DELETE_CUBE).unselectAll();
 		editorMan.setCubeToAdd(cube);
 	}
 
@@ -146,6 +189,8 @@ public class EditorMultiCubes extends EditorAbstract {
 	public void saveMulti(int id, String tag) {
 		YAML yaml = new YAML();
 		yaml.put("id", "" + id);
+		yaml.put("tag", "" + tag);
+		yaml.put("camera", YAMLBlocks.toYAML(camera));
 		ArrayList<YAML> list = new ArrayList<YAML>();
 
 		for (Cube cube : multi.list) {
@@ -168,12 +213,14 @@ public class EditorMultiCubes extends EditorAbstract {
 		YAML.encodeFile(yaml, fileName);
 
 		editorMan.updateButtonsItem();
+		panel.get(ActionEditor.EDIT_MULTI_CUBE).setSaved(true);
 	}
 
 	// =========================================================================================================================
 
 	@Override
 	public void updateAfterUndoRedo() {
+		updatePreview();
 	}
 
 	@Override
@@ -191,7 +238,7 @@ public class EditorMultiCubes extends EditorAbstract {
 	}
 
 	// =========================================================================================================================
-	// Layer
+	// Layers
 
 	void switchFaceName() {
 		showFaceName = !showFaceName;

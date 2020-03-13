@@ -91,6 +91,12 @@ public class EditorManager extends Environment3D implements Displayable {
 		clock.stop();
 	}
 
+	@Override
+	public void repaintEnvironment() {
+		super.repaintEnvironment();
+		editor.repainted();
+	}
+
 	// =========================================================================================================================
 	// Buttons events
 
@@ -134,11 +140,14 @@ public class EditorManager extends Environment3D implements Displayable {
 				}
 				break;
 
-			// ================== PanItem ======================
+			// ================== Save ======================
 			case ITEM_TAG:
 				if (panel.get(action).isSelected())
 					setListeningKey(action);
-
+				break;
+			// Intercept
+			case ITEM_ID:
+				break;
 			default:
 				editor.action(action);
 			}

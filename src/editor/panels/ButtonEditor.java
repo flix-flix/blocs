@@ -3,6 +3,7 @@ package editor.panels;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
@@ -11,7 +12,6 @@ import data.id.ItemTable;
 import data.id.ItemTableClient;
 import editor.ActionEditor;
 import editor.EditorManager;
-import environment.extendsData.CubeClient;
 import utils.Utils;
 import utilsBlocks.ButtonBlocks;
 
@@ -40,6 +40,11 @@ public class ButtonEditor extends ButtonBlocks {
 	 */
 	private boolean bool = true;
 
+	// =============== Unsaved ===============
+	private boolean saved = true;;
+	private static Image notSavedImg = Utils
+			.getImage(ItemTableClient.getTexturePack().getFolder() + "menu/editor/not_saved");
+
 	// =========================================================================================================================
 
 	public ButtonEditor(EditorManager editor, ActionEditor action) {
@@ -49,14 +54,17 @@ public class ButtonEditor extends ButtonBlocks {
 		setPadding(5);
 
 		if (hasImage())
-			setImage(Utils.getImage(
-					ItemTableClient.getTexturePack().getFolder() + "menu/editor/" + action.name().toLowerCase()));
+			setImage(getImage(action));
 
 		else if (hasEngine()) {
 			int itemID;
 			switch (action) {
-			case MINIATURE:
+			case MINIATURE_CUBE_TEXTURE:
 				itemID = ItemID.EDITOR_PREVIEW;
+				break;
+			case MINIATURE_MULTICUBE:
+				setEmptyImage(getImage(action));
+				itemID = ItemID.EDITOR_PREVIEW_MULTI;
 				break;
 
 			case EDIT_CUBE:
@@ -69,7 +77,7 @@ public class ButtonEditor extends ButtonBlocks {
 				itemID = ItemID.GRASS;
 				break;
 			}
-			setModel(new CubeClient(ItemTable.create(itemID)));
+			setModel(ItemTable.create(itemID));
 		}
 
 		else {
@@ -110,18 +118,30 @@ public class ButtonEditor extends ButtonBlocks {
 	// =========================================================================================================================
 
 	@Override
+	protected void paintComponent(Graphics g) {
+		super.paintComponent(g);
+
+		int h = getHeight();
+		if (!saved)
+			g.drawImage(notSavedImg, h  / 2, h  / 2, h / 2, h / 2, null);
+	}
+
+	@Override
 	public void paintCenter(Graphics g) {
 		super.paintCenter(g);
+
+		int h = getContentHeight();
 
 		if (action == ActionEditor.ITEM_COLOR) {
 			int x = 40;
 			int y = 25;
 
 			g.setColor(Color.LIGHT_GRAY);
-			g.drawRect(getContentWidth() / 2 - x / 2 - 1, getContentHeight() / 2 - y / 2 - 1, x + 1, y + 1);
+			g.drawRect(getContentWidth() / 2 - x / 2 - 1, h / 2 - y / 2 - 1, x + 1, y + 1);
 			g.setColor(new Color(value & 0xffffff));
-			g.fillRect(getContentWidth() / 2 - x / 2, getContentHeight() / 2 - y / 2, x, y);
+			g.fillRect(getContentWidth() / 2 - x / 2, h / 2 - y / 2, x, y);
 		}
+
 	}
 
 	// =========================================================================================================================
@@ -189,7 +209,8 @@ public class ButtonEditor extends ButtonBlocks {
 
 	public boolean hasEngine() {
 		switch (action) {
-		case MINIATURE:
+		case MINIATURE_CUBE_TEXTURE:
+		case MINIATURE_MULTICUBE:
 		case EDIT_CUBE:
 		case EDIT_MULTI_CUBE:
 			return true;
@@ -253,6 +274,11 @@ public class ButtonEditor extends ButtonBlocks {
 			bool = false;
 	}
 
+	public void setSaved(boolean saved) {
+		this.saved = saved;
+		repaint();
+	}
+
 	// =========================================================================================================================
 
 	public void updateData() {
@@ -273,6 +299,13 @@ public class ButtonEditor extends ButtonBlocks {
 			setText("" + wheelStep);
 
 		repaint();
+	}
+
+	// =========================================================================================================================
+
+	private Image getImage(ActionEditor action) {
+		return Utils
+				.getImage(ItemTableClient.getTexturePack().getFolder() + "menu/editor/" + action.name().toLowerCase());
 	}
 
 	// =========================================================================================================================

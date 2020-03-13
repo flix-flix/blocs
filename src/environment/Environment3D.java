@@ -74,7 +74,8 @@ public class Environment3D implements Client {
 		this.camera = camera;
 
 		panel.setCamera(camera);
-		engine.setModelCamera(map, camera);
+		engine.setModel(map);
+		engine.setCamera(camera);
 	}
 
 	// =========================================================================================================================
@@ -85,7 +86,9 @@ public class Environment3D implements Client {
 			return;
 
 		panel.setCamera(camera);
-		engine.setModelCamera(map, camera);
+
+		engine.setModel(map);
+		engine.setCamera(camera);
 
 		Thread thread = new Thread(new RefreshImage());
 		thread.setName("Refresh Image");
@@ -180,12 +183,13 @@ public class Environment3D implements Client {
 
 	public void setMap(MapClient map) {
 		this.map = map;
-		engine.setModelCamera(map, camera);
+		engine.setModel(map);
 	}
 
 	public void setCamera(Camera camera) {
 		this.camera = camera;
-		engine.setModelCamera(map, camera);
+		engine.setCamera(camera);
+		panel.setCamera(camera);
 	}
 
 	// =========================================================================================================================
@@ -285,10 +289,7 @@ public class Environment3D implements Client {
 		if (cubeToAdd == null)
 			return;
 
-		// ===== Set coords of the cube(s) =====
 		cubeToAdd.setCoords(target.getAir());
-
-		// Test if there is place for the cube(s) at the coords
 		previewed = map.addPreview(cubeToAdd);
 	}
 

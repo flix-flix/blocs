@@ -8,6 +8,7 @@ import data.map.resources.ResourceType;
 import graphicEngine.calcul.Camera;
 import graphicEngine.calcul.Point3D;
 import utils.yaml.YAML;
+import utilsBlocks.YAMLBlocks;
 
 public class Item {
 
@@ -27,7 +28,7 @@ public class Item {
 	int sizeX, sizeY, sizeZ;
 
 	// ==================== Multicube ====================
-	MultiCube multi;
+	public MultiCube multi;
 
 	// ==================== Resource ====================
 	int miningTime = -1;
@@ -38,7 +39,7 @@ public class Item {
 	int buildingTime = -1;
 
 	// ==================== Texture ====================
-	Camera camera = new Camera(new Point3D(-.4, 1.5, -1), 58, -35);
+	public Camera camera = new Camera(new Point3D(-.4, 1.5, -1), 58, -35);
 	boolean contour = true;
 	int mapColor = 0xeaff00;
 
@@ -73,9 +74,13 @@ public class Item {
 			type = ItemType.MULTICUBE;
 			multi = new MultiCube();
 			multi.itemID = id;
-			for (YAML cube : yaml.getList("multicube.cubes"))
-				multi.add(new Cube(cube.getInt("x"), cube.getInt("y"), cube.getInt("z"), cube.getInt("id")));
+			if (yaml.contains("multicube.cubes"))
+				for (YAML cube : yaml.getList("multicube.cubes"))
+					multi.add(new Cube(cube.getInt("x"), cube.getInt("y"), cube.getInt("z"), cube.getInt("id")));
 		}
+
+		if (yaml.contains("camera"))
+			camera = YAMLBlocks.getCamera(yaml.getYAML("camera"));
 
 		if (yaml.contains("mining"))
 			miningTime = yaml.getInt("mining.time");
@@ -97,15 +102,8 @@ public class Item {
 	// =========================================================================================================================
 
 	public void setTexture(YAML yaml) {
-		if (yaml.contains("camera")) {
-			double x = yaml.getDouble("camera.x");
-			double y = yaml.getDouble("camera.y");
-			double z = yaml.getDouble("camera.z");
-			int vx = yaml.getInt("camera.vx");
-			int vy = yaml.getInt("camera.vy");
-
-			camera = new Camera(new Point3D(x, y, z), vx, vy);
-		}
+		if (yaml.contains("camera"))
+			camera = YAMLBlocks.getCamera(yaml.getYAML("camera"));
 
 		if (yaml.contains("contour"))
 			contour = yaml.getBoolean("contour");

@@ -120,6 +120,10 @@ public class Camera {
 
 	// =========================================================================================================================
 
+	public Camera clone() {
+		return new Camera(vue.clone(), vx, vy);
+	}
+
 	@Override
 	public String toString() {
 		return "Camera [vue=" + vue.toString() + ", vx=" + vx + ", vy=" + vy + "]";

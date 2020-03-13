@@ -142,6 +142,12 @@ public class EditorCubeTexture extends EditorAbstract {
 		return history.isEmpty();
 	}
 
+	@Override
+	void historyPack() {
+		super.historyPack();
+		panel.get(ActionEditor.EDIT_CUBE_TEXTURE).setSaved(false);
+	}
+
 	// =========================================================================================================================
 
 	@Override
@@ -223,7 +229,7 @@ public class EditorCubeTexture extends EditorAbstract {
 			updatePreviewTexture();
 			refreshLayerGrid();
 			break;
-		case MINIATURE:
+		case MINIATURE_CUBE_TEXTURE:
 			break;
 		case PLAYER_COLOR:
 			break;
@@ -269,14 +275,14 @@ public class EditorCubeTexture extends EditorAbstract {
 	public void updatePreviewTexture() {
 		updatePreviewTexture(createTexture(), ItemID.EDITOR_PREVIEW);
 		// Repaint Miniature
-		panel.get(ActionEditor.MINIATURE).repaint();
+		panel.get(ActionEditor.MINIATURE_CUBE_TEXTURE).repaint();
 	}
 
 	private void updatePreviewTexture(TextureCube tc, int id) {
 		// Update TexturePack
 		texturePack.setTextureCube(tc, id);
 		// Update miniature preview
-		panel.get(ActionEditor.MINIATURE).update();
+		panel.get(ActionEditor.MINIATURE_CUBE_TEXTURE).update();
 		textureCube = tc;
 	}
 
@@ -342,6 +348,7 @@ public class EditorCubeTexture extends EditorAbstract {
 		YAML.encodeFile(yaml, savedFileName);
 
 		editorMan.updateButtonsItem();
+		panel.get(ActionEditor.EDIT_CUBE_TEXTURE).setSaved(true);
 	}
 
 	// =========================================================================================================================

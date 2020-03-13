@@ -4,8 +4,9 @@ import java.awt.Graphics;
 import java.awt.Image;
 
 import data.id.ItemTableClient;
-import environment.extendsData.CubeClient;
+import data.map.Cube;
 import environment.extendsData.MapClient;
+import graphicEngine.calcul.Camera;
 import graphicEngine.calcul.Engine;
 import utils.Utils;
 import utils.panels.FButton;
@@ -13,8 +14,10 @@ import utils.panels.FButton;
 public class ButtonBlocks extends FButton {
 	private static final long serialVersionUID = 7876247726882411115L;
 
-	Engine engine = null;
-	MapClient map = null;
+	private Engine engine = null;
+	private MapClient map = null;
+
+	private Image emptyImg = null;
 
 	// ======================= WIP =========================
 	private static Image wipImg;
@@ -36,7 +39,13 @@ public class ButtonBlocks extends FButton {
 
 	// =========================================================================================================================
 
-	public void setModel(CubeClient cube) {
+	public void setModel(Cube cube) {
+		if (cube == null) {
+			engine = null;
+			update();
+			return;
+		}
+
 		map = new MapClient();
 		map.add(cube);
 
@@ -46,9 +55,26 @@ public class ButtonBlocks extends FButton {
 		update();
 	}
 
+	public void setCamera(Camera camera) {
+		if (engine == null)
+			return;
+		engine.setCamera(camera);
+		update();
+	}
+
 	public void update() {
-		if (engine != null)
+		if (engine == null) {
+			if (emptyImg != null)
+				setImage(emptyImg);
+		} else
 			setImage(engine.getImage(getContentWidth(), getContentHeight()));
+		repaint();
+	}
+
+	// =========================================================================================================================
+
+	public void setEmptyImage(Image emptyImg) {
+		this.emptyImg = emptyImg;
 	}
 
 	// =========================================================================================================================

@@ -7,7 +7,6 @@ import java.util.Locale;
 import data.id.ItemID;
 import data.id.ItemTableClient;
 import data.map.Cube;
-import environment.extendsData.CubeClient;
 import utils.Utils;
 import utils.panels.FButton;
 import utilsBlocks.ButtonBlocks;
@@ -37,7 +36,7 @@ public class ButtonDataManager extends ButtonBlocks {
 			break;
 		case TEXTURE:
 			setWIP();
-			setModel(new CubeClient(new Cube(ItemID.GRASS)));
+			setModel(new Cube(ItemID.GRASS));
 			setPadding(5);
 			break;
 

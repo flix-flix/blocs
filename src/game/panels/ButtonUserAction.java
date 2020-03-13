@@ -3,7 +3,6 @@ package game.panels;
 import data.id.ItemID;
 import data.id.ItemTableClient;
 import data.map.Cube;
-import environment.extendsData.CubeClient;
 import game.Game;
 import game.UserAction;
 import utils.Utils;
@@ -28,7 +27,7 @@ public class ButtonUserAction extends ButtonBlocks {
 			setSelected(true);
 
 		if (action == UserAction.CREA_ADD)
-			setModel(new CubeClient(new Cube(ItemID.GRASS)));
+			setModel(new Cube(ItemID.GRASS));
 		else
 			setImage(Utils.getImage(
 					ItemTableClient.getTexturePack().getFolder() + "menu/game/" + action.name().toLowerCase()));

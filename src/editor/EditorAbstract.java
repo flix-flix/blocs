@@ -70,6 +70,10 @@ public abstract class EditorAbstract {
 		return true;
 	}
 
+	/** Called after environment repaint */
+	public void repainted() {
+	}
+
 	// =========================================================================================================================
 
 	public abstract void action(ActionEditor action);

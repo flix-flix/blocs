@@ -87,6 +87,7 @@ public class ItemTable {
 	public static boolean isDevelopment(int itemID) {
 		switch (itemID) {
 		case ItemID.EDITOR_PREVIEW:
+		case ItemID.EDITOR_PREVIEW_MULTI:
 		case ItemID.EDITOR_SOCLE:
 		case ItemID.TEST:
 		case ItemID.TEST_BIG:
