@@ -41,43 +41,48 @@ keys:
 tips:
     editor:
         global:
-            face_name: Appuyez sur "Alt" pour afficher / masquer l'orientation de chaque face
-            rotate: Maintenez le clic droit enfoncé en déplaçant la souris pour faire tourner le cube (ou ~FORWARD, ~LEFT, ~BACKWARD, ~RIGHT )
-            grid: Utilisez la molette sur le bouton "Grille" pour augmenter / diminuer la résolution de la face
+            face_name: Appuyez sur ~ALT pour afficher / masquer l'orientation de chaque face
+            rotate: Maintenez le clic droit enfoncé en déplaçant la souris pour faire tourner le cube (ou ~FORWARD, ~LEFT, ~BACKWARD, ~RIGHT)
             zoom: Utilisez la molette pour zoomer / dézoomer
-            undo: Utilisez "Ctrl+Z" pour annuler la dernière modification et "Ctrl+Y" pour l'appliquer de nouveau
+            undo: Utilisez ~UNDO pour annuler la dernière modification et ~REDO pour l'appliquer de nouveau
+            
+        cube_texture:
+            reso: Utilisez la molette sur le bouton ~GRID pour augmenter / diminuer la résolution des faces
+            grid: Cliquez sur ~GRID pour afficher / masquer la grille
+            fill: ~FILL permet de changer la couleur d'une zone
+            
+        multi_cubes:
+            add_cube: Sélectionnez le cube à ajouter dans la liste en bas à gauche puis placer le avec un clic gauche. (Impossible d'ajouter en dessous du socle)
+            remove_cube: ~DESTROY permet de détruire un cube en effectuant un clic gauche dessus
+            altitude: Maintenez ~CTRL en utilisant la molette pour faire monter / descendre la caméra
+            rotate: Appuyez sur ~ARROW_LEFT ou ~ARROW_RIGHT pour faire tourner le cube sélectionné
+            camera: Cliquez sur ~MINIATURE (ou sur la miniature du multi-cubes) puis faites tourner le cube pour modifier la miniature
             
         pencil:
             new_color: Sélecteur de couleurs: cliquez sur la barre verticale pour choisir la couleur puis utilisez le carré pour ajuster la teinte
             alpha: Utilisez la molette sur le bouton "100%" pour augmenter / diminuer la transparence de la couleur
             memory: Les 5 dernières couleurs sont affichées en dessous de celle actuelle: cliquez dessus pour les réutiliser
-            pick_color: Sur le cube, maintenez "Ctrl" pour récuperer la couleur de la case ciblée
-            line_square: Maintenez "Maj" pour dessiner une ligne depuis la dernière case peinte. "Maj + Ctrl" pour remplir un carré
+            pick_color: Sur le cube, maintenez ~CTRL en cliquant pour récuperer la couleur de la case ciblée
+            line_square: Maintenez ~SHIFT puis cliquez pour dessiner une ligne depuis la dernière case peinte. ~SHIFT_CTRL pour remplir un carré
             
         calk:
-            select_rect: Sélectionnez une zone sur une face en maintenant le clic gauche
-            copy_paste: Utilisez "Ctrl+C" pour copier la sélection. Pour coller: cliquez sur la face souhaitée puis appuyez sur "Ctrl+V"
-            move: Maintenez le clic gauche sur le calque flottant pour le déplacer
-            rotate: Appuyez sur "◄" ou "►" pour faire tourner le calque
-            apply_delete: Appuyez sur "Entrée" pour appliquer le calque ou sur "Echap" pour le supprimer
-            select_all: "Ctrl+A" sélectionne toute la face. "Ctrl+Maj+A" annule la sélection
-            
-        multi_cubes:
-            add_cube: Sélectionnez le cube à ajouter dans la liste en bas à gauche puis placer le avec un clic gauche. (Impossible d'ajouter en dessous du socle)
-            remove_cube: La croix rouge permet de détruire un cube en effectuant un clic gauche dessus
-            altitude: Maintenez "Ctrl" en utilisant la molette pour faire monter / descendre la caméra
-            rotate: Appuyez sur "◄" ou "►" pour faire tourner le cube sélectionné
+            select_rect: Pour sélectionner une zone sur une face : maintenez le clic gauche tout en déplaçant la souris
+            copy_paste: Utilisez ~COPY pour copier la sélection. Pour coller: cliquez sur la face souhaitée puis appuyez sur ~PASTE
+            move: Maintenez le clic gauche enfoncé sur le calque flottant tout en déplaçant la souris pour le déplacer
+            rotate: Appuyez sur ~ARROW_LEFT ou ~ARROW_RIGHT pour faire tourner le calque
+            apply_delete: Appuyez sur ~ENTER pour appliquer le calque ou sur ~ESC pour le supprimer
+            select_all: ~SELECT_ALL sélectionne toute la face. ~UNSELECT_ALL annule la sélection
 
     game:
         global:
             camera: Utilisez ~FORWARD, ~LEFT, ~BACKWARD, ~RIGHT pour déplacer le point de vue et la molette pour modifier l'altitude
-            user_action: En haut à gauche de l'écran se trouve 3 boutons permettant de sélectionner l'action souhaitée (Sélectionner, Ajouter, Détruire)
-            mouse: Le curseur permet de sélectionner une ressource, un bâtiment ou une unitée. Une description de la sélection sera affichée en dessous des 3 boutons
-            unit: Si une unitée est sélectionnée: Il est possible de la déplacer en effectuant un clic droit sur la destination souhaitée. (Elle peut également récolter des ressources et construire des bâtiments)
-            add: Le bloc permet d'ajouter le bloc ou structure selectionnée en effectuant un clic droit à l'emplacement souhaité. (Appuyez sur "◄" ou "►" pour faire tourner le cube sélectionné)
-            remove: La croix rouge permet de détruire un cube ou une structure en effectuant un clic gauche dessus
+            user_action: En haut à gauche de l'écran se trouve 3 boutons permettant de choisir l'action à effectuer (~MOUSE Sélectionner, ~ADD Ajouter, ~DESTROY Détruire)
+            mouse: ~MOUSE permet de sélectionner une ressource ~TREE, un bâtiment ~CASTLE ou une unitée ~UNIT. Une description de la sélection sera affichée en dessous des 3 boutons
+            unit: Si une unitée ~UNIT est sélectionnée: Il est possible de la déplacer en effectuant un clic droit sur la destination souhaitée. (Elle peut également récolter des ressources et construire des bâtiments)
+            add: ~ADD permet d'ajouter le bloc ou structure selectionnée en effectuant un clic droit à l'emplacement souhaité. (Appuyez sur ~ARROW_LEFT ou ~ARROW_RIGHT pour faire tourner le cube sélectionné)
+            remove: ~DESTROY permet de détruire un cube ou une structure en effectuant un clic gauche dessus
             f3: Appuyez sur ~DEVLOP pour afficher les informations du moteur graphique
-            chat: Appuyez sur ~DIALOG pour ouvrir le chat. Entrée pour envoyer le message, "Echap" pour fermer l'interface. Tapez !help pour afficher la liste des commandes disponibles
+            chat: Appuyez sur ~DIALOG pour ouvrir le chat. ~ENTER pour envoyer le message, ~ESC pour fermer l'interface. Tapez !help pour afficher la liste des commandes disponibles
             camera_mode: Utilisez ~ACCESS_1 pour utiliser la caméra en première personne, ~ACCESS_2 pour utiliser la caméra classique
 
 text:

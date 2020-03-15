@@ -176,7 +176,7 @@ public class PanColor extends FPanel {
 			g.fillRect(startColorX + i * widthMemory, startColorY + heightColor, widthMemory, heightColor);
 		}
 
-		g.setColor(Color.DARK_GRAY);
+		g.setColor(Color.BLACK);
 		g.setFont(font);
 		g.drawString(currentText, startColorX - 5 - fm.stringWidth(currentText), getHeight() - pad - heightColor - 10);
 		g.drawString(previousText, startColorX - 5 - fm.stringWidth(previousText), getHeight() - pad - 10);

@@ -6,14 +6,13 @@ import java.io.File;
 import data.id.Item;
 import data.id.ItemID;
 import data.id.ItemTable;
+import data.id.ItemTableClient;
 import data.map.Cube;
 import data.map.enumerations.Face;
 import data.map.enumerations.Orientation;
 import editor.history.PixelHistory;
 import editor.history.SizeHistory;
 import editor.panels.PanEditor;
-import editor.tips.TipCalk;
-import editor.tips.TipPencil;
 import environment.extendsData.CubeClient;
 import environment.extendsEngine.DrawLayer;
 import environment.textures.TextureCube;
@@ -25,6 +24,7 @@ import utils.Utils;
 import utils.panels.ClickListener;
 import utils.yaml.YAML;
 import utilsBlocks.ButtonCube;
+import utilsBlocks.Tip;
 
 public class EditorCubeTexture extends EditorAbstract {
 
@@ -118,6 +118,7 @@ public class EditorCubeTexture extends EditorAbstract {
 	@Override
 	public void show() {
 		panel.get(ActionEditor.ITEM_COLOR).setVisible(true);
+		panel.helpTool.setVisible(true);
 
 		if (action == null)
 			return;
@@ -130,8 +131,7 @@ public class EditorCubeTexture extends EditorAbstract {
 	@Override
 	public void hide() {
 		panel.cardsSquare.hide();
-		panel.helpPencil.setVisible(false);
-		panel.helpCalk.setVisible(false);
+		panel.helpTool.setVisible(false);
 
 		panel.get(ActionEditor.ITEM_COLOR).setVisible(false);
 	}
@@ -145,7 +145,7 @@ public class EditorCubeTexture extends EditorAbstract {
 	@Override
 	void historyPack() {
 		super.historyPack();
-		panel.get(ActionEditor.EDIT_CUBE_TEXTURE).setSaved(false);
+		panel.get(ActionEditor.EDIT_CUBE_TEXTURE).setSaved(history.isEmpty());
 	}
 
 	// =========================================================================================================================
@@ -163,8 +163,7 @@ public class EditorCubeTexture extends EditorAbstract {
 		case SQUARE_SELECTION:
 		case FILL:
 		case PLAYER_COLOR:
-			panel.helpCalk.setVisible(false);
-			panel.helpPencil.setVisible(false);
+			panel.helpTool.setTips(ItemTableClient.getTips(Tip.EDITOR_CUBE_TEXTURE));
 			panel.cardsSquare.hide();
 
 			if (action == this.action)
@@ -173,11 +172,9 @@ public class EditorCubeTexture extends EditorAbstract {
 				if (action == ActionEditor.PAINT || action == ActionEditor.FILL)
 					panel.cardsSquare.show(PanEditor.COLOR);
 				if (action == ActionEditor.SQUARE_SELECTION) {
-					panel.helpCalk.setTip(TipCalk.values()[0]);
-					panel.helpCalk.setVisible(true);
+					panel.helpTool.setTips(ItemTableClient.getTips(Tip.EDITOR_CALK));
 				} else if (action == ActionEditor.PAINT) {
-					panel.helpPencil.setTip(TipPencil.values()[0]);
-					panel.helpPencil.setVisible(true);
+					panel.helpTool.setTips(ItemTableClient.getTips(Tip.EDITOR_PENCIL));
 				}
 				this.action = action;
 			}
@@ -250,7 +247,10 @@ public class EditorCubeTexture extends EditorAbstract {
 		for (Face face : Face.faces)
 			for (int x = 0; x < MAX_SIZE; x++)
 				for (int y = 0; y < MAX_SIZE; y++)
-					drawPixel(face, x, y, (x + y) % 2 == 0 ? 0xff888888 : 0xff555555);
+					if (history.isEmpty())// Can't be undone
+						setPixel(face, x, y, (x + y) % 2 == 0 ? 0xff888888 : 0xff555555);
+					else
+						drawPixel(face, x, y, (x + y) % 2 == 0 ? 0xff888888 : 0xff555555);
 
 		if (!history.isEmpty())
 			historyPack();

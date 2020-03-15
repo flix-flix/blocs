@@ -42,44 +42,49 @@ keys:
 tips:
     editor:
         global:
-            face_name: Press "Alt" to show / hide the direction of each face
-            rotate: Maintain the right click while moving the mouse to rotate the cube (or ~FORWARD, ~LEFT, ~BACKWARD, ~RIGHT )
-            grid: Use the mouse wheel on the "Grid" button to increase / decrease the resolution of the face
+            face_name: Press ~ALT to show / hide the direction of each face
+            rotate: Hold down the right click while moving the mouse to rotate the cube (or use ~FORWARD, ~LEFT, ~BACKWARD, ~RIGHT)
             zoom: Use the mouse wheel to zoom in / zoom out
-            undo: Use "Ctrl+Z" to undo the last modification and "Ctrl+Y" to redo it
+            undo: Use ~UNDO to undo the last modification and ~REDO to redo it
+            
+        cube_texture:
+            reso: Use the mouse wheel on the ~GRID button to increase / decrease the resolution of the faces
+            grid: Click on ~GRID to display / hide the grid
+            fill: ~FILL allow to switch the color of a full zone
+            
+        multi_cubes:
+            add_cube: Select the cube to add in the list on the bottom left then add it with a left click. (It is impossible to add bellow the socle)
+            remove_cube: ~DESTROY allow to remove a cube by left-clicking on it
+            altitude: Hold down ~CTRL while using the mouse wheel to make the camera go up / down
+            rotate: Press ~ARROW_LEFT or ~ARROW_RIGHT to rotate the selected cube
+            camera: Click on ~MINIATURE (or the miniature of the multicube) then rotate the cube to modify the miniature
             
         pencil:
             new_color: Color selector: click on the vertical line to select the color, then use the square to adjust the hue
             alpha: Use the mouse wheel on the "100%" button to increase / decrease the transparency of the selected color
             memory: The last 5 used colors are displayed bellow the current one: Click on it to re-use them
-            pick_color: On the cube, maintain "Ctrl" to pick up the color of the selected cell
-            line_square: Maintain "Shift" to draw a line from the last drawed cell. "Shift + Ctrl" to fill a square
+            pick_color: On the cube, hold down ~CTRL while clicking to pick up the color of the selected cell
+            line_square: Hold down ~SHIFT then click to draw a line from the last drawed cell. ~SHIFT_CTRL to fill a square
         
         calk:
-            select_rect: Select a zone of a face by maintaining the left click
-            copy_paste: Use "Ctrl+C" to copy the selected zone. To paste: clic on the desired face then press "Ctrl+V"
-            move: Maintain left clic on the floatting calk to move it
-            rotate: Press "◄" or "►" to rotate the calk
-            apply_delete: Press "Enter" to apply the calk or "Esc" to delete it
-            select_all: "Ctrl+A" select the full face. "Ctrl+Shift+A" cancel the selection
-            
-        multi_cubes:
-            add_cube: Select the cube to add in the list on the bottom left then add it with a left click. (It is impossible to add bellow the socle)
-            remove_cube: The red cross allow to remove a cube by left-clicking on it
-            altitude: Maintain "Ctrl" using the mouse wheel to make the camera go up / down
-            rotate: Press "◄" or "►" to rotate the selected cube
+            select_rect: To select a zone of a face : hold the left click down while dragging the mouse
+            copy_paste: Use ~COPY to copy the selected zone. To paste: click on the desired face then press ~PASTE
+            move: Hold down the left click on the floatting calk while moving the mouse to move it
+            rotate: Press ~ARROW_LEFT or ~ARROW_RIGHT to rotate the calk
+            apply_delete: Press ~ENTER to apply the calk or ~ESC to delete it
+            select_all: ~SELECT_ALL select the full face. ~UNSELECT_ALL cancel the selection
             
     game:
         global:
             camera: Use ~FORWARD, ~LEFT, ~BACKWARD, ~RIGHT to move the point of view and use the mouse wheel to modify the altitude
-            user_action: In the top left corner there are 3 buttons allowing to select the wanted action (Select, Add, Remove)
-            mouse: The cursor allow to select a resource, a building or an unit. A description of the selection will be displayed bellow the 3 buttons.
-            unit: If an unit is selected : It's possible to make it move with a right click at the desired destination. (It can recolt resources and build buildings)
-            add: The cube allow to add a cube or a structure with a right click at the desired location. (Press "◄" or "►" to rotate the selected cube)
-            remove: The red cross allow to remove cube or structure with a left click on it
+            user_action: In the top left corner there are 3 buttons allowing to select the wanted action (~MOUSE Select, ~ADD Add, ~DESTROY Remove)
+            mouse: ~MOUSE allow to select a resource ~TREE, a building ~CASTLE or an unit ~UNIT. A description of the selection will be displayed bellow the 3 buttons.
+            unit: If an unit ~UNIT is selected : It's possible to make it move with a right click at the desired destination. (It can recolt resources and build buildings)
+            add: ~ADD allow to add a cube or a structure with a right click at the desired location. (Press ~ARROW_LEFT or ~ARROW_RIGHT to rotate the selected cube)
+            remove: ~DESTROY allow to remove cube or structure with a left click on it
             f3: Press ~DEVLOP to display the graphic engine infos
-            chat: Press ~DIALOG to open the chat. Enter to send the message, "Esc" to close the interface. Send !help to display the list of available commands   
-            camera_mode: Use ~ACCESS_1 to use the first person camera , ~ACCESS_2 to use the classic camera
+            chat: Press ~DIALOG to open the chat. ~ENTER to send the message, ~ESC to close the interface. Send !help to display the list of available commands   
+            camera_mode: Press ~ACCESS_1 to use the first person camera , ~ACCESS_2 to use the classic camera
 
 text:
     game:

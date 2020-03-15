@@ -5,15 +5,16 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 
+import data.id.ItemTableClient;
 import environment.PanEnvironment;
 import game.CameraMode;
 import game.Game;
 import game.StateHUD;
-import game.tips.TipGame;
 import server.game.messages.Message;
 import server.game.messages.TypeMessage;
-import utilsBlocks.help.PanHelp;
-import utilsBlocks.help.PanHelp.Mark;
+import utils.panels.PanHelp;
+import utils.panels.PanHelp.Mark;
+import utilsBlocks.Tip;
 
 public class PanGameEnv extends PanEnvironment {
 	private static final long serialVersionUID = 5191296217478885760L;
@@ -56,7 +57,7 @@ public class PanGameEnv extends PanEnvironment {
 
 	// =============== Panels ===============
 	public PanPause pause;
-	public PanHelp<?> help;
+	public PanHelp help;
 
 	// =========================================================================================================================
 
@@ -69,7 +70,7 @@ public class PanGameEnv extends PanEnvironment {
 
 		this.add(pause = new PanPause(game));
 
-		help = new PanHelp<>(Mark.INTERROGATION, 700, 80, 10, TipGame.values()[0]);
+		help = new PanHelp(ItemTableClient.getTips(Tip.GAME_GLOBAL), Mark.INTERROGATION, 700, 80, 10);
 		help.setBackground(new Color(0xff4068c4));
 		help.setBorderColor(Color.LIGHT_GRAY);
 		help.setForeground(Color.DARK_GRAY);

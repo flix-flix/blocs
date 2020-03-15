@@ -7,24 +7,22 @@ import java.util.HashMap;
 import javax.swing.JPanel;
 
 import data.id.ItemTable;
+import data.id.ItemTableClient;
 import data.map.Cube;
 import editor.ActionEditor;
 import editor.EditorCubeTexture;
 import editor.EditorManager;
-import editor.tips.TipCalk;
-import editor.tips.TipEditor;
-import editor.tips.TipMultiCube;
-import editor.tips.TipPencil;
 import environment.PanEnvironment;
 import utils.panels.ClickListener;
 import utils.panels.PanCard;
 import utils.panels.PanCol;
 import utils.panels.PanGrid;
+import utils.panels.PanHelp;
+import utils.panels.PanHelp.Mark;
 import utils.panels.popUp.PopUpConfirm;
 import utilsBlocks.ButtonBlocks;
 import utilsBlocks.ButtonCube;
-import utilsBlocks.help.PanHelp;
-import utilsBlocks.help.PanHelp.Mark;
+import utilsBlocks.Tip;
 
 public class PanEditor extends JPanel {
 	private static final long serialVersionUID = -7092208608285186782L;
@@ -67,10 +65,8 @@ public class PanEditor extends JPanel {
 	private HashMap<ActionEditor, ButtonEditor> buttonsMultiCubes = new HashMap<>();
 
 	// =============== Help ===============
-	private PanHelp<TipEditor> help;
-	public PanHelp<TipCalk> helpCalk;
-	public PanHelp<TipPencil> helpPencil;
-	public PanHelp<TipMultiCube> helpMultiCube;
+	private PanHelp helpGeneral;
+	public PanHelp helpTool;
 
 	// =============== Square ===============
 	public static final String COLOR = "Color";
@@ -158,27 +154,14 @@ public class PanEditor extends JPanel {
 		// ========================================================================================
 		// Help
 
-		help = new PanHelp<>(Mark.INTERROGATION, 500, 80, 10, TipEditor.ZOOM);
-		help.setLocation(25, 25);
-		panel.add(help);
+		helpGeneral = new PanHelp(ItemTableClient.getTips(Tip.EDITOR_GLOBAL), Mark.INTERROGATION, 600, 80, 10);
+		helpGeneral.setLocation(25, 25);
+		panel.add(helpGeneral);
 
-		helpCalk = new PanHelp<>(Mark.EXCLAMATION, 500, 60, 7, TipCalk.values()[0]);
-		helpCalk.setBackground(new Color(0xff4068c4));
-		helpCalk.setLocation(25, 25);
-		helpCalk.setVisible(false);
-		panel.add(helpCalk);
-
-		helpPencil = new PanHelp<>(Mark.EXCLAMATION, 500, 60, 7, TipPencil.values()[0]);
-		helpPencil.setBackground(new Color(0xff4068c4));
-		helpPencil.setLocation(25, 25);
-		helpPencil.setVisible(false);
-		panel.add(helpPencil);
-
-		helpMultiCube = new PanHelp<>(Mark.EXCLAMATION, 500, 60, 7, TipMultiCube.values()[0]);
-		helpMultiCube.setBackground(new Color(0xff4068c4));
-		helpMultiCube.setLocation(25, 25);
-		helpMultiCube.setVisible(false);
-		panel.add(helpMultiCube);
+		helpTool = new PanHelp(ItemTableClient.getTips(Tip.EDITOR_CUBE_TEXTURE), Mark.EXCLAMATION, 600, 60, 7);
+		helpTool.setBackground(new Color(0xff4068c4));
+		helpTool.setLocation(25, 25);
+		panel.add(helpTool);
 
 		// ========================================================================================
 		// Top
@@ -347,10 +330,8 @@ public class PanEditor extends JPanel {
 		menu.setSize(menuWidth, height);
 		panel.setSize(width - menuWidth, height);
 
-		helpPencil.setBottomLeftCorner(25, getHeight() - 26 - help.getSize().height - 25);
-		helpCalk.setBottomLeftCorner(25, getHeight() - 26 - help.getSize().height - 25);
-		helpMultiCube.setBottomLeftCorner(25, getHeight() - 26 - help.getSize().height - 25);
-		help.setBottomLeftCorner(25, getHeight() - 26);
+		helpTool.setBottomLeftCorner(25, getHeight() - 26 - helpGeneral.getSize().height - 25);
+		helpGeneral.setBottomLeftCorner(25, getHeight() - 26);
 
 		popUpExit.setSize(width, height);
 		popUpSaveOnExistant.setSize(width, height);

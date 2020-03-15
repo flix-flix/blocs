@@ -1,8 +1,9 @@
 package data.id;
 
+import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Image;
 import java.awt.event.KeyEvent;
-import java.io.StringWriter;
 import java.util.Locale;
 
 import data.Gamer;
@@ -11,17 +12,19 @@ import data.map.Cube;
 import data.map.resources.ResourceType;
 import environment.textures.TexturePack;
 import graphicEngine.calcul.Camera;
+import utils.TextPlus;
+import utils.TextPlusPart;
+import utils.Utils;
 import utils.yaml.YAML;
-import utilsBlocks.help.Tip;
+import utilsBlocks.Tip;
+import utilsBlocks.UtilsBlocks;
 import window.Key;
 
 public class ItemTableClient extends ItemTable {
 
-	public static Cursor defaultCursor;
+	public static Cursor defaultCursor = Cursor.getDefaultCursor();
 
-	static {
-		defaultCursor = Cursor.getDefaultCursor();
-	}
+	public static Image grid, fill, mouse, add, unit, destroy, miniature, castle, tree, goTo, build, axe;
 
 	// =========================================================================================================================
 
@@ -45,6 +48,22 @@ public class ItemTableClient extends ItemTable {
 		for (int i : items.keySet())
 			if (texturePack.yamls.get(i) != null)
 				items.get(i).setTexture(texturePack.yamls.get(i));
+
+		mouse = Utils.getImage(texturePack.getFolder() + "menu/game/mouse");
+		destroy = Utils.getImage(texturePack.getFolder() + "menu/editor/tips/destroy");
+
+		grid = Utils.getImage(texturePack.getFolder() + "menu/editor/tips/grid");
+		fill = Utils.getImage(texturePack.getFolder() + "menu/editor/fill");
+		miniature = Utils.getImage(texturePack.getFolder() + "menu/editor/tips/miniature");
+
+		add = UtilsBlocks.getImage(ItemID.GRASS, 30, 30);
+		unit = UtilsBlocks.getImage(ItemID.UNIT, 30, 30);
+		castle = UtilsBlocks.getImage(ItemID.CASTLE, 30, 30);
+		tree = UtilsBlocks.getImage(ItemID.TREE, 30, 30);
+
+		goTo = Utils.getImage(texturePack.getFolder() + "menu/game/goto");
+		build = Utils.getImage(texturePack.getFolder() + "menu/game/tips/build");
+		axe = Utils.getImage(texturePack.getFolder() + "menu/game/tips/axe");
 	}
 
 	public static TexturePack getTexturePack() {
@@ -133,8 +152,15 @@ public class ItemTableClient extends ItemTable {
 		return name;
 	}
 
-	public static String getTip(Tip<?> tip) {
-		return modifyKey(lang.getString(tip.getPath() + ((Enum<?>) tip).name().toLowerCase()));
+	public static TextPlus[] getTips(Tip tip) {
+		String[] tags = tip.getTags();
+		TextPlus[] tips = new TextPlus[tags.length];
+
+		for (int i = 0; i < tags.length; i++) {
+			tips[i] = modifyText(lang.getString(tip.getPath() + "." + tags[i]), tip);
+		}
+
+		return tips;
 	}
 
 	public static String getKey(Key key) {
@@ -148,28 +174,125 @@ public class ItemTableClient extends ItemTable {
 	// =========================================================================================================================
 	// Text (modifications)
 
-	public static String modifyKey(String str) {
-		StringWriter sw = new StringWriter();
+	private static TextPlus modifyText(String str, Tip tip) {
+		TextPlus text = new TextPlus();
+
 		int start = 0, index = 0, temp;
 
 		while ((index = str.indexOf('~', start)) != -1) {
-			sw.write(str.substring(start, index));
+			text.add(str.substring(start, index));
 
-			int space = str.indexOf(' ', index);
+			int space = 1_000_000;
+			if ((temp = str.indexOf(' ', index)) != -1 && temp < space)
+				space = temp;
 			if ((temp = str.indexOf(',', index)) != -1 && temp < space)
 				space = temp;
-			if (space == -1)
+			if ((temp = str.indexOf(')', index)) != -1 && temp < space)
+				space = temp;
+			if ((temp = str.indexOf('.', index)) != -1 && temp < space)
+				space = temp;
+			if (space == 1_000_000)
 				space = str.length();
 
-			sw.write('[');
-			sw.write(KeyEvent.getKeyText(Key.valueOf(str.substring(index + 1, space)).code));
-			sw.write(']');
+			String tag = str.substring(index + 1, space);
+
+			Image img = getImage(tag);
+			if (img != null)
+				text.add(img, 30, 30);
+			else {
+				String key = getPlainTextKey(tag);
+
+				if (key == null)
+					try {
+						key = KeyEvent.getKeyText(Key.valueOf(tag).code);
+					} catch (IllegalArgumentException e) {
+						key = "Error";
+						System.out.println("ERROR: " + tag);
+					}
+
+				key = "[" + key + "]";
+
+				Color color = tip == Tip.GAME_GLOBAL ? Color.BLUE : Color.WHITE;
+				text.add(new TextPlusPart(key, null, color));
+			}
 
 			start = space;
 		}
 
-		sw.write(str.substring(start));
+		text.add(str.substring(start));
 
-		return sw.toString();
+		return text;
+	}
+
+	// =========================================================================================================================
+
+	private static Image getImage(String tag) {
+		switch (tag) {
+		case "MOUSE":
+			return mouse;
+		case "ADD":
+			return add;
+		case "DESTROY":
+			return destroy;
+
+		case "UNIT":
+			return unit;
+		case "TREE":
+			return tree;
+		case "CASTLE":
+			return castle;
+
+		case "GOTO":
+			return goTo;
+		case "BUILD":
+			return build;
+		case "AXE":
+			return axe;
+
+		case "GRID":
+			return grid;
+		case "FILL":
+			return fill;
+		case "MINIATURE":
+			return miniature;
+		}
+		return null;
+	}
+
+	private static String getPlainTextKey(String tag) {
+		switch (tag) {
+		case "ESC":
+			return "Esc";
+		case "CTRL":
+			return "Ctrl";
+		case "SHIFT":
+			return "Shift";
+		case "ALT":
+			return "Alt";
+		case "SHIFT_CTRL":
+			return "Shift+Ctrl";
+		case "ENTER":
+			return "Enter";
+
+		case "UNDO":
+			return "Ctrl+Z";
+		case "REDO":
+			return "Ctrl+Y";
+
+		case "COPY":
+			return "Ctrl+C";
+		case "PASTE":
+			return "Ctrl+V";
+		case "ARROW_LEFT":
+			return "◄";
+		case "ARROW_RIGHT":
+			return "►";
+
+		case "SELECT_ALL":
+			return "Ctrl+A";
+		case "UNSELECT_ALL":
+			return "Ctrl+Maj+A";
+		}
+		return null;
 	}
 }

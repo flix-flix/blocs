@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import data.id.Item;
 import data.id.ItemID;
 import data.id.ItemTable;
+import data.id.ItemTableClient;
 import data.map.Chunk;
 import data.map.Cube;
 import data.map.MultiCube;
@@ -17,6 +18,7 @@ import environment.extendsData.CubeClient;
 import environment.extendsEngine.DrawLayer;
 import graphicEngine.calcul.Point3D;
 import utils.yaml.YAML;
+import utilsBlocks.Tip;
 import utilsBlocks.YAMLBlocks;
 
 public class EditorMultiCubes extends EditorAbstract {
@@ -59,13 +61,14 @@ public class EditorMultiCubes extends EditorAbstract {
 	@Override
 	public void show() {
 		panel.cardsSquare.show(PanEditor.CUBES);
-		panel.helpMultiCube.setVisible(true);
+		panel.helpTool.setTips(ItemTableClient.getTips(Tip.EDITOR_MULTICUBES));
+		panel.helpTool.setVisible(true);
 	}
 
 	@Override
 	public void hide() {
 		panel.cardsSquare.hide();
-		panel.helpMultiCube.setVisible(false);
+		panel.helpTool.setVisible(false);
 	}
 
 	@Override
