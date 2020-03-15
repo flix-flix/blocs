@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 
+import data.id.ItemTableClient;
 import mainMenu.MainMenu;
 import mainMenu.MainMenuAction;
 import utils.Utils;
@@ -17,9 +18,10 @@ public class ButtonAction extends FButton {
 	private static Image data, options, quit;
 
 	static {
-		quit = Utils.getImage("static/quit");
-		options = Utils.getImage("static/options");
-		data = Utils.getImage("static/data");
+		String folder = ItemTableClient.getTexturePack().getFolder() + "/menu/mainMenu/";
+		quit = Utils.getImage(folder + "quit");
+		options = Utils.getImage(folder + "options");
+		data = Utils.getImage(folder + "data");
 	}
 
 	private MainMenuAction action;

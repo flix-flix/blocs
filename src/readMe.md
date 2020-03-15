@@ -6,41 +6,46 @@
 
 ## window
 
+**Frame of this project**
+
 - **Fen** : Frame of the program
 - **Displayable** : Interface allowing to display an "application" (getPanel(), resize(), stop()/resume())
 - **Keyboard** : Interface handling the inputs (keyboard and mouse)
 
 ## data
 
-- **Item** : Store the properties of an item
-- **ItemTable** : Static access to all the properties
-- **ItemTableClient** : Static access to all the properties (textures/language dependant inclued)
+**Representation of the data**
 
-**Organize the cubes**
- 
-- **Cube** : Store the data of one cube (1x1x1)
-- **Chunk** : Store 10x50x10 cubes
-- **Map** : Store chunks
+- **Items properties**
+    - **Item** : Store the properties of an item
+    - **ItemTable** : Static access to the properties of all items
+    - **ItemTableClient** : Static access to the properties of all items (textures/language dependant inclued)
 
-**Additional data**
 
-- **Multibloc** : List of cubes acting together
-- **Unit**
-- **Building**
-- **Resource**
+- **Organize the cubes**
+    - **Cube** : Store the data of one cube (1x1x1)
+    - **Chunk** : Store 10x50x10 cubes
+    - **Map** : Store chunks
 
-**Dynamic**
 
-- **TickClock** : 20 times/second make the data "live a little"
-- **PathFinding**
+- **Additional data**
+    - **Multibloc** : List of cubes acting together
+    - **Unit**
+    - **Building**
+    - **Resource**
 
-**Generation**
 
-- **WorldGeneration** : Generates map
+- **Dynamic**
+    - **TickClock** : 20 times/second (each 50ms) make the data perform a step of their current action
+    - **PathFinding**
+
+
+- **Generation**
+    - **WorldGeneration** : Generates map
 
 ## graphicEngine
 
-**Graphic Engine ^^**
+**Homemade graphic engine (need a lot of optimization but do the job...)**
 
 - **Engine** : Core
 - **Line/Quadri** : 2D objects to draw
@@ -67,14 +72,15 @@
 **Game interface**
 
 - **Game** : (Environement3D) (Displayable) Handle the interactions between the user and the server
-- **Client** : Connect to server
+- **ServerListener** : Connect to server
 - **panels/menus/** : Menu interface
 
-## editor (displayable)
+## editor
 
 **Tool to easily edit the textures**
 
-- **Editor** : (Environement3D) (Displayable) Handle the interactions between the user and the textures
+- **EditorManager** : (Environement3D) (Displayable) Handle the interactions between the user and the editors
+- **EditorCubeTexture, EditorMultiCubes** : Available editors
 - **history/** : Store the user modifications and allow to undo/redo them
 
 ## server
@@ -107,7 +113,8 @@
 - **Utils** : Regroup usefull comands (read, write, ...)
 - **yaml/** : YAML parser/encoder
 - **panels/** : Differents extends of JPanel (Buttons, PopUp, Grid, Tips display)
+- **TextPlus** : Representation of a text with different colors/fonts and containing images
 
 ## utilsBlocks
 
-**Utils for this program**
+**Utils for this project**

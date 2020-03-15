@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class Resource implements Serializable {
 	private static final long serialVersionUID = -8554005042263955323L;
 
-	// TODO Implement EVERYTHING and UNLIMITED
+	// TODO [Feature] Implement EVERYTHING and UNLIMITED
 
 	/** Call remove(EVERYTHING) to take as mush as possible */
 	public final static int EVERYTHING = -1;

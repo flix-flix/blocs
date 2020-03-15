@@ -1,6 +1,6 @@
 package environment.textures;
 
-import java.awt.image.BufferedImage;
+import java.awt.Image;
 import java.util.TreeMap;
 
 import data.id.ItemTable;
@@ -32,31 +32,28 @@ public class TexturePack {
 	private TextureSquare[] miningFrames = new TextureSquare[nbAnim];
 
 	/** Default missing texture */
-	private TextureSquare faceError = TextureSquare.generateSquare((BufferedImage) Utils.imgError);
+	private TextureSquare faceError = TextureSquare.generateSquare(Utils.imgError);
 
 	public TexturePack(String folder) {
 		this.folder = folder;
 
-		for (String file : Utils.getFilesName("resources/textures/" + folder + "/cubes")) {
-			YAML yaml = YAML.parseFile(file);
-			yamls.put(yaml.getInt("id"), yaml);
-			YAMLTextureCube texture = new YAMLTextureCube(yaml);
-			texturesCubes.put(texture.id, texture.getTextureCube());
-		}
-
-		for (String file : Utils.getFilesName("resources/textures/" + folder + "/multi")) {
+		for (String file : Utils.getFilesName("resources/texturesPacks/" + folder + "/cubes")) {
 			YAML yaml = YAML.parseFile(file);
 			yamls.put(yaml.getInt("id"), yaml);
 
-			if (ItemTable.getType(yaml.getInt("id")) != ItemType.MULTIBLOC)
-				continue;
-
-			YAMLTextureMulti texture = new YAMLTextureMulti(yaml);
-			texturesMulti.put(texture.id, texture.getTextureMulti());
+			if (ItemTable.getType(yaml.getInt("id")) == ItemType.MULTIBLOC) {
+				YAMLTextureMulti texture = new YAMLTextureMulti(yaml);
+				texturesMulti.put(texture.id, texture.getTextureMulti());
+			} else if (ItemTable.getType(yaml.getInt("id")) == ItemType.CUBE) {
+				YAMLTextureCube texture = new YAMLTextureCube(yaml);
+				texturesCubes.put(texture.id, texture.getTextureCube());
+			}
 		}
 
-		for (int i = 0; i < nbAnim; i++)
-			miningFrames[i] = TextureSquare.generateSquare("textures/" + folder + "/anim/mining-" + i);
+		for (int i = 0; i < nbAnim; i++) {
+			Image img = Utils.getImage("texturesPacks/" + folder + "/anim/mining-" + i);
+			miningFrames[i] = TextureSquare.generateSquare(img);
+		}
 	}
 
 	// =========================================================================================================================
@@ -99,6 +96,6 @@ public class TexturePack {
 	// =========================================================================================================================
 
 	public String getFolder() {
-		return "textures/" + folder + "/";
+		return "texturesPacks/" + folder + "/";
 	}
 }

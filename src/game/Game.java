@@ -275,18 +275,18 @@ public class Game extends Environment3D implements Displayable {
 	}
 
 	public void generateCursor() {
-		cursorGoto = Utils.createCursor(texturePack.getFolder() + "cursor/cursorGoto");
-		cursorBuild = Utils.createCursor(texturePack.getFolder() + "cursor/cursorBuild");
-		cursorAttack = Utils.createCursor(texturePack.getFolder() + "cursor/cursorAttack");
+		cursorGoto = Utils.createCursor(texturePack.getFolder() + "cursor/game/cursorGoto");
+		cursorBuild = Utils.createCursor(texturePack.getFolder() + "cursor/game/cursorBuild");
+		cursorAttack = Utils.createCursor(texturePack.getFolder() + "cursor/game/cursorAttack");
 
-		cursorDrop = Utils.createCursor(texturePack.getFolder() + "cursor/cursorDrop");
-		cursorDropWood = Utils.createCursor(texturePack.getFolder() + "cursor/cursorDropWood");
-		cursorDropStone = Utils.createCursor(texturePack.getFolder() + "cursor/cursorDropStone");
-		cursorDropWater = Utils.createCursor(texturePack.getFolder() + "cursor/cursorDropWater");
+		cursorDrop = Utils.createCursor(texturePack.getFolder() + "cursor/game/cursorDrop");
+		cursorDropWood = Utils.createCursor(texturePack.getFolder() + "cursor/game/cursorDropWood");
+		cursorDropStone = Utils.createCursor(texturePack.getFolder() + "cursor/game/cursorDropStone");
+		cursorDropWater = Utils.createCursor(texturePack.getFolder() + "cursor/game/cursorDropWater");
 
-		cursorAxe = Utils.createCursor(texturePack.getFolder() + "cursor/cursorAxe");
-		cursorPickaxe = Utils.createCursor(texturePack.getFolder() + "cursor/cursorPickaxe");
-		cursorBucket = Utils.createCursor(texturePack.getFolder() + "cursor/cursorBucket");
+		cursorAxe = Utils.createCursor(texturePack.getFolder() + "cursor/game/cursorAxe");
+		cursorPickaxe = Utils.createCursor(texturePack.getFolder() + "cursor/game/cursorPickaxe");
+		cursorBucket = Utils.createCursor(texturePack.getFolder() + "cursor/game/cursorBucket");
 	}
 
 	public void setCursorVisible(boolean visible) {
@@ -372,14 +372,14 @@ public class Game extends Environment3D implements Displayable {
 	public void exception(Exception e) {
 		if (e instanceof SocketException || e instanceof EOFException) {
 			if (client.isRunning())
-				connexionLost();
+				connectionLost();
 		} else
 			e.printStackTrace();
 	}
 
-	public void connexionLost() {
+	public void connectionLost() {
 		setStateHUD(StateHUD.ERROR);
-		errorMsg = ItemTableClient.getText("game.error.connexion_lost");
+		errorMsg = ItemTableClient.getText("game.error.connection_lost");
 		stop();
 
 		panel.error();

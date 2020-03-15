@@ -30,16 +30,8 @@ public class Utils {
 
 	// =========================================================================================================================
 
-	public static Image imgError;
-
-	static {
-		try {
-			imgError = ImageIO.read(Utils.class.getResource("/999.png"));
-		} catch (IOException e) {
-			debugBefore("Can't read imgERROR");
-			e.printStackTrace();
-		}
-	}
+	// TODO [Move] imgError to UtilsBlock
+	public static Image imgError = getResourceImage("/errorFace.png");
 
 	// =========================================================================================================================
 	// Hexa
@@ -81,6 +73,17 @@ public class Utils {
 			e.printStackTrace();
 		}
 		return imgError;
+	}
+
+	public static Image getResourceImage(String path) {
+		Image img = null;
+		try {
+			img= ImageIO.read(Utils.class.getResource(path));
+		} catch (IOException e) {
+			debugBefore("Can't read resource: " + path);
+			e.printStackTrace();
+		}
+		return img;
 	}
 
 	// =========================================================================================================================
@@ -135,7 +138,7 @@ public class Utils {
 	}
 
 	// =========================================================================================================================
-	// Debug
+	// Debug (Will be used for log files)
 
 	public static void debugBefore(String str) {
 		StackTraceElement stack = Thread.currentThread().getStackTrace()[3];

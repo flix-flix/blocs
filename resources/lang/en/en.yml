@@ -87,7 +87,7 @@ text:
         loading_error: (If you can read it, the game probably crashed ;p)            
         
         error:
-            connexion_lost: Server connexion lost
+            connection_lost: Server connection lost
             button_quit: Return to main menu
         
         pause:

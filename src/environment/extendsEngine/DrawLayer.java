@@ -11,6 +11,7 @@ import graphicEngine.calcul.Engine;
 import graphicEngine.calcul.Point3D;
 import graphicEngine.calcul.Quadri;
 import graphicEngine.calcul.Vector;
+import utils.Utils;
 
 public class DrawLayer {
 
@@ -27,7 +28,7 @@ public class DrawLayer {
 	static TextureSquare[] letters = new TextureSquare[26];
 
 	static {
-		TextureSquare alphabet = TextureSquare.generateSquare("static/alphabet");
+		TextureSquare alphabet = TextureSquare.generateSquare(Utils.getResourceImage("/alphabet.png"));
 
 		int start = 0;
 

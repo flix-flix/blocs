@@ -20,12 +20,8 @@ public class ButtonBlocks extends FButton {
 	private Image emptyImg = null;
 
 	// ======================= WIP =========================
-	private static Image wipImg;
+	private static Image wipImg = Utils.getResourceImage("/WIP.png");
 	private boolean wip = false;
-
-	static {
-		wipImg = Utils.getImage("static/WIP");
-	}
 
 	// =========================================================================================================================
 

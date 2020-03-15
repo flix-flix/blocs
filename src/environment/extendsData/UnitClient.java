@@ -89,13 +89,13 @@ public class UnitClient extends Unit {
 			resource = new Resource(map.gridGet(actionCube).getResource().getType(), 0, maxCapacity);
 
 		if (resource.isFull())
-			action = null;// TODO Go Drop
+			action = null;// TODO [Feature] Go Drop
 		else {
 			resource.add(1);
 
 			// Cube break
 			map.remove(actionCube);
-			action = null;// TODO Go store
+			action = null;// TODO [Feature] Go store
 		}
 	}
 
@@ -103,8 +103,8 @@ public class UnitClient extends Unit {
 		super.doStore(map, build);
 
 		if (build.addToStock(resource, 1))// Stock full
-			action = null;// TODO Except if there is another empty stock around
-		else if (resource == null || resource.isEmpty()) {// TODO Go Harvest
+			action = null;// TODO [Feature] Except if there is another empty stock around
+		else if (resource == null || resource.isEmpty()) {// TODO [Feature] Go Harvest
 			removeResource();
 			action = null;
 		}

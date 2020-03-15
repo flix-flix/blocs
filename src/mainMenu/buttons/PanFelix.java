@@ -6,8 +6,10 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 
+import data.id.ItemTableClient;
 import environment.textures.TextureFace;
 import environment.textures.TextureSquare;
+import utils.Utils;
 import utils.panels.FPanel;
 
 public class PanFelix extends FPanel {
@@ -21,7 +23,8 @@ public class PanFelix extends FPanel {
 	private static TextureFace face;
 
 	static {
-		face = new TextureFace(TextureSquare.generateSquare("static/felix"));
+		String folder = ItemTableClient.getTexturePack().getFolder() + "/menu/mainMenu/";
+		face = new TextureFace(TextureSquare.generateSquare(Utils.getImage(folder + "felix")));
 		face.rotation += 2;
 	}
 

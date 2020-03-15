@@ -28,9 +28,9 @@ public class ButtonDataManager extends ButtonBlocks {
 		case LANG:
 			setWIP();
 			if (ItemTableClient.getLanguage().equals(Locale.FRENCH.getLanguage()))
-				setImage(Utils.getImage("static/flags/fr"), FButton.KEEP_RATIO);
+				setImage(Utils.getResourceImage("/flags/fr.png"), FButton.KEEP_RATIO);
 			else
-				setImage(Utils.getImage("static/flags/en"), FButton.KEEP_RATIO);
+				setImage(Utils.getResourceImage("/flags/en.png"), FButton.KEEP_RATIO);
 
 			setPadding(10);
 			break;
@@ -43,7 +43,8 @@ public class ButtonDataManager extends ButtonBlocks {
 		case SHOW_FIELDS:
 		case TREE:
 			setWIP();
-			setImage(Utils.getImage("textures/classic/menu/dataManager/" + action.name().toLowerCase()),
+		case QUIT:
+			setImage(Utils.getImage("texturesPacks/classic/menu/dataManager/" + action.name().toLowerCase()),
 					FButton.KEEP_RATIO);
 			break;
 
@@ -51,9 +52,6 @@ public class ButtonDataManager extends ButtonBlocks {
 			setBackground(Color.LIGHT_GRAY);
 			break;
 
-		case QUIT:
-			setImage(Utils.getImage("static/quit"));
-			break;
 
 		default:
 			setText("ERROR");

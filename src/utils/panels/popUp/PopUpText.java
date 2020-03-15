@@ -56,10 +56,7 @@ public class PopUpText extends PopUp {
 	// =========================================================================================================================
 
 	protected void setText(String text) {
-		if (text == null)
-			text = "No text to display";
-
-		this.text = text;
+		this.text = text == null ? "No text to display" : text;
 		lines = Utils.getLines(text, fmText, width - 50);
 	}
 
@@ -79,7 +76,8 @@ public class PopUpText extends PopUp {
 	}
 
 	public void refreshLang() {
-		setText(ItemTableClient.getText(yamlKey));
+		if (yamlKey != null)
+			setText(ItemTableClient.getText(yamlKey));
 	}
 
 	// =========================================================================================================================

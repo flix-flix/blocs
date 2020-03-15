@@ -15,12 +15,8 @@ public class ButtonLang extends FButton {
 	private String lang;
 	private boolean french = true;
 
-	private static Image fr, en;
-
-	static {
-		fr = Utils.getImage("static/flags/fr");
-		en = Utils.getImage("static/flags/en");
-	}
+	private static Image fr = Utils.getResourceImage("/flags/fr.png");
+	private static Image en = Utils.getResourceImage("/flags/en.png");
 
 	// =========================================================================================================================
 

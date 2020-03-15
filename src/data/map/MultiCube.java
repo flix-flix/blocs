@@ -133,7 +133,7 @@ public class MultiCube implements Serializable {
 
 		for (Cube cube : list) {
 			Cube newCube = new Cube(cube);
-			// TODO onGrid=true is forced here
+			// TODO [Warning] onGrid=true is forced here
 			newCube.onGrid = true;
 			newCube.multicube = multi;
 			cubes.add(newCube);

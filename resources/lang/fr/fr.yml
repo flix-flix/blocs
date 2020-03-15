@@ -86,7 +86,7 @@ text:
         loading_error: (Si tu peux lire ce message, le jeu a probablement planté ^^)
         
         error:
-            connexion_lost: Perte de connexion avec le server
+            connection_lost: Perte de connexion avec le server
             button_quit: Retour au menu principal
         
         pause:

@@ -1,8 +1,7 @@
 package environment.textures;
 
+import java.awt.Image;
 import java.awt.image.BufferedImage;
-
-import utils.Utils;
 
 public class TextureSquare {
 
@@ -44,11 +43,8 @@ public class TextureSquare {
 
 	// =========================================================================================================================
 
-	public static TextureSquare generateSquare(String file) {
-		return generateSquare((BufferedImage) Utils.getImage(file));
-	}
-
-	public static TextureSquare generateSquare(BufferedImage bimg) {
+	public static TextureSquare generateSquare(Image img) {
+		BufferedImage bimg = (BufferedImage) img;
 		int[] color = new int[bimg.getHeight() * bimg.getWidth()];
 
 		for (int x = 0; x < bimg.getWidth(); x++)

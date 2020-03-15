@@ -35,7 +35,7 @@ import window.KeyBoard;
 public class MainMenu extends JPanel implements Displayable {
 	private static final long serialVersionUID = -3189420915172593199L;
 
-	private static final String knownFile = "resources/settings/server/known.yml";
+	private static final String knownFile = "settings/server/known.yml";
 
 	private Fen fen;
 

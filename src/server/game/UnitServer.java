@@ -43,7 +43,7 @@ public class UnitServer extends Unit {
 		super.doHarvest(map);
 
 		if (resource.isFull())
-			action = null;// TODO Go store
+			action = null;// TODO [Feature] Go store
 		else {
 			resource.add(1);
 
@@ -57,11 +57,11 @@ public class UnitServer extends Unit {
 		super.doStore(map, build);
 
 		if (build.addToStock(resource, 1))// Stock full
-			action = null;// TODO Except if there is another empty stock around
+			action = null;// TODO [Feature] Except if there is another empty stock around
 
 		((MapServer) map).store(this, build);
 
-		if (resource == null || resource.isEmpty()) {// TODO Go Harvest
+		if (resource == null || resource.isEmpty()) {// TODO [Feature] Go Harvest
 			removeResource();
 			action = null;
 		}
@@ -99,7 +99,7 @@ public class UnitServer extends Unit {
 	/** Initialize a rotation to an adjacent position */
 	@Override
 	protected void rollAdjacent(Orientation dir) {
-		// TODO test if cube is walkable (and set phantom cube)
+		// TODO [Warning] Test if cube is walkable (and set phantom cube)
 		Coord movingTo = coord.face(dir.face);
 
 		if (server.map.gridContains(movingTo))
@@ -110,25 +110,25 @@ public class UnitServer extends Unit {
 
 	/** Initialize a rotation to a diagonal position */
 	public void rollDiago(int x) {
-		// TODO test if cube is walkable (and set phantom cube)
+		// TODO [Warning] Test if cube is walkable (and set phantom cube)
 		super.rollDiago(x);
 	}
 
 	/** Initialize a rotation to the upper position */
 	public void rollUp(Orientation dir) {
-		// TODO test if cube is walkable (and set phantom cube)
+		// TODO [Warning] Test if cube is walkable (and set phantom cube)
 		super.rollUp(dir);
 	}
 
 	/** Initialize a rotation to the position below */
 	public void rollDown(Orientation dir) {
-		// TODO test if cube is walkable (and set phantom cube)
+		// TODO [Warning] Test if cube is walkable (and set phantom cube)
 		super.rollDown(dir);
 	}
 
 	/** Initialize an on-place rotation to change the unit's rotation axe */
 	public void rotation() {
-		// TODO test if cube is walkable (and set phantom cube)
+		// TODO [Warning] Test if cube is walkable (and set phantom cube)
 		super.rotation();
 	}
 

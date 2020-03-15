@@ -267,7 +267,6 @@ public class EditorManager extends Environment3D implements Displayable {
 		int x = 0, y = 0;
 		int speed = 10;
 
-		// TODO Slow down the rotate mode with shift
 		if (editor != null && ((KeyboardEditor) editor.getKeyBoard()).shiftDown)
 			speed = 3;
 

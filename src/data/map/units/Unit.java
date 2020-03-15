@@ -168,7 +168,7 @@ public class Unit implements Serializable {
 
 			alreadyHarvest = 0;
 
-			// TODO Avoid destruction of current Resource
+			// TODO [Feature] Avoid destruction of current Resource
 			if (resource == null || resource.getType() != map.gridGet(actionCube).getResource().getType())
 				resource = new Resource(map.gridGet(actionCube).getResource().getType(), 0, maxCapacity);
 

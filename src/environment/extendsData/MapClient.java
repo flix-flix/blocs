@@ -374,7 +374,7 @@ public class MapClient extends Map implements Modelisable {
 				if (_containsChunk(camChunkX + x, camChunkZ + z))
 					_getChunk(camChunkX + x, camChunkZ + z).init(camera, matrix);
 
-		// TODO ConcurrentModificationException
+		// TODO [Fix] ConcurrentModificationException
 		for (Cube c : units.values())
 			((CubeClient) c).init(camera, matrix);
 	}

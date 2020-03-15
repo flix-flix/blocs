@@ -65,6 +65,6 @@ public class PanMap extends FPanel {
 
 	@Override
 	public void click(MouseEvent e) {
-		// TODO Map clickable
+		// TODO [Feature] Map clickable
 	}
 }

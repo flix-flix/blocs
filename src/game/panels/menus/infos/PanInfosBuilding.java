@@ -156,7 +156,7 @@ public class PanInfosBuilding extends FPanel {
 		img = engine.getImage(imgSize, imgSize);
 
 		// ===== Resource =====
-		// TODO Cause indexException in update (stocks.get())
+		// TODO [Fix] Cause indexException in update (stocks.get())
 		stocks.clear();
 
 		for (ResourceType type : ResourceType.values())

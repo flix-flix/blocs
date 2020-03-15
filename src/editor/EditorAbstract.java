@@ -27,7 +27,7 @@ public abstract class EditorAbstract {
 	public Target target;
 
 	// =============== History ===============
-	// TODO suppressWarnings History
+	// TODO [Fix] suppressWarnings History
 	/** Store the modifications */
 	@SuppressWarnings("rawtypes")
 	protected ArrayList<History> history = new ArrayList<>();
