@@ -350,6 +350,8 @@ public class MapClient extends Map implements Modelisable {
 		int camChunkX = toChunkCoord(camera.vue.x);
 		int camChunkZ = toChunkCoord(camera.vue.z);
 
+		// TODO [Improve] In classic mode don't need to display cubes with Z coords
+		// behind camera
 		for (int x = -range; x <= range; x++)
 			for (int z = -range; z <= range; z++)
 				if (_containsChunk(camChunkX + x, camChunkZ + z)) {
@@ -357,8 +359,11 @@ public class MapClient extends Map implements Modelisable {
 					nbChunks++;
 				}
 
-		for (Cube c : units.values())
-			draws.addAll(((CubeClient) c).getDraws(camera));
+		for (Cube c : units.values()) {
+			int x = toChunkCoord(c.x), z = toChunkCoord(c.z);
+			if (Math.abs(camChunkX - x) <= range && Math.abs(camChunkZ - z) <= range)
+				draws.addAll(((CubeClient) c).getDraws(camera));
+		}
 		nbFaces = draws.size();
 
 		return draws;

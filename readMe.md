@@ -36,14 +36,14 @@ java -jar target/Blocs-0.0.1-SNAPSHOT.jar
 * Unit management (move, harvest/store and build)
 * Map-edition 
 * Chat
-* **/!\** There is currently no gameplay available (fight, objectives, ...)
+* **/!\\** There is currently no gameplay available (fights, objectives, ...)
 
 **Server**
 
 * Multiplayer
 * LAN
-* **/!\** Joining player may encouter an issue if actions are performed during its connection
-* **/!\** Server requests must be improved to prevent cheat
+* **/!\\** Joining player may encouter an issue if actions are performed during its connection
+* **/!\\** Server requests must be improved to prevent cheat
 
 **Editors**
 

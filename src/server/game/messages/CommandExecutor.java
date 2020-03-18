@@ -1,8 +1,12 @@
 package server.game.messages;
 
+import java.awt.Color;
+
 import server.Server;
 import server.game.GameMode;
 import server.game.Player;
+import utils.TextPlus;
+import utils.TextPlusPart;
 
 public class CommandExecutor {
 
@@ -22,7 +26,12 @@ public class CommandExecutor {
 		case "!help":
 			consoleMsg("=============== HELP ===============", player);
 			errorMsg("Commands are a Work In Progress", player);
-			consoleMsg("!help : Display this help", player);
+
+			TextPlus plus = new TextPlus();
+			plus.add(new TextPlusPart("!help", null, Color.BLACK));
+			plus.add(new TextPlusPart(": Display this help", null, Color.WHITE));
+
+			consoleMsg(plus, player);
 			break;
 		case "!gamemode":
 			if (parts.length != 3) {
@@ -47,6 +56,10 @@ public class CommandExecutor {
 
 	public void msg(Message msg, Player player) {
 		server.sendToPlayer(msg, player.id);
+	}
+
+	public void consoleMsg(TextPlus text, Player player) {
+		server.sendToPlayer(new Message(text, TypeMessage.CONSOLE), player.id);
 	}
 
 	public void msg(String text, TypeMessage type, Player player) {

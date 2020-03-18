@@ -37,7 +37,7 @@ import window.Displayable;
 import window.Fen;
 import window.KeyBoard;
 
-public class Game extends Environment3D implements Displayable {
+public class Game extends Environment3D implements Displayable, MessageSender {
 	public Fen fen;
 
 	// =============== Pan ===============
@@ -111,6 +111,9 @@ public class Game extends Environment3D implements Displayable {
 		panel = new PanGame(this);
 		super.panel = panel.panEnv;
 
+		messages = new MessageManager(this, player, panel);
+		messages.displayRecent(true);
+
 		// ======================================
 
 		setUserAction(UserAction.MOUSE);
@@ -134,8 +137,6 @@ public class Game extends Environment3D implements Displayable {
 	// =========================================================================================================================
 
 	public void start() {
-		messages = new MessageManager(this);
-
 		super.start();
 		clock.start();
 		keyboard.start();
@@ -146,6 +147,8 @@ public class Game extends Environment3D implements Displayable {
 	@Override
 	public void stop() {
 		super.stop();
+
+		messages.stop();
 
 		keyboard.stop();
 		clock.stop();
@@ -307,6 +310,12 @@ public class Game extends Environment3D implements Displayable {
 	}
 
 	public void resume() {
+		if (stateHUD == StateHUD.DIALOG) {
+			messages.gotoLastLine();
+			messages.displayLine(false);
+			messages.displayPrevious(false);
+		}
+
 		setStateHUD(StateHUD.GAME);
 		keyboard.setPaused(false);
 
@@ -321,6 +330,13 @@ public class Game extends Environment3D implements Displayable {
 
 		keyboard.setTargetOnMouse();
 		fen.requestFocusInWindow();
+	}
+
+	public void dialog() {
+		setStateHUD(StateHUD.DIALOG);
+		messages.gotoLastLine();
+		messages.displayLine(true);
+		messages.displayPrevious(true);
 	}
 
 	public void exit() {
@@ -448,6 +464,13 @@ public class Game extends Environment3D implements Displayable {
 	public void setStateHUD(StateHUD stateHUD) {
 		panel.panEnv.help.setVisible(map != null && stateHUD != StateHUD.DIALOG && cameraMode == CameraMode.CLASSIC);
 		this.stateHUD = stateHUD;
+	}
+
+	// =========================================================================================================================
+
+	@Override
+	public void sendMessage(Message msg) {
+		send(msg);
 	}
 
 	// =========================================================================================================================

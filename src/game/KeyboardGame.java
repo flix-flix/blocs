@@ -136,14 +136,13 @@ public class KeyboardGame extends KeyboardEnvironment3D {
 					break;
 				case VALID:
 					game.messages.send();
-					game.keyboard.mouseToCenter();
-					game.setStateHUD(StateHUD.GAME);
+					game.resume();
 					break;
 				case DEL:
-					game.messages.deletePrevious();
+					game.messages.deletePreviousChar();
 					break;
 				case SUPPR:
-					game.messages.deleteNext();
+					game.messages.deleteNextChar();
 					break;
 
 				case ARROW_UP:
@@ -160,18 +159,18 @@ public class KeyboardGame extends KeyboardEnvironment3D {
 					break;
 
 				case PAGE_UP:
-					game.messages.pageUp();
+					game.messages.displayPrev();
 					break;
 				case PAGE_DOWN:
-					game.messages.pageDown();
+					game.messages.displayNext();
 					break;
 				case KEY_TAB:
 					break;
 				case END:
-					game.messages.end();
+					game.messages.cursorGotoEnd();
 					break;
 				case START:
-					game.messages.start();
+					game.messages.cursorGotoStart();
 					break;
 
 				default:
@@ -222,7 +221,7 @@ public class KeyboardGame extends KeyboardEnvironment3D {
 				// =====================================================
 
 				case DIALOG:
-					dialog();
+					game.dialog();
 					break;
 
 				// =====================================================
@@ -236,11 +235,5 @@ public class KeyboardGame extends KeyboardEnvironment3D {
 					break;
 				}
 		}
-	}
-
-	// =========================================================================================================================
-
-	public void dialog() {
-		game.setStateHUD(StateHUD.DIALOG);
 	}
 }

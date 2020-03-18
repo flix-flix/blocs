@@ -32,7 +32,7 @@ public class Matrix {
 		tab[1][1] = 1;
 		tab[2][2] = 1;
 
-		point = p.clone();
+		point = p;
 
 		Matrix m1 = new Matrix(vx, true);
 		Matrix m2 = new Matrix(vy, false);

@@ -1,14 +1,20 @@
 package utils;
 
+import java.awt.Graphics;
 import java.awt.Image;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
+import utils.TextPlusPart.TextType;
+
 /**
  * Class to represent text with different colors/fonts and containing images
  */
-public class TextPlus {
+public class TextPlus implements Serializable {
+	private static final long serialVersionUID = -1366313903960175159L;
+
 	/** List of parts constituing this text */
 	private ArrayList<TextPlusPart> list = new ArrayList<>();
 
@@ -73,22 +79,24 @@ public class TextPlus {
 		// The TextPart will be added to the next line
 		if (splitted[0] == null) {
 			if (sizes[0] == sizes[1]) {
-				Utils.debug("Can't split TextPlusPart: " + part.toString() + " (" + sizes[0] + ", " + sizes[1] + ")");
-				System.out.println(part.str.length());
-				System.out.println(part.str);
-				for (char c : part.str.toCharArray())
-					System.out.println((int) c);
-				return null;
+				if (part.type == TextType.STR)
+					splitted = part.forceSplit(sizes[1], panel);
+				else {
+					Utils.debug(
+							"Can't split TextPlusPart: " + part.toString() + " (" + sizes[0] + ", " + sizes[1] + ")");
+					return null;
+				}
+			} else {
+				// End the current line
+				lines.add(currentLine);
+				// === New line ===
+				sizes[1] = sizes[0];
+				return addPartToLine(lines, new TextPlus(), part, panel, sizes);
 			}
-
-			// End the current line
-			lines.add(currentLine);
-			// === New line ===
-			sizes[1] = sizes[0];
-			return addPartToLine(lines, new TextPlus(), part, panel, sizes);
 		}
+
 		// It all fits in the current line
-		else if (splitted[1] == null) {
+		if (splitted[1] == null) {
 			sizes[1] -= splitted[0].getSize(panel);
 			currentLine.add(splitted[0]);
 			return currentLine;
@@ -106,7 +114,16 @@ public class TextPlus {
 
 	// =========================================================================================================================
 
-	public ArrayList<TextPlusPart> getList() {
-		return list;
+	/**
+	 * Draw the text
+	 * 
+	 * @param panel
+	 *            - tool to measure strings
+	 */
+	public void draw(Graphics g, JPanel panel, int startX, int bottomY) {
+		for (TextPlusPart part : list) {
+			part.draw(g, startX, bottomY);
+			startX += part.getSize(panel);
+		}
 	}
 }

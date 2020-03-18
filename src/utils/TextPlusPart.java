@@ -5,13 +5,17 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.io.Serializable;
 
 import javax.swing.JPanel;
 
 /** Sub-part of {@link TextPlus} */
-public class TextPlusPart {
+public class TextPlusPart implements Serializable {
+	private static final long serialVersionUID = -3211612180350592004L;
 
 	TextType type;
+	/** The space to add between this part and the next one (in pixels) */
+	int spaceAfter = 3;
 
 	// =============== Str ===============
 	String str;
@@ -34,6 +38,11 @@ public class TextPlusPart {
 
 		this.font = font == null ? new Font("monospace", Font.PLAIN, 18) : font;
 		this.color = color == null ? Color.BLACK : color;
+	}
+
+	public TextPlusPart(String str, Font font, Color color, int space) {
+		this(str, font, color);
+		spaceAfter = space;
 	}
 
 	// =========================================================================================================================
@@ -68,6 +77,9 @@ public class TextPlusPart {
 		TextPlusPart fitting = new TextPlusPart("", font, color);
 		TextPlusPart nextLine = null;
 
+		if (str.trim().length() == 0)
+			return new TextPlusPart[] { fitting, nextLine };
+
 		String[] words = str.split(" ");
 
 		// Add words one by one
@@ -84,8 +96,26 @@ public class TextPlusPart {
 		return new TextPlusPart[] { fitting, nextLine };
 	}
 
+	public TextPlusPart[] forceSplit(int size, JPanel panel) {
+		FontMetrics fm = panel.getFontMetrics(font);
+		TextPlusPart fitting = new TextPlusPart("", font, color);
+		TextPlusPart nextLine = null;
+
+		char[] letters = str.toCharArray();
+
+		for (char letter : letters)
+			// Don't fit in the remaning space
+			if (fm.stringWidth(fitting.str + " " + letter) > size) {
+				nextLine = new TextPlusPart(str.substring(fitting.str.length() + 1), font, color);
+				break;
+			} else
+				fitting.addText("" + letter);
+
+		return new TextPlusPart[] { fitting, nextLine };
+	}
+
 	public int getSize(JPanel panel) {
-		return (type == TextType.IMG ? width : panel.getFontMetrics(font).stringWidth(str)) + 3;
+		return (type == TextType.IMG ? width : panel.getFontMetrics(font).stringWidth(str)) + spaceAfter;
 	}
 
 	// =========================================================================================================================

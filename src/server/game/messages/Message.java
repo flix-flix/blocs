@@ -1,15 +1,31 @@
 package server.game.messages;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.io.Serializable;
 
 import server.game.Player;
+import utils.TextPlus;
+import utils.TextPlusPart;
 
 public class Message implements Serializable {
 	private static final long serialVersionUID = -7696844549236456406L;
 
+	// =============== Data ===============
 	private String text;
 	private Player author;
 	private TypeMessage type;
+
+	private TextPlus plus;
+
+	// =============== Fonts/Colors ===============
+	private final static Color authorC = Color.BLACK;
+	private final static Color textC = Color.WHITE;
+	private final static Color errorC = new Color(255, 150, 0);// Orange
+
+	private Font font = new Font("monospace", Font.BOLD, 18);
+
+	// =========================================================================================================================
 
 	public Message(String text, TypeMessage type, Player author) {
 		this.author = author;
@@ -29,21 +45,38 @@ public class Message implements Serializable {
 		this(text, TypeMessage.TEXT);
 	}
 
+	public Message(TextPlus plus, TypeMessage type) {
+		this.type = type;
+		this.plus = plus;
+	}
+
 	// =========================================================================================================================
 
-	public String toMessage() {
+	public TextPlus toMessage() {
+		if (plus != null)
+			return plus;
+
+		TextPlus text = new TextPlus();
 		switch (type) {
 		case AUTHOR:
-			return author.getName() + " : " + text;
+			text.add(new TextPlusPart(author.getName(), font, authorC));
+			text.add(new TextPlusPart(" : ", font, textC));
+			text.add(new TextPlusPart(this.text, font, textC));
+			break;
 		case CONSOLE:
-			// return "[Console] " + text;
+			text.add(new TextPlusPart(this.text, font, Color.LIGHT_GRAY));
+			break;
 		case ERROR:
-			// return "[Error] " + text;
+			text.add(new TextPlusPart(this.text, null, errorC));
+			break;
 		case TEXT:
-			return text;
+			text.add(new TextPlusPart(this.text, null, Color.LIGHT_GRAY));
+			break;
 		default:
-			return "Error during message retranscription";
+			text.add(new TextPlusPart("Error during message retranscription", null, errorC));
+			break;
 		}
+		return text;
 	}
 
 	// =========================================================================================================================

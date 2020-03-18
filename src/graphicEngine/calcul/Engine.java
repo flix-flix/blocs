@@ -26,16 +26,16 @@ public class Engine {
 	private double vx = Math.tan(60 * toRadian);
 	private double vy = Math.tan(45 * toRadian);
 
-	// ================ Target =====================
+	// =============== Target ===============
 	private int targetX = 100, targetY = 100;
 
 	private Drawable drawTarget;
 	private Quadri quadriTarget;
 
-	// ================ Processing time =====================
+	// =============== Processing time ===============
 	public long timeStart, timeMat, timeDraw, timeEnd;
 
-	// ================ Data =====================
+	// =============== Data ===============
 	private Matrix matrix;
 
 	private BufferedImage bimg;
@@ -49,7 +49,7 @@ public class Engine {
 	 */
 	private int widthRatio;
 
-	// ================ Background =====================
+	// =============== Background ===============
 	/** Leave the background transparent */
 	public static final int NONE = 0;
 	/** Fill the background with black */
@@ -59,6 +59,9 @@ public class Engine {
 
 	/** State of the background */
 	private int background = SKY;
+
+	// =============== Anti-aliasing ===============
+	double antiAPercent = .3;
 
 	// =========================================================================================================================
 
@@ -93,7 +96,7 @@ public class Engine {
 		timeStart = System.currentTimeMillis();
 		init(w, h);
 
-		matrix = new Matrix(-camera.getVx(), -camera.getVy(), camera.vue);
+		matrix = new Matrix(-camera.getVx(), -camera.getVy(), camera.vue.clone());
 
 		drawTarget = null;
 		quadriTarget = null;
@@ -103,6 +106,8 @@ public class Engine {
 		timeEnd = System.currentTimeMillis();
 
 		drawBackgroung();
+
+		antiAliasing();
 
 		return bimg;
 	}
@@ -118,6 +123,46 @@ public class Engine {
 
 		bimg = new BufferedImage(imgWidth, imgHeight, BufferedImage.TYPE_INT_ARGB);
 		dataBuffer = bimg.getRaster().getDataBuffer();
+	}
+
+	// =========================================================================================================================
+
+	private void antiAliasing() {
+		if (widthRatio == (int) (imgHeight * (1920. / 1080)))
+			return;
+
+		BufferedImage bimg = new BufferedImage(imgWidth, imgHeight, BufferedImage.TYPE_INT_ARGB);
+		DataBuffer dataBuffer = bimg.getRaster().getDataBuffer();
+
+		for (int i = 0; i < dataBuffer.getSize(); i++)
+			dataBuffer.setElem(i, this.dataBuffer.getElem(i));
+
+		for (int x = 0; x < imgWidth; x++) {
+			for (int y = 0; y < imgHeight; y++) {
+				antiAPixel(x, y, x + 1, y, dataBuffer);
+				antiAPixel(x, y, x - 1, y, dataBuffer);
+				antiAPixel(x, y, x, y + 1, dataBuffer);
+				antiAPixel(x, y, x, y - 1, dataBuffer);
+			}
+		}
+
+		this.bimg = bimg;
+	}
+
+	private void antiAPixel(int x1, int y1, int x2, int y2, DataBuffer data) {
+		if (x2 < 0 || imgWidth <= x2 || y2 < 0 || imgHeight <= y2)
+			return;
+
+		int color1 = this.dataBuffer.getElem(y1 * imgWidth + x1);
+		int color2 = this.dataBuffer.getElem(y2 * imgWidth + x2);
+
+		if (color1 == color2)
+			return;
+
+		int newColor = data.getElem(y1 * imgWidth + x1);
+		newColor = addHue(newColor, color2, antiAPercent);
+
+		data.setElem(y1 * imgWidth + x1, newColor);
 	}
 
 	// =========================================================================================================================

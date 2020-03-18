@@ -21,12 +21,14 @@
     - **ItemTable** : Static access to the properties of all items
     - **ItemTableClient** : Static access to the properties of all items (textures/language dependant inclued)
 
+<br>
 
 - **Organize the cubes**
     - **Cube** : Store the data of one cube (1x1x1)
     - **Chunk** : Store 10x50x10 cubes
     - **Map** : Store chunks
 
+<br>
 
 - **Additional data**
     - **Multibloc** : List of cubes acting together
@@ -34,11 +36,13 @@
     - **Building**
     - **Resource**
 
+<br>
 
 - **Dynamic**
     - **TickClock** : 20 times/second (each 50ms) make the data perform a step of their current action
     - **PathFinding**
 
+<br>
 
 - **Generation**
     - **WorldGeneration** : Generates map

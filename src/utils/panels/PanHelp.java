@@ -88,17 +88,13 @@ public class PanHelp extends FPanel {
 			g.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, total, total);
 
 			// ========== Tip ==========
-			g.setColor(getForeground());
 			// TODO [Fix] Line height depends on TextPlus font
 			int lineH = 20;
 
 			for (int i = 0; i < tipPlusLines.size(); i++) {
 				int x = total;
 				int y = getHeight() / 2 - lineH * tipPlusLines.size() / 4 + lineH * i;
-				for (TextPlusPart part : tipPlusLines.get(i).getList()) {
-					part.draw(g, x, y);
-					x += part.getSize(this);
-				}
+				tipPlusLines.get(i).draw(g, this, x, y);
 			}
 
 			// ========== Arrows ==========
